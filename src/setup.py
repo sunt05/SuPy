@@ -56,7 +56,7 @@ for f in target_f95 + other_obj:
 ext_modules = [
     Extension('supy.SUEWS_driver',
               target_f95,
-              extra_f90_compile_args=['-cpp'],
+              extra_f90_compile_args=['-O3 -cpp'],
               f2py_options=[
                   '--quiet',
                   ('-DF2PY_REPORT_ATEXIT' if sysname == 'Linux' else '')],
