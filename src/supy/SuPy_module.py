@@ -991,7 +991,7 @@ dict_var_inout = {k: None for k in set_var_inout}
 
 
 # high-level wrapper: suews_cal_tstep
-def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep):
+def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep, save_state=False):
     # use single dict as input for suews_cal_main
     dict_input = dict_state_start.copy()
     dict_input.update(dict_met_forcing_tstep)
@@ -1001,9 +1001,13 @@ def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep):
     res_suews_tstep = sd.suews_cal_main(**dict_input)
 
     # update state variables
-    dict_state_end = dict_state_start.copy()
-    dict_state_end.update({var: copy.copy(dict_input[var])
-                           for var in list_var_inout})
+    if save_state:  # deep copy states results
+        dict_state_end = dict_state_start.copy()
+        dict_state_end.update({var: copy.copy(dict_input[var])
+                               for var in list_var_inout})
+    else: # only reference to dict_state_start
+        dict_state_end = dict_state_start
+
 
     # update timestep info
     dict_state_end['tstep_prev'] = dict_state_end['tstep']
@@ -1019,7 +1023,7 @@ def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep):
 # 2. compact wrapper for running a whole simulation
 # # main calculation
 # input as DataFrame
-def run_suews_df(df_forcing, df_init):
+def run_suews_df(df_forcing, df_init, save_state=False):
     # initialise dicts for holding results and model states
     dict_state = {}
     dict_output = {}
@@ -1033,6 +1037,7 @@ def run_suews_df(df_forcing, df_init):
     #                 in df_forcing.iterrows()}
     # grid list determined by initial states
     grid_list = df_init.index
+
     # dict_state is used to save model states for later use
     dict_state = {(t_start, grid): series_state_init.to_dict()
                   for grid, series_state_init
@@ -1051,7 +1056,8 @@ def run_suews_df(df_forcing, df_init):
             # series_state_end, series_output_tstep = suews_cal_tstep_df(
             #     series_state_start, met_forcing_tstep)
             dict_state_end, dict_output_tstep = suews_cal_tstep(
-                dict_state_start, met_forcing_tstep)
+                dict_state_start, met_forcing_tstep,
+                save_state=save_state)
             # update output & model state at tstep for the current grid
             dict_output.update({(tstep, grid): dict_output_tstep})
             dict_state.update({(tstep + 1, grid): dict_state_end})
