@@ -1,4 +1,4 @@
 [submodule "suews"]
-	path = suews
+	path = src/suews
 	url = git@bitbucket.org:grimmond/suews.git
 	branch = v2018b
