@@ -64,7 +64,7 @@ ext_modules = [
               extra_link_args=[(''if sysname == 'Linux' else '-static')])]
 
 setup(name='supy',
-      version='0.3.1',
+      version='0.3.2',
       description='the SUEWS model that speaks python',
       long_description=readme(),
       url='https://github.com/sunt05/SuPy',
