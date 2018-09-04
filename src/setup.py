@@ -50,6 +50,10 @@ other_f95 = list(
 )
 other_obj = [f.replace('.f95', '.o') for f in other_f95]
 src_f95 = target_f95 + other_f95
+
+if sysname == 'Windows':
+    other_obj.append(os.path.join(dir_f95, 'strptime.o'))
+
 for f in target_f95 + other_obj:
     print(f)
 
