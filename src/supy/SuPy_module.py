@@ -17,7 +17,7 @@ import pandas as pd
 import f90nml
 from pandas import DataFrame as df
 import inspect
-from scipy import interpolate
+# from scipy import interpolate
 import copy
 import glob
 from datetime import timedelta
@@ -80,7 +80,6 @@ def get_args_suews():
 # 1. surface properties will be retrieved and packed together for later use
 # 2. met forcing conditions will splitted into time steps and used to derive
 # other information
-
 
 
 # descriptive list/dicts for variables
@@ -202,7 +201,7 @@ def load_SUEWS_SurfaceChar(dir_input):
     # load RunControl variables
     lib_RunControl = load_SUEWS_nml(os.path.join(dir_input, 'runcontrol.nml'))
     dict_RunControl = lib_RunControl.loc[:, 'runcontrol'].to_dict()
-    tstep = dict_RunControl['tstep']
+    # tstep = dict_RunControl['tstep']
     dir_path = os.path.join(dir_input, dict_RunControl['fileinputpath'])
     # load all libraries
     dict_libs = load_SUEWS_Libs(dir_path)
@@ -431,20 +430,20 @@ def load_SUEWS_Forcing_met_df_raw(
             'id': 'id',
             'it': 'it',
             'imin': 'imin',
-            'Kdn': 'avkdn',
+            'kdown': 'avkdn',
             'RH': 'avrh',
-            'Wind': 'avu1',
+            'U': 'avu1',
             'fcld': 'fcld_obs',
-            'lai_hr': 'lai_obs',
+            'lai': 'lai_obs',
             'ldown': 'ldown_obs',
             'rain': 'precip',
-            'press': 'press_hpa',
-            'Qs': 'qs_obs',
-            'Qf': 'qf_obs',
-            'QH': 'qh_obs',
-            'Q*': 'qn1_obs',
+            'pres': 'press_hpa',
+            'qs': 'qs_obs',
+            'qf': 'qf_obs',
+            'qh': 'qh_obs',
+            'qn': 'qn1_obs',
             'snow': 'snow_obs',
-            'Td': 'temp_c',
+            'Tair': 'temp_c',
             # 'all': 'metforcingdata_grid',
             'xsmd': 'xsmd'})
 
@@ -494,18 +493,18 @@ def load_SUEWS_Forcing_ESTM_df_raw(
             'id': 'id',
             'it': 'it',
             'imin': 'imin',
-            'Kdn': 'avkdn',
+            'kdown': 'avkdn',
             'RH': 'avrh',
-            'Wind': 'avu1',
+            'U': 'avu1',
             'fcld': 'fcld_obs',
-            'lai_hr': 'lai_obs',
+            'lai': 'lai_obs',
             'ldown': 'ldown_obs',
             'rain': 'precip',
-            'press': 'press_hpa',
-            'QH': 'qh_obs',
-            'Q*': 'qn1_obs',
+            'pres': 'press_hpa',
+            'qh': 'qh_obs',
+            'qn': 'qn1_obs',
             'snow': 'snow_obs',
-            'Td': 'temp_c',
+            'Tair': 'temp_c',
             # 'all': 'metforcingdata_grid',
             'xsmd': 'xsmd'})
 
@@ -546,7 +545,8 @@ def load_SUEWS_Forcing_df_grid(dir_site, grid, ser_mod_cfg, df_state_init):
 
     # resample raw data from tstep_in to tstep_mod
     df_forcing_met_tstep = resample_forcing_met(
-        df_forcing_met, tstep_met_in, tstep_mod, lat, lon, alt, timezone, kdownzen)
+        df_forcing_met, tstep_met_in, tstep_mod,
+        lat, lon, alt, timezone, kdownzen)
 
     # merge forcing datasets (met and ESTM)
     df_forcing_tstep = df_forcing_met_tstep.copy()
@@ -560,9 +560,10 @@ def load_SUEWS_Forcing_df_grid(dir_site, grid, ser_mod_cfg, df_state_init):
     dict_id_all = {xid: df_grp.get_group(xid)
                    for xid in df_forcing_tstep['id'].unique()}
     id_all = df_forcing_tstep['id'].apply(lambda xid: dict_id_all[xid])
-    df_forcing_tstep = df_forcing_tstep.merge(id_all.to_frame(name='metforcingdata_grid'),
-                                              left_index=True,
-                                              right_index=True)
+    df_forcing_tstep = df_forcing_tstep.merge(
+        id_all.to_frame(name='metforcingdata_grid'),
+        left_index=True,
+        right_index=True)
 
     # add Ts forcing for ESTM
     if df_state_init.iloc[0]['storageheatmethod'] == 4:
@@ -589,13 +590,13 @@ def load_SUEWS_Forcing_df_grid(dir_site, grid, ser_mod_cfg, df_state_init):
     # new columns for later use in main calculation
     df_forcing_tstep[['iy', 'id', 'it', 'imin']] = df_forcing_tstep[[
         'iy', 'id', 'it', 'imin']].astype(np.int64)
-    df_forcing_tstep['dectime'] = ((df_forcing_tstep['id'] - 1) +
-                                   (df_forcing_tstep['it']
-                                    + df_forcing_tstep['imin'] / 60.) / 24.)
-    df_forcing_tstep['id_prev_t'] = df_forcing_tstep['id'].shift(
-        1).fillna(method='backfill')
-    df_forcing_tstep['iy_prev_t'] = df_forcing_tstep['iy'].shift(
-        1).fillna(method='backfill')
+    # df_forcing_tstep['dectime'] = ((df_forcing_tstep['id'] - 1) +
+    #                                (df_forcing_tstep['it']
+    #                                 + df_forcing_tstep['imin'] / 60.) / 24.)
+    # df_forcing_tstep['id_prev_t'] = df_forcing_tstep['id'].shift(
+    #     1).fillna(method='backfill')
+    # df_forcing_tstep['iy_prev_t'] = df_forcing_tstep['iy'].shift(
+    #     1).fillna(method='backfill')
 
     return df_forcing_tstep
 
@@ -674,7 +675,7 @@ def init_SUEWS_dict_grid(dir_input, grid,
     tstep = dict_ModConfig['tstep']
     # some constant values
     nan = -999.
-    ndays = 366
+    # ndays = 366
     nsh = int(3600 / tstep)  # tstep from dict_RunControl
 
     # load met forcing of `grid`:
@@ -687,7 +688,7 @@ def init_SUEWS_dict_grid(dir_input, grid,
 
     # define some met forcing determined variables:
     # previous day index
-    id_prev = int(df_forcing_met['id'].iloc[0] - 1)
+    # id_prev = int(df_forcing_met['id'].iloc[0] - 1)
 
     # initialise dict_InitCond with default values
     dict_InitCond = {
@@ -991,7 +992,8 @@ dict_var_inout = {k: None for k in set_var_inout}
 
 
 # high-level wrapper: suews_cal_tstep
-def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep, save_state=False):
+def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep,
+                    save_state=False):
     # use single dict as input for suews_cal_main
     dict_input = dict_state_start.copy()
     dict_input.update(dict_met_forcing_tstep)
@@ -1005,9 +1007,8 @@ def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep, save_state=False):
         dict_state_end = dict_state_start.copy()
         dict_state_end.update({var: copy.copy(dict_input[var])
                                for var in list_var_inout})
-    else: # only reference to dict_state_start
+    else:  # only reference to dict_state_start
         dict_state_end = dict_state_start
-
 
     # update timestep info
     dict_state_end['tstep_prev'] = dict_state_end['tstep']
@@ -1018,6 +1019,37 @@ def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep, save_state=False):
         list_var_output, res_suews_tstep)}
 
     return dict_state_end, dict_output
+
+
+# high-level wrapper: suews_cal_tstep
+def suews_cal_tstep_multi(df_state_start_grid, df_met_forcing_block):
+    # use single dict as input for suews_cal_main
+    dict_input = df_state_start_grid.copy().to_dict()
+    dict_input.update({
+        'metforcingblock': np.array(
+            df_met_forcing_block.drop(
+                'metforcingdata_grid', axis=1), order='F'),
+        'ts5mindata_ir': np.array(
+            df_met_forcing_block['ts5mindata_ir'], order='F'),
+        'len_sim': df_met_forcing_block.shape[0]})
+    # dict_input = {k: dict_input[k] for k in list_var_input}
+
+    # main calculation:
+    res_suews_tstep_multi = sd.suews_cal_multitsteps(**dict_input)
+
+    # update state variables
+    dict_state_end = df_state_start_grid.to_dict()
+    dict_state_end.update({var: dict_input[var] for var in list_var_inout})
+
+    # update timestep info
+    dict_state_end['tstep_prev'] = dict_state_end['tstep']
+    dict_state_end['dt_since_start'] += dict_state_end['tstep']
+
+    # pack output
+    dict_output_array = {k: v for k, v in zip(
+        list_var_output[1:], res_suews_tstep_multi)}
+
+    return dict_state_end, dict_output_array
 
 
 # 2. compact wrapper for running a whole simulation
@@ -1043,28 +1075,40 @@ def run_suews_df(df_forcing, df_init, save_state=False):
                   for grid, series_state_init
                   in copy.deepcopy(df_init).iterrows()}
 
-    # temporal loop
-    for tstep in df_forcing.index:
-        # print 'tstep at', tstep
-        # initialise output of tstep:
-        # load met_forcing if the same across all grids:
-        met_forcing_tstep = dict_forcing[tstep]
-        # spatial loop
-        for grid in grid_list:
-            dict_state_start = dict_state[(tstep, grid)]
-            # calculation at one step:
-            # series_state_end, series_output_tstep = suews_cal_tstep_df(
-            #     series_state_start, met_forcing_tstep)
-            dict_state_end, dict_output_tstep = suews_cal_tstep(
-                dict_state_start, met_forcing_tstep,
-                save_state=save_state)
-            # update output & model state at tstep for the current grid
-            dict_output.update({(tstep, grid): dict_output_tstep})
-            dict_state.update({(tstep + 1, grid): dict_state_end})
+    if save_state:  # use slower more functional single step wrapper
+        # temporal loop
+        for tstep in df_forcing.index:
+            # print 'tstep at', tstep
+            # initialise output of tstep:
+            # load met_forcing if the same across all grids:
+            met_forcing_tstep = dict_forcing[tstep]
+            # spatial loop
+            for grid in grid_list:
+                dict_state_start = dict_state[(tstep, grid)]
+                # calculation at one step:
+                # series_state_end, series_output_tstep = suews_cal_tstep_df(
+                #     series_state_start, met_forcing_tstep)
+                dict_state_end, dict_output_tstep = suews_cal_tstep(
+                    dict_state_start, met_forcing_tstep,
+                    save_state=save_state)
+                # update output & model state at tstep for the current grid
+                dict_output.update({(tstep, grid): dict_output_tstep})
+                dict_state.update({(tstep + 1, grid): dict_state_end})
 
-    # pack results as easier DataFrames
-    df_output = pack_df_output(dict_output)
-    df_state = pack_df_state(dict_state)
+        # pack results as easier DataFrames
+        df_output = pack_df_output(dict_output)
+        df_state = pack_df_state(dict_state)
+
+    else:  # use higher level wrapper that calculate at a `block` level
+        # for better performance
+        for grid in grid_list:
+            df_state_start_grid = df_init.loc[grid]
+            dict_state_end, dict_output_array = suews_cal_tstep_multi(
+                df_state_start_grid, df_forcing)
+
+        # temporarily save them as they are
+        df_output = dict_output_array
+        df_state = dict_state_end
     # df_output = dict_output
     # df_state = dict_state
 

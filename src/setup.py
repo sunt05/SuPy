@@ -53,7 +53,6 @@ src_f95 = target_f95 + other_f95
 
 if sysname == 'Windows':
     other_obj.append(os.path.join(dir_f95, 'strptime.o'))
-
 for f in target_f95 + other_obj:
     print(f)
 
@@ -68,7 +67,7 @@ ext_modules = [
               extra_link_args=[(''if sysname == 'Linux' else '-static')])]
 
 setup(name='supy',
-      version='0.3.2',
+      version='0.4.0a',
       description='the SUEWS model that speaks python',
       long_description=readme(),
       url='https://github.com/sunt05/SuPy',
