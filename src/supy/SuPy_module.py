@@ -8,10 +8,10 @@
 # 03 Feb 2018: improvement in output processing
 # 08 Mar 2018: pypi packaging
 ###########################################################################
-
 # load dependency modules
+from __future__ import print_function, division
 import os
-import sys
+# import sys
 import numpy as np
 import pandas as pd
 import f90nml
@@ -22,9 +22,7 @@ import copy
 import glob
 from datetime import timedelta
 
-# import math
-# import random
-# import pkg_resources
+
 
 # define local path for loading resources in this package
 dir_path = os.path.dirname(os.path.abspath(inspect.getsourcefile(lambda: 0)))
@@ -142,7 +140,7 @@ def load_SUEWS_table(fileX):
     # remove case issues
     fileX = path_insensitive(fileX)
     rawdata = pd.read_table(fileX, delim_whitespace=True,
-                            comment='!', error_bad_lines=True,
+                            comment='!', error_bad_lines=False,
                             skiprows=1, index_col=0).dropna()
     return rawdata
 
@@ -151,6 +149,7 @@ def load_SUEWS_table(fileX):
 def load_SUEWS_Libs(dir_input):
     dict_libs = {}
     for lib, lib_file in dict_libVar2File.items():
+        # print(lib_file)
         lib_path = os.path.join(dir_input, lib_file)
         dict_libs.update({lib: load_SUEWS_table(lib_path)})
     # return DataFrame containing settings
@@ -177,7 +176,7 @@ def lookup_code_lib(libName, codeKey, codeValue, dict_libs):
 
 # a recursive function to retrieve value based on key sequences
 def lookup_KeySeq_lib(indexKey, subKey, indexCode, dict_libs):
-    # print indexKey, subKey, indexCode
+    # print(indexKey, subKey, indexCode)
     if type(subKey) is float:
         res = subKey
     elif type(subKey) is str:
@@ -346,8 +345,8 @@ def resample_precip(data_raw_precip, tstep_mod, tstep_in):
 # resample input forcing by linear interpolation
 def resample_linear(data_raw, tstep_in, tstep_mod):
     # reset index as timestamps
-    data_raw.index = data_raw.loc[:, ['iy', 'id', 'it', 'imin']].apply(
-        func_parse_date_row, 1)
+    # data_raw.index = data_raw.loc[:, ['iy', 'id', 'it', 'imin']].apply(
+    #     func_parse_date_row, 1)
     # shift by half-tstep_in to generate a time series with instantaneous
     # values
     data_raw_shift = data_raw.copy().shift(-tstep_in / 2, freq='S')
@@ -359,12 +358,13 @@ def resample_linear(data_raw, tstep_in, tstep_mod):
         window=2, center=False).mean()
 
     # reindex data_tstep to valid range
-    ix = pd.date_range(
-        data_raw.index[0] - timedelta(seconds=tstep_in - tstep_mod),
-        data_raw.index[-1],
-        freq='{tstep}S'.format(tstep=tstep_mod))
-    data_tstep = data_raw_tstep.copy().reindex(
-        index=ix).bfill().ffill().dropna()
+    # ix = pd.date_range(
+    #     data_raw.index[0] - timedelta(seconds=tstep_in - tstep_mod),
+    #     data_raw.index[-1],
+    #     freq='{tstep}S'.format(tstep=tstep_mod))
+    # data_tstep = data_raw_tstep.copy().reindex(
+    #     index=ix).bfill().ffill().dropna()
+    data_tstep = data_raw_tstep.copy().bfill().ffill().dropna()
 
     # correct temporal information
     data_tstep['iy'] = data_tstep.index.year
@@ -390,10 +390,10 @@ def resample_forcing_met(
     data_met_tstep['precip'] = resample_precip(
         data_met_raw['precip'], tstep_mod, tstep_in)
 
-    # reset index with numbers
-    data_met_tstep_out = data_met_tstep.copy().reset_index(drop=True)
+    # # reset index with numbers
+    # data_met_tstep_out = data_met_tstep.copy().reset_index(drop=True)
 
-    return data_met_tstep_out
+    return data_met_tstep
 
 
 # load raw data: met forcing
@@ -456,6 +456,15 @@ def load_SUEWS_Forcing_met_df_raw(
     # set correct data types
     df_forcing_met[['iy', 'id', 'it', 'imin', 'isec']] = df_forcing_met[[
         'iy', 'id', 'it', 'imin', 'isec']].astype(np.int64)
+
+    # set timestamp as index
+    idx_dt = pd.date_range(
+        *df_forcing_met.iloc[[0, -1], :4].astype(int).astype(str).apply(
+            lambda ser: ser.str.cat(sep=' '), axis=1).map(
+            lambda dt: pd.Timestamp.strptime(dt, '%Y %j %H %M')),
+        periods=df_forcing_met.shape[0])
+
+    df_forcing_met = df_forcing_met.set_index(idx_dt)
 
     return df_forcing_met
 
@@ -694,7 +703,7 @@ def init_SUEWS_dict_grid(dir_input, grid,
     dict_InitCond = {
         'dayssincerain':  0,
         # `temp_c0` defaults to daily mean air temperature of the first day
-        'temp_c0':  df_forcing_met.loc[:(24 * nsh) - 1, 'temp_c'].mean(),
+        'temp_c0':  df_forcing_met['temp_c'].iloc[:(24 * nsh) - 1].mean(),
         'leavesoutinitially':  int(nan),
         'gdd_1_0':  nan,
         'gdd_2_0':  nan,
@@ -1038,7 +1047,7 @@ def suews_cal_tstep_multi(df_state_start_grid, df_met_forcing_block):
     res_suews_tstep_multi = sd.suews_cal_multitsteps(**dict_input)
 
     # update state variables
-    dict_state_end = df_state_start_grid.to_dict()
+    dict_state_end = df_state_start_grid.copy().to_dict()
     dict_state_end.update({var: dict_input[var] for var in list_var_inout})
 
     # update timestep info
@@ -1055,30 +1064,31 @@ def suews_cal_tstep_multi(df_state_start_grid, df_met_forcing_block):
 # 2. compact wrapper for running a whole simulation
 # # main calculation
 # input as DataFrame
-def run_suews_df(df_forcing, df_init, save_state=False):
-    # initialise dicts for holding results and model states
-    dict_state = {}
-    dict_output = {}
-    # start tstep retrived from forcing data
-    t_start = df_forcing.index[0]
-    # convert df to dict with `itertuples` for better performance
-    dict_forcing = {row.Index: row._asdict()
-                    for row in df_forcing.itertuples()}
-    # dict_forcing = {tstep: met_forcing_tstep.to_dict()
-    #                 for tstep, met_forcing_tstep
-    #                 in df_forcing.iterrows()}
+def run_suews_df(df_forcing, df_init_input, save_state=False):
+    # save df_init without changing its original data
+    # df.copy() in pandas does work as a standard python deepcopy
+    df_init = pd.DataFrame(copy.deepcopy(df_init_input.to_dict()))
     # grid list determined by initial states
     grid_list = df_init.index
 
-    # dict_state is used to save model states for later use
-    dict_state = {(t_start, grid): series_state_init.to_dict()
-                  for grid, series_state_init
-                  in copy.deepcopy(df_init).iterrows()}
+    # initialise dicts for holding results and model states
+    dict_state = {}
+    dict_output = {}
+    df_forcing.iloc[[0, -1], :4]
 
     if save_state:  # use slower more functional single step wrapper
-        # temporal loop
+        # start tstep retrived from forcing data
+        t_start = df_forcing.index[0]
+        # convert df to dict with `itertuples` for better performance
+        dict_forcing = {row.Index: row._asdict()
+                        for row in df_forcing.itertuples()}
+
+        # dict_state is used to save model states for later use
+        dict_state = {(t_start, grid): series_state_init.to_dict()
+                      for grid, series_state_init
+                      in df_init.iterrows()}
         for tstep in df_forcing.index:
-            # print 'tstep at', tstep
+            # temporal loop
             # initialise output of tstep:
             # load met_forcing if the same across all grids:
             met_forcing_tstep = dict_forcing[tstep]
@@ -1101,16 +1111,20 @@ def run_suews_df(df_forcing, df_init, save_state=False):
 
     else:  # use higher level wrapper that calculate at a `block` level
         # for better performance
+        dict_state = {grid: df_init.loc[grid]
+                      for grid in grid_list}
         for grid in grid_list:
-            df_state_start_grid = df_init.loc[grid]
+            df_state_start_grid = dict_state[grid]
             dict_state_end, dict_output_array = suews_cal_tstep_multi(
                 df_state_start_grid, df_forcing)
+            # update output & model state at tstep for the current grid
+            dict_output.update({grid: dict_output_array})
+            dict_state.update({grid: dict_state_end})
 
-        # temporarily save them as they are
-        df_output = dict_output_array
-        df_state = dict_state_end
-    # df_output = dict_output
-    # df_state = dict_state
+        # save results as time-aware DataFrame
+        df_output = pack_df_output_array(dict_output, df_forcing)
+        df_output = df_output.replace(-999., np.nan)
+        df_state = pd.DataFrame(dict_state).T
 
     return df_output, df_state
 
@@ -1174,7 +1188,7 @@ def get_output_info_df():
     size_var_list = sd.output_size()
     var_list_x = [np.array(sd.output_name_n(i))
                   for i in np.arange(size_var_list) + 1]
-    df_var_list = pd.DataFrame(var_list_x, columns=['var', 'group', 'aggm'])
+
     df_var_list = pd.DataFrame(var_list_x, columns=['var', 'group', 'aggm'])
     df_var_list = df_var_list.applymap(lambda x: x.decode().strip())
     df_var_list_x = df_var_list.replace(r'^\s*$', np.nan, regex=True).dropna()
@@ -1288,9 +1302,28 @@ def pack_df_state(dict_state):
     return df_state
 
 
+def pack_df_output_array(dict_output_array, df_forcing):
+    grid_list = list(dict_output_array.keys())
+    grid_start = grid_list[0]
+    col_df = gen_MultiIndex(dict_output_array[grid_start])
+    dict_df = {}
+    for grid in grid_list:
+        array_grid = np.hstack(
+            [v[:, 5:] for v in dict_output_array[grid].values()])
+        df_grid = pd.DataFrame(
+            array_grid, columns=col_df, index=df_forcing.index)
+
+        dict_df.update({grid: df_grid})
+
+    df_grid_res = pd.concat(dict_df, keys=dict_df.keys())
+
+    return df_grid_res
+
 ##############################################################################
 # auxiliary functions
 # resolve path case issues
+
+
 def path_insensitive(path):
     """
     Get a case-insensitive path for use on a case sensitive system.
