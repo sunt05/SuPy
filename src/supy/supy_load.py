@@ -6,16 +6,15 @@ import glob
 # import inspect
 import os
 from datetime import timedelta
-# import suews_driver
-# from pathlib import Path
+from pathlib import Path
 
 # import sys
 import numpy as np
 import pandas as pd
+from suews_driver import suews_driver as sd
 
 import f90nml
 
-from suews_driver import suews_driver as sd
 from .supy_env import path_supy_module
 from .supy_misc import path_insensitive
 
@@ -187,14 +186,14 @@ def lookup_KeySeq_lib(indexKey, subKey, indexCode, dict_libs):
 
 
 # load surface characteristics
-def load_SUEWS_SurfaceChar(dir_input):
+def load_SUEWS_SurfaceChar(path_input):
     # load RunControl variables
-    lib_RunControl = load_SUEWS_nml(os.path.join(dir_input, 'runcontrol.nml'))
-    dict_RunControl = lib_RunControl.loc[:, 'runcontrol'].to_dict()
-    # tstep = dict_RunControl['tstep']
-    dir_path = os.path.join(dir_input, dict_RunControl['fileinputpath'])
+    # lib_RunControl = load_SUEWS_nml(os.path.join(path_input, 'runcontrol.nml'))
+    # dict_RunControl = lib_RunControl.loc[:, 'runcontrol'].to_dict()
+    # # tstep = dict_RunControl['tstep']
+    # dir_path = os.path.join(dir_input, dict_RunControl['fileinputpath'])
     # load all libraries
-    dict_libs = load_SUEWS_Libs(dir_path)
+    dict_libs = load_SUEWS_Libs(path_input)
     # construct a dictionary in the form: {grid:{var:value,...}}
     dict_gridSurfaceChar = {
         grid: {k: lookup_KeySeq_lib(k, v, grid, dict_libs)
@@ -390,10 +389,10 @@ def resample_forcing_met(
 
 # load raw data: met forcing
 def load_SUEWS_Forcing_met_df_raw(
-        dir_input, filecode, grid, tstep_met_in, multiplemetfiles):
+        path_input, filecode, grid, tstep_met_in, multiplemetfiles):
     # file name pattern for met files
     forcingfile_met_pattern = os.path.join(
-        dir_input,
+        path_input,
         '{site}{grid}*{tstep}*txt'.format(
             site=filecode,
             grid=(grid if multiplemetfiles == 1 else ''),
@@ -404,6 +403,7 @@ def load_SUEWS_Forcing_met_df_raw(
         f for f in glob.glob(forcingfile_met_pattern)
         if 'ESTM' not in f])
 
+    print('list_file_MetForcing', list_file_MetForcing)
     # load raw data
     df_forcing_met = pd.concat(
         [pd.read_table(
@@ -411,9 +411,6 @@ def load_SUEWS_Forcing_met_df_raw(
             delim_whitespace=True,
             comment='!',
             error_bad_lines=True
-            # parse_dates={'datetime': [0, 1, 2, 3]},
-            # keep_date_col=True,
-            # date_parser=func_parse_date
         ).dropna() for fileX in list_file_MetForcing],
         ignore_index=True).rename(
         # rename these columns to match variables via the driver interface
@@ -463,10 +460,10 @@ def load_SUEWS_Forcing_met_df_raw(
 
 # load raw data: met forcing
 def load_SUEWS_Forcing_ESTM_df_raw(
-        dir_input, filecode, grid, tstep_ESTM_in, multipleestmfiles):
+        path_input, filecode, grid, tstep_ESTM_in, multipleestmfiles):
     # file name pattern for met files
     forcingfile_ESTM_pattern = os.path.join(
-        dir_input,
+        path_input,
         '{site}{grid}*{tstep}*txt'.format(
             site=filecode,
             grid=(grid if multipleestmfiles == 1 else ''),
@@ -525,18 +522,20 @@ def load_SUEWS_Forcing_ESTM_df_raw(
 # 1. dict_mod_cfg: model settings
 # 2. dict_state_init: initial model states/conditions
 # 3. dict_met_forcing: met forcing conditions (NB:NOT USED)
-def init_SUEWS_dict(dir_start):  # return dict
+# return dict
+def init_SUEWS_dict(path_runcontrol):
+    path_runcontrol = Path(path_runcontrol)
+
     # initialise dict_state_init
     dict_state_init = {}
     # dict_met_forcing = {}
 
     # load RunControl variables
-    lib_RunControl = load_SUEWS_nml(os.path.join(dir_start, 'runcontrol.nml'))
+    lib_RunControl = load_SUEWS_nml(path_runcontrol)
     dict_RunControl = lib_RunControl.loc[:, 'runcontrol'].to_dict()
 
     # # path for SUEWS input tables:
-    dir_input = os.path.join(dir_start,
-                             dict_RunControl['fileinputpath'])
+    path_input = path_runcontrol.parent / dict_RunControl['fileinputpath']
 
     # mod_config: static properties
     dict_ModConfig = {'aerodynamicresistancemethod': 2,
@@ -550,13 +549,13 @@ def init_SUEWS_dict(dir_start):  # return dict
 
     # dict for temporally varying states
     # load surface charasteristics
-    df_gridSurfaceChar = load_SUEWS_SurfaceChar(dir_start)
+    df_gridSurfaceChar = load_SUEWS_SurfaceChar(path_input)
     for grid in df_gridSurfaceChar.index:
         # load two dict's for `grid`:
         # 1. dict_StateInit: initial states
         # 2. dict_MetForcing: met forcing (NB:NOT USED)
         dict_StateInit = init_SUEWS_dict_grid(
-            dir_input, grid, dict_ModConfig, df_gridSurfaceChar)
+            path_input, grid, dict_ModConfig, df_gridSurfaceChar)
 
         # return dict_StateInit
         # dict with all properties of one grid:
@@ -590,7 +589,7 @@ def init_SUEWS_dict(dir_start):  # return dict
 
 # create initial states for one grid
 def init_SUEWS_dict_grid(
-        dir_input,
+        path_input,
         grid,
         dict_ModConfig,
         df_gridSurfaceChar):
@@ -607,7 +606,7 @@ def init_SUEWS_dict_grid(
     multiplemetfiles = dict_ModConfig['multiplemetfiles']
     # load as DataFrame:
     df_forcing_met = load_SUEWS_Forcing_met_df_raw(
-        dir_input, filecode, grid, tstep_in, multiplemetfiles)
+        path_input, filecode, grid, tstep_in, multiplemetfiles)
 
     # define some met forcing determined variables:
     # previous day index
@@ -675,13 +674,14 @@ def init_SUEWS_dict_grid(
     }
 
     # load Initial Condition variables from namelist file
-    lib_InitCond = load_SUEWS_nml(os.path.join(
-        dir_input, 'initialconditions{site}{grid}_{year}.nml'.format(
-            site=dict_ModConfig['filecode'],
-            # grid info will be include in the nml file pattern
-            # if multiple init files are used
-            grid=(grid if dict_ModConfig['multipleinitfiles'] == 1 else ''),
-            year=int(np.min(df_gridSurfaceChar.loc[grid, 'year'])))))
+    InitialCond_x = 'initialconditions{site}{grid}_{year}.nml'.format(
+        site=dict_ModConfig['filecode'],
+        # grid info will be include in the nml file pattern
+        # if multiple init files are used
+        grid=(grid if dict_ModConfig['multipleinitfiles'] == 1 else ''),
+        year=int(np.min(df_gridSurfaceChar.loc[grid, 'year']))
+    )
+    lib_InitCond = load_SUEWS_nml(path_input / InitialCond_x)
     # update default InitialCond with values set in namelist
     dict_InitCond.update(
         lib_InitCond.loc[:, 'initialconditions'].to_dict())

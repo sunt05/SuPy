@@ -13,7 +13,7 @@
 from __future__ import division, print_function
 
 import copy
-import os
+# import os
 from pathlib import Path
 
 import numpy as np
@@ -29,9 +29,9 @@ from .supy_run import suews_cal_tstep, suews_cal_tstep_multi
 
 
 # convert dict_InitCond to pandas Series and DataFrame
-def init_SUEWS_pd(dir_input):  # return pd.DataFrame
+def init_SUEWS_pd(path_runcontrol):  # return pd.DataFrame
     # dict_mod_cfg, dict_state_init = sp.init_SUEWS_dict(dir_start)
-    dict_mod_cfg, dict_state_init = init_SUEWS_dict(dir_input)
+    dict_mod_cfg, dict_state_init = init_SUEWS_dict(path_runcontrol)
     # ser_mod_cfg: all static model configuration info
     ser_mod_cfg = pd.Series(dict_mod_cfg)
     # df_state_init: initial conditions for SUEWS simulations
@@ -42,7 +42,9 @@ def init_SUEWS_pd(dir_input):  # return pd.DataFrame
 
 
 # load forcing datasets of `grid`
-def load_SUEWS_Forcing_df_grid(dir_site, grid, ser_mod_cfg, df_state_init):
+def load_SUEWS_Forcing_df_grid(path_runcontrol, grid):
+    path_runcontrol = Path(path_runcontrol)
+    ser_mod_cfg, df_state_init = init_SUEWS_pd(path_runcontrol)
     # load setting variables from ser_mod_cfg
     (filecode, kdownzen,
      tstep_met_in, tstep_ESTM_in,
@@ -54,14 +56,14 @@ def load_SUEWS_Forcing_df_grid(dir_site, grid, ser_mod_cfg, df_state_init):
     tstep_mod, lat, lon, alt, timezone = df_state_init.loc[
         grid,
         ['tstep', 'lat', 'lng', 'alt', 'timezone']]
-    dir_input = (os.path.join(dir_site, dir_input_cfg)
-                 if not os.path.isabs(dir_input_cfg)
-                 else dir_input_cfg)
+
+    path_site = path_runcontrol.parent
+    path_input = path_site / ser_mod_cfg['fileinputpath']
 
     # load raw data
     # met forcing
     df_forcing_met = load_SUEWS_Forcing_met_df_raw(
-        dir_input, filecode, grid, tstep_met_in, multiplemetfiles)
+        path_input, filecode, grid, tstep_met_in, multiplemetfiles)
 
     # resample raw data from tstep_in to tstep_mod
     df_forcing_met_tstep = resample_forcing_met(
@@ -89,7 +91,7 @@ def load_SUEWS_Forcing_df_grid(dir_site, grid, ser_mod_cfg, df_state_init):
     if df_state_init.iloc[0]['storageheatmethod'] == 4:
         # load ESTM forcing
         df_forcing_estm = load_SUEWS_Forcing_ESTM_df_raw(
-            dir_input, filecode, grid, tstep_ESTM_in, multipleestmfiles)
+            path_input, filecode, grid, tstep_ESTM_in, multipleestmfiles)
         # resample raw data from tstep_in to tstep_mod
         df_forcing_estm_tstep = resample_linear(
             df_forcing_estm, tstep_met_in, tstep_mod)
@@ -124,12 +126,12 @@ def load_SUEWS_Forcing_df_grid(dir_site, grid, ser_mod_cfg, df_state_init):
 # load sample data for quickly starting a demo run
 def load_SampleData():
     path_SampleData = Path(path_supy_module) / 'sample_run'
-    ser_mod_cfg, df_state_init = init_SUEWS_pd(path_SampleData)
+    path_runcontrol = path_SampleData / 'RunControl.nml'
+    ser_mod_cfg, df_state_init = init_SUEWS_pd(path_runcontrol)
+    # path_input = path_runcontrol.parent / ser_mod_cfg['fileinputpath']
     df_forcing_tstep = load_SUEWS_Forcing_df_grid(
-        path_SampleData,
-        df_state_init.index[0],
-        ser_mod_cfg,
-        df_state_init
+        path_runcontrol,
+        df_state_init.index[0]
     )
     return ser_mod_cfg, df_state_init, df_forcing_tstep
 
