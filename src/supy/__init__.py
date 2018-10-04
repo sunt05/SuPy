@@ -9,4 +9,6 @@
 # 08 Mar 2018: pypi packaging
 ###########################################################################
 
-from .SuPy_module import *
+from .supy_module import (load_SampleData, init_SUEWS_pd,
+                          load_SUEWS_Forcing_df_grid,
+                          run_suews_df)

@@ -31,7 +31,7 @@ MODULE = supy
 
 main:
 	$(MAKE) clean
-	${PYTHON} setup.py bdist_wheel test
+	${PYTHON} setup.py bdist_wheel
 
 # make fortran exe and run test cases
 test:
@@ -46,4 +46,4 @@ clean:
 
 # upload wheels to pypi using twine
 upload:
-	@echo $(shell twine upload --skip-existing dist/*whl)
+	twine upload --skip-existing dist/*whl

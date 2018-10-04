@@ -1,9 +1,9 @@
-# from setuptools import setup, Distribution
-from setuptools import Distribution
-from numpy.distutils.core import Extension, setup
-import platform
-import glob
-import os
+from setuptools import setup
+# from setuptools import Distribution
+# from numpy.distutils.core import setup
+# import platform
+# import glob
+# import os
 
 
 def readme():
@@ -11,9 +11,8 @@ def readme():
         return f.read()
 
 
-
 setup(name='supy',
-      version='0.4.1b0',
+      version='0.4.1b1',
       description='the SUEWS model that speaks python',
       long_description=readme(),
       url='https://github.com/sunt05/SuPy',
