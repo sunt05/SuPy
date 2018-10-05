@@ -26,9 +26,8 @@ var_df = get_output_info_df()
 var_df_lower = {group.lower(): group
                 for group in var_df.index.levels[0].str.strip()}
 
+
 # generate index for variables in different model groups
-
-
 def gen_group_cols(group_x):
     # get correct group name by cleaning and swapping case
     group = group_x.replace('dataoutline', '').replace('line', '')
@@ -138,6 +137,10 @@ def pack_df_output_array(dict_output_array, df_forcing):
 
         dict_df.update({grid: df_grid})
 
+    # join results of all grids
     df_grid_res = pd.concat(dict_df, keys=dict_df.keys())
+
+    # set index level names
+    df_grid_res.index.set_names(['grid', 'datetime'], inplace=True)
 
     return df_grid_res

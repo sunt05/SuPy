@@ -1,19 +1,22 @@
 # ###########################################################################
-# SUEWS for Python
+# SuPy: SUEWS for Python
+#
 # Authors:
 # Ting Sun, ting.sun@reading.ac.uk
+#
 # History:
 # 20 Jan 2018: first alpha release
 # 01 Feb 2018: performance improvement
 # 03 Feb 2018: improvement in output processing
 # 08 Mar 2018: pypi packaging
+# 04 Oct 2018: overhual of structure
+# 05 Oct 2018: added sample run data
 ###########################################################################
 
 
 from __future__ import division, print_function
 
 import copy
-# import os
 from pathlib import Path
 
 import numpy as np
@@ -28,9 +31,13 @@ from .supy_post import pack_df_output, pack_df_output_array, pack_df_state
 from .supy_run import suews_cal_tstep, suews_cal_tstep_multi
 
 
+##############################################################################
+# 1. compact wrapper for loading SUEWS settings
+
+
 # convert dict_InitCond to pandas Series and DataFrame
-def init_SUEWS_pd(path_runcontrol):  # return pd.DataFrame
-    # dict_mod_cfg, dict_state_init = sp.init_SUEWS_dict(dir_start)
+# return pd.DataFrame
+def init_SUEWS_pd(path_runcontrol):
     dict_mod_cfg, dict_state_init = init_SUEWS_dict(path_runcontrol)
     # ser_mod_cfg: all static model configuration info
     ser_mod_cfg = pd.Series(dict_mod_cfg)
@@ -45,14 +52,27 @@ def init_SUEWS_pd(path_runcontrol):  # return pd.DataFrame
 def load_SUEWS_Forcing_df_grid(path_runcontrol, grid):
     path_runcontrol = Path(path_runcontrol)
     ser_mod_cfg, df_state_init = init_SUEWS_pd(path_runcontrol)
+
     # load setting variables from ser_mod_cfg
-    (filecode, kdownzen,
-     tstep_met_in, tstep_ESTM_in,
-     multiplemetfiles, multipleestmfiles,
-     dir_input_cfg) = ser_mod_cfg[
-        ['filecode', 'kdownzen',
-         'resolutionfilesin', 'resolutionfilesinestm',
-         'multiplemetfiles', 'multipleestmfiles', 'fileinputpath']]
+    (
+        filecode,
+        kdownzen,
+        tstep_met_in,
+        tstep_ESTM_in,
+        multiplemetfiles,
+        multipleestmfiles,
+        dir_input_cfg
+    ) = ser_mod_cfg[
+        [
+            'filecode',
+            'kdownzen',
+            'resolutionfilesin',
+            'resolutionfilesinestm',
+            'multiplemetfiles',
+            'multipleestmfiles',
+            'fileinputpath'
+        ]
+    ]
     tstep_mod, lat, lon, alt, timezone = df_state_init.loc[
         grid,
         ['tstep', 'lat', 'lng', 'alt', 'timezone']]
@@ -72,10 +92,6 @@ def load_SUEWS_Forcing_df_grid(path_runcontrol, grid):
 
     # merge forcing datasets (met and ESTM)
     df_forcing_tstep = df_forcing_met_tstep.copy()
-    # df_forcing_tstep = df_forcing_met_tstep.merge(
-    #     df_forcing_estm_tstep,
-    #     left_on=['iy', 'id', 'it', 'imin'],
-    #     right_on=['iy', 'id', 'it', 'imin'])
 
     # pack all records of `id` into `metforcingdata_grid` for AnOHM and others
     df_grp = df_forcing_tstep.groupby('id')
@@ -112,13 +128,6 @@ def load_SUEWS_Forcing_df_grid(path_runcontrol, grid):
     # new columns for later use in main calculation
     df_forcing_tstep[['iy', 'id', 'it', 'imin']] = df_forcing_tstep[[
         'iy', 'id', 'it', 'imin']].astype(np.int64)
-    # df_forcing_tstep['dectime'] = ((df_forcing_tstep['id'] - 1) +
-    #                                (df_forcing_tstep['it']
-    #                                 + df_forcing_tstep['imin'] / 60.) / 24.)
-    # df_forcing_tstep['id_prev_t'] = df_forcing_tstep['id'].shift(
-    #     1).fillna(method='backfill')
-    # df_forcing_tstep['iy_prev_t'] = df_forcing_tstep['iy'].shift(
-    #     1).fillna(method='backfill')
 
     return df_forcing_tstep
 
@@ -140,6 +149,7 @@ def load_SampleData():
 ##############################################################################
 
 
+##############################################################################
 # 2. compact wrapper for running a whole simulation
 # # main calculation
 # input as DataFrame
@@ -153,9 +163,9 @@ def run_suews_df(df_forcing, df_init_input, save_state=False):
     # initialise dicts for holding results and model states
     dict_state = {}
     dict_output = {}
-    df_forcing.iloc[[0, -1], :4]
 
-    if save_state:  # use slower more functional single step wrapper
+    if save_state:
+        # use slower more functional single step wrapper
         # start tstep retrived from forcing data
         t_start = df_forcing.index[0]
         # convert df to dict with `itertuples` for better performance
@@ -188,7 +198,8 @@ def run_suews_df(df_forcing, df_init_input, save_state=False):
         df_output = pack_df_output(dict_output)
         df_state = pack_df_state(dict_state)
 
-    else:  # use higher level wrapper that calculate at a `block` level
+    else:
+        # use higher level wrapper that calculate at a `block` level
         # for better performance
         dict_state = {grid: df_init.loc[grid]
                       for grid in grid_list}
@@ -201,8 +212,8 @@ def run_suews_df(df_forcing, df_init_input, save_state=False):
             dict_state.update({grid: dict_state_end})
 
         # save results as time-aware DataFrame
-        df_output = pack_df_output_array(dict_output, df_forcing)
-        df_output = df_output.replace(-999., np.nan)
+        df_output0 = pack_df_output_array(dict_output, df_forcing)
+        df_output = df_output0.replace(-999., np.nan)
         df_state = pd.DataFrame(dict_state).T
 
     return df_output, df_state

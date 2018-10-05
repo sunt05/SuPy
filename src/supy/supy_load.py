@@ -403,7 +403,6 @@ def load_SUEWS_Forcing_met_df_raw(
         f for f in glob.glob(forcingfile_met_pattern)
         if 'ESTM' not in f])
 
-    print('list_file_MetForcing', list_file_MetForcing)
     # load raw data
     df_forcing_met = pd.concat(
         [pd.read_table(
