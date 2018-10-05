@@ -102,3 +102,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+warnings.txt
+suews_sample.txt
+suews_1h.txt
