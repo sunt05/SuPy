@@ -1,35 +1,37 @@
 {
   "ah_min": {
-    "AnthropogenicCode": ["AHMin_WD", "AHMin_WE"]
+    "AnthropogenicCode": [
+      "AHMin_WD",
+      "AHMin_WE"
+    ]
   },
   "ah_slope_cooling": {
-    "AnthropogenicCode": ["AHSlope_Cooling_WD", "AHSlope_Cooling_WE"]
+    "AnthropogenicCode": [
+      "AHSlope_Cooling_WD",
+      "AHSlope_Cooling_WE"
+    ]
   },
   "ah_slope_heating": {
-    "AnthropogenicCode": ["AHSlope_Heating_WD", "AHSlope_Heating_WE"]
+    "AnthropogenicCode": [
+      "AHSlope_Heating_WD",
+      "AHSlope_Heating_WE"
+    ]
   },
   "ahprof_24hr": {
-    "AnthropogenicCode": [{
-      "EnergyUseProfWD": ":"
-    }, {
+    "AnthropogenicCode": {
+      "EnergyUseProfWD": ":",
       "EnergyUseProfWE": ":"
-    }]
+    }
   },
-  "alb": [{
-    "Code_Paved": "AlbedoMax"
-  }, {
-    "Code_Bldgs": "AlbedoMax"
-  }, {
-    "Code_EveTr": "AlbedoMax"
-  }, {
-    "Code_DecTr": "AlbedoMax"
-  }, {
-    "Code_Grass": "AlbedoMax"
-  }, {
-    "Code_Bsoil": "AlbedoMax"
-  }, {
+  "alb": {
+    "Code_Bldgs": "AlbedoMax",
+    "Code_Bsoil": "AlbedoMax",
+    "Code_DecTr": "AlbedoMax",
+    "Code_EveTr": "AlbedoMax",
+    "Code_Grass": "AlbedoMax",
+    "Code_Paved": "AlbedoMax",
     "Code_Water": "AlbedoMax"
-  }],
+  },
   "albmax_dectr": {
     "Code_DecTr": "AlbedoMax"
   },
@@ -48,76 +50,64 @@
   "albmin_grass": {
     "Code_Grass": "AlbedoMin"
   },
-  "alpha_bioco2": [{
-    "Code_EveTr": {
-      "BiogenCO2Code": "alpha"
-    }
-  }, {
+  "alpha_bioco2": {
     "Code_DecTr": {
       "BiogenCO2Code": "alpha"
-    }
-  }, {
+    },
+    "Code_EveTr": {
+      "BiogenCO2Code": "alpha"
+    },
     "Code_Grass": {
       "BiogenCO2Code": "alpha"
     }
-  }],
-  "alpha_enh_bioco2": [{
-    "Code_EveTr": {
-      "BiogenCO2Code": "alpha_enh"
-    }
-  }, {
+  },
+  "alpha_enh_bioco2": {
     "Code_DecTr": {
       "BiogenCO2Code": "alpha_enh"
-    }
-  }, {
+    },
+    "Code_EveTr": {
+      "BiogenCO2Code": "alpha_enh"
+    },
     "Code_Grass": {
       "BiogenCO2Code": "alpha_enh"
     }
-  }],
+  },
   "alt": "Alt",
-  "baset": [{
-    "Code_EveTr": "BaseT"
-  }, {
-    "Code_DecTr": "BaseT"
-  }, {
+  "baset": {
+    "Code_DecTr": "BaseT",
+    "Code_EveTr": "BaseT",
     "Code_Grass": "BaseT"
-  }],
-  "basete": [{
-    "Code_EveTr": "BaseTe"
-  }, {
-    "Code_DecTr": "BaseTe"
-  }, {
+  },
+  "basete": {
+    "Code_DecTr": "BaseTe",
+    "Code_EveTr": "BaseTe",
     "Code_Grass": "BaseTe"
-  }],
+  },
   "basethdd": {
     "AnthropogenicCode": "BaseTHDD"
   },
-  "beta_bioco2": [{
-    "Code_EveTr": {
-      "BiogenCO2Code": "beta"
-    }
-  }, {
+  "beta_bioco2": {
     "Code_DecTr": {
       "BiogenCO2Code": "beta"
-    }
-  }, {
+    },
+    "Code_EveTr": {
+      "BiogenCO2Code": "beta"
+    },
     "Code_Grass": {
       "BiogenCO2Code": "beta"
     }
-  }],
-  "beta_enh_bioco2": [{
-    "Code_EveTr": {
-      "BiogenCO2Code": "beta_enh"
-    }
-  }, {
+  },
+  "beta_enh_bioco2": {
     "Code_DecTr": {
       "BiogenCO2Code": "beta_enh"
-    }
-  }, {
+    },
+    "Code_EveTr": {
+      "BiogenCO2Code": "beta_enh"
+    },
     "Code_Grass": {
       "BiogenCO2Code": "beta_enh"
     }
-  }],
+  },
   "bldgh": "H_Bldgs",
   "capmax_dec": {
     "Code_DecTr": "StorageMax"
@@ -125,36 +115,24 @@
   "capmin_dec": {
     "Code_DecTr": "StorageMin"
   },
-  "chanohm": [{
-    "Code_Paved": "AnOHM_Ch"
-  }, {
-    "Code_Bldgs": "AnOHM_Ch"
-  }, {
-    "Code_EveTr": "AnOHM_Ch"
-  }, {
-    "Code_DecTr": "AnOHM_Ch"
-  }, {
-    "Code_Grass": "AnOHM_Ch"
-  }, {
-    "Code_Bsoil": "AnOHM_Ch"
-  }, {
+  "chanohm": {
+    "Code_Bldgs": "AnOHM_Ch",
+    "Code_Bsoil": "AnOHM_Ch",
+    "Code_DecTr": "AnOHM_Ch",
+    "Code_EveTr": "AnOHM_Ch",
+    "Code_Grass": "AnOHM_Ch",
+    "Code_Paved": "AnOHM_Ch",
     "Code_Water": "AnOHM_Ch"
-  }],
-  "cpanohm": [{
-    "Code_Paved": "AnOHM_Cp"
-  }, {
-    "Code_Bldgs": "AnOHM_Cp"
-  }, {
-    "Code_EveTr": "AnOHM_Cp"
-  }, {
-    "Code_DecTr": "AnOHM_Cp"
-  }, {
-    "Code_Grass": "AnOHM_Cp"
-  }, {
-    "Code_Bsoil": "AnOHM_Cp"
-  }, {
+  },
+  "cpanohm": {
+    "Code_Bldgs": "AnOHM_Cp",
+    "Code_Bsoil": "AnOHM_Cp",
+    "Code_DecTr": "AnOHM_Cp",
+    "Code_EveTr": "AnOHM_Cp",
+    "Code_Grass": "AnOHM_Cp",
+    "Code_Paved": "AnOHM_Cp",
     "Code_Water": "AnOHM_Cp"
-  }],
+  },
   "crwmax": {
     "SnowCode": "CRWMax"
   },
@@ -162,31 +140,41 @@
     "SnowCode": "CRWMin"
   },
   "daywat": {
-    "IrrigationCode": ["DayWat(1)", "DayWat(2)", "DayWat(3)", "DayWat(4)", "DayWat(5)", "DayWat(6)", "DayWat(7)"]
+    "IrrigationCode": [
+      "DayWat(1)",
+      "DayWat(2)",
+      "DayWat(3)",
+      "DayWat(4)",
+      "DayWat(5)",
+      "DayWat(6)",
+      "DayWat(7)"
+    ]
   },
   "daywatper": {
-    "IrrigationCode": ["DayWatPer(1)", "DayWatPer(2)", "DayWatPer(3)", "DayWatPer(4)", "DayWatPer(5)", "DayWatPer(6)", "DayWatPer(7)"]
+    "IrrigationCode": [
+      "DayWatPer(1)",
+      "DayWatPer(2)",
+      "DayWatPer(3)",
+      "DayWatPer(4)",
+      "DayWatPer(5)",
+      "DayWatPer(6)",
+      "DayWatPer(7)"
+    ]
   },
   "dectreeh": "H_DecTr",
   "drainrt": "LUMPS_DrRate",
   "ef_umolco2perj": {
     "AnthropogenicCode": "EF_umolCO2perJ"
   },
-  "emis": [{
-    "Code_Paved": "Emissivity"
-  }, {
-    "Code_Bldgs": "Emissivity"
-  }, {
-    "Code_EveTr": "Emissivity"
-  }, {
-    "Code_DecTr": "Emissivity"
-  }, {
-    "Code_Grass": "Emissivity"
-  }, {
-    "Code_Bsoil": "Emissivity"
-  }, {
+  "emis": {
+    "Code_Bldgs": "Emissivity",
+    "Code_Bsoil": "Emissivity",
+    "Code_DecTr": "Emissivity",
+    "Code_EveTr": "Emissivity",
+    "Code_Grass": "Emissivity",
+    "Code_Paved": "Emissivity",
     "Code_Water": "Emissivity"
-  }],
+  },
   "enddls": "EndDLS",
   "enef_v_jkm": {
     "AnthropogenicCode": "EnEF_v_Jkm"
@@ -226,31 +214,36 @@
   "g6": {
     "CondCode": "G6"
   },
-  "gddfull": [{
-    "Code_EveTr": "GDDFull"
-  }, {
-    "Code_DecTr": "GDDFull"
-  }, {
+  "gddfull": {
+    "Code_DecTr": "GDDFull",
+    "Code_EveTr": "GDDFull",
     "Code_Grass": "GDDFull"
-  }],
+  },
   "gsmodel": {
     "CondCode": "gsModel"
   },
   "humactivity_24hr": {
-    "AnthropogenicCode": [{
-      "ActivityProfWD": ":"
-    }, {
+    "AnthropogenicCode": {
+      "ActivityProfWD": ":",
       "ActivityProfWE": ":"
-    }]
+    }
   },
   "ie_a": {
-    "IrrigationCode": ["Ie_a1", "Ie_a2", "Ie_a3"]
+    "IrrigationCode": [
+      "Ie_a1",
+      "Ie_a2",
+      "Ie_a3"
+    ]
   },
   "ie_end": {
     "IrrigationCode": "Ie_end"
   },
   "ie_m": {
-    "IrrigationCode": ["Ie_m1", "Ie_m2", "Ie_m3"]
+    "IrrigationCode": [
+      "Ie_m1",
+      "Ie_m2",
+      "Ie_m3"
+    ]
   },
   "ie_start": {
     "IrrigationCode": "Ie_start"
@@ -261,77 +254,74 @@
   "irrfracconif": "IrrFr_EveTr",
   "irrfracdecid": "IrrFr_DecTr",
   "irrfracgrass": "IrrFr_Grass",
-  "kkanohm": [{
-    "Code_Paved": "AnOHM_Kk"
-  }, {
-    "Code_Bldgs": "AnOHM_Kk"
-  }, {
-    "Code_EveTr": "AnOHM_Kk"
-  }, {
-    "Code_DecTr": "AnOHM_Kk"
-  }, {
-    "Code_Grass": "AnOHM_Kk"
-  }, {
-    "Code_Bsoil": "AnOHM_Kk"
-  }, {
+  "kkanohm": {
+    "Code_Bldgs": "AnOHM_Kk",
+    "Code_Bsoil": "AnOHM_Kk",
+    "Code_DecTr": "AnOHM_Kk",
+    "Code_EveTr": "AnOHM_Kk",
+    "Code_Grass": "AnOHM_Kk",
+    "Code_Paved": "AnOHM_Kk",
     "Code_Water": "AnOHM_Kk"
-  }],
+  },
   "kmax": {
     "CondCode": "Kmax"
   },
-  "laimax": [{
-    "Code_EveTr": "LAIMax"
-  }, {
-    "Code_DecTr": "LAIMax"
-  }, {
+  "laimax": {
+    "Code_DecTr": "LAIMax",
+    "Code_EveTr": "LAIMax",
     "Code_Grass": "LAIMax"
-  }],
-  "laimin": [{
-    "Code_EveTr": "LAIMin"
-  }, {
-    "Code_DecTr": "LAIMin"
-  }, {
+  },
+  "laimin": {
+    "Code_DecTr": "LAIMin",
+    "Code_EveTr": "LAIMin",
     "Code_Grass": "LAIMin"
-  }],
-  "laipower": [{
-    "Code_EveTr": ["LeafGrowthPower1", "LeafGrowthPower2", "LeafOffPower1", "LeafOffPower2"]
-  }, {
-    "Code_DecTr": ["LeafGrowthPower1", "LeafGrowthPower2", "LeafOffPower1", "LeafOffPower2"]
-  }, {
-    "Code_Grass": ["LeafGrowthPower1", "LeafGrowthPower2", "LeafOffPower1", "LeafOffPower2"]
-  }],
-  "laitype": [{
-    "Code_EveTr": "LAIEq"
-  }, {
-    "Code_DecTr": "LAIEq"
-  }, {
+  },
+  "laipower": {
+    "Code_DecTr": [
+      "LeafGrowthPower1",
+      "LeafGrowthPower2",
+      "LeafOffPower1",
+      "LeafOffPower2"
+    ],
+    "Code_EveTr": [
+      "LeafGrowthPower1",
+      "LeafGrowthPower2",
+      "LeafOffPower1",
+      "LeafOffPower2"
+    ],
+    "Code_Grass": [
+      "LeafGrowthPower1",
+      "LeafGrowthPower2",
+      "LeafOffPower1",
+      "LeafOffPower2"
+    ]
+  },
+  "laitype": {
+    "Code_DecTr": "LAIEq",
+    "Code_EveTr": "LAIEq",
     "Code_Grass": "LAIEq"
-  }],
+  },
   "lat": "lat",
   "lng": "lng",
-  "maxconductance": [{
-    "Code_EveTr": "MaxConductance"
-  }, {
-    "Code_DecTr": "MaxConductance"
-  }, {
+  "maxconductance": {
+    "Code_DecTr": "MaxConductance",
+    "Code_EveTr": "MaxConductance",
     "Code_Grass": "MaxConductance"
-  }],
+  },
   "maxqfmetab": {
     "AnthropogenicCode": "MaxQFMetab"
   },
-  "min_res_bioco2": [{
-    "Code_EveTr": {
-      "BiogenCO2Code": "min_respi"
-    }
-  }, {
+  "min_res_bioco2": {
     "Code_DecTr": {
       "BiogenCO2Code": "min_respi"
-    }
-  }, {
+    },
+    "Code_EveTr": {
+      "BiogenCO2Code": "min_respi"
+    },
     "Code_Grass": {
       "BiogenCO2Code": "min_respi"
     }
-  }],
+  },
   "minqfmetab": {
     "AnthropogenicCode": "MinQFMetab"
   },
@@ -339,130 +329,212 @@
     "SnowCode": "Emissivity"
   },
   "narp_trans_site": "NARP_Trans",
-  "ohm_coef": [{
-    "Code_Paved": [{
-      "OHMCode_SummerWet": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_SummerDry": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_WinterWet": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_WinterDry": ["a1", "a2", "a3"]
-    }]
-  }, {
-    "Code_Bldgs": [{
-      "OHMCode_SummerWet": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_SummerDry": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_WinterWet": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_WinterDry": ["a1", "a2", "a3"]
-    }]
-  }, {
-    "Code_EveTr": [{
-      "OHMCode_SummerWet": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_SummerDry": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_WinterWet": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_WinterDry": ["a1", "a2", "a3"]
-    }]
-  }, {
-    "Code_DecTr": [{
-      "OHMCode_SummerWet": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_SummerDry": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_WinterWet": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_WinterDry": ["a1", "a2", "a3"]
-    }]
-  }, {
-    "Code_Grass": [{
-      "OHMCode_SummerWet": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_SummerDry": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_WinterWet": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_WinterDry": ["a1", "a2", "a3"]
-    }]
-  }, {
-    "Code_Bsoil": [{
-      "OHMCode_SummerWet": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_SummerDry": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_WinterWet": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_WinterDry": ["a1", "a2", "a3"]
-    }]
-  }, {
-    "Code_Water": [{
-      "OHMCode_SummerWet": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_SummerDry": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_WinterWet": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_WinterDry": ["a1", "a2", "a3"]
-    }]
-  }, {
-    "SnowCode": [{
-      "OHMCode_SummerWet": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_SummerDry": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_WinterWet": ["a1", "a2", "a3"]
-    }, {
-      "OHMCode_WinterDry": ["a1", "a2", "a3"]
-    }]
-  }],
-  "ohm_threshsw": [{
-    "Code_Paved": "OHMThresh_SW"
-  }, {
-    "Code_Bldgs": "OHMThresh_SW"
-  }, {
-    "Code_EveTr": "OHMThresh_SW"
-  }, {
-    "Code_DecTr": "OHMThresh_SW"
-  }, {
-    "Code_Grass": "OHMThresh_SW"
-  }, {
-    "Code_Bsoil": "OHMThresh_SW"
-  }, {
-    "Code_Water": "OHMThresh_SW"
-  }, {
+  "ohm_coef": {
+    "Code_Bldgs": {
+      "OHMCode_SummerDry": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_SummerWet": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_WinterDry": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_WinterWet": [
+        "a1",
+        "a2",
+        "a3"
+      ]
+    },
+    "Code_Bsoil": {
+      "OHMCode_SummerDry": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_SummerWet": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_WinterDry": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_WinterWet": [
+        "a1",
+        "a2",
+        "a3"
+      ]
+    },
+    "Code_DecTr": {
+      "OHMCode_SummerDry": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_SummerWet": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_WinterDry": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_WinterWet": [
+        "a1",
+        "a2",
+        "a3"
+      ]
+    },
+    "Code_EveTr": {
+      "OHMCode_SummerDry": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_SummerWet": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_WinterDry": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_WinterWet": [
+        "a1",
+        "a2",
+        "a3"
+      ]
+    },
+    "Code_Grass": {
+      "OHMCode_SummerDry": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_SummerWet": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_WinterDry": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_WinterWet": [
+        "a1",
+        "a2",
+        "a3"
+      ]
+    },
+    "Code_Paved": {
+      "OHMCode_SummerDry": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_SummerWet": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_WinterDry": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_WinterWet": [
+        "a1",
+        "a2",
+        "a3"
+      ]
+    },
+    "Code_Water": {
+      "OHMCode_SummerDry": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_SummerWet": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_WinterDry": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_WinterWet": [
+        "a1",
+        "a2",
+        "a3"
+      ]
+    },
+    "SnowCode": {
+      "OHMCode_SummerDry": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_SummerWet": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_WinterDry": [
+        "a1",
+        "a2",
+        "a3"
+      ],
+      "OHMCode_WinterWet": [
+        "a1",
+        "a2",
+        "a3"
+      ]
+    }
+  },
+  "ohm_threshsw": {
+    "Code_Bldgs": "OHMThresh_SW",
+    "Code_Bsoil": "OHMThresh_SW",
+    "Code_DecTr": "OHMThresh_SW",
+    "Code_EveTr": "OHMThresh_SW",
+    "Code_Grass": "OHMThresh_SW",
+    "Code_Paved": "OHMThresh_SW",
+    "Code_Water": "OHMThresh_SW",
     "SnowCode": "OHMThresh_SW"
-  }],
-  "ohm_threshwd": [{
-    "Code_Paved": "OHMThresh_WD"
-  }, {
-    "Code_Bldgs": "OHMThresh_WD"
-  }, {
-    "Code_EveTr": "OHMThresh_WD"
-  }, {
-    "Code_DecTr": "OHMThresh_WD"
-  }, {
-    "Code_Grass": "OHMThresh_WD"
-  }, {
-    "Code_Bsoil": "OHMThresh_WD"
-  }, {
-    "Code_Water": "OHMThresh_WD"
-  }, {
+  },
+  "ohm_threshwd": {
+    "Code_Bldgs": "OHMThresh_WD",
+    "Code_Bsoil": "OHMThresh_WD",
+    "Code_DecTr": "OHMThresh_WD",
+    "Code_EveTr": "OHMThresh_WD",
+    "Code_Grass": "OHMThresh_WD",
+    "Code_Paved": "OHMThresh_WD",
+    "Code_Water": "OHMThresh_WD",
     "SnowCode": "OHMThresh_WD"
-  }],
+  },
   "pipecapacity": "PipeCapacity",
   "popdensdaytime": "PopDensDay",
   "popdensnighttime": "PopDensNight",
   "popprof_24hr": {
-    "AnthropogenicCode": [{
-      "PopProfWD": ":"
-    }, {
+    "AnthropogenicCode": {
+      "PopProfWD": ":",
       "PopProfWE": ":"
-    }]
+    }
   },
   "pormax_dec": {
     "Code_DecTr": "PorosityMax"
@@ -476,47 +548,55 @@
   "preciplimitalb": {
     "SnowCode": "PrecipLimAlb"
   },
-  "qf0_beu": ["QF0_BEU_WD", "QF0_BEU_WE"],
+  "qf0_beu": [
+    "QF0_BEU_WD",
+    "QF0_BEU_WE"
+  ],
   "qf_a": {
-    "AnthropogenicCode": ["QF_A_WD", "QF_A_WE"]
+    "AnthropogenicCode": [
+      "QF_A_WD",
+      "QF_A_WE"
+    ]
   },
   "qf_b": {
-    "AnthropogenicCode": ["QF_B_WD", "QF_B_WE"]
+    "AnthropogenicCode": [
+      "QF_B_WD",
+      "QF_B_WE"
+    ]
   },
   "qf_c": {
-    "AnthropogenicCode": ["QF_C_WD", "QF_C_WE"]
+    "AnthropogenicCode": [
+      "QF_C_WD",
+      "QF_C_WE"
+    ]
   },
   "radmeltfact": {
     "SnowCode": "RadMeltFactor"
   },
   "raincover": "LUMPS_Cover",
   "rainmaxres": "LUMPS_MaxRes",
-  "resp_a": [{
-    "Code_EveTr": {
-      "BiogenCO2Code": "resp_a"
-    }
-  }, {
+  "resp_a": {
     "Code_DecTr": {
       "BiogenCO2Code": "resp_a"
-    }
-  }, {
+    },
+    "Code_EveTr": {
+      "BiogenCO2Code": "resp_a"
+    },
     "Code_Grass": {
       "BiogenCO2Code": "resp_a"
     }
-  }],
-  "resp_b": [{
-    "Code_EveTr": {
-      "BiogenCO2Code": "resp_b"
-    }
-  }, {
+  },
+  "resp_b": {
     "Code_DecTr": {
       "BiogenCO2Code": "resp_b"
-    }
-  }, {
+    },
+    "Code_EveTr": {
+      "BiogenCO2Code": "resp_b"
+    },
     "Code_Grass": {
       "BiogenCO2Code": "resp_b"
     }
-  }],
+  },
   "runofftowater": "RunoffToWater",
   "s1": {
     "CondCode": "S1"
@@ -524,58 +604,56 @@
   "s2": {
     "CondCode": "S2"
   },
-  "sathydraulicconduct": [{
-    "Code_Paved": {
-      "SoilTypeCode": "SatHydraulicCond"
-    }
-  }, {
+  "sathydraulicconduct": {
     "Code_Bldgs": {
       "SoilTypeCode": "SatHydraulicCond"
-    }
-  }, {
-    "Code_EveTr": {
-      "SoilTypeCode": "SatHydraulicCond"
-    }
-  }, {
-    "Code_DecTr": {
-      "SoilTypeCode": "SatHydraulicCond"
-    }
-  }, {
-    "Code_Grass": {
-      "SoilTypeCode": "SatHydraulicCond"
-    }
-  }, {
+    },
     "Code_Bsoil": {
       "SoilTypeCode": "SatHydraulicCond"
-    }
-  }, 0.0],
-  "sddfull": [{
-    "Code_EveTr": "SDDFull"
-  }, {
-    "Code_DecTr": "SDDFull"
-  }, {
+    },
+    "Code_DecTr": {
+      "SoilTypeCode": "SatHydraulicCond"
+    },
+    "Code_EveTr": {
+      "SoilTypeCode": "SatHydraulicCond"
+    },
+    "Code_Grass": {
+      "SoilTypeCode": "SatHydraulicCond"
+    },
+    "Code_Paved": {
+      "SoilTypeCode": "SatHydraulicCond"
+    },
+    "const":0.0
+  },
+  "sddfull": {
+    "Code_DecTr": "SDDFull",
+    "Code_EveTr": "SDDFull",
     "Code_Grass": "SDDFull"
-  }],
-  "sfr": ["Fr_Paved", "Fr_Bldgs", "Fr_EveTr", "Fr_DecTr", "Fr_Grass", "Fr_Bsoil", "Fr_Water"],
+  },
+  "sfr": [
+    "Fr_Paved",
+    "Fr_Bldgs",
+    "Fr_EveTr",
+    "Fr_DecTr",
+    "Fr_Grass",
+    "Fr_Bsoil",
+    "Fr_Water"
+  ],
   "snowalbmax": {
     "SnowCode": "AlbedoMax"
   },
   "snowalbmin": {
     "SnowCode": "AlbedoMin"
   },
-  "snowd": [{
-    "Code_Paved": "SnowLimPatch"
-  }, {
-    "Code_Bldgs": "SnowLimPatch"
-  }, {
-    "Code_EveTr": "SnowLimPatch"
-  }, {
-    "Code_DecTr": "SnowLimPatch"
-  }, {
-    "Code_Grass": "SnowLimPatch"
-  }, {
-    "Code_Bsoil": "SnowLimPatch"
-  }, 0.0],
+  "snowd": {
+    "Code_Bldgs": "SnowLimPatch",
+    "Code_Bsoil": "SnowLimPatch",
+    "Code_DecTr": "SnowLimPatch",
+    "Code_EveTr": "SnowLimPatch",
+    "Code_Grass": "SnowLimPatch",
+    "Code_Paved": "SnowLimPatch",
+    "const":0.0
+  },
   "snowdensmax": {
     "SnowCode": "SnowDensMax"
   },
@@ -588,175 +666,130 @@
   "snowlimpaved": {
     "Code_Paved": "SnowLimRemove"
   },
-  "snowprof_24hr": [{
-    "SnowClearingProfWD": ":"
-  }, {
+  "snowprof_24hr": {
+    "SnowClearingProfWD": ":",
     "SnowClearingProfWE": ":"
-  }],
-  "soildepth": [{
-    "Code_Paved": {
-      "SoilTypeCode": "SoilDepth"
-    }
-  }, {
+  },
+  "soildepth": {
     "Code_Bldgs": {
       "SoilTypeCode": "SoilDepth"
-    }
-  }, {
-    "Code_EveTr": {
-      "SoilTypeCode": "SoilDepth"
-    }
-  }, {
-    "Code_DecTr": {
-      "SoilTypeCode": "SoilDepth"
-    }
-  }, {
-    "Code_Grass": {
-      "SoilTypeCode": "SoilDepth"
-    }
-  }, {
+    },
     "Code_Bsoil": {
       "SoilTypeCode": "SoilDepth"
-    }
-  }, 0.0],
-  "soilstorecap": [{
+    },
+    "Code_DecTr": {
+      "SoilTypeCode": "SoilDepth"
+    },
+    "Code_EveTr": {
+      "SoilTypeCode": "SoilDepth"
+    },
+    "Code_Grass": {
+      "SoilTypeCode": "SoilDepth"
+    },
     "Code_Paved": {
-      "SoilTypeCode": "SoilStoreCap"
-    }
-  }, {
+      "SoilTypeCode": "SoilDepth"
+    },
+    "const":0.0
+  },
+  "soilstorecap": {
     "Code_Bldgs": {
       "SoilTypeCode": "SoilStoreCap"
-    }
-  }, {
-    "Code_EveTr": {
-      "SoilTypeCode": "SoilStoreCap"
-    }
-  }, {
-    "Code_DecTr": {
-      "SoilTypeCode": "SoilStoreCap"
-    }
-  }, {
-    "Code_Grass": {
-      "SoilTypeCode": "SoilStoreCap"
-    }
-  }, {
+    },
     "Code_Bsoil": {
       "SoilTypeCode": "SoilStoreCap"
-    }
-  }, 0.0],
+    },
+    "Code_DecTr": {
+      "SoilTypeCode": "SoilStoreCap"
+    },
+    "Code_EveTr": {
+      "SoilTypeCode": "SoilStoreCap"
+    },
+    "Code_Grass": {
+      "SoilTypeCode": "SoilStoreCap"
+    },
+    "Code_Paved": {
+      "SoilTypeCode": "SoilStoreCap"
+    },
+    "const":0.0
+  },
   "startdls": "StartDLS",
-  "statelimit": [{
-    "Code_Paved": "StateLimit"
-  }, {
-    "Code_Bldgs": "StateLimit"
-  }, {
-    "Code_EveTr": "StateLimit"
-  }, {
-    "Code_DecTr": "StateLimit"
-  }, {
-    "Code_Grass": "StateLimit"
-  }, {
-    "Code_Bsoil": "StateLimit"
-  }, {
+  "statelimit": {
+    "Code_Bldgs": "StateLimit",
+    "Code_Bsoil": "StateLimit",
+    "Code_DecTr": "StateLimit",
+    "Code_EveTr": "StateLimit",
+    "Code_Grass": "StateLimit",
+    "Code_Paved": "StateLimit",
     "Code_Water": "StateLimit"
-  }],
+  },
   "storedrainprm": [
-    [{
-      "Code_Paved": "StorageMin"
-    }, {
-      "Code_Bldgs": "StorageMin"
-    }, {
-      "Code_EveTr": "StorageMin"
-    }, {
-      "Code_DecTr": "StorageMin"
-    }, {
-      "Code_Grass": "StorageMin"
-    }, {
-      "Code_Bsoil": "StorageMin"
-    }, {
+    {
+      "Code_Bldgs": "StorageMin",
+      "Code_Bsoil": "StorageMin",
+      "Code_DecTr": "StorageMin",
+      "Code_EveTr": "StorageMin",
+      "Code_Grass": "StorageMin",
+      "Code_Paved": "StorageMin",
       "Code_Water": "StorageMin"
-    }],
-    [{
-      "Code_Paved": "DrainageEq"
-    }, {
-      "Code_Bldgs": "DrainageEq"
-    }, {
-      "Code_EveTr": "DrainageEq"
-    }, {
-      "Code_DecTr": "DrainageEq"
-    }, {
-      "Code_Grass": "DrainageEq"
-    }, {
-      "Code_Bsoil": "DrainageEq"
-    }, {
+    },
+    {
+      "Code_Bldgs": "DrainageEq",
+      "Code_Bsoil": "DrainageEq",
+      "Code_DecTr": "DrainageEq",
+      "Code_EveTr": "DrainageEq",
+      "Code_Grass": "DrainageEq",
+      "Code_Paved": "DrainageEq",
       "Code_Water": "DrainageEq"
-    }],
-    [{
-      "Code_Paved": "DrainageCoef1"
-    }, {
-      "Code_Bldgs": "DrainageCoef1"
-    }, {
-      "Code_EveTr": "DrainageCoef1"
-    }, {
-      "Code_DecTr": "DrainageCoef1"
-    }, {
-      "Code_Grass": "DrainageCoef1"
-    }, {
-      "Code_Bsoil": "DrainageCoef1"
-    }, {
+    },
+    {
+      "Code_Bldgs": "DrainageCoef1",
+      "Code_Bsoil": "DrainageCoef1",
+      "Code_DecTr": "DrainageCoef1",
+      "Code_EveTr": "DrainageCoef1",
+      "Code_Grass": "DrainageCoef1",
+      "Code_Paved": "DrainageCoef1",
       "Code_Water": "DrainageCoef1"
-    }],
-    [{
-      "Code_Paved": "DrainageCoef2"
-    }, {
-      "Code_Bldgs": "DrainageCoef2"
-    }, {
-      "Code_EveTr": "DrainageCoef2"
-    }, {
-      "Code_DecTr": "DrainageCoef2"
-    }, {
-      "Code_Grass": "DrainageCoef2"
-    }, {
-      "Code_Bsoil": "DrainageCoef2"
-    }, {
+    },
+    {
+      "Code_Bldgs": "DrainageCoef2",
+      "Code_Bsoil": "DrainageCoef2",
+      "Code_DecTr": "DrainageCoef2",
+      "Code_EveTr": "DrainageCoef2",
+      "Code_Grass": "DrainageCoef2",
+      "Code_Paved": "DrainageCoef2",
       "Code_Water": "DrainageCoef2"
-    }],
-    [{
-      "Code_Paved": "StorageMax"
-    }, {
-      "Code_Bldgs": "StorageMax"
-    }, {
-      "Code_EveTr": "StorageMax"
-    }, {
-      "Code_DecTr": "StorageMax"
-    }, {
-      "Code_Grass": "StorageMax"
-    }, {
-      "Code_Bsoil": "StorageMax"
-    }, {
+    },
+    {
+      "Code_Bldgs": "StorageMax",
+      "Code_Bsoil": "StorageMax",
+      "Code_DecTr": "StorageMax",
+      "Code_EveTr": "StorageMax",
+      "Code_Grass": "StorageMax",
+      "Code_Paved": "StorageMax",
       "Code_Water": "StorageMax"
-    }],
-    [{
-      "Code_Paved": "StorageMin"
-    }, {
-      "Code_Bldgs": "StorageMin"
-    }, {
-      "Code_EveTr": "StorageMin"
-    }, {
-      "Code_DecTr": "StorageMin"
-    }, {
-      "Code_Grass": "StorageMin"
-    }, {
-      "Code_Bsoil": "StorageMin"
-    }, {
+    },
+    {
+      "Code_Bldgs": "StorageMin",
+      "Code_Bsoil": "StorageMin",
+      "Code_DecTr": "StorageMin",
+      "Code_EveTr": "StorageMin",
+      "Code_Grass": "StorageMin",
+      "Code_Paved": "StorageMin",
       "Code_Water": "StorageMin"
-    }]
+    }
   ],
   "surfacearea": "SurfaceArea",
   "t_critic_cooling": {
-    "AnthropogenicCode": ["TCritic_Cooling_WD", "TCritic_Cooling_WE"]
+    "AnthropogenicCode": [
+      "TCritic_Cooling_WD",
+      "TCritic_Cooling_WE"
+    ]
   },
   "t_critic_heating": {
-    "AnthropogenicCode": ["TCritic_Heating_WD", "TCritic_Heating_WE"]
+    "AnthropogenicCode": [
+      "TCritic_Heating_WD",
+      "TCritic_Heating_WE"
+    ]
   },
   "tau_a": {
     "SnowCode": "tau_a"
@@ -773,168 +806,138 @@
   "th": {
     "CondCode": "TH"
   },
-  "theta_bioco2": [{
-    "Code_EveTr": {
-      "BiogenCO2Code": "theta"
-    }
-  }, {
+  "theta_bioco2": {
     "Code_DecTr": {
       "BiogenCO2Code": "theta"
-    }
-  }, {
+    },
+    "Code_EveTr": {
+      "BiogenCO2Code": "theta"
+    },
     "Code_Grass": {
       "BiogenCO2Code": "theta"
     }
-  }],
+  },
   "timezone": "Timezone",
   "tl": {
     "CondCode": "TL"
   },
-  "trafficrate": ["TrafficRate_WD", "TrafficRate_WE"],
+  "trafficrate": [
+    "TrafficRate_WD",
+    "TrafficRate_WE"
+  ],
   "trafficunits": {
     "AnthropogenicCode": "TrafficUnits"
   },
   "traffprof_24hr": {
-    "AnthropogenicCode": [{
-      "TraffProfWD": ":"
-    }, {
+    "AnthropogenicCode": {
+      "TraffProfWD": ":",
       "TraffProfWE": ":"
-    }]
+    }
   },
   "waterdepth": {
     "Code_Water": "WaterDepth"
   },
   "waterdist": [
-    [{
-      "WithinGridPavedCode": "ToPaved"
-    }, {
-      "WithinGridBldgsCode": "ToPaved"
-    }, {
-      "WithinGridEveTrCode": "ToPaved"
-    }, {
-      "WithinGridDecTrCode": "ToPaved"
-    }, {
-      "WithinGridGrassCode": "ToPaved"
-    }, {
+    {
+      "WithinGridBldgsCode": "ToPaved",
+      "WithinGridDecTrCode": "ToPaved",
+      "WithinGridEveTrCode": "ToPaved",
+      "WithinGridGrassCode": "ToPaved",
+      "WithinGridPavedCode": "ToPaved",
       "WithinGridUnmanBSoilCode": "ToPaved"
-    }],
-    [{
-      "WithinGridPavedCode": "ToBldgs"
-    }, {
-      "WithinGridBldgsCode": "ToBldgs"
-    }, {
-      "WithinGridEveTrCode": "ToBldgs"
-    }, {
-      "WithinGridDecTrCode": "ToBldgs"
-    }, {
-      "WithinGridGrassCode": "ToBldgs"
-    }, {
+    },
+    {
+      "WithinGridBldgsCode": "ToBldgs",
+      "WithinGridDecTrCode": "ToBldgs",
+      "WithinGridEveTrCode": "ToBldgs",
+      "WithinGridGrassCode": "ToBldgs",
+      "WithinGridPavedCode": "ToBldgs",
       "WithinGridUnmanBSoilCode": "ToBldgs"
-    }],
-    [{
-      "WithinGridPavedCode": "ToEveTr"
-    }, {
-      "WithinGridBldgsCode": "ToEveTr"
-    }, {
-      "WithinGridEveTrCode": "ToEveTr"
-    }, {
-      "WithinGridDecTrCode": "ToEveTr"
-    }, {
-      "WithinGridGrassCode": "ToEveTr"
-    }, {
+    },
+    {
+      "WithinGridBldgsCode": "ToEveTr",
+      "WithinGridDecTrCode": "ToEveTr",
+      "WithinGridEveTrCode": "ToEveTr",
+      "WithinGridGrassCode": "ToEveTr",
+      "WithinGridPavedCode": "ToEveTr",
       "WithinGridUnmanBSoilCode": "ToEveTr"
-    }],
-    [{
-      "WithinGridPavedCode": "ToDecTr"
-    }, {
-      "WithinGridBldgsCode": "ToDecTr"
-    }, {
-      "WithinGridEveTrCode": "ToDecTr"
-    }, {
-      "WithinGridDecTrCode": "ToDecTr"
-    }, {
-      "WithinGridGrassCode": "ToDecTr"
-    }, {
+    },
+    {
+      "WithinGridBldgsCode": "ToDecTr",
+      "WithinGridDecTrCode": "ToDecTr",
+      "WithinGridEveTrCode": "ToDecTr",
+      "WithinGridGrassCode": "ToDecTr",
+      "WithinGridPavedCode": "ToDecTr",
       "WithinGridUnmanBSoilCode": "ToDecTr"
-    }],
-    [{
-      "WithinGridPavedCode": "ToGrass"
-    }, {
-      "WithinGridBldgsCode": "ToGrass"
-    }, {
-      "WithinGridEveTrCode": "ToGrass"
-    }, {
-      "WithinGridDecTrCode": "ToGrass"
-    }, {
-      "WithinGridGrassCode": "ToGrass"
-    }, {
+    },
+    {
+      "WithinGridBldgsCode": "ToGrass",
+      "WithinGridDecTrCode": "ToGrass",
+      "WithinGridEveTrCode": "ToGrass",
+      "WithinGridGrassCode": "ToGrass",
+      "WithinGridPavedCode": "ToGrass",
       "WithinGridUnmanBSoilCode": "ToGrass"
-    }],
-    [{
-      "WithinGridPavedCode": "ToBSoil"
-    }, {
-      "WithinGridBldgsCode": "ToBSoil"
-    }, {
-      "WithinGridEveTrCode": "ToBSoil"
-    }, {
-      "WithinGridDecTrCode": "ToBSoil"
-    }, {
-      "WithinGridGrassCode": "ToBSoil"
-    }, {
+    },
+    {
+      "WithinGridBldgsCode": "ToBSoil",
+      "WithinGridDecTrCode": "ToBSoil",
+      "WithinGridEveTrCode": "ToBSoil",
+      "WithinGridGrassCode": "ToBSoil",
+      "WithinGridPavedCode": "ToBSoil",
       "WithinGridUnmanBSoilCode": "ToBSoil"
-    }],
-    [{
-      "WithinGridPavedCode": "ToWater"
-    }, {
-      "WithinGridBldgsCode": "ToWater"
-    }, {
-      "WithinGridEveTrCode": "ToWater"
-    }, {
-      "WithinGridDecTrCode": "ToWater"
-    }, {
-      "WithinGridGrassCode": "ToWater"
-    }, {
+    },
+    {
+      "WithinGridBldgsCode": "ToWater",
+      "WithinGridDecTrCode": "ToWater",
+      "WithinGridEveTrCode": "ToWater",
+      "WithinGridGrassCode": "ToWater",
+      "WithinGridPavedCode": "ToWater",
       "WithinGridUnmanBSoilCode": "ToWater"
-    }],
-    [{
-      "WithinGridPavedCode": ["ToRunoff", "ToSoilStore"]
-    }, {
-      "WithinGridBldgsCode": ["ToRunoff", "ToSoilStore"]
-    }, {
-      "WithinGridEveTrCode": ["ToRunoff", "ToSoilStore"]
-    }, {
-      "WithinGridDecTrCode": ["ToRunoff", "ToSoilStore"]
-    }, {
-      "WithinGridGrassCode": ["ToRunoff", "ToSoilStore"]
-    }, {
-      "WithinGridUnmanBSoilCode": ["ToRunoff", "ToSoilStore"]
-    }]
+    },
+    {
+      "WithinGridBldgsCode": [
+        "ToRunoff",
+        "ToSoilStore"
+      ],
+      "WithinGridDecTrCode": [
+        "ToRunoff",
+        "ToSoilStore"
+      ],
+      "WithinGridEveTrCode": [
+        "ToRunoff",
+        "ToSoilStore"
+      ],
+      "WithinGridGrassCode": [
+        "ToRunoff",
+        "ToSoilStore"
+      ],
+      "WithinGridPavedCode": [
+        "ToRunoff",
+        "ToSoilStore"
+      ],
+      "WithinGridUnmanBSoilCode": [
+        "ToRunoff",
+        "ToSoilStore"
+      ]
+    }
   ],
-  "wetthresh": [{
-    "Code_Paved": "WetThreshold"
-  }, {
-    "Code_Bldgs": "WetThreshold"
-  }, {
-    "Code_EveTr": "WetThreshold"
-  }, {
-    "Code_DecTr": "WetThreshold"
-  }, {
-    "Code_Grass": "WetThreshold"
-  }, {
-    "Code_Bsoil": "WetThreshold"
-  }, {
+  "wetthresh": {
+    "Code_Bldgs": "WetThreshold",
+    "Code_Bsoil": "WetThreshold",
+    "Code_DecTr": "WetThreshold",
+    "Code_EveTr": "WetThreshold",
+    "Code_Grass": "WetThreshold",
+    "Code_Paved": "WetThreshold",
     "Code_Water": "WetThreshold"
-  }],
-  "wuprofa_24hr": [{
-    "WaterUseProfAutoWD": ":"
-  }, {
+  },
+  "wuprofa_24hr": {
+    "WaterUseProfAutoWD": ":",
     "WaterUseProfAutoWE": ":"
-  }],
-  "wuprofm_24hr": [{
-    "WaterUseProfManuWD": ":"
-  }, {
+  },
+  "wuprofm_24hr": {
+    "WaterUseProfManuWD": ":",
     "WaterUseProfManuWE": ":"
-  }],
+  },
   "year": "Year",
   "z": "z",
   "z0m_in": "z0",

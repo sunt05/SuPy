@@ -1,5 +1,7 @@
 from __future__ import division, print_function
 
+# import collections
+import functools
 # from scipy import interpolate
 # import copy
 import glob
@@ -14,6 +16,7 @@ import pandas as pd
 from suews_driver import suews_driver as sd
 
 import f90nml
+import ujson
 
 from .supy_env import path_supy_module
 from .supy_misc import path_insensitive
@@ -112,6 +115,7 @@ dict_Code2File.update(dict_varSiteSelect2File)
 # load configurations: mod_config
 # process RunControl.nml
 # this function can handle all SUEWS nml files
+@functools.lru_cache(maxsize=128)
 def load_SUEWS_nml(xfile):
     # remove case issues
     xfile = path_insensitive(xfile)
@@ -136,20 +140,23 @@ def load_SUEWS_table(fileX):
 
 
 # load all tables into variables staring with 'lib_' and filename
-def load_SUEWS_Libs(dir_input):
+@functools.lru_cache(maxsize=16)
+def load_SUEWS_Libs(path_input):
     dict_libs = {}
     for lib, lib_file in dict_libVar2File.items():
         # print(lib_file)
-        lib_path = os.path.join(dir_input, lib_file)
+        lib_path = os.path.join(path_input, lib_file)
         dict_libs.update({lib: load_SUEWS_table(lib_path)})
     # return DataFrame containing settings
     return dict_libs
 
 
 # look up properties according to code
-def lookup_code_lib(libName, codeKey, codeValue, dict_libs):
+@functools.lru_cache(maxsize=None)
+def lookup_code_lib(libName, codeKey, codeValue, path_input):
     str_lib = dict_Code2File[libName].replace(
         '.txt', '').replace('SUEWS', 'lib')
+    dict_libs = load_SUEWS_Libs(path_input)
     lib = dict_libs[str_lib]
     # print(str_lib,codeKey,codeValue)
     if codeKey == ':':
@@ -164,108 +171,164 @@ def lookup_code_lib(libName, codeKey, codeValue, dict_libs):
     return res
 
 
+# https://stackoverflow.com/a/44776960/920789
+class HDict(dict):
+    def __hash__(self):
+        # if not isinstance(self.items(), collections.Hashable):
+        #     print(self.items(), hash(ujson.dumps(self)))
+        return hash(ujson.dumps(self))
+
+
+class HList(list):
+    def __hash__(self):
+        list_proc = [HDict(x) if isinstance(x, dict)
+                     else x for x in self]
+        return hash(tuple(list_proc))
+
+
+def hash_dict(func):
+    """Transform mutable dictionnary
+    Into immutable
+    Useful to be compatible with cache
+    """
+
+    @functools.wraps(func)
+    def wrapped(*args, **kwargs):
+        # print('\n print args before')
+        # print(args)
+        args = tuple([HDict(arg) if isinstance(
+            arg, dict) else arg for arg in args])
+        args = tuple([HList(arg) if isinstance(
+            arg, list) else arg for arg in args])
+
+        kwargs = {k: HDict(v) if isinstance(v, dict)
+                  else v for k, v in kwargs.items()}
+        kwargs = {k: HList(v) if isinstance(v, list)
+                  else v for k, v in kwargs.items()}
+
+        # print('\n print args after')
+        # print(args)
+        # print(kwargs, '\n')
+        return func(*args, **kwargs)
+    return wrapped
+
+
 # a recursive function to retrieve value based on key sequences
-def lookup_KeySeq_lib(indexKey, subKey, indexCode, dict_libs):
-    # print(indexKey, subKey, indexCode)
-    if type(subKey) is float:
+# @hash_dict
+# @functools.lru_cache()
+def lookup_KeySeq_lib(indexKey, subKey, indexCode, path_input):
+    # print('\ntest lookup_KeySeq_lib')
+    # print(indexKey, subKey, indexCode, type(subKey))
+    # print('test end\n')
+    if isinstance(subKey, float):
         res = subKey
+    # elif indexKey == 'const':
+    #     res = subKey
     elif type(subKey) is str:
-        res = lookup_code_lib(indexKey, subKey, indexCode, dict_libs)
-    elif type(subKey) is dict:
-        indexKeyX, subKeyX = list(subKey.items())[0]
-        indexCodeX = lookup_code_lib(indexKey, indexKeyX, indexCode, dict_libs)
-        res = lookup_KeySeq_lib(indexKeyX, subKeyX, indexCodeX, dict_libs)
-    elif type(subKey) is list:
+        res = lookup_code_lib(indexKey, subKey, indexCode, path_input)
+    elif isinstance(subKey, dict):
+        # elif isinstance(subKey, HDict):
+        res = []
+        for indexKeyX, subKeyX in subKey.items():
+            # print(indexKeyX, subKeyX)
+            if indexKeyX == 'const':
+                resX = subKeyX
+            else:
+                # indexKeyX, subKeyX = list(subKey.items())[0]
+                indexCodeX = lookup_code_lib(
+                    indexKey, indexKeyX, indexCode, path_input)
+                if isinstance(subKeyX, list):
+                    resX = [
+                        lookup_KeySeq_lib(
+                            indexKeyX, x_subKeyX, indexCodeX, path_input)
+                        for x_subKeyX in subKeyX]
+                else:
+                    resX = lookup_KeySeq_lib(
+                        indexKeyX, subKeyX, indexCodeX, path_input)
+            res.append(resX)
+        res = res[0] if len(res) == 1 else res
+    elif isinstance(subKey, list):
+        # elif isinstance(subKey, HList):
         res = []
         for subKeyX in subKey:
             indexCodeX = indexCode
-            resX = lookup_KeySeq_lib(indexKey, subKeyX, indexCodeX, dict_libs)
+            resX = lookup_KeySeq_lib(indexKey, subKeyX, indexCodeX, path_input)
             res.append(resX)
+        res = res[0] if len(res) == 1 else res
     # final result
     return res
 
 
 # load surface characteristics
 def load_SUEWS_SurfaceChar(path_input):
-    # load RunControl variables
-    # lib_RunControl = load_SUEWS_nml(os.path.join(path_input, 'runcontrol.nml'))
-    # dict_RunControl = lib_RunControl.loc[:, 'runcontrol'].to_dict()
-    # # tstep = dict_RunControl['tstep']
-    # dir_path = os.path.join(dir_input, dict_RunControl['fileinputpath'])
     # load all libraries
     dict_libs = load_SUEWS_Libs(path_input)
+    list_grid = dict_libs['lib_SiteSelect'].index
     # construct a dictionary in the form: {grid:{var:value,...}}
     dict_gridSurfaceChar = {
-        grid: {k: lookup_KeySeq_lib(k, v, grid, dict_libs)
-               for k, v in dict_var2SiteSelect.items()}
-        for grid in dict_libs['lib_SiteSelect'].index}
+        grid: {
+            k: lookup_KeySeq_lib(k, v, grid, path_input)
+            for k, v in dict_var2SiteSelect.items()
+        }
+        for grid in list_grid}
     # convert the above dict to DataFrame
     df_gridSurfaceChar = pd.DataFrame.from_dict(dict_gridSurfaceChar).T
     # empty dict to hold updated values
-    dict_x_grid = {}
+    # dict_x_grid = {}
     # modify some variables to be compliant with SUEWS requirement
     for xgrid in df_gridSurfaceChar.index:
         # transpoe snowprof:
-        df_gridSurfaceChar.loc[xgrid, 'snowprof_24hr'] = np.array(
-            df_gridSurfaceChar.loc[xgrid, 'snowprof_24hr'], order='F').T
+        df_gridSurfaceChar.at[xgrid, 'snowprof_24hr'] = np.array(
+            df_gridSurfaceChar.at[xgrid, 'snowprof_24hr'], order='F').T
 
         # transpoe laipower:
-        df_gridSurfaceChar.loc[xgrid, 'laipower'] = np.array(
-            df_gridSurfaceChar.loc[xgrid, 'laipower'], order='F').T
-        # print df_gridSurfaceChar.loc[xgrid, 'laipower'].shape
+        df_gridSurfaceChar.at[xgrid, 'laipower'] = np.array(
+            df_gridSurfaceChar.at[xgrid, 'laipower'], order='F').T
 
         # select non-zero values for waterdist of water surface:
-        x = np.array(df_gridSurfaceChar.loc[xgrid, 'waterdist'][-1])
-        df_gridSurfaceChar.loc[xgrid, 'waterdist'][-1] = (
+        x = np.array(df_gridSurfaceChar.at[xgrid, 'waterdist'][-1])
+        df_gridSurfaceChar.at[xgrid, 'waterdist'][-1] = (
             x[np.nonzero(x)])
 
         # surf order as F:
-        df_gridSurfaceChar.loc[xgrid, 'storedrainprm'] = np.array(
-            df_gridSurfaceChar.loc[xgrid, 'storedrainprm'], order='F')
+        df_gridSurfaceChar.at[xgrid, 'storedrainprm'] = np.array(
+            df_gridSurfaceChar.at[xgrid, 'storedrainprm'], order='F')
 
         # convert to np.array
-        df_gridSurfaceChar.loc[xgrid, 'alb'] = np.array(
-            df_gridSurfaceChar.loc[xgrid, 'alb'])
+        df_gridSurfaceChar.at[xgrid, 'alb'] = np.array(
+            df_gridSurfaceChar.at[xgrid, 'alb'])
 
         # convert unit of `surfacearea` from ha to m^2
-        df_gridSurfaceChar.loc[xgrid, 'surfacearea'] = np.array(
-            df_gridSurfaceChar.loc[xgrid, 'surfacearea'] * 10000.)
+        df_gridSurfaceChar.at[xgrid, 'surfacearea'] = np.array(
+            df_gridSurfaceChar.at[xgrid, 'surfacearea'] * 10000.)
 
         # print type(df_gridSurfaceChar.loc[xgrid, 'alb'])
 
         # dict holding updated values that can be converted to DataFrame later
-        dict_x = df_gridSurfaceChar.loc[xgrid, :].to_dict()
+        # dict_x = df_gridSurfaceChar.loc[xgrid, :].to_dict()
         # print 'len(dict_x)',len(dict_x['laipower'])
 
         # profiles:
-        # t_tstep = np.linspace(0, 24, num=3600 / tstep * 24, endpoint=False)
-        list_varTstep = ['ahprof_24hr',
-                         'popprof_24hr',
-                         'traffprof_24hr',
-                         'humactivity_24hr',
-                         'wuprofm_24hr',
-                         'wuprofa_24hr']
-        for var in list_varTstep:
-            #     var_name = var.replace('_24hr', '')
-            var_T = np.array(df_gridSurfaceChar.loc[xgrid, var]).T
-        #     var0 = np.vstack((var0, var0))
-        #     # interpolator:
-        #     f = interpolate.interp1d(np.arange(0, 48), var0, axis=0)
-            dict_x.update({var: var_T})
-        #     # different normalisation processing:
-        #     # For water use, SUM of the multipliers is equal to 1
-        #     if var in ['wuprofm_24hr', 'wuprofa_24hr']:
-        #         dict_x[var] = dict_x[var] / np.sum(dict_x[var], axis=0)
-        #     # For traffic, AVERAGE of the multipliers is equal to 1
-        # elif var in ['ahprof_24hr', 'traffprof_24hr']:
-        #         dict_x[var] = (dict_x[var] / np.sum(dict_x[var], axis=0)
-        #                        * len(dict_x[var]))
+        list_varTstep = [
+            'ahprof_24hr',
+            'popprof_24hr',
+            'traffprof_24hr',
+            'humactivity_24hr',
+            'wuprofm_24hr',
+            'wuprofa_24hr',
+        ]
+        df_gridSurfaceChar.loc[xgrid, list_varTstep] = \
+            df_gridSurfaceChar.loc[xgrid, list_varTstep].map(np.transpose)
+        # for var in list_varTstep:
+        #     var_T = np.array(df_gridSurfaceChar.at[xgrid, var]).T
+        #     dict_x.update({var: var_T})
 
         # update dict to hold grids
-        dict_x_grid.update({xgrid: dict_x})
+        # dict_x_grid.update({xgrid: dict_x})
 
     # convert to DataFrame
-    df_x_grid = pd.DataFrame.from_dict(dict_x_grid).T
+    # df_x_grid = pd.DataFrame.from_dict(dict_x_grid).T
+    df_x_grid = df_gridSurfaceChar
     return df_x_grid
 
 
@@ -397,8 +460,14 @@ def load_SUEWS_Forcing_met_df_raw(
             site=filecode,
             grid=(grid if multiplemetfiles == 1 else ''),
             tstep=int(tstep_met_in / 60)))
+    df_forcing_met = load_SUEWS_Forcing_met_df_pattern(forcingfile_met_pattern)
+    return df_forcing_met
 
-    # list of met forcing files
+
+# caching loaded met df for better performance in initialisation
+@functools.lru_cache(maxsize=None)
+def load_SUEWS_Forcing_met_df_pattern(forcingfile_met_pattern):
+        # list of met forcing files
     list_file_MetForcing = sorted([
         f for f in glob.glob(forcingfile_met_pattern)
         if 'ESTM' not in f])
@@ -527,7 +596,6 @@ def init_SUEWS_dict(path_runcontrol):
 
     # initialise dict_state_init
     dict_state_init = {}
-    # dict_met_forcing = {}
 
     # load RunControl variables
     lib_RunControl = load_SUEWS_nml(path_runcontrol)
@@ -633,7 +701,7 @@ def init_SUEWS_dict_grid(
         'dectrstate':  0,
         'grassstate':  0,
         'bsoilstate':  0,
-        'waterstate':  df_gridSurfaceChar.loc[grid, 'waterdepth'],
+        'waterstate':  df_gridSurfaceChar.at[grid, 'waterdepth'],
         'soilstorepavedstate':  nan,
         'soilstorebldgsstate':  nan,
         'soilstoreevetrstate':  nan,
@@ -682,8 +750,7 @@ def init_SUEWS_dict_grid(
     )
     lib_InitCond = load_SUEWS_nml(path_input / InitialCond_x)
     # update default InitialCond with values set in namelist
-    dict_InitCond.update(
-        lib_InitCond.loc[:, 'initialconditions'].to_dict())
+    dict_InitCond.update(lib_InitCond['initialconditions'].to_dict())
 
     # fr_veg_sum: total fraction of vegetation covers
     fr_veg_sum = np.sum(df_gridSurfaceChar.loc[grid, 'sfr'][2:5])
@@ -749,9 +816,10 @@ def init_SUEWS_dict_grid(
     dict_StateInit = {
         # TODO: water use patterns, which is currently not used
         'wuday_id': 0. * np.ones(9, order='F'),
-        'numcapita': df_gridSurfaceChar.loc[
-            grid,
-            ['popdensdaytime', 'popdensnighttime']].mean(),
+        'numcapita': (
+            df_gridSurfaceChar.at[grid, 'popdensdaytime'] +\
+            df_gridSurfaceChar.at[grid, 'popdensnighttime']
+        ) * 0.5,
         'qn1_av': nan * np.ones(1),
         'qn1_s_av': nan * np.ones(1),
         'dqndt': nan * np.ones(1),
@@ -837,13 +905,18 @@ def init_SUEWS_dict_grid(
 
         # Initial wetness status of each surface (above ground)
         'state_id': np.array(
-            [dict_InitCond[var] for var in ['pavedstate',
-                                            'bldgsstate',
-                                            'evetrstate',
-                                            'dectrstate',
-                                            'grassstate',
-                                            'bsoilstate',
-                                            'waterstate']],
+            [
+                dict_InitCond[var]
+                for var in [
+                    'pavedstate',
+                    'bldgsstate',
+                    'evetrstate',
+                    'dectrstate',
+                    'grassstate',
+                    'bsoilstate',
+                    'waterstate'
+                ]
+            ],
             order='F'),
 
         # mean Tair of past 24 hours, NOT used by supy as it is for ESTM
@@ -864,34 +937,9 @@ def init_SUEWS_dict_grid(
         'hdd_id': np.zeros(12)
     }
 
-    # lai-related parameters:
-    # dict_StateInit['lai'][4 + id_prev] = [
-    #     dict_InitCond[var] for var in ['laiinitialevetr',
-    #                                    'laiinitialdectr',
-    #                                    'laiinitialgrass']]
-
-    # hdd-related parameters:
-    # print 'temp_c0', dict_InitCond['temp_c0']
-    # dif_basethdd_temp_c0 = (
-    #     df_gridSurfaceChar.loc[grid, 'basethdd']
-    #     - dict_InitCond['temp_c0'])
-    # gamma1 = (1 if dif_basethdd_temp_c0 >= 0 else 0)
-    # gamma2 = (1 if dif_basethdd_temp_c0 <= 0 else 0)
-    # hdd1 = gamma1 * dif_basethdd_temp_c0
-    # hdd2 = gamma2 * (-1 * dif_basethdd_temp_c0)
-    # update hdd:
-    # dict_StateInit['hdd_id'][:6] = [
-    #     hdd1, hdd2, dict_InitCond['temp_c0'],
-    #     0, 0, dict_InitCond['dayssincerain']]
-    # dict_StateInit['hdd_id'][4 + id_prev - 3:
-    #                       4 + id_prev, 3 - 1] = dict_InitCond['temp_c0']
-    # dict_StateInit['hdd_id'][4 + id_prev, 5] = dict_InitCond['dayssincerain']
-
     # gdd-related parameters:
     dict_StateInit['gdd_id'][2] = 90
     dict_StateInit['gdd_id'][3] = -90
-    # dict_StateInit['gdd_id'][id_prev, 0] = dict_InitCond['gdd_1_0']
-    # dict_StateInit['gdd_id'][id_prev, 1] = dict_InitCond['gdd_2_0']
 
     # update timestep info:
     dict_StateInit.update(tstep_prev=tstep)
