@@ -16,10 +16,11 @@ import pandas as pd
 from suews_driver import suews_driver as sd
 
 import f90nml
-import ujson
 
 from .supy_env import path_supy_module
 from .supy_misc import path_insensitive
+
+# import ujson
 
 
 ########################################################################
@@ -153,8 +154,8 @@ def load_SUEWS_Libs(path_input):
 
 # look up properties according to code
 @functools.lru_cache(maxsize=None)
-def lookup_code_lib(libName, codeKey, codeValue, path_input):
-    str_lib = dict_Code2File[libName].replace(
+def lookup_code_lib(libCode, codeKey, codeValue, path_input):
+    str_lib = dict_Code2File[libCode].replace(
         '.txt', '').replace('SUEWS', 'lib')
     dict_libs = load_SUEWS_Libs(path_input)
     lib = dict_libs[str_lib]
@@ -172,45 +173,45 @@ def lookup_code_lib(libName, codeKey, codeValue, path_input):
 
 
 # https://stackoverflow.com/a/44776960/920789
-class HDict(dict):
-    def __hash__(self):
-        # if not isinstance(self.items(), collections.Hashable):
-        #     print(self.items(), hash(ujson.dumps(self)))
-        return hash(ujson.dumps(self))
+# class HDict(dict):
+#     def __hash__(self):
+#         # if not isinstance(self.items(), collections.Hashable):
+#         #     print(self.items(), hash(ujson.dumps(self)))
+#         return hash(ujson.dumps(self))
+#
+#
+# class HList(list):
+#     def __hash__(self):
+#         list_proc = [HDict(x) if isinstance(x, dict)
+#                      else x for x in self]
+#         return hash(tuple(list_proc))
 
 
-class HList(list):
-    def __hash__(self):
-        list_proc = [HDict(x) if isinstance(x, dict)
-                     else x for x in self]
-        return hash(tuple(list_proc))
-
-
-def hash_dict(func):
-    """Transform mutable dictionnary
-    Into immutable
-    Useful to be compatible with cache
-    """
-
-    @functools.wraps(func)
-    def wrapped(*args, **kwargs):
-        # print('\n print args before')
-        # print(args)
-        args = tuple([HDict(arg) if isinstance(
-            arg, dict) else arg for arg in args])
-        args = tuple([HList(arg) if isinstance(
-            arg, list) else arg for arg in args])
-
-        kwargs = {k: HDict(v) if isinstance(v, dict)
-                  else v for k, v in kwargs.items()}
-        kwargs = {k: HList(v) if isinstance(v, list)
-                  else v for k, v in kwargs.items()}
-
-        # print('\n print args after')
-        # print(args)
-        # print(kwargs, '\n')
-        return func(*args, **kwargs)
-    return wrapped
+# def hash_dict(func):
+#     """Transform mutable dictionnary
+#     Into immutable
+#     Useful to be compatible with cache
+#     """
+#
+#     @functools.wraps(func)
+#     def wrapped(*args, **kwargs):
+#         # print('\n print args before')
+#         # print(args)
+#         args = tuple([HDict(arg) if isinstance(
+#             arg, dict) else arg for arg in args])
+#         args = tuple([HList(arg) if isinstance(
+#             arg, list) else arg for arg in args])
+#
+#         kwargs = {k: HDict(v) if isinstance(v, dict)
+#                   else v for k, v in kwargs.items()}
+#         kwargs = {k: HList(v) if isinstance(v, list)
+#                   else v for k, v in kwargs.items()}
+#
+#         # print('\n print args after')
+#         # print(args)
+#         # print(kwargs, '\n')
+#         return func(*args, **kwargs)
+#     return wrapped
 
 
 # a recursive function to retrieve value based on key sequences
@@ -655,11 +656,7 @@ def init_SUEWS_dict(path_runcontrol):
 
 
 # create initial states for one grid
-def init_SUEWS_dict_grid(
-        path_input,
-        grid,
-        dict_ModConfig,
-        df_gridSurfaceChar):
+def init_SUEWS_dict_grid(path_input, grid, dict_ModConfig, df_gridSurfaceChar):
     # load tstep from dict_RunControl
     tstep = dict_ModConfig['tstep']
     # some constant values
@@ -950,3 +947,181 @@ def init_SUEWS_dict_grid(
                       for k, v in dict_StateInit.items()}
 
     return dict_StateInit
+
+
+# collect tracing entries under a reference `code`
+def gather_code_set(code, dict_var2SiteSelect):
+    set_res = set()
+    for k, v in dict_var2SiteSelect.items():
+        # print(res,type(res),k)
+        if k == code:
+            if isinstance(v, str):
+                set_res.update([v])
+            elif isinstance(v, list):
+                set_res.update(v)
+            elif isinstance(v, dict):
+                set_res.update(v.keys())
+            else:
+                print(k, v)
+        elif isinstance(v, dict):
+            # print(res,v)
+            set_res.update(list(gather_code_set(code, v)))
+        elif isinstance(v, list):
+            # print(set_res, v)
+            for v_x in v:
+                if isinstance(v_x, dict):
+                    set_res.update(list(gather_code_set(code, v_x)))
+    return set_res
+
+
+# generate DataFrame based on reference `code` with index from `df_base`
+def build_code_df(code, path_input, df_base):
+    # str_lib = dict_Code2File[libCode].replace(
+    #     '.txt', '').replace('SUEWS', 'lib')
+    dict_libs = load_SUEWS_Libs(path_input)
+
+    keys_code = gather_code_set(code, dict_var2SiteSelect)
+    if keys_code == {':'}:
+        # for profile values, extract all
+        list_keys = code
+    else:
+        list_keys = [(code, k) for k in list(keys_code)]
+    lib_code = dict_Code2File[code]
+    str_lib = lib_code.replace('.txt', '').replace('SUEWS', 'lib')
+    # lib = dict_libs[str_lib]
+    df_code0 = pd.concat([dict_libs[str_lib]], axis=1, keys=[code])
+    # df_siteselect = dict_libs['lib_SiteSelect']
+    if isinstance(df_base.columns, pd.core.index.MultiIndex):
+        code_base = df_base.columns.levels[0][0]
+        code_index = (code_base, code)
+    else:
+        code_index = code
+
+    # print('list_keys:\n', list_keys)
+    df_code = df_code0.loc[df_base[code_index].astype(int).values, list_keys]
+    df_code.index = df_base.index
+    # recover outmost level code if profile values are extracted
+    if keys_code == {':'}:
+        df_code = pd.concat([df_code], axis=1, keys=[code])
+    return df_code
+
+
+# if to expand
+def to_exp_Q(code_str):
+    return ('Code' in code_str) or ('Prof' in code_str)
+
+
+# generate df with all code-references values
+# @functools.lru_cache(maxsize=16)
+def gen_all_code_df(path_input):
+    dict_libs = load_SUEWS_Libs(path_input)
+    df_siteselect = dict_libs['lib_SiteSelect']
+    list_code = [
+        code for code in df_siteselect.columns
+        if to_exp_Q(code)
+    ]
+
+    # dict with code:{vars}
+    dict_code_var = {
+        code: gather_code_set(code, dict_var2SiteSelect)
+        for code in list_code
+        if len(gather_code_set(code, dict_var2SiteSelect)) > 0
+    }
+
+    # stage one expansion
+    df_all_code = pd.concat(
+        [build_code_df(code, path_input, df_siteselect)
+         for code in dict_code_var],
+        axis=1)
+
+    return df_all_code
+
+
+# build code expanded ensemble libs
+def build_code_exp_df(path_input, code_x):
+    # df with all code-references values
+    df_all_code = gen_all_code_df(path_input)
+
+    # df with code_x for further exapansion
+    df_base_x = df_all_code[code_x]
+
+    # columns in df_base_x for further expansion
+    list_code_x = [code for code in df_base_x.columns if to_exp_Q(code)]
+    # print(list_code_x)
+    df_all_code_x = pd.concat(
+        [build_code_df(code, path_input, df_base_x)
+         for code in list_code_x],
+        axis=1)
+    df_all_code_x = pd.concat([df_all_code_x], axis=1, keys=[code_x])
+
+    df_base_x_named = pd.concat([df_base_x], axis=1, keys=[code_x])
+    df_base_x_named = pd.concat([df_base_x_named], axis=1, keys=['base'])
+    df_base_x_named = df_base_x_named.swaplevel(
+        i=0, j=1, axis=1).swaplevel(i=1, j=-1, axis=1)
+
+    # print(df_base_x_named.columns)
+    # print(df_all_code_x.columns)
+    df_res_exp = pd.concat([df_base_x_named, df_all_code_x], axis=1)
+
+    return df_res_exp
+
+
+def gen_df_siteselect_exp(path_input):
+    # df with all code-references values
+    df_all_code = gen_all_code_df(path_input)
+
+    # retrieve all `Code`-relaed names
+    dict_libs = load_SUEWS_Libs(path_input)
+    df_siteselect = dict_libs['lib_SiteSelect']
+    # list_code = [code for code in df_siteselect.columns if 'Code' in code]
+
+    # dict with code:{vars}
+    dict_code_var = {
+        code: gather_code_set(code, dict_var2SiteSelect)
+        for code in df_all_code.columns.levels[0]
+    }
+
+    # code with nested references
+    dict_code_var_nest = {
+        code: dict_code_var[code]
+        for code in dict_code_var.keys()
+        if any(('Code' in v) or ('Prof' in v) for v in dict_code_var[code])
+    }
+
+    # code with simple values
+    dict_code_var_simple = {
+        code: dict_code_var[code]
+        for code in dict_code_var.keys()
+        if code not in dict_code_var_nest
+    }
+
+    # stage 2: expand all code to actual values
+    # nested code: code -> code -> value
+    df_code_exp_nest = pd.concat(
+        [build_code_exp_df(path_input, code)
+         for code in list(dict_code_var_nest)],
+        axis=1
+    )
+    # simple code: code -> value
+    df_code_exp_simple = pd.concat(
+        [pd.concat(
+            [build_code_df(code, path_input, df_siteselect)
+             for code in list(dict_code_var_simple)],
+            axis=1
+        )], axis=1, keys=['base'])
+    df_code_exp_simple = df_code_exp_simple.swaplevel(
+        i=0, j=1, axis=1)
+    df_code_exp_simple = df_code_exp_simple.swaplevel(i=1, j=-1, axis=1)
+
+    # combine both nested and simple df's
+    df_code_exp = pd.concat([df_code_exp_simple, df_code_exp_nest], axis=1)
+
+    # df_siteselect_pad: pad levels for pd.concat
+    df_siteselect_pad = pd.concat([df_siteselect], axis=1, keys=['base'])
+    df_siteselect_pad = df_siteselect_pad.swaplevel(i=0, j=1, axis=1)
+    df_siteselect_pad = pd.concat([df_siteselect_pad], axis=1, keys=['base'])
+    df_siteselect_pad = df_siteselect_pad.swaplevel(i=0, j=1, axis=1)
+
+    df_siteselect_exp = pd.concat([df_siteselect_pad, df_code_exp], axis=1)
+
+    return df_siteselect_exp
