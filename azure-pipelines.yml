@@ -27,17 +27,17 @@ jobs:
   # - script:           python -m pip install --upgrade pip && pip install -r requirements.txt
   #   displayName:      'Install dependencies'
 
-  - script:             |
-      cd src
-      pip install pytest
-      pytest tests --doctest-modules --junitxml=junit/test-results.xml
-    displayName:        'pytest'
-
-  - task:               PublishTestResults@2
-    inputs:
-      testResultsFiles: '**/test-results.xml'
-      testRunTitle:     'Python $(python.version)'
-    condition:          succeededOrFailed()
+  # - script:             |
+  #     cd src
+  #     pip install pytest
+  #     pytest tests --doctest-modules --junitxml=junit/test-results.xml
+  #   displayName:        'pytest'
+  #
+  # - task:               PublishTestResults@2
+  #   inputs:
+  #     testResultsFiles: '**/test-results.xml'
+  #     testRunTitle:     'Python $(python.version)'
+  #   condition:          succeededOrFailed()
 
 - job:                  'Publish'
   dependsOn:            'Test'
