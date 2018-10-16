@@ -12,7 +12,7 @@ def readme():
 
 
 setup(name='supy',
-      version='0.5.2',
+      version='0.5.5',
       description='the SUEWS model that speaks python',
       long_description=readme(),
       url='https://github.com/sunt05/SuPy',
@@ -35,6 +35,7 @@ setup(name='supy',
           'pandas',
           'scipy',
           'f90nml',
+          # 'ujson',
           'suews_driver>=2018b6'  # a separate f2py-based driver
       ],
       include_package_data=True,

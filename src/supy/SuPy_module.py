@@ -17,6 +17,7 @@
 from __future__ import division, print_function
 
 import copy
+import functools
 from pathlib import Path
 
 import numpy as np
@@ -30,13 +31,13 @@ from .supy_load import (init_SUEWS_dict, load_SUEWS_Forcing_ESTM_df_raw,
 from .supy_post import pack_df_output, pack_df_output_array, pack_df_state
 from .supy_run import suews_cal_tstep, suews_cal_tstep_multi
 
-
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
 
 
 # convert dict_InitCond to pandas Series and DataFrame
 # return pd.DataFrame
+@functools.lru_cache(maxsize=16)
 def init_SUEWS_pd(path_runcontrol):
     dict_mod_cfg, dict_state_init = init_SUEWS_dict(path_runcontrol)
     # ser_mod_cfg: all static model configuration info
@@ -49,6 +50,7 @@ def init_SUEWS_pd(path_runcontrol):
 
 
 # load forcing datasets of `grid`
+@functools.lru_cache(maxsize=16)
 def load_SUEWS_Forcing_df_grid(path_runcontrol, grid):
     path_runcontrol = Path(path_runcontrol)
     ser_mod_cfg, df_state_init = init_SUEWS_pd(path_runcontrol)
