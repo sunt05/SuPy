@@ -320,12 +320,6 @@ def load_SUEWS_SurfaceChar(path_input):
         ]
         df_gridSurfaceChar.loc[xgrid, list_varTstep] = \
             df_gridSurfaceChar.loc[xgrid, list_varTstep].map(np.transpose)
-        # for var in list_varTstep:
-        #     var_T = np.array(df_gridSurfaceChar.at[xgrid, var]).T
-        #     dict_x.update({var: var_T})
-
-        # update dict to hold grids
-        # dict_x_grid.update({xgrid: dict_x})
 
     # convert to DataFrame
     # df_x_grid = pd.DataFrame.from_dict(dict_x_grid).T
@@ -949,11 +943,58 @@ def init_SUEWS_dict_grid(path_input, grid, dict_ModConfig, df_gridSurfaceChar):
     return dict_StateInit
 
 
+# expand dict into paired tuples
+def exp_dict2tuple(rec):
+    if isinstance(rec, str):
+        return rec
+    elif isinstance(rec, float):
+        # expand this for consistency in value indexing
+        return [(rec, 'base')]
+    elif isinstance(rec, dict):
+        res = [
+            # expand profile values to all hour indices
+            (k, [str(i) for i in range(24)])
+            if v == ':' else (k, exp_dict2tuple(v)) for k, v in rec.items()]
+        # print(res)
+        return res
+    elif isinstance(rec, list):
+        return [exp_dict2tuple(v) for v in rec]
+
+
+# test if a list exists in a tuple
+def list_in_tuple_Q(rec):
+    if isinstance(rec, tuple):
+        return any(isinstance(x, list) for x in rec)
+    else:
+        return False
+
+
+# expand list of nested tuples to simple chained tuples
+# (a,[b1,b2])->[(a,b1),(a,b2)]
+def exp_list2tuple(rec):
+    if isinstance(rec, list):
+        if len(rec) == 1:
+            return exp_list2tuple(rec[0])
+        else:
+            return [exp_list2tuple(x) for x in rec]
+    elif list_in_tuple_Q(rec):
+        for i, v in enumerate(rec):
+            if isinstance(v, list):
+                res = [(*rec[:i], x) if isinstance(x, (str, int))
+                       else (*rec[:i], *x)
+                       for x in v]
+                res = [exp_list2tuple(x) for x in res]
+                return exp_list2tuple(res)
+    else:
+        return rec
+
+
 # collect tracing entries under a reference `code`
 def gather_code_set(code, dict_var2SiteSelect):
     set_res = set()
+    # print('\n code', code)
     for k, v in dict_var2SiteSelect.items():
-        # print(res,type(res),k)
+        # print(set_res, type(set_res), k, v)
         if k == code:
             if isinstance(v, str):
                 set_res.update([v])
@@ -1037,6 +1078,31 @@ def gen_all_code_df(path_input):
     return df_all_code
 
 
+# generate df for all const based columns
+def gen_all_const_df(path_input):
+    dict_libs = load_SUEWS_Libs(path_input)
+    df_siteselect = dict_libs['lib_SiteSelect']
+
+    df_cst_all = df_siteselect.copy()
+    dict_var_tuple = exp_dict_full(dict_var2SiteSelect)
+
+    set_const_col = {
+        v
+        for x in dict_var_tuple.values() if isinstance(x, list)
+        for v in x if 'const' in v
+    }
+
+    list_const_col = [x[1] for x in set_const_col]
+    for cst in set_const_col:
+        df_cst_all[cst[1]] = cst[1]
+    df_cst_all = df_cst_all.loc[:, list_const_col]
+    df_cst_all = pd.concat([df_cst_all], axis=1, keys=['base'])
+    df_cst_all = pd.concat([df_cst_all], axis=1, keys=['const'])
+    df_cst_all = df_cst_all.swaplevel(i=1, j=-1, axis=1)
+
+    return df_cst_all
+
+
 # build code expanded ensemble libs
 def build_code_exp_df(path_input, code_x):
     # df with all code-references values
@@ -1054,6 +1120,7 @@ def build_code_exp_df(path_input, code_x):
         axis=1)
     df_all_code_x = pd.concat([df_all_code_x], axis=1, keys=[code_x])
 
+    # add innermost lables to conform dimensionality
     df_base_x_named = pd.concat([df_base_x], axis=1, keys=[code_x])
     df_base_x_named = pd.concat([df_base_x_named], axis=1, keys=['base'])
     df_base_x_named = df_base_x_named.swaplevel(
@@ -1116,12 +1183,160 @@ def gen_df_siteselect_exp(path_input):
     # combine both nested and simple df's
     df_code_exp = pd.concat([df_code_exp_simple, df_code_exp_nest], axis=1)
 
+    # generate const based columns
+    df_cst_all = gen_all_const_df(path_input)
+
     # df_siteselect_pad: pad levels for pd.concat
     df_siteselect_pad = pd.concat([df_siteselect], axis=1, keys=['base'])
     df_siteselect_pad = df_siteselect_pad.swaplevel(i=0, j=1, axis=1)
     df_siteselect_pad = pd.concat([df_siteselect_pad], axis=1, keys=['base'])
     df_siteselect_pad = df_siteselect_pad.swaplevel(i=0, j=1, axis=1)
 
-    df_siteselect_exp = pd.concat([df_siteselect_pad, df_code_exp], axis=1)
+    df_siteselect_exp = pd.concat(
+        [df_siteselect_pad, df_code_exp, df_cst_all],
+        axis=1)
 
     return df_siteselect_exp
+
+
+def flatten_list(l):
+    res = []
+    if isinstance(l, list):
+        for x in l:
+            if isinstance(x, list):
+                res += flatten_list(x)
+            else:
+                res.append(x)
+    else:
+        res = l
+    return res
+
+
+# pad a single record to three-element tuple for easier indexing
+def pad_rec_single(rec):
+    base_pad = ['base' for i in range(3)]
+    if isinstance(rec, tuple) and len(rec) < 3:
+        # print(rec)
+        if all(isinstance(v, (str, float, int)) for v in rec):
+            v_pad = tuple(list(rec) + base_pad)[:3]
+        else:
+            v_pad = rec
+    elif isinstance(rec, str):
+        v_pad = tuple([rec] + base_pad)[:3]
+    else:
+        v_pad = rec
+    return v_pad
+
+
+# recursive version to generate three-element tuples
+def pad_rec(rec):
+    if isinstance(rec, list):
+        rec_pad = [pad_rec(v) for v in rec]
+    else:
+        rec_pad = pad_rec_single(rec)
+    return rec_pad
+
+
+# expand a dict to fully referenced tuples
+def exp_dict_full(dict_var2SiteSelect):
+    # expand dict to list of tuples
+    dict_list_tuple = {k: exp_dict2tuple(v)
+                       for k, v in dict_var2SiteSelect.items()}
+    # expand list of nested tuples to simple chained tuples
+    dict_var_tuple = {k: exp_list2tuple(v)
+                      for k, v in dict_list_tuple.items()}
+
+    # pad records to three-element tuples
+    dict_var_tuple = {k: pad_rec(v) for k, v in dict_var_tuple.items()}
+    return dict_var_tuple
+
+
+# save this as system variable
+# dict_var_tuple = exp_dict_full(dict_var2SiteSelect)
+
+
+# generate expanded surface characteristics df
+# this df contains all the actual values retrived from all tables
+def gen_df_gridSurfaceChar_exp(path_input):
+    df_siteselect_exp = gen_df_siteselect_exp(path_input)
+    dict_var_tuple = exp_dict_full(dict_var2SiteSelect)
+    df_gridSurfaceChar_exp = pd.concat(
+        {k: df_siteselect_exp.loc[:, flatten_list(dict_var_tuple[k])]
+         for k in dict_var_tuple},
+        axis=1)
+    return df_gridSurfaceChar_exp
+
+
+# quickly load surface characteristics as DataFrame
+# the dimension info of each variable can be derived from level 1 in columns
+def load_SUEWS_SurfaceChar_df(path_input):
+    df_gridSurfaceChar_exp = gen_df_gridSurfaceChar_exp(path_input)
+    dict_var_ndim = {
+        'ahprof_24hr': (24, 2),
+        'humactivity_24hr': (24, 2),
+        'laipower': (4, 3),
+        'ohm_coef': (8, 4, 3),
+        'popprof_24hr': (24, 2),
+        'snowprof_24hr': (24, 2),
+        'storedrainprm': (6, 7),
+        'traffprof_24hr': (24, 2),
+        'waterdist': (8, 6),
+        'wuprofa_24hr': (24, 2),
+        'wuprofm_24hr': (24, 2)
+    }
+    # df_gridSurfaceChar_x=df_gridSurfaceChar_exp.copy()
+    list_var = df_gridSurfaceChar_exp.columns.levels[0]
+    list_grid = df_gridSurfaceChar_exp.index
+    dict_gridSurfaceChar = {
+        var: np.squeeze(df_gridSurfaceChar_exp[var].values)
+        for var in list_var
+    }
+    dict_gridSurfaceChar['surfacearea'] *= 1E4
+    len_grid = df_gridSurfaceChar_exp.shape[0]
+    for var, dim in dict_var_ndim.items():
+        # print(var)
+        val = df_gridSurfaceChar_exp.loc[:, var].values
+        if '_24hr' in var:
+            dim_x = dim[-1::-1]
+            # val = df_gridSurfaceChar_exp.loc[:, var].values
+            val_x = val.reshape((len_grid, *dim_x)).transpose((0, 2, 1))
+            dict_gridSurfaceChar.update({var: val_x})
+        elif var == 'laipower':
+            dim_x = dim[-1::-1]
+            # val = df_gridSurfaceChar_exp.loc[:, var].values
+            val_x = val.reshape((len_grid, *dim_x)).transpose((0, 2, 1))
+            dict_gridSurfaceChar.update({var: val_x})
+        elif var == 'storedrainprm':
+            dim_x = dim
+            # val = df_gridSurfaceChar_exp.loc[:, var].values
+            val_x = val.reshape((len_grid, *dim_x))
+            dict_gridSurfaceChar.update({var: val_x})
+        elif var == 'ohm_coef':
+            dim_x = dim
+            # val = df_gridSurfaceChar_exp.loc[:, var].values
+            val_x = val.reshape((len_grid, *dim_x))
+            dict_gridSurfaceChar.update({var: val_x})
+        elif var == 'waterdist':
+            dim_x = dict_var_ndim[var]  # [-1::-1]
+            # val = df_gridSurfaceChar_exp.loc[:, var].values
+            val_x0 = val.reshape((len_grid, 9, 6))
+            val_x1 = val_x0[:, :7]
+            val_x2 = val_x0[:, 7:].reshape(
+                len_grid, 6, 2).sum(axis=2).reshape(-1, 1, 6)
+            val_x = np.hstack((val_x1, val_x2))
+            dict_gridSurfaceChar.update({var: val_x})
+
+    # convert to DataFrame
+    dict_var = {}
+    for var in list_var:
+        val = dict_gridSurfaceChar[var]
+        ind_list = list(np.ndindex(val.shape[1:]))
+        df_var = pd.DataFrame(
+            val.reshape((val.shape[0], -1)),
+            index=list_grid,
+            columns=ind_list)
+        dict_var.update({var: df_var})
+
+    df_sfc_char = pd.concat(dict_var, axis=1)
+
+    return df_sfc_char
