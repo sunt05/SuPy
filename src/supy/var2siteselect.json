@@ -623,7 +623,7 @@
     "Code_Bsoil": {
       "SoilTypeCode": "SatHydraulicCond"
     },
-    "const": 0
+    "const": 0.0
   },
   "sddfull": {
     "Code_EveTr": "SDDFull",
@@ -652,7 +652,7 @@
     "Code_DecTr": "SnowLimPatch",
     "Code_Grass": "SnowLimPatch",
     "Code_Bsoil": "SnowLimPatch",
-    "const": 0
+    "const": 0.0
   },
   "snowdensmax": {
     "SnowCode": "SnowDensMax"
@@ -689,7 +689,7 @@
     "Code_Bsoil": {
       "SoilTypeCode": "SoilDepth"
     },
-    "const": 0
+    "const": 0.0
   },
   "soilstorecap": {
     "Code_Paved": {
@@ -710,7 +710,7 @@
     "Code_Bsoil": {
       "SoilTypeCode": "SoilStoreCap"
     },
-    "const": 0
+    "const": 0.0
   },
   "startdls": "StartDLS",
   "statelimit": {
