@@ -25,11 +25,14 @@ import pandas as pd
 from pandas import DataFrame as df
 
 from .supy_env import path_supy_module
-from .supy_load import (init_SUEWS_dict, load_SUEWS_Forcing_ESTM_df_raw,
+from .supy_load import (init_SUEWS_dict, load_InitialCond_grid_df,
+                        load_SUEWS_dict_ModConfig,
+                        load_SUEWS_Forcing_ESTM_df_raw,
                         load_SUEWS_Forcing_met_df_raw, resample_forcing_met,
                         resample_linear)
 from .supy_post import pack_df_output, pack_df_output_array, pack_df_state
-from .supy_run import suews_cal_tstep, suews_cal_tstep_multi
+from .supy_run import (pack_grid_dict, suews_cal_tstep, suews_cal_tstep_multi,
+                       suews_cal_tstep_multi_test)
 
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
@@ -38,13 +41,15 @@ from .supy_run import suews_cal_tstep, suews_cal_tstep_multi
 # convert dict_InitCond to pandas Series and DataFrame
 # return pd.DataFrame
 @functools.lru_cache(maxsize=16)
-def init_SUEWS_pd(path_runcontrol):
-    dict_mod_cfg, dict_state_init = init_SUEWS_dict(path_runcontrol)
+def init_SUEWS_pd_test(path_runcontrol):
+    df_state_init = load_InitialCond_grid_df(path_runcontrol)
+    dict_ModConfig = load_SUEWS_dict_ModConfig(path_runcontrol)
+    # dict_mod_cfg, dict_state_init = init_SUEWS_dict(path_runcontrol)
     # ser_mod_cfg: all static model configuration info
-    ser_mod_cfg = pd.Series(dict_mod_cfg)
+    ser_mod_cfg = pd.Series(dict_ModConfig)
     # df_state_init: initial conditions for SUEWS simulations
-    df_state_init = df.from_dict(dict_state_init).T
-    df_state_init.index.set_names('grid', inplace=True)
+    # df_state_init = df.from_dict(dict_state_init).T
+    # df_state_init.index.set_names('grid', inplace=True)
 
     return ser_mod_cfg, df_state_init
 
@@ -106,7 +111,7 @@ def load_SUEWS_Forcing_df_grid(path_runcontrol, grid):
         right_index=True)
 
     # add Ts forcing for ESTM
-    if df_state_init.iloc[0]['storageheatmethod'] == 4:
+    if df_state_init.iloc[0]['storageheatmethod'][0] == 4:
         # load ESTM forcing
         df_forcing_estm = load_SUEWS_Forcing_ESTM_df_raw(
             path_input, filecode, grid, tstep_ESTM_in, multipleestmfiles)
@@ -155,6 +160,96 @@ def load_SampleData():
 # 2. compact wrapper for running a whole simulation
 # # main calculation
 # input as DataFrame
+def run_suews_df_test(df_forcing, df_init_input, save_state=False):
+    # save df_init without changing its original data
+    # df.copy() in pandas does work as a standard python deepcopy
+    # df_init = pd.DataFrame(copy.deepcopy(df_init_input.to_dict()))
+    df_init = df_init_input.copy()
+    # grid list determined by initial states
+    grid_list = df_init.index
+
+    # initialise dicts for holding results and model states
+    dict_state = {}
+    dict_output = {}
+
+    if save_state:
+        # use slower more functional single step wrapper
+        # start tstep retrived from forcing data
+        t_start = df_forcing.index[0]
+        # convert df to dict with `itertuples` for better performance
+        dict_forcing = {row.Index: row._asdict()
+                        for row in df_forcing.itertuples()}
+
+        # dict_state is used to save model states for later use
+        dict_state = {
+            # (t_start, grid): series_state_init.to_dict()
+            (t_start, grid): pack_grid_dict(series_state_init)
+            for grid, series_state_init
+            in df_init.iterrows()
+        }
+        for tstep in df_forcing.index:
+            # temporal loop
+            # initialise output of tstep:
+            # load met_forcing if the same across all grids:
+            met_forcing_tstep = dict_forcing[tstep]
+            # spatial loop
+            for grid in grid_list:
+                dict_state_start = dict_state[(tstep, grid)]
+                # calculation at one step:
+                # series_state_end, series_output_tstep = suews_cal_tstep_df(
+                #     series_state_start, met_forcing_tstep)
+                dict_state_end, dict_output_tstep = suews_cal_tstep(
+                    dict_state_start, met_forcing_tstep,
+                    save_state=save_state)
+                # update output & model state at tstep for the current grid
+                dict_output.update({(tstep, grid): dict_output_tstep})
+                dict_state.update({(tstep + 1, grid): dict_state_end})
+
+        # pack results as easier DataFrames
+        df_output = pack_df_output(dict_output)
+        df_state = pack_df_state(dict_state)
+
+    else:
+        # use higher level wrapper that calculate at a `block` level
+        # for better performance
+        dict_state = {
+            # grid: df_init.loc[grid]
+            grid: pack_grid_dict(series_state_init)
+            for grid, series_state_init
+            in df_init.iterrows()
+        }
+        for grid in grid_list:
+            dict_state_start_grid = dict_state[grid]
+            dict_state_end, dict_output_array = suews_cal_tstep_multi_test(
+                dict_state_start_grid, df_forcing)
+            # update output & model state at tstep for the current grid
+            dict_output.update({grid: dict_output_array})
+            dict_state.update({grid: dict_state_end})
+
+        # save results as time-aware DataFrame
+        df_output0 = pack_df_output_array(dict_output, df_forcing)
+        df_output = df_output0.replace(-999., np.nan)
+        df_state = pd.DataFrame(dict_state).T
+
+    return df_output, df_state
+
+
+##############################################################################
+# old: archived
+# convert dict_InitCond to pandas Series and DataFrame
+# return pd.DataFrame
+@functools.lru_cache(maxsize=16)
+def init_SUEWS_pd(path_runcontrol):
+    dict_mod_cfg, dict_state_init = init_SUEWS_dict(path_runcontrol)
+    # ser_mod_cfg: all static model configuration info
+    ser_mod_cfg = pd.Series(dict_mod_cfg)
+    # df_state_init: initial conditions for SUEWS simulations
+    df_state_init = df.from_dict(dict_state_init).T
+    df_state_init.index.set_names('grid', inplace=True)
+
+    return ser_mod_cfg, df_state_init
+
+
 def run_suews_df(df_forcing, df_init_input, save_state=False):
     # save df_init without changing its original data
     # df.copy() in pandas does work as a standard python deepcopy
