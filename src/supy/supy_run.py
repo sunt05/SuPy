@@ -2,6 +2,7 @@ import copy
 from ast import literal_eval
 
 import numpy as np
+import pandas as pd
 from suews_driver import suews_driver as sd
 
 from .supy_load import (gen_suews_arg_info_df, get_args_suews,
@@ -45,7 +46,7 @@ dict_var_inout = {k: None for k in set_var_inout}
 def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep,
                     save_state=False):
     # use single dict as input for suews_cal_main
-    dict_input = dict_state_start.copy()
+    dict_input = copy.deepcopy(dict_state_start)
     dict_input.update(dict_met_forcing_tstep)
     dict_input = {k: dict_input[k] for k in list_var_input}
 
@@ -60,8 +61,12 @@ def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep,
     # update state variables
     if save_state:  # deep copy states results
         dict_state_end = dict_state_start.copy()
-        dict_state_end.update({var: copy.copy(dict_input[var])
-                               for var in list_var_inout})
+        dict_state_end.update(
+            {
+                var: copy.copy(dict_input[var])
+                for var in list_var_inout
+            }
+        )
     else:  # only reference to dict_state_start
         dict_state_end = dict_state_start
 
@@ -76,43 +81,12 @@ def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep,
     return dict_state_end, dict_output
 
 
-# # high-level wrapper: suews_cal_tstep
-# def suews_cal_tstep_multi(df_state_start_grid, df_met_forcing_block):
-#     # use single dict as input for suews_cal_main
-#     dict_input = df_state_start_grid.copy().to_dict()
-#     dict_input.update({
-#         'metforcingblock': np.array(
-#             df_met_forcing_block.drop(
-#                 'metforcingdata_grid', axis=1), order='F'),
-#         'ts5mindata_ir': np.array(
-#             df_met_forcing_block['ts5mindata_ir'], order='F'),
-#         'len_sim': df_met_forcing_block.shape[0]})
-#     # dict_input = {k: dict_input[k] for k in list_var_input}
-#
-#     # main calculation:
-#     res_suews_tstep_multi = sd.suews_cal_multitsteps(**dict_input)
-#
-#     # update state variables
-#     dict_state_end = df_state_start_grid.copy().to_dict()
-#     dict_state_end.update({var: dict_input[var] for var in list_var_inout})
-#
-#     # update timestep info
-#     dict_state_end['tstep_prev'] = dict_state_end['tstep']
-#     dict_state_end['dt_since_start'] += dict_state_end['tstep']
-#
-#     # pack output
-#     dict_output_array = {k: v for k, v in zip(
-#         list_var_output[1:], res_suews_tstep_multi)}
-#
-#     return dict_state_end, dict_output_array
-
-
 # high-level wrapper: suews_cal_tstep
 # def suews_cal_tstep_multi(df_state_start_grid, df_met_forcing_block):
 def suews_cal_tstep_multi(dict_state_start_grid, df_met_forcing_block):
     # use single dict as input for suews_cal_main
     # dict_input = df_state_start_grid.copy().to_dict()
-    dict_input = copy.copy(dict_state_start_grid)
+    dict_input = copy.deepcopy(dict_state_start_grid)
     dict_input.update({
         'metforcingblock': np.array(
             df_met_forcing_block.drop(
@@ -137,12 +111,18 @@ def suews_cal_tstep_multi(dict_state_start_grid, df_met_forcing_block):
 
     # update state variables
     # dict_state_end = copy.copy(dict_input)
-    dict_state_end = copy.copy(dict_input)
-    dict_state_end.update({var: dict_input[var] for var in list_var_inout})
+    dict_state_end = copy.copy(dict_state_start_grid)
+    dict_state_end.update(
+        {
+            var: dict_input[var] for var in list_var_inout_multitsteps
+        }
+    )
 
     # update timestep info
     dict_state_end['tstep_prev'] = dict_state_end['tstep']
-    dict_state_end['dt_since_start'] += dict_state_end['tstep']
+    idx_dt = df_met_forcing_block.index
+    duration_s = int((idx_dt[-1] - idx_dt[0]).total_seconds())
+    dict_state_end['dt_since_start'] += duration_s
 
     # pack output
     dict_output_array = {k: v for k, v in zip(
@@ -182,6 +162,30 @@ def pack_grid_dict(grid_ser):
     }
     dict_var.update(dict_var_int)
     return dict_var
+
+
+# pack final state to the same format as initial state
+def pact_df_state_final(df_state_end, df_state_start):
+    ser_col_multi = df_state_start.columns.to_series()
+    idx = df_state_end.index
+    size_idx = idx.size
+
+    dict_packed = {}
+    for var in df_state_end.to_dict():
+        # print(var)
+        # print(df_state_end[var].values.shape)
+        # reshape values to (number of columns, number of grids)
+        val_flatten = np.concatenate(df_state_end[var].values).ravel()
+        val = val_flatten.reshape((size_idx, -1)).T
+        col_names = ser_col_multi[var].values
+        dict_var = dict(zip(col_names, val))
+        dict_packed.update(dict_var)
+
+    df_state_end_packed = pd.DataFrame(dict_packed, index=idx)
+    df_state_end_packed.columns.set_names(['var', 'ind_dim'], inplace=True)
+    # df_state_end_packed.index.set_names('grid', inplace=True)
+
+    return df_state_end_packed
 
 
 # # archived

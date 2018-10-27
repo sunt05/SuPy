@@ -881,6 +881,7 @@ def gen_df_siteselect_exp(path_input):
     return df_siteselect_exp
 
 
+# fully unravel nested lists into one flattened list
 def flatten_list(l):
     res = []
     if isinstance(l, list):
@@ -1051,6 +1052,9 @@ def load_SUEWS_SurfaceChar_df(path_input):
     if len_grid_orig == 1:
         df_sfc_char = df_sfc_char.drop_duplicates()
 
+    # set level names for columns
+    df_sfc_char.columns.set_names(['var', 'ind_dim'], inplace=True)
+
     return df_sfc_char
 
 
@@ -1153,6 +1157,8 @@ def load_SUEWS_InitialCond_df(path_runcontrol):
     df_gridSurfaceChar = load_SUEWS_SurfaceChar_df(path_input)
     # only use the first year of each grid as base for initial conditions
     df_init = df_gridSurfaceChar.groupby('Grid').aggregate(np.min)
+    # rename 'Grid' to 'grid' for consistency
+    df_init.index.set_names('grid')
 
     # incorporate numeric entries from dict_ModConfig
     list_var_dim_from_dict_ModConfig = [
@@ -1166,15 +1172,6 @@ def load_SUEWS_InitialCond_df(path_runcontrol):
         val_x = df_init[val] if isinstance(val, str) else val
         for ind in ind_dim:
             df_init[(var, str(ind))] = val_x
-
-    # create an empty df
-    # list_grid = df_gridSurfaceChar_init.index
-    # df_InitialCond_grid = pd.DataFrame(
-    #     np.ones([len(list_grid), len(dict_InitCond_default)]),
-    #     index=list_grid,
-    #     columns=list(dict_InitCond_default)
-    # )
-    # df_InitialCond_grid.index.set_names('Grid', inplace=True)
 
     # initialise df_InitialCond_grid with default values
     for k in dict_InitCond_default:
@@ -1366,6 +1363,9 @@ def load_InitialCond_grid_df(path_runcontrol):
     # add initial daily state into `df_init`
     df_init = add_state_init_df(df_init)
 
+    # # sort column names for consistency
+    # df_init = df_init.sort_index(axis=1)
+    df_init.index.set_names('grid', inplace=True)
     return df_init
 
 

@@ -104,7 +104,7 @@ def pack_df_output(dict_output):
     df_output = pd.DataFrame(dict_output).T
     # df_output = pd.concat(dict_output).to_frame().unstack()
     # set index level names
-    index = df_output.index.set_names(['tstep', 'grid'])
+    index = df_output.index.set_names(['datetime', 'grid'])
     # clean columns
     # df_output.columns = df_output.columns.droplevel()
     columns = gen_MultiIndex(df_output.iloc[0])
@@ -117,7 +117,7 @@ def pack_df_state(dict_state):
     df_state = pd.DataFrame(dict_state).T
     # df_state = pd.concat(dict_state).to_frame().unstack()
     # set index level names
-    df_state.index = df_state.index.set_names(['tstep', 'grid'])
+    df_state.index = df_state.index.set_names(['datetime', 'grid'])
     # clean columns
     # df_state.columns = df_state.columns.droplevel()
 
