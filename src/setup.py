@@ -12,7 +12,7 @@ def readme():
 
 
 setup(name='supy',
-      version='0.5.7',
+      version='0.5.8',
       description='the SUEWS model that speaks python',
       long_description=readme(),
       url='https://github.com/sunt05/SuPy',
