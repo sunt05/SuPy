@@ -1,4 +1,5 @@
 from setuptools import setup
+from supy.version import __version__
 # from setuptools import Distribution
 # from numpy.distutils.core import setup
 # import platform
@@ -12,7 +13,7 @@ def readme():
 
 
 setup(name='supy',
-      version='0.5.8',
+      version=__version__,
       description='the SUEWS model that speaks python',
       long_description=readme(),
       url='https://github.com/sunt05/SuPy',
@@ -36,7 +37,7 @@ setup(name='supy',
           'scipy',
           'f90nml',
           # 'ujson',
-          'suews_driver>=2018b6'  # a separate f2py-based driver
+          'supy_driver>=2018b10'  # a separate f2py-based driver
       ],
       include_package_data=True,
       test_suite='nose.collector',

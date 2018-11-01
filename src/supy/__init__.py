@@ -13,3 +13,4 @@ from .supy_module import (init_SUEWS_pd, load_SampleData,
                           load_SUEWS_Forcing_df_grid, run_suews_df)
 
 from .supy_util import *
+from .version import __version__
