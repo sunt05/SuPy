@@ -107,3 +107,9 @@ suews_sample.txt
 suews_1h.txt
 *.lock
 *.dirlock
+
+# dask
+dask-worker-space
+
+# dev space
+dev-test/

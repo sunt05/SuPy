@@ -1,7 +1,5 @@
 # supy utilities
-import os
 
-import numpy as np
 import pandas as pd
 
 
@@ -26,7 +24,6 @@ def fill_gap_one(ser_test, freq='1D', pattern='010'):
     ser_find = (rsmp.get_group(x) for x in loc_ser)
     if len(loc_ser) == 0:
         return ser_test
-    # print len(loc_ser), loc_ser
 
     # assign series:
     # ser_prev: series prior to gapped period

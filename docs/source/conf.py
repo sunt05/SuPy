@@ -20,15 +20,15 @@ import platform
 
 # -- Project information -----------------------------------------------------
 
-project = u'supy'
+project = u'SuPy'
 doc_name = u'SuPy Documentation'
 copyright = u'2018, Dr Ting Sun'
 author = u'Dr Ting Sun'
 
 # The short X.Y version
-version = u''
+version = u'2018.11'
 # The full version, including alpha/beta/rc tags
-release = u'0.4'
+release = u'2018.11.4'
 
 
 # -- General configuration ---------------------------------------------------
@@ -76,7 +76,7 @@ language = None
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path .
 
-exclude_patterns = []
+exclude_patterns = ['_build', '**.ipynb_checkpoints']
 # tags.add('html')
 # if tags.has('html'):
 #     exclude_patterns = ['references.rst']
@@ -123,6 +123,44 @@ html_theme_path = ["_themes"]
 # documentation.
 #
 # html_theme_options = {}
+# This is processed by Jinja2 and inserted before each notebook
+nbsphinx_prolog = r"""
+{% set docname = env.doc2path(env.docname, base='docs') %}
+
+.. only:: html
+
+    .. role:: raw-html(raw)
+        :format: html
+
+    .. nbinfo::
+
+        This page was generated from `{{ docname }}`__.
+        Interactive online version:
+        :raw-html:`<a href="https://mybinder.org/v2/gh/Urban-Meteorology-Reading/BLM/master?filepath={{ docname }}"><img alt="Binder badge" src="https://mybinder.org/badge.svg" style="vertical-align:text-bottom"></a>`
+        Slideshow:
+        :raw-html:`<a href="https://nbviewer.jupyter.org/format/slides/github/Urban-Meteorology-Reading/BLM/tree/master/{{ docname }}"><img alt="Binder badge" src="https://img.shields.io/badge/render-nbviewer-orange.svg" style="vertical-align:text-bottom"></a>`
+
+    __ https://github.com/Urban-Meteorology-Reading/BLM/blob/master/{{ docname }}
+
+.. raw:: latex
+
+    \vfil\penalty-1\vfilneg
+    \vspace{\baselineskip}
+    \textcolor{gray}{The following section was generated from
+    \texttt{\strut{}{{ docname }}}\\[-0.5\baselineskip]
+    \noindent\rule{\textwidth}{0.4pt}}
+    \vspace{-2\baselineskip}
+"""
+
+# This is processed by Jinja2 and inserted after each notebook
+nbsphinx_epilog = r"""
+.. raw:: latex
+
+    \textcolor{gray}{\noindent\rule{\textwidth}{0.4pt}\\
+    \hbox{}\hfill End of
+    \texttt{\strut{}{{ env.doc2path(env.docname, base='doc') }}}}
+    \vfil\penalty-1\vfilneg
+"""
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
