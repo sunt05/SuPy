@@ -12,7 +12,7 @@ from datetime import timedelta
 # import sys
 import numpy as np
 import pandas as pd
-from suews_driver import suews_driver as sd
+from supy_driver import suews_driver as sd
 
 import f90nml
 
@@ -530,7 +530,7 @@ def load_SUEWS_Forcing_met_df_pattern(forcingfile_met_pattern):
         'qn1_obs', 'qh_obs', 'qe', 'qs_obs', 'qf_obs',
         'avu1', 'avrh', 'temp_c', 'press_hpa', 'precip', 'avkdn',
         'snow_obs', 'ldown_obs', 'fcld_obs',
-        'wuh', 'xsmd', 'lai_obs', 'kdiff', 'kdir', 'wdir'
+        'wu_m3', 'xsmd', 'lai_obs', 'kdiff', 'kdir', 'wdir'
     ]
     # rename these columns to match variables via the driver interface
     df_forcing_met.columns = col_suews_met_forcing

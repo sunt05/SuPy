@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from suews_driver import suews_driver as sd
+from supy_driver import suews_driver as sd
 
 
 ##############################################################################

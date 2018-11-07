@@ -3,7 +3,7 @@ from ast import literal_eval
 
 import numpy as np
 import pandas as pd
-from suews_driver import suews_driver as sd
+from supy_driver import suews_driver as sd
 
 from .supy_load import (gen_suews_arg_info_df, get_args_suews,
                         get_args_suews_multitsteps)

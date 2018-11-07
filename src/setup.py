@@ -32,7 +32,7 @@ setup(name='supy',
       # distclass=BinaryDistribution,
       ext_modules=[],
       install_requires=[
-          'numpy',
+          'numpy>=1.15.2',
           'pandas',
           'scipy',
           'f90nml',

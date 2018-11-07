@@ -47,11 +47,11 @@ def init_SUEWS_pd(path_runcontrol_x):
         # df_state_init: initial conditions for SUEWS simulations
         df_state_init = load_InitialCond_grid_df(path_runcontrol)
 
-        # ser_mod_cfg: all static model configuration info
-        dict_ModConfig = load_SUEWS_dict_ModConfig(path_runcontrol)
-        ser_mod_cfg = pd.Series(dict_ModConfig)
+        # # ser_mod_cfg: all static model configuration info
+        # dict_ModConfig = load_SUEWS_dict_ModConfig(path_runcontrol)
+        # ser_mod_cfg = pd.Series(dict_ModConfig)
 
-    return ser_mod_cfg, df_state_init
+    return df_state_init
 
 
 # load forcing datasets of `grid`
@@ -62,7 +62,8 @@ def load_SUEWS_Forcing_df_grid(path_runcontrol_x, grid):
     except FileNotFoundError:
         print('{path} does not exists!'.format(path=path_runcontrol))
     else:
-        ser_mod_cfg, df_state_init = init_SUEWS_pd(path_runcontrol)
+        dict_mod_cfg = load_SUEWS_dict_ModConfig(path_runcontrol)
+        df_state_init = init_SUEWS_pd(path_runcontrol)
 
         # load setting variables from ser_mod_cfg
         (
@@ -73,24 +74,24 @@ def load_SUEWS_Forcing_df_grid(path_runcontrol_x, grid):
             multiplemetfiles,
             multipleestmfiles,
             dir_input_cfg
-        ) = ser_mod_cfg[
-            [
-                'filecode',
-                'kdownzen',
-                'resolutionfilesin',
-                'resolutionfilesinestm',
-                'multiplemetfiles',
-                'multipleestmfiles',
-                'fileinputpath'
-            ]
+        ) = (dict_mod_cfg[x] for x in
+             [
+            'filecode',
+            'kdownzen',
+            'resolutionfilesin',
+            'resolutionfilesinestm',
+            'multiplemetfiles',
+            'multipleestmfiles',
+            'fileinputpath'
         ]
+        )
         tstep_mod, lat, lon, alt, timezone = df_state_init.loc[
             grid,
             [(x, '0') for x in ['tstep', 'lat', 'lng', 'alt', 'timezone']]
         ].values
 
         path_site = path_runcontrol.parent
-        path_input = path_site / ser_mod_cfg['fileinputpath']
+        path_input = path_site / dict_mod_cfg['fileinputpath']
 
         # load raw data
         # met forcing
@@ -148,13 +149,13 @@ def load_SUEWS_Forcing_df_grid(path_runcontrol_x, grid):
 def load_SampleData():
     path_SampleData = Path(path_supy_module) / 'sample_run'
     path_runcontrol = path_SampleData / 'RunControl.nml'
-    ser_mod_cfg, df_state_init = init_SUEWS_pd(path_runcontrol)
+    df_state_init = init_SUEWS_pd(path_runcontrol)
     # path_input = path_runcontrol.parent / ser_mod_cfg['fileinputpath']
     df_forcing_tstep = load_SUEWS_Forcing_df_grid(
         path_runcontrol,
         df_state_init.index[0]
     )
-    return ser_mod_cfg, df_state_init, df_forcing_tstep
+    return df_state_init, df_forcing_tstep
 
 
 # input processing code end here
