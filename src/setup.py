@@ -33,12 +33,12 @@ setup(name='supy',
       ext_modules=[],
       install_requires=[
           'numpy>=1.15.2',
-          'pandas',
+          'pandas>=0.23.4',
           'scipy',
           'f90nml',
           'matplotlib',
           'seaborn',
-          'supy_driver>=2018b12'  # a separate f2py-based driver
+          'supy_driver>=2018b13'  # a separate f2py-based driver
       ],
       include_package_data=True,
       test_suite='nose.collector',
