@@ -36,8 +36,9 @@ setup(name='supy',
           'pandas',
           'scipy',
           'f90nml',
-          # 'ujson',
-          'supy_driver>=2018b10'  # a separate f2py-based driver
+          'matplotlib',
+          'seaborn',
+          'supy_driver>=2018b12'  # a separate f2py-based driver
       ],
       include_package_data=True,
       test_suite='nose.collector',

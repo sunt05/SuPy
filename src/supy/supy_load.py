@@ -12,9 +12,9 @@ from datetime import timedelta
 # import sys
 import numpy as np
 import pandas as pd
-from supy_driver import suews_driver as sd
 
 import f90nml
+from supy_driver import suews_driver as sd
 
 from .supy_env import path_supy_module
 from .supy_misc import path_insensitive
@@ -32,10 +32,12 @@ def get_args_suews(docstring=sd.suews_cal_main.__doc__):
         dtype=str)
 
     # get the information of input variables for SUEWS_driver
-    posInput = np.where(
-        np.logical_or(
-            docLines == 'Parameters', docLines == 'Returns'))
-    varInputLines = docLines[posInput[0][0] + 2:posInput[0][1] - 1]
+    # posInput = np.where(
+    #     np.logical_or(
+    #         docLines == 'Parameters', docLines == 'Returns'))
+    # varInputLines = docLines[posInput[0][0] + 2:posInput[0][1] - 1]
+    ser_docs = pd.Series(docLines)
+    varInputLines = ser_docs[ser_docs.str.contains('input|in/output')].values
     varInputInfo = np.array([[xx.rstrip() for xx in x.split(':')]
                              for x in varInputLines])
     dict_InputInfo = {xx[0]: xx[1] for xx in varInputInfo}
@@ -72,10 +74,11 @@ def get_args_suews_multitsteps():
         dtype=str)
 
     # get the information of input variables for SUEWS_driver
-    posInput = np.where(
-        np.logical_or(
-            docLines == 'Parameters', docLines == 'Returns'))
-    varInputLines = docLines[posInput[0][0] + 2:posInput[0][1] - 1]
+    # posInput = np.where(
+    #     np.logical_or(
+    #         docLines == 'Parameters', docLines == 'Returns'))
+    ser_docs = pd.Series(docLines)
+    varInputLines = ser_docs[ser_docs.str.contains('input|in/output')].values
     varInputInfo = np.array([[xx.rstrip() for xx in x.split(':')]
                              for x in varInputLines])
     dict_InputInfo = {xx[0]: xx[1] for xx in varInputInfo}

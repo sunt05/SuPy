@@ -92,8 +92,8 @@ def suews_cal_tstep_multi(dict_state_start_grid, df_met_forcing_block):
             df_met_forcing_block.drop(
                 columns=[
                     'metforcingdata_grid',
-                    # 'ts5mindata_ir',
-                    # 'isec',
+                    'ts5mindata_ir',
+                    'isec',
                 ]),
             order='F'),
         'ts5mindata_ir': np.array(
@@ -165,7 +165,7 @@ def pack_grid_dict(grid_ser):
 
 
 # pack final state to the same format as initial state
-def pact_df_state_final(df_state_end, df_state_start):
+def pack_df_state_final(df_state_end, df_state_start):
     ser_col_multi = df_state_start.columns.to_series()
     idx = df_state_end.index
     size_idx = idx.size

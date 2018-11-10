@@ -28,7 +28,7 @@ from .supy_load import (load_InitialCond_grid_df, load_SUEWS_dict_ModConfig,
                         load_SUEWS_Forcing_met_df_raw, resample_forcing_met,
                         resample_linear)
 from .supy_post import pack_df_output, pack_df_output_array, pack_df_state
-from .supy_run import (pack_grid_dict, pact_df_state_final, suews_cal_tstep,
+from .supy_run import (pack_grid_dict, pack_df_state_final, suews_cal_tstep,
                        suews_cal_tstep_multi)
 
 ##############################################################################
@@ -243,6 +243,6 @@ def run_suews_df(df_forcing, df_init_input, save_state=False):
         # df_state = pd.DataFrame(dict_state).T
         # df_state.index.set_names('grid')
 
-    df_state = pact_df_state_final(df_state, df_init)
+    df_state = pack_df_state_final(df_state, df_init)
 
     return df_output, df_state
