@@ -16,11 +16,10 @@
 
 from __future__ import division, print_function
 
-import functools
+# import functools
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 
 from .supy_env import path_supy_module
 from .supy_load import (load_InitialCond_grid_df, load_SUEWS_dict_ModConfig,
@@ -28,7 +27,7 @@ from .supy_load import (load_InitialCond_grid_df, load_SUEWS_dict_ModConfig,
                         load_SUEWS_Forcing_met_df_raw, resample_forcing_met,
                         resample_linear)
 from .supy_post import pack_df_output, pack_df_output_array, pack_df_state
-from .supy_run import (pack_grid_dict, pack_df_state_final, suews_cal_tstep,
+from .supy_run import (pack_df_state_final, pack_grid_dict, suews_cal_tstep,
                        suews_cal_tstep_multi)
 
 ##############################################################################
@@ -38,7 +37,7 @@ from .supy_run import (pack_grid_dict, pack_df_state_final, suews_cal_tstep,
 # convert dict_InitCond to pandas Series and DataFrame
 # return pd.DataFrame
 # @functools.lru_cache(maxsize=16)
-def init_SUEWS_pd(path_runcontrol_x):
+def init_supy_df(path_runcontrol_x):
     try:
         path_runcontrol = Path(path_runcontrol_x).expanduser().resolve()
     except FileNotFoundError:
@@ -55,15 +54,15 @@ def init_SUEWS_pd(path_runcontrol_x):
 
 
 # load forcing datasets of `grid`
-@functools.lru_cache(maxsize=16)
-def load_SUEWS_Forcing_df_grid(path_runcontrol_x, grid):
+# @functools.lru_cache(maxsize=16)
+def load_forcing_grid(path_runcontrol_x, grid):
     try:
         path_runcontrol = Path(path_runcontrol_x).expanduser().resolve()
     except FileNotFoundError:
         print('{path} does not exists!'.format(path=path_runcontrol))
     else:
         dict_mod_cfg = load_SUEWS_dict_ModConfig(path_runcontrol)
-        df_state_init = init_SUEWS_pd(path_runcontrol)
+        df_state_init = init_supy_df(path_runcontrol)
 
         # load setting variables from ser_mod_cfg
         (
@@ -138,6 +137,8 @@ def load_SUEWS_Forcing_df_grid(path_runcontrol_x, grid):
             # insert some placeholder values
             df_forcing_tstep['ts5mindata_ir'] = df_forcing_tstep['temp_c']
 
+        # coerced precision here to prevent numerical errors inside Fortran
+        df_forcing_tstep = np.around(df_forcing_tstep, decimals=10)
         # new columns for later use in main calculation
         df_forcing_tstep[['iy', 'id', 'it', 'imin']] = df_forcing_tstep[[
             'iy', 'id', 'it', 'imin']].astype(np.int64)
@@ -149,14 +150,13 @@ def load_SUEWS_Forcing_df_grid(path_runcontrol_x, grid):
 def load_SampleData():
     path_SampleData = Path(path_supy_module) / 'sample_run'
     path_runcontrol = path_SampleData / 'RunControl.nml'
-    df_state_init = init_SUEWS_pd(path_runcontrol)
+    df_state_init = init_supy_df(path_runcontrol)
     # path_input = path_runcontrol.parent / ser_mod_cfg['fileinputpath']
-    df_forcing_tstep = load_SUEWS_Forcing_df_grid(
+    df_forcing_tstep = load_forcing_grid(
         path_runcontrol,
         df_state_init.index[0]
     )
     return df_state_init, df_forcing_tstep
-
 
 # input processing code end here
 ##############################################################################
@@ -166,7 +166,7 @@ def load_SampleData():
 # 2. compact wrapper for running a whole simulation
 # # main calculation
 # input as DataFrame
-def run_suews_df(df_forcing, df_init_input, save_state=False):
+def run_supy(df_forcing, df_init_input, save_state=False):
     # save df_init without changing its original data
     # df.copy() in pandas does work as a standard python deepcopy
     df_init = df_init_input.copy()
@@ -204,8 +204,8 @@ def run_suews_df(df_forcing, df_init_input, save_state=False):
                 # series_state_end, series_output_tstep = suews_cal_tstep_df(
                 #     series_state_start, met_forcing_tstep)
                 dict_state_end, dict_output_tstep = suews_cal_tstep(
-                    dict_state_start, met_forcing_tstep,
-                    save_state=save_state)
+                    dict_state_start, met_forcing_tstep)
+                # save_state=save_state)
                 # update output & model state at tstep for the current grid
                 dict_output.update({(tstep, grid): dict_output_tstep})
                 dict_state.update({(tstep + 1, grid): dict_state_end})

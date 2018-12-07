@@ -12,9 +12,9 @@ from datetime import timedelta
 # import sys
 import numpy as np
 import pandas as pd
+from supy_driver import suews_driver as sd
 
 import f90nml
-from supy_driver import suews_driver as sd
 
 from .supy_env import path_supy_module
 from .supy_misc import path_insensitive
@@ -422,6 +422,14 @@ def resample_precip(data_raw_precip, tstep_mod, tstep_in):
         -tstep_in + tstep_mod, freq='S').resample(
         '{tstep}S'.format(tstep=tstep_mod)).mean().interpolate(
         method='polynomial', order=0)
+    # assign a new start with nan
+    # t_start = data_raw_precip.index.shift(-tstep_in + tstep_mod, freq='S')[0]
+    t_end = data_raw_precip.index[-1]
+    # data_tstep_precip_adj.loc[t_start, :] = np.nan
+    data_tstep_precip_adj.loc[t_end] = np.nan
+    data_tstep_precip_adj = data_tstep_precip_adj.sort_index()
+    data_tstep_precip_adj = data_tstep_precip_adj.asfreq(
+        '{tstep}S'.format(tstep=tstep_mod))
     data_tstep_precip_adj = data_tstep_precip_adj.fillna(value=0.)
     return data_tstep_precip_adj
 
@@ -429,8 +437,6 @@ def resample_precip(data_raw_precip, tstep_mod, tstep_in):
 # resample input forcing by linear interpolation
 def resample_linear(data_raw, tstep_in, tstep_mod):
     # reset index as timestamps
-    # data_raw.index = data_raw.loc[:, ['iy', 'id', 'it', 'imin']].apply(
-    #     func_parse_date_row, 1)
     # shift by half-tstep_in to generate a time series with instantaneous
     # values
     data_raw_shift = data_raw.copy().shift(-tstep_in / 2, freq='S')
@@ -441,13 +447,16 @@ def resample_linear(data_raw, tstep_in, tstep_mod):
         method='polynomial', order=1).rolling(
         window=2, center=False).mean()
 
-    # reindex data_tstep to valid range
-    # ix = pd.date_range(
-    #     data_raw.index[0] - timedelta(seconds=tstep_in - tstep_mod),
-    #     data_raw.index[-1],
-    #     freq='{tstep}S'.format(tstep=tstep_mod))
-    # data_tstep = data_raw_tstep.copy().reindex(
-    #     index=ix).bfill().ffill().dropna()
+    # assign a new start with nan
+    t_start = data_raw.index.shift(-tstep_in + tstep_mod, freq='S')[0]
+    t_end = data_raw.index[-1]
+    data_raw_tstep.loc[t_start, :] = np.nan
+    data_raw_tstep.loc[t_end, :] = np.nan
+
+    # re-align the index so after resampling we can have filled heading part
+    data_raw_tstep = data_raw_tstep.sort_index()
+    data_raw_tstep = data_raw_tstep.asfreq('{tstep}S'.format(tstep=tstep_mod))
+    # fill gaps with valid values
     data_tstep = data_raw_tstep.copy().bfill().ffill().dropna()
 
     # correct temporal information
@@ -1073,9 +1082,23 @@ def load_SUEWS_dict_ModConfig(path_runcontrol):
         'evapmethod': 2,
         'laicalcyes': 1,
         'veg_type': 1,
-        'diagnose': 0,
-        'diagqn': 0,
-        'diagqs': 0
+        'diagnose' :0,
+  'diagnosedisagg' :0,
+  'diagnosedisaggestm' :0,
+  'diagqn' :0,
+  'diagqs' :0,
+  'keeptstepfilesin'     : 0,
+'keeptstepfilesout'    : 0,
+'writeoutoption'       : 0,
+'disaggmethod'         : 1   ,
+'disaggmethodestm'     : 1   ,
+'raindisaggmethod'     : 100 ,
+'rainamongn'           : -999,
+'multrainamongn'       : -999,
+'multrainamongnupperi' : -999,
+'kdownzen'             : 1   ,
+'suppresswarnings':0   ,
+'resolutionfilesin':0  ,
     }
     dict_ModConfig.update(dict_RunControl)
     return dict_ModConfig
@@ -1335,6 +1358,10 @@ def add_state_init_df(df_init):
             df_init[(var, str(ind))] = val_x
 
     # modifications for special cases
+    # `lai_id` corrections:
+    df_init[('lai_id', '(0,)')] = df_init['laiinitialevetr']
+    df_init[('lai_id', '(1,)')] = df_init['laiinitialdectr']
+    df_init[('lai_id', '(2,)')] = df_init['laiinitialgrass']
     # `gdd_id` corrections:
     df_init[('gdd_id', '(2,)')] = 90
     df_init[('gdd_id', '(3,)')] = -90

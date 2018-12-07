@@ -9,8 +9,8 @@
 # 08 Mar 2018: pypi packaging
 ###########################################################################
 
-from .supy_module import (init_SUEWS_pd, load_SampleData,
-                          load_SUEWS_Forcing_df_grid, run_suews_df)
+from .supy_module import (init_supy_df, load_SampleData,
+                          load_forcing_grid, run_supy)
 
 from .supy_util import *
 from .supy_plot import plot_day_clm, plot_comp

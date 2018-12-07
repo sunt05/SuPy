@@ -43,8 +43,8 @@ dict_var_inout = {k: None for k in set_var_inout}
 
 
 # high-level wrapper: suews_cal_tstep
-def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep,
-                    save_state=False):
+def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep):
+                    # save_state=False):
     # use single dict as input for suews_cal_main
     dict_input = copy.deepcopy(dict_state_start)
     dict_input.update(dict_met_forcing_tstep)
@@ -59,16 +59,16 @@ def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep,
     res_suews_tstep = sd.suews_cal_main(**dict_input)
 
     # update state variables
-    if save_state:  # deep copy states results
-        dict_state_end = dict_state_start.copy()
-        dict_state_end.update(
-            {
-                var: copy.copy(dict_input[var])
-                for var in list_var_inout
-            }
-        )
-    else:  # only reference to dict_state_start
-        dict_state_end = dict_state_start
+    # if save_state:  # deep copy states results
+    dict_state_end = copy.deepcopy(dict_state_start)
+    dict_state_end.update(
+        {
+            var: copy.copy(dict_input[var])
+            for var in list_var_inout
+        }
+    )
+    # else:  # only reference to dict_state_start
+        # dict_state_end = copy.deepcopy(dict_state_start)
 
     # update timestep info
     dict_state_end['tstep_prev'] = dict_state_end['tstep']
@@ -111,7 +111,7 @@ def suews_cal_tstep_multi(dict_state_start_grid, df_met_forcing_block):
 
     # update state variables
     # dict_state_end = copy.copy(dict_input)
-    dict_state_end = copy.copy(dict_state_start_grid)
+    dict_state_end = copy.deepcopy(dict_state_start_grid)
     dict_state_end.update(
         {
             var: dict_input[var] for var in list_var_inout_multitsteps
@@ -122,7 +122,7 @@ def suews_cal_tstep_multi(dict_state_start_grid, df_met_forcing_block):
     dict_state_end['tstep_prev'] = dict_state_end['tstep']
     idx_dt = df_met_forcing_block.index
     duration_s = int((idx_dt[-1] - idx_dt[0]).total_seconds())
-    dict_state_end['dt_since_start'] += duration_s
+    dict_state_end['dt_since_start'] += duration_s + dict_state_end['tstep']
 
     # pack output
     dict_output_array = {k: v for k, v in zip(
@@ -151,14 +151,12 @@ def pack_grid_dict(grid_ser):
     dict_var = {
         var: pack_var(grid_ser[var])\
         # .astype(np.float)
-        for var in list_var
-        if var not in ['file_init']
+        for var in list_var if var not in ['file_init']
     }
     # convert to int
     dict_var_int = {
         var: dict_var[var].astype(int)
-        for var in list_var
-        if var in list_var_int
+        for var in list_var if var in list_var_int
     }
     dict_var.update(dict_var_int)
     return dict_var

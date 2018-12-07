@@ -17,7 +17,7 @@ class TestSuPy(TestCase):
 
     # def test_is_sampledata_init_loaded(self):
     #     path_SampleData = Path(sp.path_supy_module) / 'sample_run'
-    #     ser_mod_cfg, df_state_init = sp.init_SUEWS_pd(path_SampleData)
+    #     ser_mod_cfg, df_state_init = sp.init_supy_df(path_SampleData)
     #     test_non_empty = np.all(
     #         [
     #             not ser_mod_cfg.empty,
@@ -40,7 +40,7 @@ class TestSuPy(TestCase):
     def test_is_supy_running(self):
         df_state_init, df_forcing_tstep = sp.load_SampleData()
         df_forcing_part = df_forcing_tstep.iloc[:288 * 1]
-        df_output, df_state = sp.run_suews_df(
+        df_output, df_state = sp.run_supy(
             df_forcing_part, df_state_init,
             save_state=True)
         test_non_empty = np.all(
