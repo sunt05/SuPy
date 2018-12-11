@@ -193,7 +193,7 @@ def gen_suews_arg_info_df(docstring):
 # load configurations: mod_config
 # process RunControl.nml
 # this function can handle all SUEWS nml files
-@functools.lru_cache(maxsize=128)
+# @functools.lru_cache(maxsize=128)
 def load_SUEWS_nml(xfile):
     # remove case issues
     xfile = path_insensitive(xfile)
@@ -218,7 +218,7 @@ def load_SUEWS_table(fileX):
 
 
 # load all tables into variables staring with 'lib_' and filename
-@functools.lru_cache(maxsize=16)
+# @functools.lru_cache(maxsize=16)
 def load_SUEWS_Libs(path_input):
     dict_libs = {}
     for lib, lib_file in dict_libVar2File.items():
@@ -770,7 +770,7 @@ def gen_all_code_df(path_input):
 
 
 # generate df for all const based columns
-@functools.lru_cache(maxsize=16)
+# @functools.lru_cache(maxsize=16)
 def gen_all_const_df(path_input):
     dict_libs = load_SUEWS_Libs(path_input)
     df_siteselect = dict_libs['lib_SiteSelect']
@@ -1082,23 +1082,23 @@ def load_SUEWS_dict_ModConfig(path_runcontrol):
         'evapmethod': 2,
         'laicalcyes': 1,
         'veg_type': 1,
-        'diagnose' :0,
-  'diagnosedisagg' :0,
-  'diagnosedisaggestm' :0,
-  'diagqn' :0,
-  'diagqs' :0,
-  'keeptstepfilesin'     : 0,
-'keeptstepfilesout'    : 0,
-'writeoutoption'       : 0,
-'disaggmethod'         : 1   ,
-'disaggmethodestm'     : 1   ,
-'raindisaggmethod'     : 100 ,
-'rainamongn'           : -999,
-'multrainamongn'       : -999,
-'multrainamongnupperi' : -999,
-'kdownzen'             : 1   ,
-'suppresswarnings':0   ,
-'resolutionfilesin':0  ,
+        'diagnose': 0,
+        'diagnosedisagg': 0,
+        'diagnosedisaggestm': 0,
+        'diagqn': 0,
+        'diagqs': 0,
+        'keeptstepfilesin': 0,
+        'keeptstepfilesout': 0,
+        'writeoutoption': 0,
+        'disaggmethod': 1,
+        'disaggmethodestm': 1,
+        'raindisaggmethod': 100,
+        'rainamongn': -999,
+        'multrainamongn': -999,
+        'multrainamongnupperi': -999,
+        'kdownzen': 1,
+        'suppresswarnings': 0,
+        'resolutionfilesin': 0,
     }
     dict_ModConfig.update(dict_RunControl)
     return dict_ModConfig
@@ -1265,7 +1265,7 @@ def add_veg_init_df(df_init):
     # list of tuples for assignment of leave on/off parameters
     list_var_veg = [
         # aligned for:
-        # (var, ,leavesout==1,leavesout==0)
+        # (var, leavesout==1, leavesout==0)
         ('gdd_1_0', ('gdd_0', '0'), ('const', '0')),
         ('gdd_2_0', ('const', '0'), ('gdd_0', '0')),
         ('laiinitialevetr', ('laimax', '(0,)'), ('laimin', '(0,)')),
@@ -1376,7 +1376,7 @@ def add_state_init_df(df_init):
 
 
 # add additional parameters to `df` produced by `load_SUEWS_InitialCond_df`
-@functools.lru_cache(maxsize=16)
+# @functools.lru_cache(maxsize=16)
 def load_InitialCond_grid_df(path_runcontrol):
     # load base df of InitialCond
     df_init = load_SUEWS_InitialCond_df(path_runcontrol)
