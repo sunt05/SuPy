@@ -251,7 +251,7 @@ def lookup_code_lib(libCode, codeKey, codeValue, path_input):
 
 # a recursive function to retrieve value based on key sequences
 # @hash_dict
-# @functools.lru_cache()
+@functools.lru_cache(maxsize=None)
 def lookup_KeySeq_lib(indexKey, subKey, indexCode, path_input):
     # print('\ntest lookup_KeySeq_lib')
     # print(indexKey, subKey, indexCode, type(subKey))
@@ -1251,9 +1251,6 @@ def add_veg_init_df(df_init):
     # get veg surface fractions
     df_init[('fr_veg_sum', '0')] = df_init['sfr'].iloc[:, 2:5].sum(axis=1)
 
-    # determine veg related parameters based on `leavesoutinitially`
-    ser_leaves_on_flag = df_init['leavesoutinitially'] == 1
-
     # get gdd_0
     veg_sfr = df_init['sfr'].iloc[:, 2:5].T
     veg_sfr = veg_sfr.reset_index(drop=True).T
@@ -1266,17 +1263,21 @@ def add_veg_init_df(df_init):
     list_var_veg = [
         # aligned for:
         # (var, leavesout==1, leavesout==0)
-        ('gdd_1_0', ('gdd_0', '0'), ('const', '0')),
-        ('gdd_2_0', ('const', '0'), ('gdd_0', '0')),
-        ('laiinitialevetr', ('laimax', '(0,)'), ('laimin', '(0,)')),
-        ('laiinitialdectr', ('laimax', '(1,)'), ('laimin', '(1,)')),
-        ('laiinitialgrass', ('laimax', '(2,)'), ('laimin', '(2,)')),
-        ('albevetr0', 'albmax_evetr', 'albmin_evetr'),
-        ('albdectr0', 'albmax_dectr', 'albmin_dectr'),
-        ('albgrass0', 'albmax_grass', 'albmin_grass'),
-        ('decidcap0', 'capmax_dec', 'capmin_dec'),
-        ('porosity0', 'pormin_dec', 'pormax_dec'),
+        (('gdd_1_0', '0'), ('gdd_0', '0'), ('const', '0')),
+        (('gdd_2_0', '0'), ('const', '0'), ('gdd_0', '0')),
+        (('laiinitialevetr', '0'), ('laimax', '(0,)'), ('laimin', '(0,)')),
+        (('laiinitialdectr', '0'), ('laimax', '(1,)'), ('laimin', '(1,)')),
+        (('laiinitialgrass', '0'), ('laimax', '(2,)'), ('laimin', '(2,)')),
+        (('albevetr0', '0'), ('albmax_evetr', '0'), ('albmin_evetr', '0')),
+        (('albdectr0', '0'), ('albmax_dectr', '0'), ('albmin_dectr', '0')),
+        (('albgrass0', '0'), ('albmax_grass', '0'), ('albmin_grass', '0')),
+        (('decidcap0', '0'), ('capmax_dec', '0'), ('capmin_dec', '0')),
+        (('porosity0', '0'), ('pormin_dec', '0'), ('pormax_dec', '0')),
     ]
+
+    # determine veg related parameters based on `leavesoutinitially`
+    ser_leaves_on_flag = pd.Series(
+        (df_init['leavesoutinitially'] == 1).values.flatten())
 
     # set veg related parameters
     for var_veg, var_leaves_on, var_leaves_off in list_var_veg:
@@ -1284,10 +1285,23 @@ def add_veg_init_df(df_init):
         # get default values based on ser_leaves_on_flag
         val_dft = df_init[var_leaves_on]\
             .where(ser_leaves_on_flag, df_init[var_leaves_off])
+        # if 'lai' in var_veg[0]:
+        #     print('ser_leaves_on_flag', ser_leaves_on_flag)
+        #     print('var_leaves_on', df_init[var_leaves_on].values)
+        #     print('var_leaves_off', df_init[var_leaves_off].values)
+        #     print('val_dft', val_dft.values)
+        #     print('')
         # replace with val_dft if set as -999 (i.e., nan)
-        ser_nan_flag = ~(df_init[var_veg] == -999)
-        df_init[var_veg] = df_init[var_veg].where(
-            ser_nan_flag, val_dft, axis=1)
+        ser_valid_flag = ~(df_init[var_veg] == -999)
+        # ser_nan_flag = (df_init[var_veg] == -999)
+
+        df_init[var_veg] = df_init[var_veg].where(ser_valid_flag, val_dft)
+        # if 'lai' in var_veg[0]:
+        #     print(var_veg, df_init[var_veg].values)
+        #     print('ser_nan_flag', ser_valid_flag.values)
+        #     print('val_dft', val_dft.values)
+        #     print('\n')
+
 
     return df_init
 
@@ -1384,11 +1398,14 @@ def load_InitialCond_grid_df(path_runcontrol):
     # add Initial Condition variables from namelist file
     df_init = add_file_init_df(df_init)
 
-    # add veg info into `df_init`
-    df_init = add_veg_init_df(df_init)
+    # # add veg info into `df_init`
+    # df_init = add_veg_init_df(df_init)
 
     # add surface specific info into `df_init`
     df_init = add_sfc_init_df(df_init)
+
+    # add veg info into `df_init`
+    df_init = add_veg_init_df(df_init)
 
     # add initial daily state into `df_init`
     df_init = add_state_init_df(df_init)
