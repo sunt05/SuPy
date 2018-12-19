@@ -67,8 +67,6 @@ def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep):
             for var in list_var_inout
         }
     )
-    # else:  # only reference to dict_state_start
-        # dict_state_end = copy.deepcopy(dict_state_start)
 
     # update timestep info
     dict_state_end['tstep_prev'] = dict_state_end['tstep']

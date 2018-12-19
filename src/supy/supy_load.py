@@ -1302,7 +1302,6 @@ def add_veg_init_df(df_init):
         #     print('val_dft', val_dft.values)
         #     print('\n')
 
-
     return df_init
 
 
