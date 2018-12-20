@@ -21,3 +21,4 @@ help:
 	pipreqs .
 	pip install -r requirements.txt
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	rm -rf requirements.txt
