@@ -16,6 +16,7 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 import platform
+import supy
 
 
 # -- Project information -----------------------------------------------------
@@ -26,9 +27,9 @@ copyright = u'2018, Dr Ting Sun'
 author = u'Dr Ting Sun'
 
 # The short X.Y version
-version = u'2018.11'
+version = supy.__version__
 # The full version, including alpha/beta/rc tags
-release = u'2018.11.4'
+release = supy.__version__
 
 
 # -- General configuration ---------------------------------------------------

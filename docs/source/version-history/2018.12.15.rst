@@ -1,0 +1,31 @@
+
+.. _new_latest:
+
+.. _new_2018.12:
+
+Version 2018.12.15 (preview release in December 2018)
+======================================================
+
+
+- **New**
+
+  #. Preview release of SuPy based on the computation kernel of SUEWS 2018b
+
+
+- **Improvement**
+
+  #. Improved calculation of OHM-related radiation terms
+
+
+- **Changes**
+
+  None.
+
+
+- **Fix**
+
+  None
+
+- **Known issue**
+
+  #. The heat storage modules AnOHM and ESTM are not supported yet.

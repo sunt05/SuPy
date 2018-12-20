@@ -9,3 +9,4 @@ Tutorials
 
   quickstart
   sensitivity-analysis
+  external-interaction

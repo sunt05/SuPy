@@ -11,18 +11,23 @@ SuPy: SUEWS that speaks Python
 
 - How to get SuPy?
 
-  - quick installation::
+  - quick installation:
 
-      pip install supy
+  .. code-block:: shell
+
+    pip install supy --upgrade
 
 - How to use SuPy?
 
   Please follow the :ref:`quickstart`.
 
+
 .. toctree::
+  :hidden:
   :maxdepth: 1
 
-  input/input
-  output/output
+  intro
   tutorial/tutorial
+  data-structure/supy-io
+  suews-term
   version-history/version-history
