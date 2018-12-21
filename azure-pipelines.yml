@@ -5,7 +5,7 @@
 
 jobs:
 
-- job:                  'Test SuPy'
+- job:                  'Test'
   pool:
     vmImage:            'Ubuntu 16.04'
   strategy:
@@ -42,7 +42,7 @@ jobs:
   #     testRunTitle:   'Python $(python.version)'
   #   condition:        succeededOrFailed()
 
-- job:                  'Test Docs'
+- job:                  'Docs'
   dependsOn:            'Test'
   pool:
     vmImage:            'Ubuntu 16.04'
