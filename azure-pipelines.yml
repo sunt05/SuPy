@@ -5,55 +5,64 @@
 
 jobs:
 
-# - job:                  'Test'
+# - job:                    'Test'
 #   pool:
-#     vmImage:            'Ubuntu 16.04'
+#     vmImage:              'Ubuntu 16.04'
 #   strategy:
 #     matrix:
 #       # Python35:
 #       #   python.version: '3.5'
 #       Python36:
-#         python.version: '3.6'
+#         python.version:   '3.6'
 #       Python37:
-#         python.version: '3.7'
-#     maxParallel:        4
+#         python.version:   '3.7'
+#     maxParallel:          4
 #
 #   steps:
-#   - task:               UsePythonVersion@0
+#   - task:                 UsePythonVersion@0
 #     inputs:
-#       versionSpec:      '$(python.version)'
-#       architecture:     'x64'
+#       versionSpec:        '$(python.version)'
+#       architecture:       'x64'
 #
-#   - script:             |
+#   - script:               |
 #       python -m pip install --upgrade pip
 #       pip install pipreqs
 #       pipreqs src
 #       pip install -r src/requirements.txt
-#     displayName:        'Install dependencies'
+#     displayName:          'Install dependencies'
 #
-#   - script:             |
+#   - script:               |
 #       cd src
 #       make test
-#     displayName:        'pytest'
+#     displayName:          'pytest'
   #
-  # - task:             PublishTestResults@2
+  # - task:                 PublishTestResults@2
   #   inputs:
-  #     testResultsFiles: '**/test-results.xml'
-  #     testRunTitle:   'Python $(python.version)'
-  #   condition:        succeededOrFailed()
+  #     testResultsFiles:   '**/test-results.xml'
+  #     testRunTitle:       'Python $(python.version)'
+  #   condition:            succeededOrFailed()
 
-- job:                  'Docs'
-  # dependsOn:            'Test'
+- job:                      'Docs'
+  # dependsOn:              'Test'
   pool:
-    vmImage:            'Ubuntu 16.04'
+    vmImage:                'Ubuntu 16.04'
+  strategy:
+    matrix:
+      Python35:
+        python.version: '3.5'
+      Python36:
+        python.version: '3.6'
+      Python37:
+        python.version: '3.7'
+    maxParallel:        4
 
   steps:
-  - task:               UsePythonVersion@0
+  - task:                 UsePythonVersion@0
     inputs:
-      versionSpec:      '3.5'
-      architecture:     'x64'
+      versionSpec:        '$(python.version)'
+      architecture:       'x64'
 
-  - script:             |
+  - script:                 |
       cd docs
       make html
-    displayName:        'test docs'
+    displayName:            'test docs'
