@@ -13,5 +13,5 @@ from .supy_module import (init_supy_df, load_SampleData,
                           load_forcing_grid, run_supy)
 
 from .supy_util import *
-# from .supy_plot import plot_day_clm, plot_comp
+from .supy_plot import plot_day_clm, plot_comp
 from .version import __version__
