@@ -5,67 +5,67 @@
 
 jobs:
 
-- job:                  'Test-Ubuntu'
+- job:                    'Test-Ubuntu'
   pool:
-    vmImage:            'ubuntu-16.04'
+    vmImage:              'ubuntu-16.04'
   strategy:
     matrix:
       Python35:
-        python.version: '3.5'
+        python.version:   '3.5'
       Python36:
-        python.version: '3.6'
+        python.version:   '3.6'
       Python37:
-        python.version: '3.7'
-    maxParallel:        4
+        python.version:   '3.7'
+    maxParallel:          4
 
   steps:
-  - task:               UsePythonVersion@0
+  - task:                 UsePythonVersion@0
     inputs:
-      versionSpec:      '$(python.version)'
-      architecture:     'x64'
+      versionSpec:        '$(python.version)'
+      architecture:       'x64'
 
-  - script:             |
+  - script:               |
       python -m pip install --upgrade pip
       pip install pipreqs
       pipreqs src
       pip install -r src/requirements.txt
-    displayName:        'Install dependencies'
+    displayName:          'Install dependencies'
 
-  - script:             |
+  - script:               |
       cd src
       make test
-    displayName:        'pytest'
+    displayName:          'pytest'
 
-- job:                  'Test-macOS'
+- job:                    'Test-macOS'
   pool:
-    vmImage:            'macOS-10.13'
+    vmImage:              'macOS-10.13'
   strategy:
     matrix:
       Python35:
-        python.version: '3.5'
+        python.version:   '3.5'
       Python36:
-        python.version: '3.6'
+        python.version:   '3.6'
       Python37:
-        python.version: '3.7'
-    maxParallel:        4
+        python.version:   '3.7'
+    maxParallel:          4
 
   steps:
-  - task:               UsePythonVersion@0
+  - task:                 UsePythonVersion@0
     inputs:
-      versionSpec:      '$(python.version)'
-      architecture:     'x64'
+      versionSpec:        '$(python.version)'
+      architecture:       'x64'
 
-  - script:             |
+  - script:               |
       python -m pip install --upgrade pip
       pip install pipreqs
       pipreqs src
       pip install -r src/requirements.txt
-    displayName:        'Install dependencies'
+    displayName:          'Install dependencies'
 
-  - script:             |
+  - script:               |
       cd src
       make test
-    displayName:        'pytest'
+    displayName:          'pytest'
 
 
   - job:                  'Test-windows'
@@ -87,46 +87,46 @@ jobs:
         versionSpec:      '$(python.version)'
         architecture:     'x64'
 
-    - bash:             |
+    - bash:               |
         python -m pip install --upgrade pip
         pip install pipreqs
         pipreqs src
         pip install -r src/requirements.txt
       displayName:        'Install dependencies'
 
-    - bash:             |
+    - bash:               |
         cd src
         make test
       displayName:        'pytest'
   #
-  # - task:             PublishTestResults@2
+  # - task:               PublishTestResults@2
   #   inputs:
   #     testResultsFiles: '**/test-results.xml'
-  #     testRunTitle:   'Python $(python.version)'
-  #   condition:        succeededOrFailed()
+  #     testRunTitle:     'Python $(python.version)'
+  #   condition:          succeededOrFailed()
 
-- job:                  'Docs'
-  # dependsOn:          'Test'
+- job:                    'Docs'
+  # dependsOn:            'Test'
   pool:
-    vmImage:            'Ubuntu 16.04'
+    vmImage:              'Ubuntu 16.04'
   strategy:
     matrix:
       Python35:
-        python.version: '3.5'
+        python.version:   '3.5'
       # Python36:
       #   python.version: '3.6'
       # Python37:
       #   python.version: '3.7'
-    maxParallel:        4
+    maxParallel:          4
 
   steps:
-  - task:               UsePythonVersion@0
+  - task:                 UsePythonVersion@0
     inputs:
-      versionSpec:      '$(python.version)'
-      architecture:     'x64'
+      versionSpec:        '$(python.version)'
+      architecture:       'x64'
 
-  - script:             |
+  - script:               |
       cd docs
       sudo apt-get install pandoc
       make html
-    displayName:        'test docs'
+    displayName:          'test docs'
