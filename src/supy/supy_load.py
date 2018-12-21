@@ -200,12 +200,17 @@ def load_SUEWS_nml(path_file):
     # xfile = path_insensitive(xfile)
     try:
         path_file = path_file.resolve()
+        print(path_file)
     except FileNotFoundError:
         print('{path} does not exists!'.format(path=path_file))
     else:
         str_file = path_insensitive(str(path_file))
-        df = pd.DataFrame(f90nml.read(str_file))
-    return df
+        print('str_file')
+        print(str_file)
+        df_res = pd.DataFrame(f90nml.read(str_file))
+        print('df_res')
+        print(df_res)
+    return df_res
 
 
 # def load_SUEWS_RunControl(path_file):
