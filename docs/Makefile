@@ -18,7 +18,7 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	pip --version
-	pip install pipreqs
+	pip install pipreqs sphinx
 	pipreqs . --force
 	pip install -r requirements.txt
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
