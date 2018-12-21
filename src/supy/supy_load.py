@@ -8,6 +8,7 @@ import functools
 # import inspect
 # import os
 from datetime import timedelta
+from pathlib import Path
 
 import f90nml
 # import sys
@@ -17,8 +18,6 @@ from supy_driver import suews_driver as sd
 
 from .supy_env import path_supy_module
 from .supy_misc import path_insensitive
-
-# from pathlib import Path
 
 
 ########################################################################
@@ -199,6 +198,7 @@ def load_SUEWS_nml(path_file):
     # remove case issues
     # xfile = path_insensitive(xfile)
     try:
+        path_file = Path(str(path_file).lower())
         path_file = path_file.resolve()
         print(path_file)
     except FileNotFoundError:
@@ -210,7 +210,7 @@ def load_SUEWS_nml(path_file):
         df_res = pd.DataFrame(f90nml.read(str_file))
         print('df_res')
         print(df_res)
-    return df_res
+        return df_res
 
 
 # def load_SUEWS_RunControl(path_file):
