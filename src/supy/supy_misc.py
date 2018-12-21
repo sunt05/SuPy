@@ -33,7 +33,7 @@ def _path_insensitive(path):
     """
     Recursive part of path_insensitive to do the work.
     """
-
+    path = str(path)
     if path == '' or os.path.exists(path):
         return path
 
