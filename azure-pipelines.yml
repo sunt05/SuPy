@@ -50,10 +50,10 @@ jobs:
     matrix:
       Python35:
         python.version: '3.5'
-      Python36:
-        python.version: '3.6'
-      Python37:
-        python.version: '3.7'
+      # Python36:
+      #   python.version: '3.6'
+      # Python37:
+      #   python.version: '3.7'
     maxParallel:        4
 
   steps:
@@ -64,6 +64,6 @@ jobs:
 
   - script:             |
       cd docs
-      sudo apt-get install pandoc 
+      sudo apt-get install pandoc
       make html
     displayName:        'test docs'
