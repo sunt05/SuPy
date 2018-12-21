@@ -64,6 +64,7 @@ jobs:
 
   - script:             |
       cd src
+      echo "backend: TkAgg" >> ~/.matplotlib/matplotlibrc
       make test
     displayName:        'pytest'
 
@@ -106,7 +107,7 @@ jobs:
   #   condition:        succeededOrFailed()
 
 - job:                  'Docs'
-  # dependsOn:          'Test'
+  dependsOn:            'Test_Ubuntu'
   pool:
     vmImage:            'Ubuntu 16.04'
   strategy:
