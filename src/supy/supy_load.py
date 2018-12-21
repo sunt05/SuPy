@@ -4,20 +4,19 @@ from __future__ import division, print_function
 import functools
 # from scipy import interpolate
 # import copy
-import glob
+# import glob
 # import inspect
-import os
+# import os
 from datetime import timedelta
 
+import f90nml
 # import sys
 import numpy as np
 import pandas as pd
 from supy_driver import suews_driver as sd
 
-import f90nml
-
 from .supy_env import path_supy_module
-from .supy_misc import path_insensitive
+# from .supy_misc import path_insensitive
 
 # from pathlib import Path
 
@@ -141,10 +140,12 @@ dict_libVar2File = {fileX.replace('.txt', '').replace(
 # links between code in SiteSelect to properties in according tables
 # this is described in SUEWS online manual:
 # http://urban-climate.net/umep/SUEWS#SUEWS_SiteSelect.txt
-path_code2file = os.path.join(path_supy_module, 'code2file.json')
+# path_code2file = os.path.join(path_supy_module, 'code2file.json')
+path_code2file = path_supy_module / 'code2file.json'
 dict_Code2File = pd.read_json(path_code2file, typ='series').to_dict()
 # variable translation as done in Fortran-SUEWS
-path_var2siteselect = os.path.join(path_supy_module, 'var2siteselect.json')
+# path_var2siteselect = os.path.join(path_supy_module, 'var2siteselect.json')
+path_var2siteselect = path_supy_module / 'var2siteselect.json'
 dict_var2SiteSelect = pd.read_json(path_var2siteselect, typ='series').to_dict()
 
 # expand dict_Code2File for retrieving surface characteristics
@@ -194,26 +195,36 @@ def gen_suews_arg_info_df(docstring):
 # process RunControl.nml
 # this function can handle all SUEWS nml files
 # @functools.lru_cache(maxsize=128)
-def load_SUEWS_nml(xfile):
+def load_SUEWS_nml(path_file):
     # remove case issues
-    xfile = path_insensitive(xfile)
-    df = pd.DataFrame(f90nml.read(xfile))
+    # xfile = path_insensitive(xfile)
+    try:
+        path_file = path_file.resolve()
+    except FileNotFoundError:
+        print('{path} does not exists!'.format(path=path_file))
+    else:
+        df = pd.DataFrame(f90nml.read(path_file))
     return df
 
 
-def load_SUEWS_RunControl(xfile):
-    lib_RunControl = load_SUEWS_nml(xfile)
-    # return DataFrame containing settings
-    return lib_RunControl
+# def load_SUEWS_RunControl(path_file):
+#     lib_RunControl = load_SUEWS_nml(path_file)
+#     # return DataFrame containing settings
+#     return lib_RunControl
 
 
 # load all tables (xgrid.e., txt files)
-def load_SUEWS_table(fileX):
+def load_SUEWS_table(path_file):
     # remove case issues
-    fileX = path_insensitive(fileX)
-    rawdata = pd.read_table(fileX, delim_whitespace=True,
-                            comment='!', error_bad_lines=False,
-                            skiprows=1, index_col=0).dropna()
+    try:
+        path_file = path_file.resolve()
+    except FileNotFoundError:
+        print('{path} does not exists!'.format(path=path_file))
+    else:
+        # fileX = path_insensitive(fileX)
+        rawdata = pd.read_table(path_file, delim_whitespace=True,
+                                comment='!', error_bad_lines=False,
+                                skiprows=1, index_col=0).dropna()
     return rawdata
 
 
@@ -223,7 +234,8 @@ def load_SUEWS_Libs(path_input):
     dict_libs = {}
     for lib, lib_file in dict_libVar2File.items():
         # print(lib_file)
-        lib_path = os.path.join(path_input, lib_file)
+        # lib_path = os.path.join(path_input, lib_file)
+        lib_path = path_input / lib_file
         dict_libs.update({lib: load_SUEWS_table(lib_path)})
     # return DataFrame containing settings
     return dict_libs
@@ -493,19 +505,19 @@ def resample_forcing_met(
 def load_SUEWS_Forcing_met_df_raw(
         path_input, filecode, grid, tstep_met_in, multiplemetfiles):
     # file name pattern for met files
-    forcingfile_met_pattern = os.path.join(
-        path_input,
-        '{site}{grid}_*_{tstep}.txt'.format(
-            site=filecode,
-            grid=(grid if multiplemetfiles == 1 else ''),
-            tstep=int(tstep_met_in / 60)))
-    df_forcing_met = load_SUEWS_Forcing_met_df_pattern(forcingfile_met_pattern)
+    forcingfile_met_pattern = '{site}{grid}_*_{tstep}.txt'.format(
+        site=filecode,
+        grid=(grid if multiplemetfiles == 1 else ''),
+        tstep=int(tstep_met_in / 60))
+    # path_forcing_pattern = path_input / forcingfile_met_pattern
+    df_forcing_met = load_SUEWS_Forcing_met_df_pattern(
+        path_input, forcingfile_met_pattern)
     return df_forcing_met
 
 
 # caching loaded met df for better performance in initialisation
 @functools.lru_cache(maxsize=None)
-def load_SUEWS_Forcing_met_df_pattern(forcingfile_met_pattern):
+def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
     """Short summary.
 
     Parameters
@@ -520,11 +532,11 @@ def load_SUEWS_Forcing_met_df_pattern(forcingfile_met_pattern):
 
     """
     # list of met forcing files
-    forcingfile_met_pattern = os.path.expanduser(forcingfile_met_pattern)
-    forcingfile_met_pattern = os.path.abspath(forcingfile_met_pattern)
+    path_input = path_input.resolve()
+    # forcingfile_met_pattern = os.path.abspath(forcingfile_met_pattern)
     list_file_MetForcing = sorted([
-        f for f in glob.glob(forcingfile_met_pattern)
-        if 'ESTM' not in f])
+        f for f in path_input.glob(forcingfile_met_pattern)
+        if 'ESTM' not in f.name])
 
     # print(forcingfile_met_pattern)
     # print(list_file_MetForcing)
@@ -573,16 +585,14 @@ def load_SUEWS_Forcing_met_df_pattern(forcingfile_met_pattern):
 def load_SUEWS_Forcing_ESTM_df_raw(
         path_input, filecode, grid, tstep_ESTM_in, multipleestmfiles):
     # file name pattern for met files
-    forcingfile_ESTM_pattern = os.path.join(
-        path_input,
-        '{site}{grid}*{tstep}*txt'.format(
-            site=filecode,
-            grid=(grid if multipleestmfiles == 1 else ''),
-            tstep=tstep_ESTM_in / 60))
+    forcingfile_ESTM_pattern = '{site}{grid}*{tstep}*txt'.format(
+        site=filecode,
+        grid=(grid if multipleestmfiles == 1 else ''),
+        tstep=tstep_ESTM_in / 60)
 
     # list of met forcing files
     list_file_MetForcing = [
-        f for f in glob.glob(forcingfile_ESTM_pattern)
+        f for f in path_input.glob(forcingfile_ESTM_pattern)
         if 'ESTM' in f]
 
     # load raw data

@@ -23,12 +23,12 @@ def gen_opt_str(ser_rec):
     str_opt = '''
 .. option:: {name}
 
-	:Dimensionality:
-		{dim}
-	:Description:
-		{desc}
-	:SUEWS-related variables:
-		{vars}
+    :Dimensionality:
+        {dim}
+    :Description:
+        {desc}
+    :SUEWS-related variables:
+        {vars}
     '''.format(
         name=name,
         dim=dim,
@@ -39,7 +39,7 @@ def gen_opt_str(ser_rec):
 
 
 df_var_info['rst'] = df_var_info.apply(gen_opt_str, axis=1)
-df_var_info=df_var_info.sort_values('variable').reset_index(drop=True)
+df_var_info = df_var_info.sort_values('variable').reset_index(drop=True)
 rst_txt = '\n\n'.join(df_var_info.rst)
 # print()
 with open('df_state_raw.rst', 'w') as f:

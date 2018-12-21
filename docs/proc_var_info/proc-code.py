@@ -3,7 +3,6 @@
 
 import numpy as np
 import pandas as pd
-
 import supy as sp
 
 list_table = [file.replace('.txt', '.csv')
@@ -15,8 +14,8 @@ list_table = [file.replace('.txt', '.csv')
 #     '/raw/master/docs/source/input_files/SUEWS_SiteInfo/csv-table/')
 
 url_table_base = (
-    '/Users/sunt05/Dropbox/8-Research/98.ReadingWork/SUWES-Docs/' +
-    'docs/source/input_files/SUEWS_SiteInfo/csv-table/')
+    '/Users/sunt05/Dropbox/8-Research/98.ReadingWork/SUWES-Docs/'
+    + 'docs/source/input_files/SUEWS_SiteInfo/csv-table/')
 
 list_url_table = [url_table_base + table for table in list_table]
 
