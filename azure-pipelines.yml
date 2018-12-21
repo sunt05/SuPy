@@ -5,7 +5,7 @@
 
 jobs:
 
-- job:                  'Test-Ubuntu'
+- job:                  'Test_Ubuntu'
   pool:
     vmImage:            'ubuntu-16.04'
   strategy:
@@ -36,7 +36,7 @@ jobs:
       make test
     displayName:        'pytest'
 
-- job:                  'Test-macOS'
+- job:                  'Test_macOS'
   pool:
     vmImage:            'macOS-10.13'
   strategy:
@@ -68,7 +68,7 @@ jobs:
     displayName:        'pytest'
 
 
-- job:                  'Test-windows'
+- job:                  'Test_windows'
   pool:
     vmImage:            'vs2017-win2016'
   strategy:
