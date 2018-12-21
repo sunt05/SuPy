@@ -16,6 +16,7 @@ import pandas as pd
 from supy_driver import suews_driver as sd
 
 from .supy_env import path_supy_module
+
 # from .supy_misc import path_insensitive
 
 # from pathlib import Path
@@ -203,7 +204,8 @@ def load_SUEWS_nml(path_file):
     except FileNotFoundError:
         print('{path} does not exists!'.format(path=path_file))
     else:
-        df = pd.DataFrame(f90nml.read(path_file))
+        str_file = str(path_file)
+        df = pd.DataFrame(f90nml.read(str_file))
     return df
 
 
@@ -222,7 +224,8 @@ def load_SUEWS_table(path_file):
         print('{path} does not exists!'.format(path=path_file))
     else:
         # fileX = path_insensitive(fileX)
-        rawdata = pd.read_table(path_file, delim_whitespace=True,
+        str_file = str(path_file)
+        rawdata = pd.read_table(str_file, delim_whitespace=True,
                                 comment='!', error_bad_lines=False,
                                 skiprows=1, index_col=0).dropna()
     return rawdata
