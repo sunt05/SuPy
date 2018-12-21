@@ -5,36 +5,36 @@
 
 jobs:
 
-# - job:                  'Test_Ubuntu'
-#   pool:
-#     vmImage:            'ubuntu-16.04'
-#   strategy:
-#     matrix:
-#       Python35:
-#         python.version: '3.5'
-#       Python36:
-#         python.version: '3.6'
-#       Python37:
-#         python.version: '3.7'
-#     maxParallel:        4
-#
-#   steps:
-#   - task:               UsePythonVersion@0
-#     inputs:
-#       versionSpec:      '$(python.version)'
-#       architecture:     'x64'
-#
-#   - script:             |
-#       python -m pip install --upgrade pip
-#       pip install pipreqs
-#       pipreqs src
-#       pip install -r src/requirements.txt
-#     displayName:        'Install dependencies'
-#
-#   - script:             |
-#       cd src
-#       make test
-#     displayName:        'pytest'
+- job:                'Test_Ubuntu'
+  pool:
+    vmImage:          'ubuntu-16.04'
+  strategy:
+    matrix:
+      Python35:
+        python.version: '3.5'
+      Python36:
+        python.version: '3.6'
+      Python37:
+        python.version: '3.7'
+    maxParallel:      4
+
+  steps:
+  - task:             UsePythonVersion@0
+    inputs:
+      versionSpec:    '$(python.version)'
+      architecture:   'x64'
+
+  - script:           |
+      python -m pip install --upgrade pip
+      pip install pipreqs
+      pipreqs src
+      pip install -r src/requirements.txt
+    displayName:      'Install dependencies'
+
+  - script:           |
+      cd src
+      make test
+    displayName:      'pytest'
 
 
 - job:                  'Test_macOS'
@@ -59,7 +59,7 @@ jobs:
   - script:             |
       mkdir -p ~/.matplotlib
       touch ~/.matplotlib/matplotlibrc
-      echo "backend: TkAgg" >> ~/.matplotlib/matplotlibrc
+      echo "backend:    TkAgg" >> ~/.matplotlib/matplotlibrc
       python -m pip install --upgrade pip
       pip install pipreqs
       pipreqs src
@@ -71,66 +71,66 @@ jobs:
       make test
     displayName:        'pytest'
 
-#
-# - job:                  'Test_windows'
-#   pool:
-#     vmImage:            'vs2017-win2016'
-#   strategy:
-#     matrix:
-#       Python35:
-#         python.version: '3.5'
-#       Python36:
-#         python.version: '3.6'
-#       Python37:
-#         python.version: '3.7'
-#     maxParallel:        4
-#
-#   steps:
-#   - task:               UsePythonVersion@0
-#     inputs:
-#       versionSpec:      '$(python.version)'
-#       architecture:     'x64'
-#
-#   - bash:               |
-#       python -m pip install --upgrade pip
-#       pip install pipreqs
-#       pipreqs src
-#       pip install -r src/requirements.txt
-#     displayName:        'Install dependencies'
-#
-#   - bash:               |
-#       cd src
-#       make test
-#     displayName:        'pytest'
-#   #
-#   # - task:             PublishTestResults@2
-#   #   inputs:
-#   #     testResultsFiles: '**/test-results.xml'
-#   #     testRunTitle:   'Python $(python.version)'
-#   #   condition:        succeededOrFailed()
-#
-# - job:                  'Docs'
-#   dependsOn:            'Test_Ubuntu'
-#   pool:
-#     vmImage:            'Ubuntu 16.04'
-#   strategy:
-#     matrix:
-#       Python35:
-#         python.version: '3.5'
-#       # Python36:
-#       #   python.version: '3.6'
-#       # Python37:
-#       #   python.version: '3.7'
-#     maxParallel:        4
-#
-#   steps:
-#   - task:               UsePythonVersion@0
-#     inputs:
-#       versionSpec:      '$(python.version)'
-#       architecture:     'x64'
-#
-#   - script:             |
-#       cd docs
-#       sudo apt-get install pandoc
-#       make html
-#     displayName:        'test docs'
+
+- job:                  'Test_windows'
+  pool:
+    vmImage:            'vs2017-win2016'
+  strategy:
+    matrix:
+      Python35:
+        python.version: '3.5'
+      Python36:
+        python.version: '3.6'
+      Python37:
+        python.version: '3.7'
+    maxParallel:        4
+
+  steps:
+  - task:               UsePythonVersion@0
+    inputs:
+      versionSpec:      '$(python.version)'
+      architecture:     'x64'
+
+  - bash:               |
+      python -m pip install --upgrade pip
+      pip install pipreqs
+      pipreqs src
+      pip install -r src/requirements.txt
+    displayName:        'Install dependencies'
+
+  - bash:               |
+      cd src
+      make test
+    displayName:        'pytest'
+  #
+  # - task:             PublishTestResults@2
+  #   inputs:
+  #     testResultsFiles: '**/test-results.xml'
+  #     testRunTitle:   'Python $(python.version)'
+  #   condition:        succeededOrFailed()
+
+- job:                  'Docs'
+  dependsOn:            'Test_Ubuntu'
+  pool:
+    vmImage:            'Ubuntu 16.04'
+  strategy:
+    matrix:
+      Python35:
+        python.version: '3.5'
+      # Python36:
+      #   python.version: '3.6'
+      # Python37:
+      #   python.version: '3.7'
+    maxParallel:        4
+
+  steps:
+  - task:               UsePythonVersion@0
+    inputs:
+      versionSpec:      '$(python.version)'
+      architecture:     'x64'
+
+  - script:             |
+      cd docs
+      sudo apt-get install pandoc
+      make html
+    displayName:        'test docs'
