@@ -140,11 +140,11 @@ nbsphinx_prolog = r"""
 
         This page was generated from `{{ docname }}`__.
         Interactive online version:
-        :raw-html:`<a href="https://mybinder.org/v2/gh/Urban-Meteorology-Reading/BLM/master?filepath={{ docname }}"><img alt="Binder badge" src="https://mybinder.org/badge.svg" style="vertical-align:text-bottom"></a>`
+        :raw-html:`<a href="https://mybinder.org/v2/gh/sunt05/SuPy/master?filepath={{ docname }}"><img alt="Binder badge" src="https://mybinder.org/badge.svg" style="vertical-align:text-bottom"></a>`
         Slideshow:
-        :raw-html:`<a href="https://nbviewer.jupyter.org/format/slides/github/Urban-Meteorology-Reading/BLM/tree/master/{{ docname }}"><img alt="Binder badge" src="https://img.shields.io/badge/render-nbviewer-orange.svg" style="vertical-align:text-bottom"></a>`
+        :raw-html:`<a href="https://nbviewer.jupyter.org/format/slides/github/sunt05/SuPy/tree/master/{{ docname }}"><img alt="Binder badge" src="https://img.shields.io/badge/render-nbviewer-orange.svg" style="vertical-align:text-bottom"></a>`
 
-    __ https://github.com/Urban-Meteorology-Reading/BLM/blob/master/{{ docname }}
+    __ https://github.com/sunt05/SuPy/blob/master/{{ docname }}
 
 .. raw:: latex
 
