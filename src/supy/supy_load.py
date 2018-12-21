@@ -198,7 +198,7 @@ def load_SUEWS_nml(path_file):
     # remove case issues
     # xfile = path_insensitive(xfile)
     try:
-        path_file = Path(str(path_file).lower())
+        path_file = Path(path_insensitive(str(path_file)))
         path_file = path_file.resolve()
         print(path_file)
     except FileNotFoundError:

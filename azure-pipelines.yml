@@ -35,7 +35,7 @@ jobs:
       cd src
       make test
     displayName:        'pytest'
-#
+
 # - job:                  'Test_macOS'
 #   pool:
 #     vmImage:            'macOS-10.13'
