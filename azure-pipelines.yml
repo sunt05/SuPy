@@ -5,36 +5,36 @@
 
 jobs:
 
-- job:                  'Test'
-  pool:
-    vmImage:            'Ubuntu 16.04'
-  strategy:
-    matrix:
-      # Python35:
-      #   python.version: '3.5'
-      Python36:
-        python.version: '3.6'
-      Python37:
-        python.version: '3.7'
-    maxParallel:        4
-
-  steps:
-  - task:               UsePythonVersion@0
-    inputs:
-      versionSpec:      '$(python.version)'
-      architecture:     'x64'
-
-  - script:             |
-      python -m pip install --upgrade pip
-      pip install pipreqs
-      pipreqs src
-      pip install -r src/requirements.txt
-    displayName:        'Install dependencies'
-
-  - script:             |
-      cd src
-      make test
-    displayName:        'pytest'
+# - job:                  'Test'
+#   pool:
+#     vmImage:            'Ubuntu 16.04'
+#   strategy:
+#     matrix:
+#       # Python35:
+#       #   python.version: '3.5'
+#       Python36:
+#         python.version: '3.6'
+#       Python37:
+#         python.version: '3.7'
+#     maxParallel:        4
+#
+#   steps:
+#   - task:               UsePythonVersion@0
+#     inputs:
+#       versionSpec:      '$(python.version)'
+#       architecture:     'x64'
+#
+#   - script:             |
+#       python -m pip install --upgrade pip
+#       pip install pipreqs
+#       pipreqs src
+#       pip install -r src/requirements.txt
+#     displayName:        'Install dependencies'
+#
+#   - script:             |
+#       cd src
+#       make test
+#     displayName:        'pytest'
   #
   # - task:             PublishTestResults@2
   #   inputs:
@@ -43,7 +43,7 @@ jobs:
   #   condition:        succeededOrFailed()
 
 - job:                  'Docs'
-  dependsOn:            'Test'
+  # dependsOn:            'Test'
   pool:
     vmImage:            'Ubuntu 16.04'
 
