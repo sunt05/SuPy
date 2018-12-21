@@ -7,12 +7,14 @@
 [**SU**EWS](https://suews-docs.readthedocs.io) that speaks **Py**thon
 
 ## Installation
+SuPy requires `python` 3.5+ and can be installed with `pip` in commmand line prompt:
 
 ```shell
 python3 -m pip install supy --upgrade
 ```
 
 ## Quickstart
+Once installed, `supy` can be quickly started to get [SUEWS](https://suews-docs.readthedocs.io) simulations done:
 
 ```python
 import supy as sp
@@ -27,6 +29,9 @@ df_output, df_state_end = sp.run_supy(df_forcing, df_state_init)
 res_plot = df_output.SUEWS.loc[1, ['QN', 'QF', 'QS', 'QE', 'QH']]
 res_plot.loc['2012 6 4':'2012 6 6'].resample('30T').mean().plot()
 ```
+
+The above code will produce a plot of surface energy balance components as follows:
+
 ![sample plot](./sample_plot.png)
 
 ## Tutorial
