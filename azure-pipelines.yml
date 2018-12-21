@@ -54,6 +54,6 @@ jobs:
       architecture:     'x64'
 
   - script:             |
-      cd doc
+      cd docs
       make html
     displayName:        'test docs'
