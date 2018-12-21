@@ -42,18 +42,18 @@ jobs:
   #     testRunTitle:   'Python $(python.version)'
   #   condition:        succeededOrFailed()
 
-# - job:                'Publish'
-#   dependsOn:          'Test'
-#   pool:
-#     vmImage:          'Ubuntu 16.04'
-#
-#   steps:
-#   - task:             UsePythonVersion@0
-#     inputs:
-#       versionSpec:    '3.x'
-#       architecture:   'x64'
-#
-#   - script:           |
-#       cd src
-#       make test
-#     displayName:      'test supy'
+- job:                  'Publish'
+  dependsOn:            'Test'
+  pool:
+    vmImage:            'Ubuntu 16.04'
+
+  steps:
+  - task:               UsePythonVersion@0
+    inputs:
+      versionSpec:      '3.5'
+      architecture:     'x64'
+
+  - script:             |
+      cd doc
+      make html
+    displayName:        'test docs'
