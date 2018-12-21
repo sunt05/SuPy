@@ -64,5 +64,6 @@ jobs:
 
   - script:             |
       cd docs
+      sudo apt-get install pandoc 
       make html
     displayName:        'test docs'
