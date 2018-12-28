@@ -1,5 +1,12 @@
+#%% Change working directory from the workspace root to the ipynb file location. Turn this addition off with the DataSciece.changeDirOnImportExport setting
+import os
+try:
+	os.chdir(os.path.join(os.getcwd(), 'docs/proc_var_info'))
+	print(os.getcwd())
+except:
+	pass
 
-# %%
+#%%
 from nml_rst_proc import gen_url_option, set_input, set_site, set_initcond, set_runcontrol, set_input_initcond, set_input_runcontrol, parse_option_rst
 from urlpath import URL
 import urllib.request
@@ -9,12 +16,12 @@ import supy as sp
 import os
 os.getcwd()
 
-# %% [markdown]
+#%% [markdown]
 # ## generate site characteristics related dataframe
-# %% [markdown]
+#%% [markdown]
 # ### load `SUEWS_***.txt` related tables
 
-# %%
+#%%
 list_table = [file.replace('.txt', '.csv')
               for file in sp.supy_load.list_file_input
               if 'Profile' not in file]  # exclude `Profile` txt: a special case
@@ -31,20 +38,20 @@ url_table_base = (
 
 list_url_table = [url_table_base + table for table in list_table]
 
-# %% [markdown]
+#%% [markdown]
 # #### retrieve SUEWS variable descriptions
 
-# %%
+#%%
 df_var_info = pd.concat([pd.read_csv(f) for f in list_url_table])
 df_var_info_x = df_var_info.drop(['No.', 'Use'], axis=1)
 df_var_info_x = df_var_info_x.set_index('Column Name')
 df_var_info_x.index = df_var_info_x.index.map(lambda x: x.replace('`', ''))
 df_var_info_x.head()
 
-# %% [markdown]
+#%% [markdown]
 # #### retrieve SUEWS-related variable names
 
-# %%
+#%%
 # retrieve SUEWS-related variables
 dict_var2SiteSelect = sp.supy_load.dict_var2SiteSelect
 
@@ -80,7 +87,7 @@ df_var_ref_suews = pd.DataFrame(
 # set_input_site_exp= set(x.lower() for x in np.concatenate(set_input_site_exp0.values))
 
 
-# %%
+#%%
 # retrive supy variable description
 dict_var_desc = {k: '\n'.join(df_var_info_x.loc[v].values.flatten())
                  for k, v in dict_var_ref_suews.items()}
@@ -90,20 +97,20 @@ df_var_desc = pd.DataFrame(dict_var_desc, index=[0]).T.rename({
 
 df_var_desc.head()
 
-# %% [markdown]
+#%% [markdown]
 # #### list supy variables that are combinations of multiple SUEWS variables
 
-# %%
+#%%
 for k, v in dict_var_ref_suews.items():
     if len(v) > 1:
         print('')
         print(k, v)
     # df_var_info_x.loc[v].values.flatten()
 
-# %% [markdown]
+#%% [markdown]
 # #### retrieve variable dimensionality
 
-# %%
+#%%
 df_init_sample, df_forcing_sample = sp.load_SampleData()
 df_var_dim_x = df_init_sample.columns.to_frame()
 df_var_dim_x.index = df_var_dim_x.index.droplevel(-1)
@@ -118,10 +125,10 @@ df_var_dim = pd.DataFrame(df_var_dim)
 df_var_dim.filter(like='method', axis=0)
 df_var_dim.head()
 
-# %% [markdown]
+#%% [markdown]
 # ### select only those useful for input to `supy`
 
-# %%
+#%%
 
 df_var_site_raw = pd.concat(
     [df_var_dim, df_var_desc, df_var_ref_suews], axis=1)
@@ -129,18 +136,18 @@ df_var_site = df_var_site_raw.filter(items=set_input, axis=0).dropna()
 # df_var_site.to_csv('df_var_site.csv')
 
 
-# %%
+#%%
 # input options other than those from site characteristics
 set_input_site = set(df_var_site.index)
 set_input_nonsite = set_input.difference(set_input_site)
 set_input_nonsite
 
-# %% [markdown]
+#%% [markdown]
 # ## process `runcontrol` and `initialcondition` related variables
-# %% [markdown]
+#%% [markdown]
 # ### these variables are based on `nml` files so the processing logic is different
 
-# %%
+#%%
 list_var_nml = list(set_initcond)+list(set_runcontrol)
 list_url_rst_x = list(gen_url_option(var, source='github')
                       for var in sorted(list_var_nml))
@@ -149,12 +156,12 @@ list_url_rst_x = list(gen_url_option(var, source='github')
 sorted(list_var_nml)
 
 
-# %%
+#%%
 # URL('/'.join(list_var_url[0].parts)).get().ok
 list_url_rst = list(set(URL('/'.join(url.parts)) for url in list_url_rst_x))
 
 
-# %%
+#%%
 
 df_var_nml = pd.concat(parse_option_rst(url) for url in list_url_rst)
 df_var_nml_x = df_var_nml.reset_index().loc[:, ['Description', 'index']].rename(
@@ -163,30 +170,30 @@ index_nml = df_var_nml_x.loc[:, 'SUEWS-related variables'].str.lower()
 df_var_nml_x.index = index_nml.rename('var')
 df_var_nml_x.sort_index()
 
-# %% [markdown]
+#%% [markdown]
 # ### generate `df_var_runcontrol` for supy
 
-# %%
+#%%
 df_var_runcontrol_x = df_var_nml_x.filter(items=set_input_runcontrol, axis=0)
 df_var_runcontrol_dim = df_var_dim.filter(items=set_input_runcontrol, axis=0)
 df_var_runcontrol = pd.concat(
     [df_var_runcontrol_dim, df_var_runcontrol_x], axis=1)
 df_var_runcontrol
 
-# %% [markdown]
+#%% [markdown]
 # ### generate `df_var_initcond` for supy
-# %% [markdown]
+#%% [markdown]
 # #### define related variables for `initcond` variables
 
-# %%
+#%%
 set_input_nonsite - set_input_runcontrol
 
 
-# %%
+#%%
 set_initcond
 
 
-# %%
+#%%
 dict_initcond_related = {
     'albdectr_id': 'albdectr0',
     'albevetr_id': 'albevetr0',
@@ -267,23 +274,23 @@ dict_initcond_related = {
     # 'wuday_id':,
 }
 
-# %% [markdown]
+#%% [markdown]
 # #### examine related variables
 
-# %%
+#%%
 for var in dict_initcond_related:
     print(dict_initcond_related[var])
     df_var_nml_x.loc[dict_initcond_related[var], 'SUEWS-related variables']
 
 
-# %%
+#%%
 df_var_nml_x.loc['albdectr0']
 df_var_nml_x.index
 
-# %% [markdown]
+#%% [markdown]
 # #### generate `df_var_initcond`
 
-# %%
+#%%
 dict_var_initcond_desc = {}
 for var in dict_initcond_related:
     var_related = dict_initcond_related[var]
@@ -308,36 +315,36 @@ df_var_initcond = pd.concat([df_initcond_dim, df_initcond_desc], axis=1)
 df_var_initcond
 
 
-# %%
+#%%
 df_initcond_desc
 # dict_initcond_related['albdectr_id']
 df_var_nml_x.sort_index()
 
-# %% [markdown]
+#%% [markdown]
 # ## summarise the `DataFrame`s
-# %% [markdown]
+#%% [markdown]
 # ### combine all `df_var_xx`s
 
-# %%
+#%%
 df_var_supy_docs = pd.concat([df_var_site, df_var_runcontrol, df_var_initcond])
 df_var_supy_docs.head()
 
-# %% [markdown]
+#%% [markdown]
 # ### these variables are for internal use and thus not released for users
 
-# %%
+#%%
 set_input - set(df_var_supy_docs.index)
 
-# %% [markdown]
+#%% [markdown]
 # ### deal with dim info
 
-# %%
+#%%
 df_var_supy_docs.loc[df_var_supy_docs.Dimensionality != 0]
 
-# %% [markdown]
+#%% [markdown]
 # #### 1D+ data
 
-# %%
+#%%
 df_1Dplus = df_var_supy_docs.loc[df_var_supy_docs.Dimensionality != 0]
 pos_1D = df_1Dplus.Dimensionality.map(len) == 1
 df_1D = df_1Dplus.loc[pos_1D]
@@ -345,23 +352,23 @@ pos_23D = df_1Dplus.Dimensionality.map(len) > 1
 df_23D = df_1Dplus.loc[pos_23D]
 
 
-# %%
+#%%
 df_1D
 
 
-# %%
+#%%
 df_23D
 
 
-# %%
+#%%
 df_1D.Dimensionality.unique()
 
 
-# %%
+#%%
 df_23D.Dimensionality.unique()
 
 
-# %%
+#%%
 dict_dim_anno = {
     0:
     'Scalar',
@@ -370,7 +377,7 @@ dict_dim_anno = {
     (3, ):
     '3: See variable description for specifics',
     (7, ):
-    '7: Seven SUEWS land cover types in the order of [paved; buildings; evergreen trees/shrubs; deciduous trees/shrubs; grass; bare soil and water]: https://suews-docs.readthedocs.io/en/latest/introduction.html',
+    '7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`',
     (8, ):
     '8: Seven SUEWS land cover types and one extra land cover type (currently NOT used)',
     (24, 2):
@@ -386,11 +393,11 @@ dict_dim_anno = {
     (8, 6):
     '8: Seven SUEWS land cover types and Runoff/SoilStore as water receiver; 6: SUEWS land cover types other than water as water contributors',
     (6, 7):
-    '6: See variable description for specifics; 7: Seven SUEWS land cover types in the order of [paved; buildings; evergreen trees/shrubs; deciduous trees/shrubs; grass; bare soil and water]: https://suews-docs.readthedocs.io/en/latest/introduction.html',
+    '6: See variable description for specifics; 7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`',
 }
 
 
-# %%
+#%%
 df_var_dim_anno = df_var_supy_docs['Dimensionality'].map(
     dict_dim_anno).rename('Dimensionality Remarks').to_frame()
 # correct the `(7,)` for week days
@@ -400,23 +407,23 @@ df_var_dim_anno.loc[
     'Dimensionality Remarks'] = anno_week
 df_var_dim_anno.sort_index().iloc[:36]
 
-# %% [markdown]
+#%% [markdown]
 # #### attach dim info to df_docs
 
-# %%
+#%%
 df_var_supy_docs_dim = pd.concat([df_var_supy_docs, df_var_dim_anno], axis=1)
 df_var_supy_docs_dim
 
-# %% [markdown]
+#%% [markdown]
 # ### add docs URL to SUEWS related variables
 
-# %%
+#%%
 opt_str = 'SnowAlb0'
 url_str = str(gen_url_option(opt_str.lower()))
 f'`{opt_str} <{url_str}>`_'
 
 
-# %%
+#%%
 def gen_rst_url_opt(opt_str):
     url_str = str(gen_url_option(opt_str.lower()))
     rst_str = f'`{opt_str} <{url_str}>`_'
@@ -426,11 +433,11 @@ def gen_rst_url_opt(opt_str):
 gen_rst_url_opt('QF0_BEU_WD')
 
 
-# %%
+#%%
 'QF0_BEU_WD, QF0_BEU_WE'.split(',')
 
 
-# %%
+#%%
 # split multiple opts into a list of them
 # then generate the links
 def gen_rst_url_split_opts(opts_str):
@@ -446,22 +453,22 @@ def gen_rst_url_split_opts(opts_str):
 gen_rst_url_split_opts('None')
 
 
-# %%
+#%%
 xx = df_var_supy_docs_dim.loc[:, 'SUEWS-related variables'].sort_index()
 xx.loc[xx.isna()]
 
 
-# %%
+#%%
 df_var_supy_docs_dim_url = df_var_supy_docs_dim.copy().fillna('None')
 df_var_supy_docs_dim_url['SUEWS-related variables'] = df_var_supy_docs_dim_url['SUEWS-related variables'].map(
     gen_rst_url_split_opts)
 # df_var_supy_docs_dim_url=df_var_supy_docs_dim.transform({'SUEWS-related variables':gen_rst_url_split_opts})
 df_var_supy_docs_dim_url
 
-# %% [markdown]
+#%% [markdown]
 # ### clean description
 
-# %%
+#%%
 # drop duplicates
 xx = df_var_supy_docs_dim_url.loc[:, 'Description']    .str.split('\n')    .map(
     lambda x: pd.Series(x).drop_duplicates().values)    .str.join(';;')
@@ -469,7 +476,7 @@ df_var_supy_docs_dim_url.loc[:, 'Description'] = xx
 df_var_supy_docs_dim_url.head()
 
 
-# %%
+#%%
 # set default values
 df_var_supy_docs_dim_url = df_var_supy_docs_dim_url.replace(
     {'Description': {'None': 'Internal use. Please DO NOT modify'}})
@@ -477,15 +484,15 @@ df_var_supy_docs_dim_url.index = df_var_supy_docs_dim_url.index.rename(
     'variable')
 
 
-# %%
+#%%
 # # save auto-generation-safe entries
 # df_var_supy_auto = df_var_supy_docs_dim_url.copy()[~pos_entry_manual]
 # df_var_supy_auto.to_csv('df_var_supy_auto.csv')
 
-# %% [markdown]
+#%% [markdown]
 # ### manipulate some messy entries
 
-# %%
+#%%
 # filter manual-work-demanding entries
 pos_entry_manual = df_var_supy_docs_dim_url.loc[:, 'Description'].str.contains(
     ';;')
@@ -494,7 +501,7 @@ df_var_supy_manual = df_var_supy_docs_dim_url.copy()[pos_entry_manual]
 df_var_supy_manual.index
 
 
-# %%
+#%%
 # dict for manual edits of several entries
 dict_var_desc_manual = {
     # surface fractions
@@ -541,6 +548,8 @@ dict_var_desc_manual = {
 }
 ser_desc_manual=pd.Series(dict_var_desc_manual).rename('Description')
 # df_var_supy_manual.loc[:, 'Description'] = ser_desc_manual
+
+
 #%%
 # update those entries with manual definitions
 df_var_supy_docs_mod = df_var_supy_docs_dim_url.copy()
@@ -548,10 +557,10 @@ df_var_supy_docs_mod['Description'].update(ser_desc_manual)
 df_var_supy_docs_mod.loc[:,'Description'] 
 # desc_mod
 
-# %% [markdown]
+#%% [markdown]
 # ### save results
-#%%
-df_var_supy_docs_mod.to_csv('./df_var_supy.csv')
-
 
 #%%
+df_var_supy_docs_mod.to_csv('./df_state.csv')
+
+

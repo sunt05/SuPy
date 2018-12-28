@@ -1,31 +1,27 @@
-# generate option rst files
-# %%
+#%% Change working directory from the workspace root to the ipynb file location. Turn this addition off with the DataSciece.changeDirOnImportExport setting
+import os
+try:
+	os.chdir(os.path.join(os.getcwd(), 'docs/proc_var_info'))
+	print(os.getcwd())
+except:
+	pass
+#%% [markdown]
+# # generate option rst files
+
+#%%
 import pandas as pd
 
-# df_var_info = pd.concat([
-#     pd.read_csv(file)
-#     for file in [
-#         'df_var_supy_auto.csv',
-#         'df_var_supy_manual_mod.csv',
-#     ]
-# ])
-# df_var_info
-df_var_info=pd.read_csv('./df_var_supy.csv')
-
+#%% [markdown]
+# ## load processed csv files of df_state info
 # %%
-# xx = df_var_info.iloc[100]
-#
-# xx
-# ser_rec = xx
-# name = ser_rec.variable
-# dim = ser_rec.Dimensionality
-# vars = ser_rec['SUEWS-related variables']
-# desc = ser_rec.Description
+df_var_info = pd.read_csv('./df_state.csv')
 
-# %%
-
-
+#%% [markdown]
+# ## generate option string for rst option file
+#%%
+# generate option string for rst option file
 def gen_opt_str(ser_rec):
+
     name = ser_rec['variable']
     desc = ser_rec['Description']
     vars = ser_rec['SUEWS-related variables']
@@ -53,16 +49,31 @@ def gen_opt_str(ser_rec):
 
 gen_opt_str(df_var_info.iloc[10])
 
-# %%
+
+#%%
 
 df_var_info['rst'] = df_var_info.apply(gen_opt_str, axis=1)
 df_var_info = df_var_info.sort_values('variable').reset_index(drop=True)
-rst_txt = '\n\n'.join(df_var_info.rst)
+
+rst_txt_x = '\n\n'.join(df_var_info.rst)
+
+rst_title='''
+.. _df_state_options:
+
+Model state variables
+============================
+
+'''
+
+rst_txt = '\n'.join([rst_title, rst_txt_x])
+
 # print()
-with open('df_state_raw.rst', 'w') as f:
+with open('../source/data-structure/df_state.rst', 'w') as f:
     print(rst_txt, file=f)
 
 df_var_info.tail()
+
+
 
 
 #%%
