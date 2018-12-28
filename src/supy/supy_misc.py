@@ -1,10 +1,11 @@
+import urllib
 import os
 # from pathlib import Path
 
 
 ##############################################################################
-# auxiliary functions
-# resolve path case issues
+# an auxiliary function to resolve path case issues
+# credit: https://stackoverflow.com/a/8462613/920789
 def path_insensitive(path):
     """
     Get a case-insensitive path for use on a case sensitive system.
@@ -71,3 +72,23 @@ def _path_insensitive(path):
         return os.path.join(dirname, basefinal) + suffix
     else:
         return
+
+
+##############################################################################
+# an auxiliary function to test URL connectivity
+# credit: https://stackoverflow.com/a/8462613/920789
+# https://gist.github.com/dehowell/884204#gistcomment-1771089
+def url_is_alive(url):
+    """
+    Checks that a given URL is reachable.
+    :param url: A URL
+    :rtype: bool
+    """
+    request = urllib.request.Request(url)
+    request.get_method = lambda: 'HEAD'
+
+    try:
+        urllib.request.urlopen(request)
+        return True
+    except urllib.request.HTTPError:
+        return False

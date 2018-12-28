@@ -37,27 +37,22 @@ from .supy_run import (pack_df_state_final, pack_grid_dict, suews_cal_tstep,
 # convert dict_InitCond to pandas Series and DataFrame
 # return pd.DataFrame
 # @functools.lru_cache(maxsize=16)
-def init_supy_df(path_runcontrol_x):
+def init_supy_df(path_runcontrol):
     try:
-        path_runcontrol = Path(path_runcontrol_x).expanduser().resolve()
+        path_runcontrol_x = Path(path_runcontrol).expanduser().resolve()
     except FileNotFoundError:
-        print('{path} does not exists!'.format(path=path_runcontrol))
+        print('{path} does not exists!'.format(path=path_runcontrol_x))
     else:
         # df_state_init: initial conditions for SUEWS simulations
-        df_state_init = load_InitialCond_grid_df(path_runcontrol)
-
-        # # ser_mod_cfg: all static model configuration info
-        # dict_ModConfig = load_SUEWS_dict_ModConfig(path_runcontrol)
-        # ser_mod_cfg = pd.Series(dict_ModConfig)
-
-    return df_state_init
+        df_state_init = load_InitialCond_grid_df(path_runcontrol_x)
+        return df_state_init
 
 
 # load forcing datasets of `grid`
 # @functools.lru_cache(maxsize=16)
-def load_forcing_grid(path_runcontrol_x, grid):
+def load_forcing_grid(path_runcontrol, grid):
     try:
-        path_runcontrol = Path(path_runcontrol_x).expanduser().resolve()
+        path_runcontrol = Path(path_runcontrol).expanduser().resolve()
     except FileNotFoundError:
         print('{path} does not exists!'.format(path=path_runcontrol))
     else:
@@ -105,37 +100,41 @@ def load_forcing_grid(path_runcontrol_x, grid):
         # merge forcing datasets (met and ESTM)
         df_forcing_tstep = df_forcing_met_tstep.copy()
 
-        # pack all records of `id` into `metforcingdata_grid` for AnOHM
-        df_grp = df_forcing_tstep.groupby('id')
-        dict_id_all = {xid: df_grp.get_group(xid)
-                       for xid in df_forcing_tstep['id'].unique()}
-        id_all = df_forcing_tstep['id'].apply(lambda xid: dict_id_all[xid])
-        df_forcing_tstep = df_forcing_tstep.merge(
-            id_all.to_frame(name='metforcingdata_grid'),
-            left_index=True,
-            right_index=True)
-
-        # add Ts forcing for ESTM
-        if np.asscalar(df_state_init.iloc[0]['storageheatmethod'].values) == 4:
-            # load ESTM forcing
-            df_forcing_estm = load_SUEWS_Forcing_ESTM_df_raw(
-                path_input, filecode, grid, tstep_ESTM_in, multipleestmfiles)
-            # resample raw data from tstep_in to tstep_mod
-            df_forcing_estm_tstep = resample_linear(
-                df_forcing_estm, tstep_met_in, tstep_mod)
-            df_forcing_tstep = df_forcing_tstep.merge(
-                df_forcing_estm_tstep,
-                left_on=['iy', 'id', 'it', 'imin'],
-                right_on=['iy', 'id', 'it', 'imin'])
-            # insert `ts5mindata_ir` into df_forcing_tstep
-            ts_col = df_forcing_estm.columns[4:]
-            df_forcing_tstep['ts5mindata_ir'] = (
-                df_forcing_tstep.loc[:, ts_col].values.tolist())
-            df_forcing_tstep['ts5mindata_ir'] = df_forcing_tstep[
-                'ts5mindata_ir'].map(lambda x: np.array(x, order='F'))
-        else:
-            # insert some placeholder values
-            df_forcing_tstep['ts5mindata_ir'] = df_forcing_tstep['temp_c']
+        # disable the AnOHM and ESTM components for now and for better performance
+        # |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+        # TS 28 Dec 2018
+        # # pack all records of `id` into `metforcingdata_grid` for AnOHM
+        # df_grp = df_forcing_tstep.groupby('id')
+        # dict_id_all = {xid: df_grp.get_group(xid)
+        #                for xid in df_forcing_tstep['id'].unique()}
+        # id_all = df_forcing_tstep['id'].apply(lambda xid: dict_id_all[xid])
+        # df_forcing_tstep = df_forcing_tstep.merge(
+        #     id_all.to_frame(name='metforcingdata_grid'),
+        #     left_index=True,
+        #     right_index=True)
+        # # add Ts forcing for ESTM
+        # if np.asscalar(df_state_init.iloc[0]['storageheatmethod'].values) == 4:
+        #     # load ESTM forcing
+        #     df_forcing_estm = load_SUEWS_Forcing_ESTM_df_raw(
+        #         path_input, filecode, grid, tstep_ESTM_in, multipleestmfiles)
+        #     # resample raw data from tstep_in to tstep_mod
+        #     df_forcing_estm_tstep = resample_linear(
+        #         df_forcing_estm, tstep_met_in, tstep_mod)
+        #     df_forcing_tstep = df_forcing_tstep.merge(
+        #         df_forcing_estm_tstep,
+        #         left_on=['iy', 'id', 'it', 'imin'],
+        #         right_on=['iy', 'id', 'it', 'imin'])
+        #     # insert `ts5mindata_ir` into df_forcing_tstep
+        #     ts_col = df_forcing_estm.columns[4:]
+        #     df_forcing_tstep['ts5mindata_ir'] = (
+        #         df_forcing_tstep.loc[:, ts_col].values.tolist())
+        #     df_forcing_tstep['ts5mindata_ir'] = df_forcing_tstep[
+        #         'ts5mindata_ir'].map(lambda x: np.array(x, order='F'))
+        # else:
+        #     # insert some placeholder values
+        #     df_forcing_tstep['ts5mindata_ir'] = df_forcing_tstep['temp_c']
+        # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        # disable the AnOHM and ESTM components for now and for better performance
 
         # coerced precision here to prevent numerical errors inside Fortran
         df_forcing_tstep = np.around(df_forcing_tstep, decimals=10)
@@ -166,10 +165,29 @@ def load_SampleData():
 # 2. compact wrapper for running a whole simulation
 # # main calculation
 # input as DataFrame
-def run_supy(df_forcing, df_init_input, save_state=False):
+def run_supy(df_forcing, df_state_init, save_state=False):
+    '''perform supy simulaiton
+    
+    :param df_forcing: forcing data
+    :type df_forcing: pandas.DataFrame
+    :param df_state_init: initial model states
+    :type df_state_init: pandas.DataFrame
+    :param save_state: flag for saving model states at each timestep, defaults to False
+    :param save_state: bool, optional
+    :return: df_output, df_state_final
+    :rtype: (pandas.DataFrame, pandas.DataFrame)
+    '''
+
     # save df_init without changing its original data
     # df.copy() in pandas does work as a standard python deepcopy
-    df_init = df_init_input.copy()
+    df_init = df_state_init.copy()
+    # add placeholder variables for df_forcing
+    # `metforcingdata_grid` and `ts5mindata_ir` are used by AnOHM and ESTM, respectively
+    # they are now temporarily disabled in supy
+    df_forcing = df_forcing.assign(
+        metforcingdata_grid=0,
+        ts5mindata_ir=0,
+    )
     # grid list determined by initial states
     grid_list = df_init.index
 
@@ -205,14 +223,14 @@ def run_supy(df_forcing, df_init_input, save_state=False):
                 #     series_state_start, met_forcing_tstep)
                 dict_state_end, dict_output_tstep = suews_cal_tstep(
                     dict_state_start, met_forcing_tstep)
-                # save_state=save_state)
+
                 # update output & model state at tstep for the current grid
                 dict_output.update({(tstep, grid): dict_output_tstep})
                 dict_state.update({(tstep + 1, grid): dict_state_end})
 
         # pack results as easier DataFrames
         df_output = pack_df_output(dict_output).swaplevel(0, 1)
-        df_state = pack_df_state(dict_state).swaplevel(0, 1)
+        df_state_final = pack_df_state(dict_state).swaplevel(0, 1)
 
     else:
         # use higher level wrapper that calculate at a `block` level
@@ -239,10 +257,10 @@ def run_supy(df_forcing, df_init_input, save_state=False):
         # save results as time-aware DataFrame
         df_output0 = pack_df_output_array(dict_output, df_forcing)
         df_output = df_output0.replace(-999., np.nan)
-        df_state = pack_df_state(dict_state).swaplevel(0, 1)
+        df_state_final = pack_df_state(dict_state).swaplevel(0, 1)
         # df_state = pd.DataFrame(dict_state).T
         # df_state.index.set_names('grid')
 
-    df_state = pack_df_state_final(df_state, df_init)
+    df_state_final = pack_df_state_final(df_state_final, df_init)
 
-    return df_output, df_state
+    return df_output, df_state_final

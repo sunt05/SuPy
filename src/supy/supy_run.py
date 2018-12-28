@@ -93,9 +93,12 @@ def suews_cal_tstep_multi(dict_state_start_grid, df_met_forcing_block):
                     'ts5mindata_ir',
                     'isec',
                 ]),
-            order='F'),
+            order='F'
+        ),
         'ts5mindata_ir': np.array(
-            df_met_forcing_block['ts5mindata_ir'], order='F'),
+            df_met_forcing_block['ts5mindata_ir'],
+            order='F'
+        ),
         'len_sim': np.array(df_met_forcing_block.shape[0], dtype=int)})
     dict_input = {k: dict_input[k] for k in list_var_input_multitsteps}
 

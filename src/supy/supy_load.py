@@ -193,19 +193,18 @@ def gen_suews_arg_info_df(docstring):
 # load configurations: mod_config
 # process RunControl.nml
 # this function can handle all SUEWS nml files
-# @functools.lru_cache(maxsize=128)
+@functools.lru_cache(maxsize=128)
 def load_SUEWS_nml(path_file):
     # remove case issues
     # xfile = path_insensitive(xfile)
     try:
-        path_file = Path(path_insensitive(str(path_file)))
-        path_file = path_file.resolve()
-    except FileNotFoundError:
-        print('{path} does not exists!'.format(path=path_file))
-    else:
+        path_file_x = Path(path_insensitive(str(path_file)))
+        path_file = path_file_x.resolve()
         str_file = path_insensitive(str(path_file))
         df_res = pd.DataFrame(f90nml.read(str_file))
         return df_res
+    except FileNotFoundError:
+        print('{path} does not exists!'.format(path=path_file))
 
 
 # def load_SUEWS_RunControl(path_file):
@@ -215,6 +214,7 @@ def load_SUEWS_nml(path_file):
 
 
 # load all tables (xgrid.e., txt files)
+@functools.lru_cache(maxsize=128)
 def load_SUEWS_table(path_file):
     # remove case issues
     try:
@@ -224,9 +224,17 @@ def load_SUEWS_table(path_file):
     else:
         # fileX = path_insensitive(fileX)
         str_file = str(path_file)
-        rawdata = pd.read_table(str_file, delim_whitespace=True,
-                                comment='!', error_bad_lines=False,
-                                skiprows=1, index_col=0).dropna()
+        rawdata = pd.read_table(
+            str_file,
+            delim_whitespace=True,
+            comment='!',
+            error_bad_lines=False,
+            skiprows=1,
+            index_col=0
+        )
+        rawdata = rawdata.dropna()
+        # rawdata = rawdata.apply(pd.to_numeric)
+        rawdata.index = rawdata.index.astype(int)
     return rawdata
 
 
@@ -551,6 +559,8 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
             error_bad_lines=True
         ).dropna() for fileX in list_file_MetForcing],
         ignore_index=True)
+    # `drop_duplicates` in case some duplicates mixed
+    df_forcing_met = df_forcing_met.drop_duplicates()
     col_suews_met_forcing = [
         'iy', 'id', 'it', 'imin',
         'qn1_obs', 'qh_obs', 'qe', 'qs_obs', 'qf_obs',
@@ -733,6 +743,7 @@ def build_code_df(code, path_input, df_base):
     lib_code = dict_Code2File[code]
     str_lib = lib_code.replace('.txt', '').replace('SUEWS', 'lib')
     # lib = dict_libs[str_lib]
+
     df_code0 = pd.concat([dict_libs[str_lib]], axis=1, keys=[code])
     # df_siteselect = dict_libs['lib_SiteSelect']
     if isinstance(df_base.columns, pd.core.index.MultiIndex):
@@ -741,8 +752,17 @@ def build_code_df(code, path_input, df_base):
     else:
         code_index = code
 
-    # print('list_keys:\n', list_keys)
-    df_code = df_code0.loc[df_base[code_index].astype(int).values, list_keys]
+    list_code = df_base[code_index].astype(int).values
+
+    try:
+        df_code = df_code0.loc[list_code, list_keys]
+    except Exception as e:
+        print('Entries missing from {lib}'.format(lib=lib_code))
+        print('\nlist_code:\n', list_code, '\n', df_code0.index)
+        print('\nlist_keys\n', list_keys, '\n', df_code0.columns)
+
+        raise e
+
     df_code.index = df_base.index
     # recover outmost level code if profile values are extracted
     if keys_code == {':'}:
@@ -1076,118 +1096,125 @@ def load_SUEWS_SurfaceChar_df(path_input):
     if len_grid_orig == 1:
         df_sfc_char = df_sfc_char.drop_duplicates()
 
+    # add DataFrame for proper type detection
+    df_sfc_char = pd.DataFrame(df_sfc_char)
+
     # set level names for columns
     df_sfc_char.columns.set_names(['var', 'ind_dim'], inplace=True)
 
     return df_sfc_char
 
 
+# mod_config: static properties
+dict_RunControl_default= {
+    'aerodynamicresistancemethod': 2,
+    'evapmethod': 2,
+    'laicalcyes': 1,
+    'veg_type': 1,
+    'diagnose': 0,
+    'diagnosedisagg': 0,
+    'diagnosedisaggestm': 0,
+    'diagqn': 0,
+    'diagqs': 0,
+    'keeptstepfilesin': 0,
+    'keeptstepfilesout': 0,
+    'writeoutoption': 0,
+    'disaggmethod': 1,
+    'disaggmethodestm': 1,
+    'raindisaggmethod': 100,
+    'rainamongn': -999,
+    'multrainamongn': -999,
+    'multrainamongnupperi': -999,
+    'kdownzen': 1,
+    'suppresswarnings': 0,
+    'resolutionfilesin': 0,
+}
+
+
 # load RunControl variables
-@functools.lru_cache(maxsize=16)
-def load_SUEWS_dict_ModConfig(path_runcontrol):
-    lib_RunControl = load_SUEWS_nml(path_runcontrol)
-    dict_RunControl = lib_RunControl.loc[:, 'runcontrol'].to_dict()
+# @functools.lru_cache(maxsize=16)
+def load_SUEWS_dict_ModConfig(path_runcontrol, dict_default=dict_RunControl_default):
+    dict_RunControl = dict_default.copy()
+    dict_RunControl_x = load_SUEWS_nml(
+        path_runcontrol).loc[:, 'runcontrol'].to_dict()
+    dict_RunControl.update(dict_RunControl_x)
+    return dict_RunControl
 
-    # mod_config: static properties
-    dict_ModConfig = {
-        'aerodynamicresistancemethod': 2,
-        'evapmethod': 2,
-        'laicalcyes': 1,
-        'veg_type': 1,
-        'diagnose': 0,
-        'diagnosedisagg': 0,
-        'diagnosedisaggestm': 0,
-        'diagqn': 0,
-        'diagqs': 0,
-        'keeptstepfilesin': 0,
-        'keeptstepfilesout': 0,
-        'writeoutoption': 0,
-        'disaggmethod': 1,
-        'disaggmethodestm': 1,
-        'raindisaggmethod': 100,
-        'rainamongn': -999,
-        'multrainamongn': -999,
-        'multrainamongnupperi': -999,
-        'kdownzen': 1,
-        'suppresswarnings': 0,
-        'resolutionfilesin': 0,
-    }
-    dict_ModConfig.update(dict_RunControl)
-    return dict_ModConfig
 
+# initialise InitialCond_df with default values
+nan = -999.
+dict_InitCond_default = {
+    'dayssincerain':  0,
+    # `temp_c0` defaults to daily mean air temperature of the first day
+    # 'temp_c0':  df_forcing_met['temp_c'].iloc[:(24 * nsh) - 1].mean(),
+    'temp_c0':  10,
+    'leavesoutinitially':  int(nan),
+    'gdd_1_0':  nan,
+    'gdd_2_0':  nan,
+    'laiinitialevetr':  nan,
+    'laiinitialdectr':  nan,
+    'laiinitialgrass':  nan,
+    'albevetr0':  nan,
+    'albdectr0':  nan,
+    'albgrass0':  nan,
+    'decidcap0':  nan,
+    'porosity0':  nan,
+    'pavedstate':  0,
+    'bldgsstate':  0,
+    'evetrstate':  0,
+    'dectrstate':  0,
+    'grassstate':  0,
+    'bsoilstate':  0,
+    # 'waterstate':  df_gridSurfaceChar.at[grid, 'waterdepth'],
+    'waterstate':  10,
+    'soilstorepavedstate':  nan,
+    'soilstorebldgsstate':  nan,
+    'soilstoreevetrstate':  nan,
+    'soilstoredectrstate':  nan,
+    'soilstoregrassstate':  nan,
+    'soilstorebsoilstate':  nan,
+    'soilstorewaterstate': 0,
+    'snowinitially':  int(nan),
+    'snowwaterpavedstate':  nan,
+    'snowwaterbldgsstate':  nan,
+    'snowwaterevetrstate':  nan,
+    'snowwaterdectrstate':  nan,
+    'snowwatergrassstate':  nan,
+    'snowwaterbsoilstate':  nan,
+    'snowwaterwaterstate':  nan,
+    'snowpackpaved':  nan,
+    'snowpackbldgs':  nan,
+    'snowpackevetr':  nan,
+    'snowpackdectr':  nan,
+    'snowpackgrass':  nan,
+    'snowpackbsoil':  nan,
+    'snowpackwater':  nan,
+    'snowfracpaved':  nan,
+    'snowfracbldgs':  nan,
+    'snowfracevetr':  nan,
+    'snowfracdectr':  nan,
+    'snowfracgrass':  nan,
+    'snowfracbsoil':  nan,
+    'snowfracwater':  nan,
+    'snowdenspaved':  nan,
+    'snowdensbldgs':  nan,
+    'snowdensevetr':  nan,
+    'snowdensdectr':  nan,
+    'snowdensgrass':  nan,
+    'snowdensbsoil':  nan,
+    'snowdenswater':  nan,
+    'snowalb0':  nan,
+    'qn1_av': 0,
+    'qn1_s_av': 0,
+    'dqndt': 0,
+    'dqnsdt': 0,
+}
 
 # load initial conditions of all grids as a DataFrame
+
+
 @functools.lru_cache(maxsize=16)
 def load_SUEWS_InitialCond_df(path_runcontrol):
-    # initialise InitialCond_df with default values
-    nan = -999.
-    dict_InitCond_default = {
-        'dayssincerain':  0,
-        # `temp_c0` defaults to daily mean air temperature of the first day
-        # 'temp_c0':  df_forcing_met['temp_c'].iloc[:(24 * nsh) - 1].mean(),
-        'temp_c0':  10,
-        'leavesoutinitially':  int(nan),
-        'gdd_1_0':  nan,
-        'gdd_2_0':  nan,
-        'laiinitialevetr':  nan,
-        'laiinitialdectr':  nan,
-        'laiinitialgrass':  nan,
-        'albevetr0':  nan,
-        'albdectr0':  nan,
-        'albgrass0':  nan,
-        'decidcap0':  nan,
-        'porosity0':  nan,
-        'pavedstate':  0,
-        'bldgsstate':  0,
-        'evetrstate':  0,
-        'dectrstate':  0,
-        'grassstate':  0,
-        'bsoilstate':  0,
-        # 'waterstate':  df_gridSurfaceChar.at[grid, 'waterdepth'],
-        'waterstate':  10,
-        'soilstorepavedstate':  nan,
-        'soilstorebldgsstate':  nan,
-        'soilstoreevetrstate':  nan,
-        'soilstoredectrstate':  nan,
-        'soilstoregrassstate':  nan,
-        'soilstorebsoilstate':  nan,
-        'soilstorewaterstate': 0,
-        'snowinitially':  int(nan),
-        'snowwaterpavedstate':  nan,
-        'snowwaterbldgsstate':  nan,
-        'snowwaterevetrstate':  nan,
-        'snowwaterdectrstate':  nan,
-        'snowwatergrassstate':  nan,
-        'snowwaterbsoilstate':  nan,
-        'snowwaterwaterstate':  nan,
-        'snowpackpaved':  nan,
-        'snowpackbldgs':  nan,
-        'snowpackevetr':  nan,
-        'snowpackdectr':  nan,
-        'snowpackgrass':  nan,
-        'snowpackbsoil':  nan,
-        'snowpackwater':  nan,
-        'snowfracpaved':  nan,
-        'snowfracbldgs':  nan,
-        'snowfracevetr':  nan,
-        'snowfracdectr':  nan,
-        'snowfracgrass':  nan,
-        'snowfracbsoil':  nan,
-        'snowfracwater':  nan,
-        'snowdenspaved':  nan,
-        'snowdensbldgs':  nan,
-        'snowdensevetr':  nan,
-        'snowdensdectr':  nan,
-        'snowdensgrass':  nan,
-        'snowdensbsoil':  nan,
-        'snowdenswater':  nan,
-        'snowalb0':  nan,
-        'qn1_av': 0,
-        'qn1_s_av': 0,
-        'dqndt': 0,
-        'dqnsdt': 0,
-    }
-
     # load basic model settings
     dict_ModConfig = load_SUEWS_dict_ModConfig(path_runcontrol)
     # path for SUEWS input tables:
@@ -1332,8 +1359,8 @@ def add_sfc_init_df(df_init):
         for var in ['snowdens', 'snowfrac', 'snowpack']
     }
     dict_var_sfc.update({
-        'meltwaterstore': ['snowwater{}state'.format(sfc) for sfc in list_sfc],
-        'soilmoist_id': ['soilstore{}state'.format(sfc) for sfc in list_sfc],
+        'snowwater': ['snowwater{}state'.format(sfc) for sfc in list_sfc],
+        'soilstore_id': ['soilstore{}state'.format(sfc) for sfc in list_sfc],
         'state_id': ['{}state'.format(sfc) for sfc in list_sfc],
     })
 
@@ -1409,9 +1436,6 @@ def load_InitialCond_grid_df(path_runcontrol):
     # add Initial Condition variables from namelist file
     df_init = add_file_init_df(df_init)
 
-    # # add veg info into `df_init`
-    # df_init = add_veg_init_df(df_init)
-
     # add surface specific info into `df_init`
     df_init = add_sfc_init_df(df_init)
 
@@ -1424,4 +1448,7 @@ def load_InitialCond_grid_df(path_runcontrol):
     # # sort column names for consistency
     # df_init = df_init.sort_index(axis=1)
     df_init.index.set_names('grid', inplace=True)
+
+    # add DataFrame for proper type detection
+    df_init = pd.DataFrame(df_init)
     return df_init
