@@ -364,7 +364,7 @@
     :Description:
         Irrigation flag: 1 for on and 0 for off.
     :SUEWS-related variables:
-        `DayWat(1) <https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/Input_Options.html#cmdoption-arg-daywat(1>`_, `DayWat(2) <https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/Input_Options.html#cmdoption-arg-daywat(2>`_, `DayWat(3) <https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/Input_Options.html#cmdoption-arg-daywat(3>`_, `DayWat(4) <https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/Input_Options.html#cmdoption-arg-daywat(4>`_, `DayWat(5) <https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/Input_Options.html#cmdoption-arg-daywat(5>`_, `DayWat(6) <https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/Input_Options.html#cmdoption-arg-daywat(6>`_, `DayWat(7) <https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/Input_Options.html#cmdoption-arg-daywat(7>`_
+        `DayWat(1) <https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/Input_Options.html#cmdoption-arg-daywat-1>`_, `DayWat(2) <https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/Input_Options.html#cmdoption-arg-daywat-2>`_, `DayWat(3) <https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/Input_Options.html#cmdoption-arg-daywat-3>`_, `DayWat(4) <https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/Input_Options.html#cmdoption-arg-daywat-4>`_, `DayWat(5) <https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/Input_Options.html#cmdoption-arg-daywat-5>`_, `DayWat(6) <https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/Input_Options.html#cmdoption-arg-daywat-6>`_, `DayWat(7) <https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/Input_Options.html#cmdoption-arg-daywat-7>`_
     :Dimensionality:
         (7,)
     :Dimensionality remarks:
@@ -1046,7 +1046,7 @@
 .. option:: ohm_coef
 
     :Description:
-        Coefficient for OHM calculation.
+        Coefficients for OHM calculation.
     :SUEWS-related variables:
         `a1 <https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/Input_Options.html#cmdoption-arg-a1>`_, `a2 <https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/Input_Options.html#cmdoption-arg-a2>`_, `a3 <https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/Input_Options.html#cmdoption-arg-a3>`_
     :Dimensionality:

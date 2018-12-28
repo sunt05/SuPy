@@ -116,3 +116,5 @@ dev-test/
 .vscode/launch.json
 .vscode/settings.json
 _build/
+
+pipfile.lock

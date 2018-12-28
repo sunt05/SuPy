@@ -2,15 +2,15 @@
 # %%
 import pandas as pd
 
-df_var_info = pd.concat([
-    pd.read_csv(file)
-    for file in [
-        'df_var_supy_auto.csv',
-        'df_var_supy_manual_mod.csv',
-    ]
-])
-df_var_info
-
+# df_var_info = pd.concat([
+#     pd.read_csv(file)
+#     for file in [
+#         'df_var_supy_auto.csv',
+#         'df_var_supy_manual_mod.csv',
+#     ]
+# ])
+# df_var_info
+df_var_info=pd.read_csv('./df_var_supy.csv')
 
 # %%
 # xx = df_var_info.iloc[100]
@@ -56,7 +56,7 @@ gen_opt_str(df_var_info.iloc[10])
 # %%
 
 df_var_info['rst'] = df_var_info.apply(gen_opt_str, axis=1)
-df_var_info = df_var_info.sort_values('var').reset_index(drop=True)
+df_var_info = df_var_info.sort_values('variable').reset_index(drop=True)
 rst_txt = '\n\n'.join(df_var_info.rst)
 # print()
 with open('df_state_raw.rst', 'w') as f:
