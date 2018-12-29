@@ -1,17 +1,10 @@
-from __future__ import division, print_function
+from ast import literal_eval
 
-# import collections
 import functools
-# from scipy import interpolate
-# import copy
-# import glob
-# import inspect
-# import os
 from datetime import timedelta
 from pathlib import Path
 
 import f90nml
-# import sys
 import numpy as np
 import pandas as pd
 from supy_driver import suews_driver as sd
@@ -104,6 +97,25 @@ def get_args_suews_multitsteps():
 
     return dict_inout_sd
 
+
+# store these lists for later use
+list_var_input = list(get_args_suews()['var_input'])
+list_var_inout = list(get_args_suews()['var_inout'])
+list_var_output = list(get_args_suews()['var_output'])
+set_var_input = set(list_var_input)
+set_var_inout = set(list_var_inout)
+set_var_ouput = set(list_var_output)
+
+list_var_input_multitsteps = list(get_args_suews_multitsteps()['var_input'])
+list_var_inout_multitsteps = list(get_args_suews_multitsteps()['var_inout'])
+list_var_output_multitsteps = list(get_args_suews_multitsteps()['var_output'])
+set_var_input_multitsteps = set(list_var_input_multitsteps)
+set_var_inout_multitsteps = set(list_var_inout_multitsteps)
+set_var_ouput_multitsteps = set(list_var_output_multitsteps)
+
+# variables used in df_state
+set_var_use = set_var_input.intersection(set_var_input_multitsteps)
+
 ##############################################################################
 # input processor
 # 1. surface properties will be retrieved and packed together for later use
@@ -138,8 +150,7 @@ dict_libVar2File = {fileX.replace('.txt', '').replace(
 # dictionaries:
 # links between code in SiteSelect to properties in according tables
 # this is described in SUEWS online manual:
-# http://urban-climate.net/umep/SUEWS#SUEWS_SiteSelect.txt
-# path_code2file = os.path.join(path_supy_module, 'code2file.json')
+# https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/SUEWS_SiteInfo.html
 path_code2file = path_supy_module / 'code2file.json'
 dict_Code2File = pd.read_json(path_code2file, typ='series').to_dict()
 # variable translation as done in Fortran-SUEWS
@@ -189,10 +200,19 @@ def gen_suews_arg_info_df(docstring):
     return df_info
 
 
+df_info_suews_cal_main = gen_suews_arg_info_df(sd.suews_cal_main.__doc__)
+df_info_suews_cal_multitsteps = gen_suews_arg_info_df(
+    sd.suews_cal_multitsteps.__doc__)
+
+df_var_info = df_info_suews_cal_multitsteps.merge(
+    df_info_suews_cal_main, how='outer').set_index('name')
+
 # load model settings
 # load configurations: mod_config
 # process RunControl.nml
 # this function can handle all SUEWS nml files
+
+
 @functools.lru_cache(maxsize=128)
 def load_SUEWS_nml(path_file):
     # remove case issues
@@ -1105,8 +1125,36 @@ def load_SUEWS_SurfaceChar_df(path_input):
     return df_sfc_char
 
 
+# filter out unnecessary entries by re-arranging the columns
+def trim_df_state(df_state: pd.DataFrame, set_var_use=set_var_use) -> pd.DataFrame:
+    df_state_slim = df_state.copy().stack().filter(items=set_var_use).unstack(0)
+    # scalar variables
+    df_state_slim_scalar = df_state_slim.loc[['0']].copy()
+    # array variables, which need to be sorted to get layout correct
+    df_state_slim_array = df_state_slim.filter(like='(', axis=0)
+    # convert index to list for numerical sorting
+    df_state_slim_array.index = df_state_slim_array.index.map(
+        lambda x: list(literal_eval(x)))
+    df_state_slim_array = df_state_slim_array.sort_index()
+    # after sorting, convert index back to str-tuple for hashing used in MultiIndex-ing
+    df_state_slim_array.index = df_state_slim_array.index.map(
+        lambda x: str(tuple(x)))
+    # concat scalar and array variables together
+    # and sort columns by variable names
+    df_state_slim = pd.concat(
+        [df_state_slim_scalar, df_state_slim_array],
+        axis=0).sort_index(axis=1)
+
+    # rearrange layout back to the previous one
+    df_state_slim = df_state_slim\
+        .stack('grid')\
+        .unstack('ind_dim')\
+        .dropna(axis=1)
+    return df_state_slim
+
+
 # mod_config: static properties
-dict_RunControl_default= {
+dict_RunControl_default = {
     'aerodynamicresistancemethod': 2,
     'evapmethod': 2,
     'laicalcyes': 1,
@@ -1449,6 +1497,7 @@ def load_InitialCond_grid_df(path_runcontrol):
     # df_init = df_init.sort_index(axis=1)
     df_init.index.set_names('grid', inplace=True)
 
-    # add DataFrame for proper type detection
-    df_init = pd.DataFrame(df_init)
+    # filter out unnecessary entries by re-arranging the columns
+    df_init = trim_df_state(df_init)
+
     return df_init

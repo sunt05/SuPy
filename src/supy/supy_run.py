@@ -5,8 +5,10 @@ import numpy as np
 import pandas as pd
 from supy_driver import suews_driver as sd
 
-from .supy_load import (gen_suews_arg_info_df, get_args_suews,
-                        get_args_suews_multitsteps)
+from .supy_load import (list_var_input, list_var_inout, list_var_output,
+                        list_var_input_multitsteps,
+                        list_var_inout_multitsteps,
+                        df_var_info)
 
 ##############################################################################
 # main calculation
@@ -15,31 +17,10 @@ from .supy_load import (gen_suews_arg_info_df, get_args_suews,
 
 
 # 1. calculation code for one time step
-# store these lists for later use
-list_var_input = list(get_args_suews()['var_input'])
-list_var_inout = list(get_args_suews()['var_inout'])
-list_var_output = list(get_args_suews()['var_output'])
-set_var_input = set(list_var_input)
-set_var_inout = set(list_var_inout)
-set_var_ouput = set(list_var_output)
 
-list_var_input_multitsteps = list(get_args_suews_multitsteps()['var_input'])
-list_var_inout_multitsteps = list(get_args_suews_multitsteps()['var_inout'])
-list_var_output_multitsteps = list(get_args_suews_multitsteps()['var_output'])
-set_var_input_multitsteps = set(list_var_input_multitsteps)
-set_var_inout_multitsteps = set(list_var_inout_multitsteps)
-set_var_ouput_multitsteps = set(list_var_output_multitsteps)
-
-
-df_info_suews_cal_main = gen_suews_arg_info_df(sd.suews_cal_main.__doc__)
-df_info_suews_cal_multitsteps = gen_suews_arg_info_df(
-    sd.suews_cal_multitsteps.__doc__)
-
-df_var_info = df_info_suews_cal_multitsteps.merge(
-    df_info_suews_cal_main, how='outer').set_index('name')
 
 # test for performance
-dict_var_inout = {k: None for k in set_var_inout}
+# dict_var_inout = {k: None for k in set_var_inout}
 
 
 # high-level wrapper: suews_cal_tstep
@@ -143,14 +124,14 @@ def pack_var(var_ser):
 
 
 # pack one Series of grid vars into dict of `np.array`s
-def pack_grid_dict(grid_ser):
+def pack_grid_dict(ser_grid):
     ser_dtype = df_var_info.dtype
     list_var_int = df_var_info[
         (ser_dtype == 'int') | (ser_dtype == "array('i')")].index
-    list_var = grid_ser.index.levels[0].unique()
+    list_var = ser_grid.index.levels[0].unique()
     # pack according to dimension info
     dict_var = {
-        var: pack_var(grid_ser[var])\
+        var: pack_var(ser_grid[var])\
         # .astype(np.float)
         for var in list_var if var not in ['file_init']
     }
