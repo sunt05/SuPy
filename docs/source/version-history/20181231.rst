@@ -1,0 +1,42 @@
+.. _new_latest:
+
+.. _new_2018.12:
+
+.. _new_20181231:
+
+Version 2018.12.31 (preview release, 31 Dec 2018)
+======================================================
+
+
+- **New**
+
+  #. SuPy documentation
+
+    * Key IO data structures documented:
+
+     - `df_output_var` (:issue:`9`)
+     - `df_state_var` (:issue:`8`)
+     - `df_forcing_var` (:issue:`7`)
+
+
+    * Tutorial of parallel SuPy simulaitons for impact studies
+
+
+
+- **Improvement**
+
+  #. Improved calculation of OHM-related radiation terms
+
+
+- **Changes**
+
+  None.
+
+
+- **Fix**
+
+  None
+
+- **Known issue**
+
+  None

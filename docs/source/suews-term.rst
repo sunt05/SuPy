@@ -1,3 +1,5 @@
+.. _suews_terms:
+
 SUEWS Terminology
 ========================
 

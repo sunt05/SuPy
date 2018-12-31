@@ -10,8 +10,8 @@ os.getcwd()
 # %% [markdown]
 # ### filter input variables
 # %%
-set_input = sp.supy_run.set_var_input.copy()
-set_input.update(sp.supy_run.set_var_input_multitsteps)
+set_input = sp.supy_load.set_var_input.copy()
+set_input.update(sp.supy_load.set_var_input_multitsteps)
 df_init_sample, df_forcing_sample = sp.load_SampleData()
 set_input.difference_update(set(df_forcing_sample.columns))
 # set_input, len(set_input)
@@ -151,7 +151,12 @@ def choose_page(str_opt, set_site=set_site, set_runcontrol=set_runcontrol, set_i
 
 
 # %%
-def gen_url_option(str_opt, set_site=set_site, set_runcontrol=set_runcontrol, set_initcond=set_initcond, source='docs'):
+def gen_url_option(
+    str_opt, 
+    set_site=set_site, 
+    set_runcontrol=set_runcontrol, 
+    set_initcond=set_initcond, 
+    source='docs'):
     '''construct a URL for option based on source 
 
     :param str_opt: option name, defaults to ''

@@ -29,14 +29,14 @@ path_runcontrol=Path('../sample_run')/'RunControl.nml'
 #%% [markdown]
 # ### Model configuration
 # 
-# We call `sp.init_supy_df` to initialise a SUEWS simulation and get two `pandas` objects (note: the following names CAN be customised and are NOT fixed to the examples shown here):
+# We call `sp.init_supy` to initialise a SUEWS simulation and get two `pandas` objects (note: the following names CAN be customised and are NOT fixed to the examples shown here):
 # 
 #  `df_state_init`: a `DataFrame` for grid-specific settings
 # 
 # Once loaded in, these objects CAN be modified and reused for conducting simulations that differ from the one configured via input files under the above `dir_start`.
 
 #%%
-df_state_init = sp.init_supy_df(path_runcontrol)
+df_state_init = sp.init_supy(path_runcontrol)
 
 #%% [markdown]
 # A sample `df_state_init` looks below (note that `.T` is used here to a nicer tableform view):

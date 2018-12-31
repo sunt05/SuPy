@@ -54,9 +54,27 @@ extensions = [
     # 'rinoh.frontend.sphinx',
     # 'sphinxfortran.fortran_autodoc',
     # 'sphinxfortran.fortran_domain',
-    'sphinx.ext.githubpages'
+    'sphinx.ext.githubpages',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.extlinks',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.ifconfig',
+    'sphinx.ext.viewcode',
+    'IPython.sphinxext.ipython_directive',
+    'IPython.sphinxext.ipython_console_highlighting',
+    # 'sphinx_gallery.gen_gallery',
 
 ]
+
+extlinks = {
+    'issue': ('https://github.com/sunt05/SuPy/issues/%s', 'GH'),
+    'pull': ('https://github.com/sunt05/SuPy/pull/%s', 'PR'),
+}
+
+autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -300,3 +318,12 @@ epub_exclude_files = ['search.html']
 # https://rackerlabs.github.io/docs-rackspace/tools/rtd-tables.html
 def setup(app):
     app.add_stylesheet('theme_overrides.css')
+
+
+# Example configuration for intersphinx: refer to the Python standard library.
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3/', None),
+    'pandas': ('http://pandas.pydata.org/pandas-docs/stable/', None),
+    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+    'suews': ('https://suews-docs.readthedocs.io/en/latest/', None),
+}

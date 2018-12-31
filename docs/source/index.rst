@@ -6,8 +6,15 @@
 
 SuPy: SUEWS that speaks Python
 ----------------------------------------------------
+.. image:: https://img.shields.io/pypi/pyversions/supy.svg
+    :target: https://pypi.org/project/supy
+    :alt: Python Version Support Status
 
-.. image:: https://mybinder.org/badge.svg
+.. image:: https://img.shields.io/pypi/v/supy.svg
+    :target: https://pypi.org/project/supy
+    :alt: Latest Version Status
+
+.. image:: https://mybinder.org/badge_logo.svg
     :target: https://mybinder.org/v2/gh/sunt05/SuPy/master
     :alt: Binder Status
 
@@ -15,20 +22,25 @@ SuPy: SUEWS that speaks Python
     :target: https://supy.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
+.. image:: https://dev.azure.com/sunt05/SUEWS/_apis/build/status/sunt05.SuPy?branchName=master
+    :target: https://dev.azure.com/sunt05/SUEWS/_build/latest?definitionId=11?branchName=master
+    :alt: Build Status
+
 
 - What is the differences between SuPy and SUEWS?
 
+
 - How to get SuPy?
 
-  - quick installation:
+  Please install via `PyPI <https://badge.fury.io/py/supy>`_
 
   .. code-block:: shell
 
-    pip install supy --upgrade
+    python3 -m pip install supy --upgrade
 
 - How to use SuPy?
 
-  Please follow the :ref:`quickstart`.
+  Please follow :ref:`the Quickstart of SuPy <quickstart>`.
 
 
 .. toctree::
@@ -38,5 +50,5 @@ SuPy: SUEWS that speaks Python
   intro
   tutorial/tutorial
   data-structure/supy-io
-  suews-term
+  api
   version-history/version-history
