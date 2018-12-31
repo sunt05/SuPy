@@ -1,13 +1,10 @@
 # SuPy
 
 [![Python Version Support Status](https://img.shields.io/pypi/pyversions/supy.svg)](https://pypi.org/project/supy)
-
 [![Latest Version Status](https://img.shields.io/pypi/v/supy.svg)](https://pypi.org/project/supy)
-
 [![Launch Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sunt05/SuPy/master)
 
 [![Build Status](https://dev.azure.com/sunt05/SUEWS/_apis/build/status/sunt05.SuPy?branchName=master)](https://dev.azure.com/sunt05/SUEWS/_build/latest?definitionId=11?branchName=master)
-
 [![Documentation Status](https://readthedocs.org/projects/supy/badge/?version=latest)](https://supy.readthedocs.io/en/latest/?badge=latest)
 
 [**SU**EWS](https://suews-docs.readthedocs.io) that speaks **Py**thon
