@@ -9,7 +9,7 @@
 # 08 Mar 2018: pypi packaging
 ###########################################################################
 
-from .supy_module import (init_supy_df, load_SampleData,
+from .supy_module import (init_supy, load_SampleData,
                           load_forcing_grid, run_supy)
 
 from .supy_util import *

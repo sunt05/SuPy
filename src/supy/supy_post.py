@@ -58,7 +58,7 @@ def pack_df_grid(dict_output):
         df_xx1[grid].to_dict()).unstack().dropna(axis=1)
         for grid in df_xx1.columns})
     # drop redundant levels
-    df_xx2.columns = df_xx2.columns.droplevel()
+    df_xx2.columns = df_xx2.columns.droplevel(0)
     # regroup by `grid`
     df_xx2.index.names = ['grid', 'time']
     gb_xx2 = df_xx2.groupby(level='grid')
@@ -106,7 +106,6 @@ def pack_df_output(dict_output):
     # set index level names
     index = df_output.index.set_names(['datetime', 'grid'])
     # clean columns
-    # df_output.columns = df_output.columns.droplevel()
     columns = gen_MultiIndex(df_output.iloc[0])
     values = np.apply_along_axis(np.hstack, 1, df_output.values)
     df_output = pd.DataFrame(values, index=index, columns=columns)
@@ -118,8 +117,6 @@ def pack_df_state(dict_state):
     # df_state = pd.concat(dict_state).to_frame().unstack()
     # set index level names
     df_state.index = df_state.index.set_names(['datetime', 'grid'])
-    # clean columns
-    # df_state.columns = df_state.columns.droplevel()
 
     return df_state
 

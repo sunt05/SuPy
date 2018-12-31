@@ -15,28 +15,6 @@ class TestSuPy(TestCase):
         s = sp.supy_run.list_var_output
         self.assertTrue(isinstance(s[0], np.str_))
 
-    # def test_is_sampledata_init_loaded(self):
-    #     path_SampleData = Path(sp.path_supy_module) / 'sample_run'
-    #     ser_mod_cfg, df_state_init = sp.init_supy_df(path_SampleData)
-    #     test_non_empty = np.all(
-    #         [
-    #             not ser_mod_cfg.empty,
-    #             not df_state_init.empty,
-    #         ]
-    #     )
-    #     self.assertTrue(test_non_empty)
-
-    # def test_is_sampledata_forcing_loaded(self):
-    #     ser_mod_cfg, df_state_init, df_forcing_tstep = sp.load_SampleData()
-    #     test_non_empty = np.all(
-    #         [
-    #             not ser_mod_cfg.empty,
-    #             not df_state_init.empty,
-    #             not df_forcing_tstep.empty,
-    #         ]
-    #     )
-    #     self.assertTrue(test_non_empty)
-
     def test_is_supy_running(self):
         df_state_init, df_forcing_tstep = sp.load_SampleData()
         df_forcing_part = df_forcing_tstep.iloc[:288 * 1]

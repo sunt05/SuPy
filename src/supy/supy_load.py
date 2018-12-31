@@ -518,12 +518,12 @@ def resample_forcing_met(
 
     # adjust solar radiation by zenith correction and total amount distribution
     if kdownzen == 1:
-        data_met_tstep["avkdn"] = resample_kdn(
-            data_met_tstep["avkdn"], tstep_mod, timezone, lat, lon, alt)
+        data_met_tstep["kdown"] = resample_kdn(
+            data_met_tstep["kdown"], tstep_mod, timezone, lat, lon, alt)
 
     # correct rainfall
-    data_met_tstep['precip'] = resample_precip(
-        data_met_raw['precip'], tstep_mod, tstep_in)
+    data_met_tstep['rain'] = resample_precip(
+        data_met_raw['rain'], tstep_mod, tstep_in)
 
     # # reset index with numbers
     # data_met_tstep_out = data_met_tstep.copy().reset_index(drop=True)
@@ -583,16 +583,16 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
     df_forcing_met = df_forcing_met.drop_duplicates()
     col_suews_met_forcing = [
         'iy', 'id', 'it', 'imin',
-        'qn1_obs', 'qh_obs', 'qe', 'qs_obs', 'qf_obs',
-        'avu1', 'avrh', 'temp_c', 'press_hpa', 'precip', 'avkdn',
-        'snow_obs', 'ldown_obs', 'fcld_obs',
-        'wu_m3', 'xsmd', 'lai_obs', 'kdiff', 'kdir', 'wdir'
+        'qn', 'qh', 'qe', 'qs', 'qf',
+        'U', 'RH', 'Tair', 'pres', 'rain', 'kdown',
+        'snow', 'ldown', 'fcld',
+        'Wuh', 'xsmd', 'lai', 'kdiff', 'kdir', 'wdir'
     ]
     # rename these columns to match variables via the driver interface
     df_forcing_met.columns = col_suews_met_forcing
 
     # convert unit from kPa to hPa
-    df_forcing_met['press_hpa'] *= 10
+    df_forcing_met['pres'] *= 10
 
     # add `isec` for WRF-SUEWS interface
     df_forcing_met['isec'] = 0

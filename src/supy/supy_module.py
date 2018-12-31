@@ -18,8 +18,11 @@ from __future__ import division, print_function
 
 # import functools
 from pathlib import Path
+from typing import Tuple
 
 import numpy as np
+import pandas as pd
+import pandas
 
 from .supy_env import path_supy_module
 from .supy_load import (load_InitialCond_grid_df, load_SUEWS_dict_ModConfig,
@@ -32,12 +35,24 @@ from .supy_run import (pack_df_state_final, pack_grid_dict, suews_cal_tstep,
 
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
-
-
-# convert dict_InitCond to pandas Series and DataFrame
-# return pd.DataFrame
 # @functools.lru_cache(maxsize=16)
-def init_supy_df(path_runcontrol):
+
+
+def init_supy(path_runcontrol: str)->pd.DataFrame:
+    '''Initialise supy by loading initial model states.
+
+    Parameters
+    ----------
+    path_runcontrol : str
+        Path to SUEWS RunControl.nml
+
+    Returns
+    -------
+    df_state_init: pandas.DataFrame
+        Initial model states.
+        See `df_state_var` for details.
+    '''
+
     try:
         path_runcontrol_x = Path(path_runcontrol).expanduser().resolve()
     except FileNotFoundError:
@@ -48,16 +63,29 @@ def init_supy_df(path_runcontrol):
         return df_state_init
 
 
-# load forcing datasets of `grid`
-# @functools.lru_cache(maxsize=16)
-def load_forcing_grid(path_runcontrol, grid):
+def load_forcing_grid(path_runcontrol: str, grid: int)->pd.DataFrame:
+    '''Load forcing data for a specific grid included in the index of `df_state_init`.
+
+    Parameters
+    ----------
+    path_runcontrol : str
+        Path to SUEWS RunControl.nml
+    grid : int
+        Grid number
+
+    Returns
+    -------
+    df_forcing: pandas.DataFrame
+        Forcing data. See `df_forcing_var` for details.
+    '''
+
     try:
         path_runcontrol = Path(path_runcontrol).expanduser().resolve()
     except FileNotFoundError:
         print('{path} does not exists!'.format(path=path_runcontrol))
     else:
         dict_mod_cfg = load_SUEWS_dict_ModConfig(path_runcontrol)
-        df_state_init = init_supy_df(path_runcontrol)
+        df_state_init = init_supy(path_runcontrol)
 
         # load setting variables from ser_mod_cfg
         (
@@ -98,7 +126,7 @@ def load_forcing_grid(path_runcontrol, grid):
             lat, lon, alt, timezone, kdownzen)
 
         # merge forcing datasets (met and ESTM)
-        df_forcing_tstep = df_forcing_met_tstep.copy()
+        df_forcing = df_forcing_met_tstep.copy()
 
         # disable the AnOHM and ESTM components for now and for better performance
         # |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -137,25 +165,34 @@ def load_forcing_grid(path_runcontrol, grid):
         # disable the AnOHM and ESTM components for now and for better performance
 
         # coerced precision here to prevent numerical errors inside Fortran
-        df_forcing_tstep = np.around(df_forcing_tstep, decimals=10)
+        df_forcing = np.around(df_forcing, decimals=10)
         # new columns for later use in main calculation
-        df_forcing_tstep[['iy', 'id', 'it', 'imin']] = df_forcing_tstep[[
+        df_forcing[['iy', 'id', 'it', 'imin']] = df_forcing[[
             'iy', 'id', 'it', 'imin']].astype(np.int64)
 
-    return df_forcing_tstep
+    return df_forcing
 
 
 # load sample data for quickly starting a demo run
-def load_SampleData():
+def load_SampleData()->Tuple[pandas.DataFrame, pandas.DataFrame]:
+    '''Load sample data for quickly starting a demo run.
+
+    Returns
+    -------
+    df_state_init, df_forcing: Tuple[pandas.DataFrame, pandas.DataFrame]
+        - df_state_init: `initial model states <df_state_var>`
+        - df_forcing: `forcing data <df_forcing_var>`
+    '''
+
     path_SampleData = Path(path_supy_module) / 'sample_run'
     path_runcontrol = path_SampleData / 'RunControl.nml'
-    df_state_init = init_supy_df(path_runcontrol)
+    df_state_init = init_supy(path_runcontrol)
     # path_input = path_runcontrol.parent / ser_mod_cfg['fileinputpath']
-    df_forcing_tstep = load_forcing_grid(
+    df_forcing = load_forcing_grid(
         path_runcontrol,
         df_state_init.index[0]
     )
-    return df_state_init, df_forcing_tstep
+    return df_state_init, df_forcing
 
 # input processing code end here
 ##############################################################################
@@ -165,17 +202,30 @@ def load_SampleData():
 # 2. compact wrapper for running a whole simulation
 # # main calculation
 # input as DataFrame
-def run_supy(df_forcing, df_state_init, save_state=False):
-    '''perform supy simulaiton
-    
-    :param df_forcing: forcing data
-    :type df_forcing: pandas.DataFrame
-    :param df_state_init: initial model states
-    :type df_state_init: pandas.DataFrame
-    :param save_state: flag for saving model states at each timestep, defaults to False
-    :param save_state: bool, optional
-    :return: df_output, df_state_final
-    :rtype: (pandas.DataFrame, pandas.DataFrame)
+
+def run_supy(
+        df_forcing: pandas.DataFrame,
+        df_state_init: pandas.DataFrame,
+        save_state=False,
+)->Tuple[pandas.DataFrame, pandas.DataFrame]:
+    '''Perform supy simulaiton.
+
+    Parameters
+    ----------
+    df_forcing : pandas.DataFrame
+        forcing data.
+    df_state_init : pandas.DataFrame
+        initial model states.
+    save_state : bool, optional
+        flag for saving model states at each timestep, which can be useful in diagnosing model runtime performance or performing a restart run.
+        (the default is False, which intructs supy not to save runtime model states).
+
+    Returns
+    -------
+    df_output, df_state_final : Tuple[pandas.DataFrame, pandas.DataFrame]
+        - df_output: `output results <df_output_var>`
+        - df_state_final: `final model states <df_state_var>`
+
     '''
 
     # save df_init without changing its original data
@@ -187,6 +237,35 @@ def run_supy(df_forcing, df_state_init, save_state=False):
     df_forcing = df_forcing.assign(
         metforcingdata_grid=0,
         ts5mindata_ir=0,
+    ).rename(
+        # remanae is a workaround to resolve naming inconsistency between
+        # suews fortran code interface and input forcing file hearders
+        columns={
+            '%' + 'iy': 'iy',
+            'id': 'id',
+            'it': 'it',
+            'imin': 'imin',
+            'qn': 'qn1_obs',
+            'qh': 'qh_obs',
+            'qe': 'qe',
+            'qs': 'qs_obs',
+            'qf': 'qf_obs',
+            'U': 'avu1',
+            'RH': 'avrh',
+            'Tair': 'temp_c',
+            'pres': 'press_hpa',
+            'rain': 'precip',
+            'kdown': 'avkdn',
+            'snow': 'snow_obs',
+            'ldown': 'ldown_obs',
+            'fcld': 'fcld_obs',
+            'Wuh': 'wu_m3',
+            'xsmd': 'xsmd',
+            'lai': 'lai_obs',
+            'kdiff': 'kdiff',
+            'kdir': 'kdir',
+            'wdir': 'wdir',
+        }
     )
     # grid list determined by initial states
     grid_list = df_init.index
@@ -261,6 +340,11 @@ def run_supy(df_forcing, df_state_init, save_state=False):
         # df_state = pd.DataFrame(dict_state).T
         # df_state.index.set_names('grid')
 
+    # drop ESTM for now as it is not supported yet
+    # unstack().stack() to remove redundant column names
+    df_output = df_output.drop(columns='ESTM', level=0).unstack().stack()
+
+    # pack final model states into a proper dataframe
     df_state_final = pack_df_state_final(df_state_final, df_init)
 
     return df_output, df_state_final
