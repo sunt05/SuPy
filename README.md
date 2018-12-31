@@ -1,5 +1,11 @@
 # SuPy
 
+[![Python Version Support Status](https://img.shields.io/pypi/pyversions/supy.svg)](https://pypi.org/project/supy)
+
+[![Latest Version Status](https://img.shields.io/pypi/v/supy.svg)](https://pypi.org/project/supy)
+
+[![Launch Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/sunt05/SuPy/master)
+
 [![Build Status](https://dev.azure.com/sunt05/SUEWS/_apis/build/status/sunt05.SuPy?branchName=master)](https://dev.azure.com/sunt05/SUEWS/_build/latest?definitionId=11?branchName=master)
 
 [![Documentation Status](https://readthedocs.org/projects/supy/badge/?version=latest)](https://supy.readthedocs.io/en/latest/?badge=latest)
@@ -7,13 +13,15 @@
 [**SU**EWS](https://suews-docs.readthedocs.io) that speaks **Py**thon
 
 ## Installation
-SuPy requires `python` 3.5+ and can be installed with `pip` in commmand line prompt:
+
+SuPy requires `python` 3.5+ and can be installed with `pip` in command line prompt:
 
 ```shell
 python3 -m pip install supy --upgrade
 ```
 
 ## Quickstart
+
 Once installed, `supy` can be quickly started to get [SUEWS](https://suews-docs.readthedocs.io) simulations done:
 
 ```python
@@ -32,7 +40,8 @@ res_plot.loc['2012 6 4':'2012 6 6'].resample('30T').mean().plot()
 
 The above code will produce a plot of surface energy balance components as follows:
 
-![sample plot](./sample_plot.png)
+![sample plot](https://github.com/sunt05/SuPy/raw/master/sample_plot.png)
 
 ## Tutorial
+
 Please check out [more SuPy tutorials here!](https://supy.readthedocs.io/en/latest/tutorial/tutorial.html)
