@@ -228,7 +228,7 @@ nbsphinx_epilog = r"""
 if platform.system() == 'Darwin':
     nbsphinx_execute = 'auto'
 else:
-    nbsphinx_execute = 'always' # force rerun jupyter notebooks for RTD build
+    nbsphinx_execute = 'auto'  # force rerun jupyter notebooks for RTD build
 
 
 # Add any paths that contain custom static files (such as style sheets) here,
