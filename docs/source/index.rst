@@ -18,6 +18,7 @@ SuPy: SUEWS that speaks Python
     :target: https://mybinder.org/v2/gh/sunt05/SuPy/master
     :alt: Binder Status
 
+
 .. image:: https://readthedocs.org/projects/supy/badge/?version=latest
     :target: https://supy.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status

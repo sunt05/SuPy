@@ -36,8 +36,6 @@ from .supy_run import (pack_df_state_final, pack_grid_dict, suews_cal_tstep,
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
 # @functools.lru_cache(maxsize=16)
-
-
 def init_supy(path_runcontrol: str)->pd.DataFrame:
     '''Initialise supy by loading initial model states.
 
