@@ -122,7 +122,7 @@ def gen_group_dict(
 )->dict:
 
     rst_title = f'''
-.. _df_{group}_options:
+.. _df_{group}_var:
 
 ``df_{group}`` variables
 ============================

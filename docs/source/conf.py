@@ -143,6 +143,41 @@ rst_prolog = r"""
 html_theme = 'sphinx_rtd_theme'
 html_theme_path = ["_themes"]
 
+# some text replacement defintions
+rst_prolog = """
+.. |km^-1| replace:: km\ :sup:`-1`
+.. |mm^-1| replace:: mm\ :sup:`-1`
+.. |m^-1| replace:: m\ :sup:`-1`
+.. |m^-2| replace:: m\ :sup:`-2`
+.. |m^-3| replace:: m\ :sup:`-3`
+.. |m^3| replace:: m\ :sup:`3`
+.. |s^-1| replace:: s\ :sup:`-1`
+.. |kg^-1| replace:: kg\ :sup:`-1`
+.. |K^-1| replace:: K\ :sup:`-1`
+.. |W^-1| replace:: W\ :sup:`-1`
+.. |h^-1| replace:: h\ :sup:`-1`
+.. |ha^-1| replace:: ha\ :sup:`-1`
+.. |QF| replace:: Q\ :sub:`F`
+.. |Qstar| replace:: Q\ :sup:`*`
+.. |d^-1| replace:: d\ :sup:`-1`
+.. |d^-2| replace:: d\ :sup:`-2`
+.. |)^-1| replace:: )\ :sup:`-1`
+.. |Recmd| replace:: **Recommended in this version.**
+.. |NotRecmd| replace:: **Not recommended in this version.**
+.. |NotAvail| replace:: **Not available in this version.**
+.. |NotUsed| replace:: **Not used in this version.**
+
+.. _GitHub page: https://github.com/sunt05/SuPy/issues/new?template=issue-report.md
+
+.. only:: html
+
+    .. note::
+
+      Please report issues with the manual on the `GitHub page`_.
+
+
+"""
+
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
@@ -190,7 +225,11 @@ nbsphinx_epilog = r"""
 # three possible settings, "always", "auto" and "never".
 # By default (= "auto"), notebooks with no outputs are executed and notebooks with at least one output are not.
 # As always, per-notebook settings take precedence over the settings in conf.py.
-nbsphinx_execute = 'auto'
+if platform.system() == 'Darwin':
+    nbsphinx_execute = 'auto'
+else:
+    nbsphinx_execute = 'always' # force rerun jupyter notebooks for RTD build
+
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

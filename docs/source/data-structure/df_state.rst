@@ -5,18 +5,6 @@
 ============================
 
 
-.. option:: aerodynamicresistancemethod
-
-    :Description:
-        Internal use. Please DO NOT modify
-    :Dimensionality:
-        0
-    :Dimensionality Remarks:
-        Scalar
-    :SUEWS-related variables:
-        None
-
-
 .. option:: ah_min
 
     :Description:
@@ -113,67 +101,7 @@
         `albGrass0`
 
 
-.. option:: albmax_dectr
-
-    :Description:
-        Effective surface albedo (middle of the day value) for summertime.
-    :Dimensionality:
-        0
-    :Dimensionality Remarks:
-        Scalar
-    :SUEWS-related variables:
-        `AlbedoMax`
-
-
-.. option:: albmax_evetr
-
-    :Description:
-        Effective surface albedo (middle of the day value) for summertime.
-    :Dimensionality:
-        0
-    :Dimensionality Remarks:
-        Scalar
-    :SUEWS-related variables:
-        `AlbedoMax`
-
-
-.. option:: albmax_grass
-
-    :Description:
-        Effective surface albedo (middle of the day value) for summertime.
-    :Dimensionality:
-        0
-    :Dimensionality Remarks:
-        Scalar
-    :SUEWS-related variables:
-        `AlbedoMax`
-
-
 .. option:: albmin_dectr
-
-    :Description:
-        Effective surface albedo (middle of the day value) for wintertime (not including snow).
-    :Dimensionality:
-        0
-    :Dimensionality Remarks:
-        Scalar
-    :SUEWS-related variables:
-        `AlbedoMin`
-
-
-.. option:: albmin_evetr
-
-    :Description:
-        Effective surface albedo (middle of the day value) for wintertime (not including snow).
-    :Dimensionality:
-        0
-    :Dimensionality Remarks:
-        Scalar
-    :SUEWS-related variables:
-        `AlbedoMin`
-
-
-.. option:: albmin_grass
 
     :Description:
         Effective surface albedo (middle of the day value) for wintertime (not including snow).
@@ -425,30 +353,6 @@
         None
 
 
-.. option:: diagqn
-
-    :Description:
-        Internal use. Please DO NOT modify
-    :Dimensionality:
-        0
-    :Dimensionality Remarks:
-        Scalar
-    :SUEWS-related variables:
-        None
-
-
-.. option:: diagqs
-
-    :Description:
-        Internal use. Please DO NOT modify
-    :Dimensionality:
-        0
-    :Dimensionality Remarks:
-        Scalar
-    :SUEWS-related variables:
-        None
-
-
 .. option:: drainrt
 
     :Description:
@@ -519,18 +423,6 @@
         Scalar
     :SUEWS-related variables:
         `EnEF_v_Jkm`
-
-
-.. option:: evapmethod
-
-    :Description:
-        Internal use. Please DO NOT modify
-    :Dimensionality:
-        0
-    :Dimensionality Remarks:
-        Scalar
-    :SUEWS-related variables:
-        None
 
 
 .. option:: evetreeh
@@ -879,18 +771,6 @@
         3: See variable description for specifics
     :SUEWS-related variables:
         `LAIinitialDecTr`, `LAIinitialEveTr`, `LAIinitialGrass`
-
-
-.. option:: laicalcyes
-
-    :Description:
-        Internal use. Please DO NOT modify
-    :Dimensionality:
-        0
-    :Dimensionality Remarks:
-        Scalar
-    :SUEWS-related variables:
-        None
 
 
 .. option:: laimax
@@ -1445,18 +1325,6 @@
         `AlbedoMax`
 
 
-.. option:: snowalbmin
-
-    :Description:
-        Effective surface albedo (middle of the day value) for wintertime (not including snow).
-    :Dimensionality:
-        0
-    :Dimensionality Remarks:
-        Scalar
-    :SUEWS-related variables:
-        `AlbedoMin`
-
-
 .. option:: snowd
 
     :Description:
@@ -1515,18 +1383,6 @@
         7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
     :SUEWS-related variables:
         `SnowFracBldgs`, `SnowFracPaved`, `SnowFracDecTr`, `SnowFracEveTr`, `SnowFracGrass`, `SnowFracBSoil`, `SnowFracWater`
-
-
-.. option:: snowlimbuild
-
-    :Description:
-        Limit of the snow water equivalent for snow removal from roads and roofs [mm]
-    :Dimensionality:
-        0
-    :Dimensionality Remarks:
-        Scalar
-    :SUEWS-related variables:
-        `SnowLimRemove`
 
 
 .. option:: snowlimpaved
@@ -1875,18 +1731,6 @@
         Scalar
     :SUEWS-related variables:
         `Tstep`
-
-
-.. option:: veg_type
-
-    :Description:
-        Internal use. Please DO NOT modify
-    :Dimensionality:
-        0
-    :Dimensionality Remarks:
-        Scalar
-    :SUEWS-related variables:
-        None
 
 
 .. option:: waterdist

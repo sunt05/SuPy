@@ -33,8 +33,8 @@ SuPy: SUEWS that speaks Python
     with `SUEWS`_ as its computation core.
 
     The scientific rigour in SuPy results is thus gurranteed by SUEWS
-    (see :ref:`SUEWS related publications <Recent_publications>` and
-    :ref:`Parameterisations and sub-models within SUEWS` ).
+    (see :ref:`SUEWS publications <Recent_publications>` and
+    :ref:`Parameterisations and sub-models within SUEWS`).
 
     Meanwhile, the data analysis ability of SuPy is greatly enhanced
     by `the Python-based SciPy Stack <scipy>`_, notably `numpy`_ and `pandas`_.
@@ -57,7 +57,7 @@ SuPy: SUEWS that speaks Python
 
 - How to use SuPy?
 
-  Please follow :ref:`the Quickstart of SuPy <quickstart>`.
+  Please follow :ref:`Quickstart of SuPy`.
 
 
 .. toctree::

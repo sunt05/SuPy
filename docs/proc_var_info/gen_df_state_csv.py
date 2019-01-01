@@ -169,7 +169,7 @@ def gen_df_site(
         df_var_dim = gen_df_dim(df_init_sample)
 
         df_var_site_raw = pd.concat(
-            [df_var_dim, df_var_desc, df_var_ref_suews], 
+            [df_var_dim, df_var_desc, df_var_ref_suews],
             axis=1,sort=False)
 
         df_var_site = df_var_site_raw.filter(items=set_input, axis=0).dropna()
@@ -508,6 +508,7 @@ def gen_df_state(
     # further processing by modifying several entries
     df_var_state = proc_df_state(
         df_var_site, df_var_runcontrol, df_var_initcond)
+    df_var_state = df_var_state.drop_duplicates()
     return df_var_state
 
 

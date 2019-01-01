@@ -137,8 +137,12 @@ def gen_df_output(
                 df_var_output.set_index('Name'),
                 left_on='Name',
                 right_on='Name')\
-            .rename(columns={'var': 'variable'})\
-            .set_index('variable')
+            .rename(columns={
+                'var': 'variable',
+                'group': 'Group',
+            })\
+            .set_index('variable')\
+            .drop_duplicates()
 
         return df_var_output
 

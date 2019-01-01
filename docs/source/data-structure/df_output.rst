@@ -9,7 +9,7 @@
 
     :Description:
         Additional water flow received from other grids [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -17,7 +17,7 @@
 
     :Description:
         Bulk albedo [-]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -25,7 +25,7 @@
 
     :Description:
         Albedo of deciduous trees [-]
-    :group:
+    :Group:
         DailyState
 
 
@@ -33,7 +33,7 @@
 
     :Description:
         Albedo of evergreen trees [-]
-    :group:
+    :Group:
         DailyState
 
 
@@ -41,7 +41,7 @@
 
     :Description:
         Albedo of grass [-]
-    :group:
+    :Group:
         DailyState
 
 
@@ -49,23 +49,23 @@
 
     :Description:
         Snow albedo [-]
-    :group:
-        DailyState
-
-
-.. option:: AlbSnow
-
-    :Description:
-        Snow albedo [-]
-    :group:
+    :Group:
         SUEWS
+
+
+.. option:: AlbSnow
+
+    :Description:
+        Snow albedo [-]
+    :Group:
+        DailyState
 
 
 .. option:: Azimuth
 
     :Description:
         Solar azimuth angle [°]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -73,7 +73,7 @@
 
     :Description:
         Days since rain [days]
-    :group:
+    :Group:
         DailyState
 
 
@@ -81,15 +81,7 @@
 
     :Description:
         Moisture storage capacity of deciduous trees [mm]
-    :group:
-        DailyState
-
-
-.. option:: DensSnow_BSoil
-
-    :Description:
-        Snow density - bare soil surface [kg |m^-3|]
-    :group:
+    :Group:
         DailyState
 
 
@@ -97,7 +89,7 @@
 
     :Description:
         Snow density – bare soil surface [kg |m^-3|]
-    :group:
+    :Group:
         DailyState
 
 
@@ -105,31 +97,23 @@
 
     :Description:
         Snow density - bare soil surface [kg |m^-3|]
-    :group:
-        snow
+    :Group:
+        DailyState
 
 
 .. option:: DensSnow_BSoil
 
     :Description:
         Snow density – bare soil surface [kg |m^-3|]
-    :group:
+    :Group:
         snow
 
 
-.. option:: DensSnow_Bldgs
+.. option:: DensSnow_BSoil
 
     :Description:
-        Snow density - building surface [kg |m^-3|]
-    :group:
-        DailyState
-
-
-.. option:: DensSnow_Bldgs
-
-    :Description:
-        Snow density - building surface [kg |m^-3|]
-    :group:
+        Snow density - bare soil surface [kg |m^-3|]
+    :Group:
         snow
 
 
@@ -137,15 +121,39 @@
 
     :Description:
         Snow density – building surface [kg |m^-3|]
-    :group:
+    :Group:
         snow
 
 
 .. option:: DensSnow_Bldgs
 
     :Description:
+        Snow density - building surface [kg |m^-3|]
+    :Group:
+        DailyState
+
+
+.. option:: DensSnow_Bldgs
+
+    :Description:
         Snow density – building surface [kg |m^-3|]
-    :group:
+    :Group:
+        DailyState
+
+
+.. option:: DensSnow_Bldgs
+
+    :Description:
+        Snow density - building surface [kg |m^-3|]
+    :Group:
+        snow
+
+
+.. option:: DensSnow_DecTr
+
+    :Description:
+        Snow density - deciduous surface [kg |m^-3|]
+    :Group:
         DailyState
 
 
@@ -153,23 +161,7 @@
 
     :Description:
         Snow density - deciduous surface [kg |m^-3|]
-    :group:
-        DailyState
-
-
-.. option:: DensSnow_DecTr
-
-    :Description:
-        Snow density – deciduous surface [kg |m^-3|]
-    :group:
-        DailyState
-
-
-.. option:: DensSnow_DecTr
-
-    :Description:
-        Snow density - deciduous surface [kg |m^-3|]
-    :group:
+    :Group:
         snow
 
 
@@ -177,31 +169,15 @@
 
     :Description:
         Snow density – deciduous surface [kg |m^-3|]
-    :group:
+    :Group:
         snow
 
 
-.. option:: DensSnow_EveTr
+.. option:: DensSnow_DecTr
 
     :Description:
-        Snow density - evergreen surface [kg |m^-3|]
-    :group:
-        snow
-
-
-.. option:: DensSnow_EveTr
-
-    :Description:
-        Snow density – evergreen surface [kg |m^-3|]
-    :group:
-        DailyState
-
-
-.. option:: DensSnow_EveTr
-
-    :Description:
-        Snow density - evergreen surface [kg |m^-3|]
-    :group:
+        Snow density – deciduous surface [kg |m^-3|]
+    :Group:
         DailyState
 
 
@@ -209,15 +185,39 @@
 
     :Description:
         Snow density – evergreen surface [kg |m^-3|]
-    :group:
+    :Group:
         snow
+
+
+.. option:: DensSnow_EveTr
+
+    :Description:
+        Snow density – evergreen surface [kg |m^-3|]
+    :Group:
+        DailyState
+
+
+.. option:: DensSnow_EveTr
+
+    :Description:
+        Snow density - evergreen surface [kg |m^-3|]
+    :Group:
+        snow
+
+
+.. option:: DensSnow_EveTr
+
+    :Description:
+        Snow density - evergreen surface [kg |m^-3|]
+    :Group:
+        DailyState
 
 
 .. option:: DensSnow_Grass
 
     :Description:
-        Snow density - grass surface [kg |m^-3|]
-    :group:
+        Snow density – grass surface [kg |m^-3|]
+    :Group:
         DailyState
 
 
@@ -225,7 +225,15 @@
 
     :Description:
         Snow density - grass surface [kg |m^-3|]
-    :group:
+    :Group:
+        DailyState
+
+
+.. option:: DensSnow_Grass
+
+    :Description:
+        Snow density - grass surface [kg |m^-3|]
+    :Group:
         snow
 
 
@@ -233,39 +241,7 @@
 
     :Description:
         Snow density – grass surface [kg |m^-3|]
-    :group:
-        DailyState
-
-
-.. option:: DensSnow_Grass
-
-    :Description:
-        Snow density – grass surface [kg |m^-3|]
-    :group:
-        snow
-
-
-.. option:: DensSnow_Paved
-
-    :Description:
-        Snow density - paved surface [kg |m^-3|]
-    :group:
-        DailyState
-
-
-.. option:: DensSnow_Paved
-
-    :Description:
-        Snow density – paved surface [kg |m^-3|]
-    :group:
-        DailyState
-
-
-.. option:: DensSnow_Paved
-
-    :Description:
-        Snow density - paved surface [kg |m^-3|]
-    :group:
+    :Group:
         snow
 
 
@@ -273,15 +249,31 @@
 
     :Description:
         Snow density – paved surface [kg |m^-3|]
-    :group:
+    :Group:
         snow
 
 
-.. option:: DensSnow_Water
+.. option:: DensSnow_Paved
 
     :Description:
-        Snow density – water surface [kg |m^-3|]
-    :group:
+        Snow density - paved surface [kg |m^-3|]
+    :Group:
+        snow
+
+
+.. option:: DensSnow_Paved
+
+    :Description:
+        Snow density – paved surface [kg |m^-3|]
+    :Group:
+        DailyState
+
+
+.. option:: DensSnow_Paved
+
+    :Description:
+        Snow density - paved surface [kg |m^-3|]
+    :Group:
         DailyState
 
 
@@ -289,7 +281,7 @@
 
     :Description:
         Snow density - water surface [kg |m^-3|]
-    :group:
+    :Group:
         snow
 
 
@@ -297,15 +289,23 @@
 
     :Description:
         Snow density – water surface [kg |m^-3|]
-    :group:
+    :Group:
         snow
 
 
 .. option:: DensSnow_Water
 
     :Description:
+        Snow density – water surface [kg |m^-3|]
+    :Group:
+        DailyState
+
+
+.. option:: DensSnow_Water
+
+    :Description:
         Snow density - water surface [kg |m^-3|]
-    :group:
+    :Group:
         DailyState
 
 
@@ -313,7 +313,7 @@
 
     :Description:
         Drainage [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -321,55 +321,55 @@
 
     :Description:
         Evaporation [mm]
-    :group:
+    :Group:
         SUEWS
 
 
 .. option:: Fc
 
     :Description:
-        CO2 flux [umol |m^-2| |s^-1|] |NotAvail|
-    :group:
+        CO2 flux [umol |m^-2| |s^-1|] |NotAvail| 
+    :Group:
         SUEWS
 
 
 .. option:: FcBuild
 
     :Description:
-        CO2 flux from buildings [umol |m^-2| |s^-1|] |NotAvail|
-    :group:
+        CO2 flux from buildings [umol |m^-2| |s^-1|] |NotAvail| 
+    :Group:
         SUEWS
 
 
 .. option:: FcMetab
 
     :Description:
-        CO2 flux from metabolism [umol |m^-2| |s^-1|] |NotAvail|
-    :group:
+        CO2 flux from metabolism [umol |m^-2| |s^-1|] |NotAvail| 
+    :Group:
         SUEWS
 
 
 .. option:: FcPhoto
 
     :Description:
-        CO2 flux from photosynthesis [umol |m^-2| |s^-1|] |NotAvail|
-    :group:
+        CO2 flux from photosynthesis [umol |m^-2| |s^-1|] |NotAvail| 
+    :Group:
         SUEWS
 
 
 .. option:: FcRespi
 
     :Description:
-        CO2 flux from respiration [umol |m^-2| |s^-1|] |NotAvail|
-    :group:
+        CO2 flux from respiration [umol |m^-2| |s^-1|] |NotAvail| 
+    :Group:
         SUEWS
 
 
 .. option:: FcTraff
 
     :Description:
-        CO2 flux from traffic [umol |m^-2| |s^-1|] |NotAvail|
-    :group:
+        CO2 flux from traffic [umol |m^-2| |s^-1|] |NotAvail| 
+    :Group:
         SUEWS
 
 
@@ -377,7 +377,7 @@
 
     :Description:
         Cloud fraction [-]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -385,7 +385,7 @@
 
     :Description:
         Additional flow into water body [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -393,7 +393,7 @@
 
     :Description:
         Growing degree days for leaf growth [°C]
-    :group:
+    :Group:
         DailyState
 
 
@@ -401,7 +401,7 @@
 
     :Description:
         Growing degree days for senescence [°C]
-    :group:
+    :Group:
         DailyState
 
 
@@ -409,7 +409,7 @@
 
     :Description:
         Daily minimum temperature [°C]
-    :group:
+    :Group:
         DailyState
 
 
@@ -417,7 +417,7 @@
 
     :Description:
         Daily maximum temperature [°C]
-    :group:
+    :Group:
         DailyState
 
 
@@ -425,7 +425,7 @@
 
     :Description:
         Day length [h]
-    :group:
+    :Group:
         DailyState
 
 
@@ -433,7 +433,7 @@
 
     :Description:
         Heating degree days [°C]
-    :group:
+    :Group:
         DailyState
 
 
@@ -441,7 +441,7 @@
 
     :Description:
         Cooling degree days [°C]
-    :group:
+    :Group:
         DailyState
 
 
@@ -449,7 +449,7 @@
 
     :Description:
         Average daily air temperature [°C]
-    :group:
+    :Group:
         DailyState
 
 
@@ -457,7 +457,7 @@
 
     :Description:
         5-day running-mean air temperature [°C]
-    :group:
+    :Group:
         DailyState
 
 
@@ -465,7 +465,7 @@
 
     :Description:
         Irrigation [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -473,7 +473,7 @@
 
     :Description:
         Incoming shortwave radiation [W |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -481,7 +481,7 @@
 
     :Description:
         Outgoing shortwave radiation [W |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -489,7 +489,7 @@
 
     :Description:
         Leaf area index [m 2 |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -497,7 +497,7 @@
 
     :Description:
         Leaf area index of deciduous trees [|m^-2| |m^-2|]
-    :group:
+    :Group:
         DailyState
 
 
@@ -505,7 +505,7 @@
 
     :Description:
         Leaf area index of evergreen trees [|m^-2| |m^-2|]
-    :group:
+    :Group:
         DailyState
 
 
@@ -513,7 +513,7 @@
 
     :Description:
         Leaf area index of grass [|m^-2| |m^-2|]
-    :group:
+    :Group:
         DailyState
 
 
@@ -521,7 +521,7 @@
 
     :Description:
         Leaf area index used in LUMPS (normalised 0-1) [-]
-    :group:
+    :Group:
         DailyState
 
 
@@ -529,7 +529,7 @@
 
     :Description:
         Incoming longwave radiation [W |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -537,7 +537,7 @@
 
     :Description:
         Obukhov length [m]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -545,7 +545,7 @@
 
     :Description:
         Outgoing longwave radiation [W |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -553,7 +553,7 @@
 
     :Description:
         Meltwater store [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -561,7 +561,7 @@
 
     :Description:
         Meltwater [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -569,7 +569,7 @@
 
     :Description:
         Melt water store – bare soil surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -577,7 +577,7 @@
 
     :Description:
         Melt water store – building surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -585,7 +585,7 @@
 
     :Description:
         Melt water store – deciduous surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -593,7 +593,7 @@
 
     :Description:
         Melt water store – evergreen surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -601,7 +601,7 @@
 
     :Description:
         Melt water store – grass surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -609,7 +609,7 @@
 
     :Description:
         Melt water store – paved surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -617,7 +617,7 @@
 
     :Description:
         Melt water store – water surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -625,7 +625,7 @@
 
     :Description:
         Meltwater – bare soil surface [mm |h^-1|]
-    :group:
+    :Group:
         snow
 
 
@@ -633,7 +633,7 @@
 
     :Description:
         Meltwater – building surface [mm |h^-1|]
-    :group:
+    :Group:
         snow
 
 
@@ -641,7 +641,7 @@
 
     :Description:
         Meltwater – deciduous surface [mm |h^-1|]
-    :group:
+    :Group:
         snow
 
 
@@ -649,7 +649,7 @@
 
     :Description:
         Meltwater – evergreen surface [mm |h^-1|]
-    :group:
+    :Group:
         snow
 
 
@@ -657,7 +657,7 @@
 
     :Description:
         Meltwater – grass surface [mm |h^-1| 1]
-    :group:
+    :Group:
         snow
 
 
@@ -665,7 +665,7 @@
 
     :Description:
         Meltwater – paved surface [mm |h^-1|]
-    :group:
+    :Group:
         snow
 
 
@@ -673,7 +673,7 @@
 
     :Description:
         Meltwater – water surface [mm |h^-1|]
-    :group:
+    :Group:
         snow
 
 
@@ -681,7 +681,7 @@
 
     :Description:
         Surface wetness state (for non-water surfaces) [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -689,7 +689,7 @@
 
     :Description:
         Daily total precipitation [mm]
-    :group:
+    :Group:
         DailyState
 
 
@@ -697,7 +697,7 @@
 
     :Description:
         Porosity of deciduous trees [-]
-    :group:
+    :Group:
         DailyState
 
 
@@ -705,7 +705,7 @@
 
     :Description:
         Air specific humidity at 2 m agl [g |kg^-1|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -713,7 +713,7 @@
 
     :Description:
         Latent heat flux (calculated using SUEWS) [W |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -721,7 +721,7 @@
 
     :Description:
         Latent heat flux (calculated using LUMPS) [W |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -729,7 +729,7 @@
 
     :Description:
         Anthropogenic heat flux [W |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -737,7 +737,7 @@
 
     :Description:
         Sensible heat flux (calculated using SUEWS) [W |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -745,7 +745,7 @@
 
     :Description:
         Sensible heat flux (calculated using LUMPS) [W |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -753,7 +753,7 @@
 
     :Description:
         Sensible heat flux (calculated using resistance method) [W |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -761,7 +761,7 @@
 
     :Description:
         Snow-related heat exchange [W |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -769,7 +769,7 @@
 
     :Description:
         Internal energy change [W |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -777,7 +777,7 @@
 
     :Description:
         Heat released by rain on snow [W |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -785,7 +785,7 @@
 
     :Description:
         Net all-wave radiation [W |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -793,7 +793,7 @@
 
     :Description:
         Net all-wave radiation for snow area [W |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -801,7 +801,7 @@
 
     :Description:
         Net all-wave radiation for snow-free area [W |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -809,7 +809,7 @@
 
     :Description:
         Storage heat flux [W |m^-2|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -817,7 +817,7 @@
 
     :Description:
         Advective heat – bare soil surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -825,7 +825,7 @@
 
     :Description:
         Advective heat – building surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -833,7 +833,7 @@
 
     :Description:
         Advective heat – deciduous surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -841,7 +841,7 @@
 
     :Description:
         Advective heat – evergreen surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -849,7 +849,7 @@
 
     :Description:
         Advective heat – grass surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -857,7 +857,7 @@
 
     :Description:
         Advective heat – paved surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -865,7 +865,7 @@
 
     :Description:
         Advective heat – water surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -873,7 +873,7 @@
 
     :Description:
         Heat related to freezing of surface store – bare soil surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -881,7 +881,7 @@
 
     :Description:
         Heat related to freezing of surface store – building surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -889,7 +889,7 @@
 
     :Description:
         Heat related to freezing of surface store – deciduous surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -897,7 +897,7 @@
 
     :Description:
         Heat related to freezing of surface store – evergreen surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -905,7 +905,7 @@
 
     :Description:
         Heat related to freezing of surface store – grass surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -913,7 +913,7 @@
 
     :Description:
         Heat related to freezing of surface store – paved surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -921,7 +921,7 @@
 
     :Description:
         Heat related to freezing of surface store – water [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -929,7 +929,7 @@
 
     :Description:
         Snowmelt-related heat – bare soil surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -937,7 +937,7 @@
 
     :Description:
         Snowmelt-related heat – building surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -945,7 +945,7 @@
 
     :Description:
         Snowmelt-related heat – deciduous surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -953,7 +953,7 @@
 
     :Description:
         Snowmelt-related heat – evergreen surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -961,7 +961,7 @@
 
     :Description:
         Snowmelt-related heat – grass surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -969,7 +969,7 @@
 
     :Description:
         Snowmelt-related heat – paved surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -977,7 +977,7 @@
 
     :Description:
         Snowmelt-related heat – water surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -985,7 +985,7 @@
 
     :Description:
         Aerodynamic resistance [s |m^-1|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -993,7 +993,7 @@
 
     :Description:
         Runoff [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1001,7 +1001,7 @@
 
     :Description:
         Above ground runoff over impervious surfaces [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1009,7 +1009,7 @@
 
     :Description:
         Runoff to pipes [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1017,7 +1017,7 @@
 
     :Description:
         Runoff to soil (sub-surface) [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1025,7 +1025,7 @@
 
     :Description:
         Above ground runoff over vegetated surfaces [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1033,7 +1033,7 @@
 
     :Description:
         Runoff for water body [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1041,7 +1041,7 @@
 
     :Description:
         Surface resistance [s |m^-1|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1049,7 +1049,7 @@
 
     :Description:
         Rain [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1057,7 +1057,7 @@
 
     :Description:
         Rain on snow – bare soil surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1065,7 +1065,7 @@
 
     :Description:
         Rain on snow – building surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1073,7 +1073,7 @@
 
     :Description:
         Rain on snow – deciduous surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1081,7 +1081,7 @@
 
     :Description:
         Rain on snow – evergreen surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1089,7 +1089,7 @@
 
     :Description:
         Rain on snow – grass surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1097,7 +1097,7 @@
 
     :Description:
         Rain on snow – paved surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1105,7 +1105,7 @@
 
     :Description:
         Rain on snow – water surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1113,7 +1113,7 @@
 
     :Description:
         Soil moisture deficit [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1121,7 +1121,7 @@
 
     :Description:
         Soil moisture deficit for bare soil surface [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1129,7 +1129,7 @@
 
     :Description:
         Soil moisture deficit for building surface [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1137,7 +1137,7 @@
 
     :Description:
         Soil moisture deficit for deciduous surface [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1145,7 +1145,7 @@
 
     :Description:
         Soil moisture deficit for evergreen surface [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1153,7 +1153,7 @@
 
     :Description:
         Soil moisture deficit for grass surface [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1161,7 +1161,7 @@
 
     :Description:
         Soil moisture deficit for paved surface [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1169,7 +1169,7 @@
 
     :Description:
         Snow water equivalent [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1177,7 +1177,7 @@
 
     :Description:
         Snow water equivalent – bare soil surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1185,7 +1185,7 @@
 
     :Description:
         Snow water equivalent – building surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1193,7 +1193,7 @@
 
     :Description:
         Snow water equivalent – deciduous surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1201,7 +1201,7 @@
 
     :Description:
         Snow water equivalent – evergreen surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1209,7 +1209,7 @@
 
     :Description:
         Snow water equivalent – grass surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1217,7 +1217,7 @@
 
     :Description:
         Snow water equivalent – paved surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1225,7 +1225,7 @@
 
     :Description:
         Snow water equivalent – water surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1233,7 +1233,7 @@
 
     :Description:
         Snow depth – bare soil surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1241,7 +1241,7 @@
 
     :Description:
         Snow depth – building surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1249,7 +1249,7 @@
 
     :Description:
         Snow depth – deciduous surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1257,7 +1257,7 @@
 
     :Description:
         Snow depth – evergreen surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1265,7 +1265,7 @@
 
     :Description:
         Snow depth – grass surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1273,7 +1273,7 @@
 
     :Description:
         Snow depth – paved surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1281,7 +1281,7 @@
 
     :Description:
         Snow depth – water surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1289,7 +1289,7 @@
 
     :Description:
         Change in snow pack [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1297,7 +1297,7 @@
 
     :Description:
         Snow removed from building surface [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1305,7 +1305,7 @@
 
     :Description:
         Snow removed from paved surface [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1313,7 +1313,7 @@
 
     :Description:
         Surface wetness state for bare soil surface [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1321,7 +1321,7 @@
 
     :Description:
         Surface wetness state for building surface [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1329,7 +1329,7 @@
 
     :Description:
         Surface wetness state for deciduous tree surface [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1337,7 +1337,7 @@
 
     :Description:
         Surface wetness state for evergreen tree surface [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1345,7 +1345,7 @@
 
     :Description:
         Surface wetness state for grass surface [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1353,7 +1353,7 @@
 
     :Description:
         Surface wetness state for paved surface [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1361,7 +1361,7 @@
 
     :Description:
         Surface wetness state for water surface [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1369,7 +1369,7 @@
 
     :Description:
         Surface wetness state [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1377,7 +1377,7 @@
 
     :Description:
         Change in surface moisture store [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1385,7 +1385,7 @@
 
     :Description:
         Air temperature at 2 m agl [°C]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1393,7 +1393,7 @@
 
     :Description:
         Change in surface and soil moisture stores [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1401,7 +1401,7 @@
 
     :Description:
         Skin temperature [°C]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1409,7 +1409,7 @@
 
     :Description:
         Snow surface temperature – bare soil surface [°C]
-    :group:
+    :Group:
         snow
 
 
@@ -1417,7 +1417,7 @@
 
     :Description:
         Snow surface temperature – building surface [°C]
-    :group:
+    :Group:
         snow
 
 
@@ -1425,7 +1425,7 @@
 
     :Description:
         Snow surface temperature – deciduous surface [°C]
-    :group:
+    :Group:
         snow
 
 
@@ -1433,7 +1433,7 @@
 
     :Description:
         Snow surface temperature – evergreen surface [°C]
-    :group:
+    :Group:
         snow
 
 
@@ -1441,7 +1441,7 @@
 
     :Description:
         Snow surface temperature – grass surface [°C]
-    :group:
+    :Group:
         snow
 
 
@@ -1449,7 +1449,7 @@
 
     :Description:
         Snow surface temperature – paved surface [°C]
-    :group:
+    :Group:
         snow
 
 
@@ -1457,7 +1457,7 @@
 
     :Description:
         Snow surface temperature – water surface [°C]
-    :group:
+    :Group:
         snow
 
 
@@ -1465,7 +1465,7 @@
 
     :Description:
         Bulk surface temperature [°C]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1473,7 +1473,7 @@
 
     :Description:
         Wind speed at 10 m agl [m |s^-1|]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1481,7 +1481,7 @@
 
     :Description:
         Water use for irrigation of deciduous trees [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1489,7 +1489,7 @@
 
     :Description:
         Water use for irrigation of evergreen trees [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1497,7 +1497,7 @@
 
     :Description:
         Water use for irrigation of grass [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1505,7 +1505,7 @@
 
     :Description:
         Internal water use [mm]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1513,7 +1513,7 @@
 
     :Description:
         Total water use for deciduous trees [mm]
-    :group:
+    :Group:
         DailyState
 
 
@@ -1521,7 +1521,7 @@
 
     :Description:
         Automatic water use for deciduous trees [mm]
-    :group:
+    :Group:
         DailyState
 
 
@@ -1529,7 +1529,7 @@
 
     :Description:
         Manual water use for deciduous trees [mm]
-    :group:
+    :Group:
         DailyState
 
 
@@ -1537,7 +1537,7 @@
 
     :Description:
         Total water use for evergreen trees [mm]
-    :group:
+    :Group:
         DailyState
 
 
@@ -1545,7 +1545,7 @@
 
     :Description:
         Automatic water use for evergreen trees [mm]
-    :group:
+    :Group:
         DailyState
 
 
@@ -1553,7 +1553,7 @@
 
     :Description:
         Manual water use for evergreen trees [mm]
-    :group:
+    :Group:
         DailyState
 
 
@@ -1561,7 +1561,7 @@
 
     :Description:
         Total water use for grass [mm]
-    :group:
+    :Group:
         DailyState
 
 
@@ -1569,7 +1569,7 @@
 
     :Description:
         Automatic water use for grass [mm]
-    :group:
+    :Group:
         DailyState
 
 
@@ -1577,7 +1577,7 @@
 
     :Description:
         Manual water use for grass [mm]
-    :group:
+    :Group:
         DailyState
 
 
@@ -1585,7 +1585,7 @@
 
     :Description:
         Solar zenith angle [°]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1593,7 +1593,7 @@
 
     :Description:
         OHM cofficient a1 - [-]
-    :group:
+    :Group:
         DailyState
 
 
@@ -1601,7 +1601,7 @@
 
     :Description:
         OHM cofficient a2 [W |m^-2| |h^-1|]
-    :group:
+    :Group:
         DailyState
 
 
@@ -1609,7 +1609,7 @@
 
     :Description:
         OHM cofficient a3 - [W |m^-2|]
-    :group:
+    :Group:
         DailyState
 
 
@@ -1617,7 +1617,7 @@
 
     :Description:
         Change in leaf area index (normalised 0-1) [-]
-    :group:
+    :Group:
         DailyState
 
 
@@ -1625,7 +1625,7 @@
 
     :Description:
         Amount of freezing melt water – bare soil surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1633,7 +1633,7 @@
 
     :Description:
         Amount of freezing melt water – building surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1641,7 +1641,7 @@
 
     :Description:
         Amount of freezing melt water – deciduous surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1649,7 +1649,7 @@
 
     :Description:
         Amount of freezing melt water – evergreen surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1657,7 +1657,7 @@
 
     :Description:
         Amount of freezing melt water – grass surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1665,7 +1665,7 @@
 
     :Description:
         Amount of freezing melt water – paved surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1673,7 +1673,7 @@
 
     :Description:
         Amount of freezing melt water – water surface [mm]
-    :group:
+    :Group:
         snow
 
 
@@ -1681,7 +1681,7 @@
 
     :Description:
         Fraction of snow – building surface [-]
-    :group:
+    :Group:
         snow
 
 
@@ -1689,7 +1689,7 @@
 
     :Description:
         Fraction of snow – deciduous surface [-]
-    :group:
+    :Group:
         snow
 
 
@@ -1697,7 +1697,7 @@
 
     :Description:
         Fraction of snow – evergreen surface [-]
-    :group:
+    :Group:
         snow
 
 
@@ -1705,7 +1705,7 @@
 
     :Description:
         Fraction of snow – grass surface [-]
-    :group:
+    :Group:
         snow
 
 
@@ -1713,7 +1713,7 @@
 
     :Description:
         Fraction of snow – paved surface [-]
-    :group:
+    :Group:
         snow
 
 
@@ -1721,7 +1721,7 @@
 
     :Description:
         Reflected shortwave radiation – bare soil surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -1729,7 +1729,7 @@
 
     :Description:
         Reflected shortwave radiation – building surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -1737,7 +1737,7 @@
 
     :Description:
         Reflected shortwave radiation – deciduous surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -1745,7 +1745,7 @@
 
     :Description:
         Reflected shortwave radiation – evergreen surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -1753,7 +1753,7 @@
 
     :Description:
         Reflected shortwave radiation – grass surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -1761,7 +1761,7 @@
 
     :Description:
         Reflected shortwave radiation – paved surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -1769,7 +1769,7 @@
 
     :Description:
         Reflected shortwave radiation – water surface [W |m^-2|]
-    :group:
+    :Group:
         snow
 
 
@@ -1777,7 +1777,7 @@
 
     :Description:
         Roughness length for momentum [m]
-    :group:
+    :Group:
         SUEWS
 
 
@@ -1785,6 +1785,6 @@
 
     :Description:
         Zero-plane displacement height [m]
-    :group:
+    :Group:
         SUEWS
 
