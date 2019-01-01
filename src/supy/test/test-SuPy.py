@@ -1,21 +1,27 @@
-from unittest import TestCase
+# from pathlib import Path
+# from pathlib import Path
+import io
+import sys
 import warnings
+from time import time
+from unittest import TestCase
+
+import numpy as np
+import pandas as pd
 
 import supy as sp
-import numpy as np
-# from pathlib import Path
-# from pathlib import Path
-
 
 class TestSuPy(TestCase):
     def setUp(self):
         warnings.simplefilter('ignore', category=ImportWarning)
 
+    # test if supy_driver can be connected
     def test_is_driver_connected(self):
         s = sp.supy_run.list_var_output
         self.assertTrue(isinstance(s[0], np.str_))
 
-    def test_is_supy_running(self):
+    # test if single-tstep mode can run
+    def test_is_supy_running_single_step(self):
         df_state_init, df_forcing_tstep = sp.load_SampleData()
         df_forcing_part = df_forcing_tstep.iloc[:288 * 1]
         df_output, df_state = sp.run_supy(
@@ -28,3 +34,50 @@ class TestSuPy(TestCase):
             ]
         )
         self.assertTrue(test_non_empty)
+
+    # test if multi-tstep mode can run
+    def test_is_supy_running_multi_step(self):
+        df_state_init, df_forcing_tstep = sp.load_SampleData()
+        df_forcing_part = df_forcing_tstep.iloc[:]
+        t_start = time()
+        df_output, df_state = sp.run_supy(
+            df_forcing_part, df_state_init)
+        t_end = time()
+
+        t_usage_str = 'Running time: '+str(t_end-t_start)
+        capturedOutput = io.StringIO()  # Create StringIO object
+        sys.stdout = capturedOutput  # and redirect stdout.
+        # Call function.
+        print('Running time: {:.2f} s'.format(t_end-t_start))
+        sys.stdout = sys.__stdout__                     # Reset redirect.
+        # Now works as before.
+        print('Captured:\n', capturedOutput.getvalue())
+
+        test_non_empty = np.all(
+            [
+                not df_output.empty,
+                not df_state.empty,
+            ]
+        )
+        self.assertTrue(test_non_empty)
+
+    # test if single-tstep and multi-tstep modes can produce the same SUEWS results
+    def test_is_supy_euqal_mode(self):
+        df_state_init, df_forcing_tstep = sp.load_SampleData()
+        df_forcing_part = df_forcing_tstep.iloc[:288 * 1]
+        # single-step results
+        df_output_s, df_state_s = sp.run_supy(
+            df_forcing_part, df_state_init,
+            save_state=True)
+        df_res_s = df_output_s.loc[
+            :, ['SUEWS', 'DailyState']].sort_index(axis=1)
+        # multi-step results
+        df_output_m, df_state_m = sp.run_supy(
+            df_forcing_part, df_state_init,
+            save_state=False)
+        df_res_m = df_output_m.loc[
+            :, ['SUEWS', 'DailyState']].fillna(-999.).sort_index(axis=1)
+        pd.testing.assert_frame_equal(
+            left=df_res_s,
+            right=df_res_m,
+        )
