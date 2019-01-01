@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 
 import supy as sp
+import platform
 
 class TestSuPy(TestCase):
     def setUp(self):
@@ -44,14 +45,16 @@ class TestSuPy(TestCase):
             df_forcing_part, df_state_init)
         t_end = time()
 
-        t_usage_str = 'Running time: '+str(t_end-t_start)
-        capturedOutput = io.StringIO()  # Create StringIO object
-        sys.stdout = capturedOutput  # and redirect stdout.
-        # Call function.
-        print('Running time: {:.2f} s'.format(t_end-t_start))
-        sys.stdout = sys.__stdout__                     # Reset redirect.
-        # Now works as before.
-        print('Captured:\n', capturedOutput.getvalue())
+        # only print to screen on macOS due incompatability on Windows
+        if platform.system() == 'Darwin':
+            t_usage_str = 'Running time: '+str(t_end-t_start)
+            capturedOutput = io.StringIO()  # Create StringIO object
+            sys.stdout = capturedOutput  # and redirect stdout.
+            # Call function.
+            print('Running time: {:.2f} s'.format(t_end-t_start))
+            sys.stdout = sys.__stdout__                     # Reset redirect.
+            # Now works as before.
+            print('Captured:\n', capturedOutput.getvalue())
 
         test_non_empty = np.all(
             [
