@@ -54,6 +54,7 @@ extensions = [
     # 'rinoh.frontend.sphinx',
     # 'sphinxfortran.fortran_autodoc',
     # 'sphinxfortran.fortran_domain',
+    'sphinx.ext.autosectionlabel',
     'sphinx.ext.githubpages',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',

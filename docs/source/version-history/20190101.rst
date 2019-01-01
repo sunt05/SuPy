@@ -8,7 +8,7 @@ Version 2019.1.1 (preview release, 01 Jan 2019)
 
 - **New**
 
-  #. Slimmed the output groups by excluding unsupported :ref:`ESTM` results
+  #. Slimmed the output groups by excluding unsupported :term:`ESTM` results
 
   #. SuPy documentation
 
