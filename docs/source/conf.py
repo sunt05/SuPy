@@ -186,6 +186,11 @@ nbsphinx_epilog = r"""
     \vfil\penalty-1\vfilneg
 """
 
+# three possible settings, "always", "auto" and "never".
+# By default (= "auto"), notebooks with no outputs are executed and notebooks with at least one output are not.
+# As always, per-notebook settings take precedence over the settings in conf.py.
+nbsphinx_execute = 'auto'
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".

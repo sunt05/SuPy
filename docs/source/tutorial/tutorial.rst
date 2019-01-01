@@ -8,5 +8,5 @@ Tutorials
   :maxdepth: 2
 
   quickstart
-  sensitivity-analysis
+  impact-studies-parallel
   external-interaction
