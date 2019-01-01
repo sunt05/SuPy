@@ -1,5 +1,6 @@
 # version info for supy
 
+from supy_driver import __version__ as sd_ver
 ver_milestone = 2018
 ver_major = 12
 ver_minor = 31
@@ -10,3 +11,5 @@ __version__ = '{ver_milestone}.{ver_major}.{ver_minor}{ver_remark}'.format(
     ver_minor=ver_minor,
     ver_remark=ver_remark,
 )
+
+__version_driver__ = sd_ver

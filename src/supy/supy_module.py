@@ -124,12 +124,12 @@ def load_forcing_grid(path_runcontrol: str, grid: int)->pd.DataFrame:
             lat, lon, alt, timezone, kdownzen)
 
         # merge forcing datasets (met and ESTM)
-        df_forcing = df_forcing_met_tstep.copy()
+        df_forcing_tstep = df_forcing_met_tstep.copy()
 
         # disable the AnOHM and ESTM components for now and for better performance
         # |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         # TS 28 Dec 2018
-        # # pack all records of `id` into `metforcingdata_grid` for AnOHM
+        # pack all records of `id` into `metforcingdata_grid` for AnOHM
         # df_grp = df_forcing_tstep.groupby('id')
         # dict_id_all = {xid: df_grp.get_group(xid)
         #                for xid in df_forcing_tstep['id'].unique()}
@@ -158,12 +158,12 @@ def load_forcing_grid(path_runcontrol: str, grid: int)->pd.DataFrame:
         #         'ts5mindata_ir'].map(lambda x: np.array(x, order='F'))
         # else:
         #     # insert some placeholder values
-        #     df_forcing_tstep['ts5mindata_ir'] = df_forcing_tstep['temp_c']
+        #     df_forcing_tstep['ts5mindata_ir'] = df_forcing_tstep['Tair']
         # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         # disable the AnOHM and ESTM components for now and for better performance
 
         # coerced precision here to prevent numerical errors inside Fortran
-        df_forcing = np.around(df_forcing, decimals=10)
+        df_forcing = np.around(df_forcing_tstep, decimals=10)
         # new columns for later use in main calculation
         df_forcing[['iy', 'id', 'it', 'imin']] = df_forcing[[
             'iy', 'id', 'it', 'imin']].astype(np.int64)
@@ -307,6 +307,8 @@ def run_supy(
 
         # pack results as easier DataFrames
         df_output = pack_df_output(dict_output).swaplevel(0, 1)
+        # drop unnecessary 'datetime' as it is already included in the index
+        df_output=df_output.drop(columns=['datetime'],level=0)
         df_state_final = pack_df_state(dict_state).swaplevel(0, 1)
 
     else:
@@ -339,8 +341,10 @@ def run_supy(
         # df_state.index.set_names('grid')
 
     # drop ESTM for now as it is not supported yet
-    # unstack().stack() to remove redundant column names
-    df_output = df_output.drop(columns='ESTM', level=0).unstack().stack()
+    # select only those supported output groups
+    df_output = df_output.loc[:,['SUEWS','snow','DailyState']]
+    # trim multiindex based columns
+    df_output.columns = df_output.columns.remove_unused_levels()
 
     # pack final model states into a proper dataframe
     df_state_final = pack_df_state_final(df_state_final, df_init)
