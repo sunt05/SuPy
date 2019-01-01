@@ -36,6 +36,8 @@ from .supy_run import (pack_df_state_final, pack_grid_dict, suews_cal_tstep,
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
 # @functools.lru_cache(maxsize=16)
+
+
 def init_supy(path_runcontrol: str)->pd.DataFrame:
     '''Initialise supy by loading initial model states.
 
@@ -49,7 +51,14 @@ def init_supy(path_runcontrol: str)->pd.DataFrame:
     df_state_init: pandas.DataFrame
         Initial model states.
         See `df_state_var` for details.
+
+    Examples
+    --------
+    >>> path_runcontrol = "~/SUEWS_sims/RunControl.nml" # a valid path to `RunControl.nml`
+    >>> df_state_init = supy.init_supy(path_runcontrol)
+
     '''
+
 
     try:
         path_runcontrol_x = Path(path_runcontrol).expanduser().resolve()
@@ -75,6 +84,15 @@ def load_forcing_grid(path_runcontrol: str, grid: int)->pd.DataFrame:
     -------
     df_forcing: pandas.DataFrame
         Forcing data. See `df_forcing_var` for details.
+
+    Examples
+    --------
+    >>> path_runcontrol = "~/SUEWS_sims/RunControl.nml"  # a valid path to `RunControl.nml`
+    >>> df_state_init = supy.init_supy(path_runcontrol) # get `df_state_init`
+    >>> grid = df_state_init.index[0] # first grid number included in `df_state_init`
+    >>> df_forcing = supy.load_forcing_grid(path_runcontrol, grid) # get df_forcing
+
+
     '''
 
     try:
@@ -180,6 +198,12 @@ def load_SampleData()->Tuple[pandas.DataFrame, pandas.DataFrame]:
     df_state_init, df_forcing: Tuple[pandas.DataFrame, pandas.DataFrame]
         - df_state_init: `initial model states <df_state_var>`
         - df_forcing: `forcing data <df_forcing_var>`
+
+    Examples
+    --------
+
+    >>> df_state_init, df_forcing = supy.load_SampleData()
+
     '''
 
     path_SampleData = Path(path_supy_module) / 'sample_run'
@@ -224,6 +248,12 @@ def run_supy(
         - df_output: `output results <df_output_var>`
         - df_state_final: `final model states <df_state_var>`
 
+    Examples
+    --------
+
+    >>> df_output, df_state_final = supy.run_supy(df_forcing, df_state_init)
+
+
     '''
 
     # save df_init without changing its original data
@@ -232,39 +262,41 @@ def run_supy(
     # add placeholder variables for df_forcing
     # `metforcingdata_grid` and `ts5mindata_ir` are used by AnOHM and ESTM, respectively
     # they are now temporarily disabled in supy
-    df_forcing = df_forcing.assign(
-        metforcingdata_grid=0,
-        ts5mindata_ir=0,
-    ).rename(
-        # remanae is a workaround to resolve naming inconsistency between
-        # suews fortran code interface and input forcing file hearders
-        columns={
-            '%' + 'iy': 'iy',
-            'id': 'id',
-            'it': 'it',
-            'imin': 'imin',
-            'qn': 'qn1_obs',
-            'qh': 'qh_obs',
-            'qe': 'qe',
-            'qs': 'qs_obs',
-            'qf': 'qf_obs',
-            'U': 'avu1',
-            'RH': 'avrh',
-            'Tair': 'temp_c',
-            'pres': 'press_hpa',
-            'rain': 'precip',
-            'kdown': 'avkdn',
-            'snow': 'snow_obs',
-            'ldown': 'ldown_obs',
-            'fcld': 'fcld_obs',
-            'Wuh': 'wu_m3',
-            'xsmd': 'xsmd',
-            'lai': 'lai_obs',
-            'kdiff': 'kdiff',
-            'kdir': 'kdir',
-            'wdir': 'wdir',
-        }
-    )
+    df_forcing = df_forcing\
+        .assign(
+            metforcingdata_grid=0,
+            ts5mindata_ir=0,
+        )\
+        .rename(
+            # remanae is a workaround to resolve naming inconsistency between
+            # suews fortran code interface and input forcing file hearders
+            columns={
+                '%' + 'iy': 'iy',
+                'id': 'id',
+                'it': 'it',
+                'imin': 'imin',
+                'qn': 'qn1_obs',
+                'qh': 'qh_obs',
+                'qe': 'qe',
+                'qs': 'qs_obs',
+                'qf': 'qf_obs',
+                'U': 'avu1',
+                'RH': 'avrh',
+                'Tair': 'temp_c',
+                'pres': 'press_hpa',
+                'rain': 'precip',
+                'kdown': 'avkdn',
+                'snow': 'snow_obs',
+                'ldown': 'ldown_obs',
+                'fcld': 'fcld_obs',
+                'Wuh': 'wu_m3',
+                'xsmd': 'xsmd',
+                'lai': 'lai_obs',
+                'kdiff': 'kdiff',
+                'kdir': 'kdir',
+                'wdir': 'wdir',
+            }
+        )
     # grid list determined by initial states
     grid_list = df_init.index
 
@@ -308,7 +340,7 @@ def run_supy(
         # pack results as easier DataFrames
         df_output = pack_df_output(dict_output).swaplevel(0, 1)
         # drop unnecessary 'datetime' as it is already included in the index
-        df_output=df_output.drop(columns=['datetime'],level=0)
+        df_output = df_output.drop(columns=['datetime'], level=0)
         df_state_final = pack_df_state(dict_state).swaplevel(0, 1)
 
     else:
@@ -342,7 +374,7 @@ def run_supy(
 
     # drop ESTM for now as it is not supported yet
     # select only those supported output groups
-    df_output = df_output.loc[:,['SUEWS','snow','DailyState']]
+    df_output = df_output.loc[:, ['SUEWS', 'snow', 'DailyState']]
     # trim multiindex based columns
     df_output.columns = df_output.columns.remove_unused_levels()
 
