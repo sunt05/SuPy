@@ -118,3 +118,4 @@ dev-test/
 _build/
 
 pipfile.lock
+.vscode/spellright.dict

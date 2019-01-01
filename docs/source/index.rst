@@ -29,11 +29,23 @@ SuPy: SUEWS that speaks Python
 
 
 - What is the differences between SuPy and SUEWS?
+    **SuPy** is a Python-enhanced urban climate model
+    with `SUEWS`_ as its computation core.
+
+    The scientific rigour in SuPy results is thus gurranteed by SUEWS.
+    Meanwhile, the data analysis ability of SuPy is greatly enhanced
+    by `the Python-based SciPy Stack <scipy>`_, notably `numpy`_ and `pandas`_.
+
+
+.. _SUEWS: https://suews-docs.readthedocs.io/en/latest/
+.. _scipy: https://scipy.org
+.. _numpy: https://www.numpy.org
+.. _pandas: http://pandas.pydata.org/
 
 
 - How to get SuPy?
 
-  Please install via `PyPI <https://badge.fury.io/py/supy>`_
+  SuPy is available on all major platforms (macOS, Windows, Linux) for Python 3.5+ via `PyPI <https://badge.fury.io/py/supy>`_:
 
   .. code-block:: shell
 
