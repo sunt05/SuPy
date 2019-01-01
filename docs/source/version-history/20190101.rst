@@ -1,14 +1,14 @@
 .. _new_latest:
 
-.. _new_2018.12:
+.. _new_20190101:
 
-.. _new_20181231:
-
-Version 2018.12.31 (preview release, 31 Dec 2018)
+Version 2019.1.1 (preview release, 01 Jan 2019)
 ======================================================
 
 
 - **New**
+
+  #. Slimmed the output groups by excluding unsupported :ref:`ESTM` results
 
   #. SuPy documentation
 
@@ -19,7 +19,7 @@ Version 2018.12.31 (preview release, 31 Dec 2018)
      - `df_forcing_var` (:issue:`7`)
 
 
-    * Tutorial of parallel SuPy simulaitons for impact studies
+    * Tutorial of parallel SuPy simulations for impact studies
 
 
 

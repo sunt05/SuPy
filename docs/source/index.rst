@@ -32,7 +32,10 @@ SuPy: SUEWS that speaks Python
     **SuPy** is a Python-enhanced urban climate model
     with `SUEWS`_ as its computation core.
 
-    The scientific rigour in SuPy results is thus gurranteed by SUEWS.
+    The scientific rigour in SuPy results is thus gurranteed by SUEWS
+    (see :ref:`SUEWS related publications <Recent_publications>` and
+    :ref:`Parameterisations and sub-models within SUEWS` ).
+
     Meanwhile, the data analysis ability of SuPy is greatly enhanced
     by `the Python-based SciPy Stack <scipy>`_, notably `numpy`_ and `pandas`_.
 
@@ -45,7 +48,8 @@ SuPy: SUEWS that speaks Python
 
 - How to get SuPy?
 
-  SuPy is available on all major platforms (macOS, Windows, Linux) for Python 3.5+ via `PyPI <https://badge.fury.io/py/supy>`_:
+  SuPy is available on all major platforms (macOS, Windows, Linux) for Python 3.5+
+  via `PyPI <https://pypi.org/project/supy/>`_:
 
   .. code-block:: shell
 
@@ -60,7 +64,6 @@ SuPy: SUEWS that speaks Python
   :hidden:
   :maxdepth: 1
 
-  intro
   tutorial/tutorial
   data-structure/supy-io
   api
