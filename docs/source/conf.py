@@ -369,6 +369,6 @@ def setup(app):
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
     'pandas': ('http://pandas.pydata.org/pandas-docs/stable/', None),
-    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+    'numpy': ('https://docs.scipy.org/doc/numpy/', None),
     'suews': ('https://suews-docs.readthedocs.io/en/latest/', None),
 }

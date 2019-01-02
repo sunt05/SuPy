@@ -1,5 +1,4 @@
-# from pathlib import Path
-# from pathlib import Path
+
 import io
 import sys
 import warnings
@@ -45,7 +44,7 @@ class TestSuPy(TestCase):
             df_forcing_part, df_state_init)
         t_end = time()
 
-        # only print to screen on macOS due incompatability on Windows
+        # only print to screen on macOS due incompatibility on Windows
         if platform.system() == 'Darwin':
             t_usage_str = 'Running time: '+str(t_end-t_start)
             capturedOutput = io.StringIO()  # Create StringIO object

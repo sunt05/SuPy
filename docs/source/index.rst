@@ -33,7 +33,7 @@ SuPy: SUEWS that speaks Python
 
 - **What is SuPy?**
 
-    **SuPy** is a Python-enhanced urban climate model
+    SuPy is a Python-enhanced urban climate model
     with `SUEWS`_ as its computation core.
 
     The scientific rigour in SuPy results is thus gurranteed by SUEWS
@@ -72,3 +72,4 @@ SuPy: SUEWS that speaks Python
   data-structure/supy-io
   api
   version-history/version-history
+
