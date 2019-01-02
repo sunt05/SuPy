@@ -48,9 +48,11 @@ list_url_rst = list(set(URL('/'.join(url.parts)) for url in list_url_rst_x))
 # preload sample data for later use
 df_init_sample, df_forcing_sample = sp.load_SampleData()
 
-print('loading in','gen_df_state', 'done')
+print('loading in', 'gen_df_state', 'done')
 # %%
 # generate df_site: site chracteristics related dataframe
+
+
 def extract_var_suews(dict_var_full: dict, var_supy: str)->list:
     '''extract related SUEWS variables for a supy variable `var_supy`
 
@@ -170,7 +172,7 @@ def gen_df_site(
 
         df_var_site_raw = pd.concat(
             [df_var_dim, df_var_desc, df_var_ref_suews],
-            axis=1,sort=False)
+            axis=1, sort=False)
 
         df_var_site = df_var_site_raw.filter(items=set_input, axis=0).dropna()
 
@@ -367,38 +369,53 @@ def proc_df_state(
     df_23D = df_1Dplus.loc[pos_23D]
 
     # pre-defined dim annotations
+    indent = r'    '  # 4 spaces
+    sep = ('\n\n'+indent*2)
     dict_dim_anno = {
         0:
         'Scalar',
         (2, ):
-        '2: Weekday and Weekend',
+        '2: {Weekday, Weekend}',
         (3, ):
-        '3: See variable description for specifics',
+        '3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}',
         (7, ):
-        '7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`',
+        '7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}',
         (8, ):
-        '8: Seven SUEWS land cover types and one extra land cover type (currently NOT used)',
+        '8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)} ',
         (24, 2):
-        '24: hours of a day; 2: Weekday and Weekend',
+        sep.join([
+            '24: hours of a day',
+            '2: {Weekday, Weekend}',
+        ]),
+
         (8, 4, 3):
-        '; '.join([
-            '8: Seven SUEWS land cover types and one extra land cover type (currently NOT used)',
-            '4: SummerWet, SummerDry, WinterWet, WinterDry',
-            '3: a1, a2, a3'
+        sep.join([
+            '8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)}',
+            '4: {SummerWet, SummerDry, WinterWet, WinterDry}',
+            '3: {a1, a2, a3}',
         ]),
         (4, 3):
-        '4: See variable description for specifics; 3: Three vegetated land cover types (`EveTr`, `DecTr`, `Grass`)',
+        sep.join([
+            '4: {`LeafGrowthPower1`, `LeafGrowthPower2`, `LeafOffPower1`, `LeafOffPower2`}',
+            '3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}',
+        ]),
         (8, 6):
-        '8: Seven SUEWS land cover types and Runoff/SoilStore as water receiver; 6: SUEWS land cover types other than water as water contributors',
+        sep.join([
+            '8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)}',
+            '6: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`}',
+        ]),
         (6, 7):
-        '6: See variable description for specifics; 7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`',
+        sep.join([
+            '6: { `StorageMin`, `DrainageEq`, `DrainageCoef1`, `DrainageCoef2`, `StorageMax`, current storage}',
+            '7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}',
+        ]),
     }
 
     df_var_dim_anno = df_var_desc['Dimensionality'].map(
         dict_dim_anno).rename('Dimensionality Remarks').to_frame()
 
-    # correct annoation for seven-day dimension
-    anno_week = '7: Seven days of a week ordered as Sunday, Monday, Tuesday, Wednesday, Thursday, Friday and Saturday'
+    # correct annotation for seven-day dimension
+    anno_week = '7: {Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday}'
     pos_daywat = df_var_dim_anno.index.str.contains('daywat')
     df_var_dim_anno.loc[pos_daywat, 'Dimensionality Remarks'] = anno_week
 

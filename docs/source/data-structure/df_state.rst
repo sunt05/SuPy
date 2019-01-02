@@ -12,7 +12,7 @@
     :Dimensionality:
         (2,)
     :Dimensionality Remarks:
-        2: Weekday and Weekend
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         `AHMin_WD`, `AHMin_WE`
 
@@ -24,7 +24,7 @@
     :Dimensionality:
         (2,)
     :Dimensionality Remarks:
-        2: Weekday and Weekend
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         `AHSlope_Cooling_WD`, `AHSlope_Cooling_WE`
 
@@ -36,7 +36,7 @@
     :Dimensionality:
         (2,)
     :Dimensionality Remarks:
-        2: Weekday and Weekend
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         `AHSlope_Heating_WD`, `AHSlope_Heating_WE`
 
@@ -48,7 +48,9 @@
     :Dimensionality:
         (24, 2)
     :Dimensionality Remarks:
-        24: hours of a day; 2: Weekday and Weekend
+        24: hours of a day
+
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         `EnergyUseProfWD`, `EnergyUseProfWE`
 
@@ -60,7 +62,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `AlbedoMax`
 
@@ -101,7 +103,7 @@
         `albGrass0`
 
 
-.. option:: albmin_dectr
+.. option:: albmin_evetr
 
     :Description:
         Effective surface albedo (middle of the day value) for wintertime (not including snow).
@@ -120,7 +122,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `alpha`
 
@@ -132,7 +134,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `alpha_enh`
 
@@ -156,7 +158,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `BaseT`
 
@@ -168,7 +170,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `BaseTe`
 
@@ -192,7 +194,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `beta`
 
@@ -204,7 +206,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `beta_enh`
 
@@ -252,7 +254,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `AnOHM_Ch`
 
@@ -264,7 +266,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `AnOHM_Cp`
 
@@ -300,7 +302,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven days of a week ordered as Sunday, Monday, Tuesday, Wednesday, Thursday, Friday and Saturday
+        7: {Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday}
     :SUEWS-related variables:
         `DayWat(1)`, `DayWat(2)`, `DayWat(3)`, `DayWat(4)`, `DayWat(5)`, `DayWat(6)`, `DayWat(7)`
 
@@ -312,7 +314,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven days of a week ordered as Sunday, Monday, Tuesday, Wednesday, Thursday, Friday and Saturday
+        7: {Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday}
     :SUEWS-related variables:
         `DayWatPer(1)`, `DayWatPer(2)`, `DayWatPer(3)`, `DayWatPer(4)`, `DayWatPer(5)`, `DayWatPer(6)`, `DayWatPer(7)`
 
@@ -339,18 +341,6 @@
         Scalar
     :SUEWS-related variables:
         `H_DecTr`
-
-
-.. option:: diagnose
-
-    :Description:
-        Internal use. Please DO NOT modify
-    :Dimensionality:
-        0
-    :Dimensionality Remarks:
-        Scalar
-    :SUEWS-related variables:
-        None
 
 
 .. option:: drainrt
@@ -384,7 +374,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `Emissivity`
 
@@ -612,7 +602,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `GDDFull`
 
@@ -636,7 +626,9 @@
     :Dimensionality:
         (24, 2)
     :Dimensionality Remarks:
-        24: hours of a day; 2: Weekday and Weekend
+        24: hours of a day
+
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         `ActivityProfWD`, `ActivityProfWE`
 
@@ -648,7 +640,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `Ie_a1`, `Ie_a2`, `Ie_a3`
 
@@ -672,7 +664,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `Ie_m1`, `Ie_m2`, `Ie_m3`
 
@@ -744,7 +736,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `AnOHM_Kk`
 
@@ -768,7 +760,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `LAIinitialDecTr`, `LAIinitialEveTr`, `LAIinitialGrass`
 
@@ -780,7 +772,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `LAIMax`
 
@@ -792,7 +784,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `LAIMin`
 
@@ -804,7 +796,9 @@
     :Dimensionality:
         (4, 3)
     :Dimensionality Remarks:
-        4: See variable description for specifics; 3: Three vegetated land cover types (`EveTr`, `DecTr`, `Grass`)
+        4: {`LeafGrowthPower1`, `LeafGrowthPower2`, `LeafOffPower1`, `LeafOffPower2`}
+
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `LeafGrowthPower1`, `LeafGrowthPower2`, `LeafOffPower1`, `LeafOffPower2`
 
@@ -816,7 +810,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `LAIEq`
 
@@ -852,7 +846,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `MaxConductance`
 
@@ -876,7 +870,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `min_respi`
 
@@ -936,7 +930,11 @@
     :Dimensionality:
         (8, 4, 3)
     :Dimensionality Remarks:
-        8: Seven SUEWS land cover types and one extra land cover type (currently NOT used); 4: SummerWet, SummerDry, WinterWet, WinterDry; 3: a1, a2, a3
+        8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)}
+
+        4: {SummerWet, SummerDry, WinterWet, WinterDry}
+
+        3: {a1, a2, a3}
     :SUEWS-related variables:
         `a1`, `a2`, `a3`
 
@@ -948,7 +946,7 @@
     :Dimensionality:
         (8,)
     :Dimensionality Remarks:
-        8: Seven SUEWS land cover types and one extra land cover type (currently NOT used)
+        8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)} 
     :SUEWS-related variables:
         `OHMThresh_SW`
 
@@ -960,7 +958,7 @@
     :Dimensionality:
         (8,)
     :Dimensionality Remarks:
-        8: Seven SUEWS land cover types and one extra land cover type (currently NOT used)
+        8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)} 
     :SUEWS-related variables:
         `OHMThresh_WD`
 
@@ -1020,7 +1018,9 @@
     :Dimensionality:
         (24, 2)
     :Dimensionality Remarks:
-        24: hours of a day; 2: Weekday and Weekend
+        24: hours of a day
+
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         `PopProfWD`, `PopProfWE`
 
@@ -1092,7 +1092,7 @@
     :Dimensionality:
         (2,)
     :Dimensionality Remarks:
-        2: Weekday and Weekend
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         `QF0_BEU_WD`, `QF0_BEU_WE`
 
@@ -1104,7 +1104,7 @@
     :Dimensionality:
         (2,)
     :Dimensionality Remarks:
-        2: Weekday and Weekend
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         `QF_A_WD`, `QF_A_WE`
 
@@ -1116,7 +1116,7 @@
     :Dimensionality:
         (2,)
     :Dimensionality Remarks:
-        2: Weekday and Weekend
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         `QF_B_WD`, `QF_B_WE`
 
@@ -1128,7 +1128,7 @@
     :Dimensionality:
         (2,)
     :Dimensionality Remarks:
-        2: Weekday and Weekend
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         `QF_C_WD`, `QF_C_WE`
 
@@ -1176,7 +1176,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `resp_a`
 
@@ -1188,7 +1188,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `resp_b`
 
@@ -1260,7 +1260,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `SatHydraulicCond`
 
@@ -1272,7 +1272,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `SDDFull`
 
@@ -1284,7 +1284,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `Fr_Bldgs`, `Fr_Bsoil`, `Fr_DecTr`, `Fr_EveTr`, `Fr_Grass`, `Fr_Paved`, `Fr_Water`
 
@@ -1332,7 +1332,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `SnowLimPatch`
 
@@ -1344,7 +1344,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `SnowDensBldgs`, `SnowDensPaved`, `SnowDensDecTr`, `SnowDensEveTr`, `SnowDensGrass`, `SnowDensBSoil`, `SnowDensWater`
 
@@ -1380,12 +1380,12 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `SnowFracBldgs`, `SnowFracPaved`, `SnowFracDecTr`, `SnowFracEveTr`, `SnowFracGrass`, `SnowFracBSoil`, `SnowFracWater`
 
 
-.. option:: snowlimpaved
+.. option:: snowlimbuild
 
     :Description:
         Limit of the snow water equivalent for snow removal from roads and roofs [mm]
@@ -1404,7 +1404,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `SnowPackBldgs`, `SnowPackPaved`, `SnowPackDecTr`, `SnowPackEveTr`, `SnowPackGrass`, `SnowPackBSoil`, `SnowPackWater`
 
@@ -1416,7 +1416,9 @@
     :Dimensionality:
         (24, 2)
     :Dimensionality Remarks:
-        24: hours of a day; 2: Weekday and Weekend
+        24: hours of a day
+
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         `SnowClearingProfWD`, `SnowClearingProfWE`
 
@@ -1440,7 +1442,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `SnowWaterBldgsState`, `SnowWaterPavedState`, `SnowWaterDecTrState`, `SnowWaterEveTrState`, `SnowWaterGrassState`, `SnowWaterBSoilState`, `SnowWaterWaterState`
 
@@ -1452,7 +1454,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `SoilDepth`
 
@@ -1464,7 +1466,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `SoilstoreBldgsState`, `SoilstorePavedState`, `SoilstoreDecTrState`, `SoilstoreEveTrState`, `SoilstoreGrassState`, `SoilstoreBSoilState`
 
@@ -1476,7 +1478,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `SoilStoreCap`
 
@@ -1512,7 +1514,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `BldgsState`, `PavedState`, `DecTrState`, `EveTrState`, `GrassState`, `BSoilState`, `WaterState`
 
@@ -1524,7 +1526,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `StateLimit`
 
@@ -1548,7 +1550,9 @@
     :Dimensionality:
         (6, 7)
     :Dimensionality Remarks:
-        6: See variable description for specifics; 7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        6: { `StorageMin`, `DrainageEq`, `DrainageCoef1`, `DrainageCoef2`, `StorageMax`, current storage}
+
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `DrainageCoef1`, `DrainageCoef2`, `DrainageEq`, `StorageMax`, `StorageMin`
 
@@ -1572,7 +1576,7 @@
     :Dimensionality:
         (2,)
     :Dimensionality Remarks:
-        2: Weekday and Weekend
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         `TCritic_Cooling_WD`, `TCritic_Cooling_WE`
 
@@ -1584,7 +1588,7 @@
     :Dimensionality:
         (2,)
     :Dimensionality Remarks:
-        2: Weekday and Weekend
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         `TCritic_Heating_WD`, `TCritic_Heating_WE`
 
@@ -1656,7 +1660,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: See variable description for specifics
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         `theta`
 
@@ -1692,7 +1696,7 @@
     :Dimensionality:
         (2,)
     :Dimensionality Remarks:
-        2: Weekday and Weekend
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         `TrafficRate_WD`, `TrafficRate_WE`
 
@@ -1716,7 +1720,9 @@
     :Dimensionality:
         (24, 2)
     :Dimensionality Remarks:
-        24: hours of a day; 2: Weekday and Weekend
+        24: hours of a day
+
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         `TraffProfWD`, `TraffProfWE`
 
@@ -1733,6 +1739,18 @@
         `Tstep`
 
 
+.. option:: veg_type
+
+    :Description:
+        Internal use. Please DO NOT modify
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        None
+
+
 .. option:: waterdist
 
     :Description:
@@ -1740,7 +1758,9 @@
     :Dimensionality:
         (8, 6)
     :Dimensionality Remarks:
-        8: Seven SUEWS land cover types and Runoff/SoilStore as water receiver; 6: SUEWS land cover types other than water as water contributors
+        8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)}
+
+        6: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`}
     :SUEWS-related variables:
         `ToBSoil`, `ToBldgs`, `ToDecTr`, `ToEveTr`, `ToGrass`, `ToPaved`, `ToRunoff`, `ToSoilStore`, `ToWater`
 
@@ -1764,7 +1784,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `WetThreshold`
 
@@ -1776,7 +1796,9 @@
     :Dimensionality:
         (24, 2)
     :Dimensionality Remarks:
-        24: hours of a day; 2: Weekday and Weekend
+        24: hours of a day
+
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         `WaterUseProfAutoWD`, `WaterUseProfAutoWE`
 
@@ -1788,7 +1810,9 @@
     :Dimensionality:
         (24, 2)
     :Dimensionality Remarks:
-        24: hours of a day; 2: Weekday and Weekend
+        24: hours of a day
+
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         `WaterUseProfManuWD`, `WaterUseProfManuWE`
 

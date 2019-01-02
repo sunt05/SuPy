@@ -1,153 +1,177 @@
 variable,Dimensionality,Description,SUEWS-related variables,Dimensionality Remarks
-s1,0,A parameter related to soil moisture dependence [-],`S1`,Scalar
-irrfracgrass,0,Fraction of `Grass` that is irrigated [-],`IrrFr_Grass`,Scalar
-z,0,Measurement height [m].,`z`,Scalar
-beta_bioco2,"(3,)",The light-saturated gross photosynthesis of the canopy. [umol |m^-2| |s^-1| ],`beta`,3: See variable description for specifics
+g6,0,Related to soil moisture dependence [|mm^-1|],`G6`,Scalar
+snowdensmin,0,Fresh snow density [kg |m^-3|],`SnowDensMin`,Scalar
+waterdist,"(8, 6)",Fraction of water redistribution,"`ToBSoil`, `ToBldgs`, `ToDecTr`, `ToEveTr`, `ToGrass`, `ToPaved`, `ToRunoff`, `ToSoilStore`, `ToWater`","8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)}
+
+        6: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`}"
+internalwateruse_h,0,Internal water use [mm |h^-1|],`InternalWaterUse`,Scalar
+dectreeh,0,Mean height of deciduous trees [m],`H_DecTr`,Scalar
+laitype,"(3,)",LAI calculation choice.,`LAIEq`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+alt,0,Used for both the radiation and water flow between grids.,`Alt`,Scalar
+soildepth,"(7,)",Depth of soil beneath the surface [mm],`SoilDepth`,"7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+tempmeltfact,0,Hourly temperature melt factor of snow [mm |K^-1| |h^-1|],`TempMeltFactor`,Scalar
+resp_a,"(3,)",Respiration coefficient a.,`resp_a`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+ie_start,0,Day when irrigation starts [DOY],`Ie_start`,Scalar
+trafficunits,0,Units for the traffic rate for the study area. Not used in v2018a.,`TrafficUnits`,Scalar
+basete,"(3,)",Base temperature for initiating sensesance degree days (SDD) for leaf off. [°C],`BaseTe`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+cpanohm,"(7,)",Volumetric heat capacity for this surface to use in AnOHM [J |m^-3|],`AnOHM_Cp`,"7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+ahprof_24hr,"(24, 2)",Hourly profile values used in energy use calculation.,"`EnergyUseProfWD`, `EnergyUseProfWE`","24: hours of a day
+
+        2: {Weekday, Weekend}"
+drainrt,0,Drainage rate of bucket for LUMPS [mm |h^-1|],`LUMPS_DrRate`,Scalar
+g1,0,Related to maximum surface conductance [mm |s^-1|],`G1`,Scalar
+faievetree,0,Frontal area index for evergreen trees [-],`FAI_EveTr`,Scalar
+resp_b,"(3,)",Respiration coefficient b - related to air temperature dependency.,`resp_b`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+ohm_coef,"(8, 4, 3)",Coefficients for OHM calculation.,"`a1`, `a2`, `a3`","8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)}
+
+        4: {SummerWet, SummerDry, WinterWet, WinterDry}
+
+        3: {a1, a2, a3}"
+lng,0,longitude [deg],`lng`,Scalar
+maxconductance,"(3,)",The maximum conductance of each vegetation or surface type. [mm |s^-1|],`MaxConductance`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+g4,0,Related to VPD dependence [units depend on `gsModel`],`G4`,Scalar
 zdm_in,0,Zero-plane displacement [m],`zd`,Scalar
-faibldg,0,Frontal area index for buildings [-],`FAI_Bldgs`,Scalar
-basete,"(3,)",Base temperature for initiating sensesance degree days (SDD) for leaf off. [°C],`BaseTe`,3: See variable description for specifics
-baset,"(3,)",Base Temperature for initiating growing degree days (GDD) for leaf growth. [°C],`BaseT`,3: See variable description for specifics
-soildepth,"(7,)",Depth of soil beneath the surface [mm],`SoilDepth`,"7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
-soilstorecap,"(7,)",Limit value for `SoilDepth` [mm],`SoilStoreCap`,"7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
+qf_a,"(2,)",Base value for QF calculation.,"`QF_A_WD`, `QF_A_WE`","2: {Weekday, Weekend}"
+preciplimitalb,0,Limit for hourly precipitation when the ground is fully covered with snow. Then snow albedo is reset to AlbedoMax [mm],`PrecipLimAlb`,Scalar
+crwmin,0,Minimum water holding capacity of snow [mm],`CRWMin`,Scalar
+capmin_dec,0,Minimum water storage capacity for upper surfaces (i.e. canopy).,`StorageMin`,Scalar
+albmin_evetr,0,Effective surface albedo (middle of the day value) for wintertime (not including snow).,`AlbedoMin`,Scalar
+t_critic_heating,"(2,)",Critical heating temperature.,"`TCritic_Heating_WD`, `TCritic_Heating_WE`","2: {Weekday, Weekend}"
+beta_bioco2,"(3,)",The light-saturated gross photosynthesis of the canopy. [umol |m^-2| |s^-1| ],`beta`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+laipower,"(4, 3)",parameters required by LAI calculation.,"`LeafGrowthPower1`, `LeafGrowthPower2`, `LeafOffPower1`, `LeafOffPower2`","4: {`LeafGrowthPower1`, `LeafGrowthPower2`, `LeafOffPower1`, `LeafOffPower2`}
+
+        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+narp_trans_site,0,Atmospheric transmissivity for NARP [-],`NARP_Trans`,Scalar
+fcef_v_kgkm,0,CO2 emission factor [kg |km^-1|],`FcEF_v_kgkm`,Scalar
+bldgh,0,Mean building height [m],`H_Bldgs`,Scalar
+snowalbmax,0,Effective surface albedo (middle of the day value) for summertime.,`AlbedoMax`,Scalar
+g2,0,Related to Kdown dependence [W |m^-2|],`G2`,Scalar
+ie_end,0,Day when irrigation ends [DOY],`Ie_end`,Scalar
+surfacearea,0,Area of the grid [ha].,`SurfaceArea`,Scalar
+gsmodel,0,Formulation choice for conductance calculation.,`gsModel`,Scalar
+wetthresh,"(7,)",Depth of water which determines whether evaporation occurs from a partially wet or completely wet surface [mm].,`WetThreshold`,"7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+crwmax,0,Maximum water holding capacity of snow [mm],`CRWMax`,Scalar
 maxqfmetab,0,Maximum value for human heat emission. [W |m^-2|],`MaxQFMetab`,Scalar
-wetthresh,"(7,)",Depth of water which determines whether evaporation occurs from a partially wet or completely wet surface [mm].,`WetThreshold`,"7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
+ohm_threshsw,"(8,)",Temperature threshold determining whether summer/winter OHM coefficients are applied [°C],`OHMThresh_SW`,"8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)} "
+snowd,"(7,)",Limit for the snow water equivalent when snow cover starts to be patchy [mm],`SnowLimPatch`,"7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+daywat,"(7,)",Irrigation flag: 1 for on and 0 for off.,"`DayWat(1)`, `DayWat(2)`, `DayWat(3)`, `DayWat(4)`, `DayWat(5)`, `DayWat(6)`, `DayWat(7)`","7: {Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday}"
+laimin,"(3,)",leaf-off wintertime value,`LAIMin`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+rainmaxres,0,Maximum water bucket reservoir [mm] Used for LUMPS surface wetness control.,`LUMPS_MaxRes`,Scalar
+snowlimbuild,0,Limit of the snow water equivalent for snow removal from roads and roofs [mm],`SnowLimRemove`,Scalar
+sddfull,"(3,)",The sensesence degree days (SDD) needed to initiate leaf off. [°C],`SDDFull`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+z0m_in,0,Roughness length for momentum [m],`z0`,Scalar
+qf0_beu,"(2,)",Building energy use [W |m^-2|],"`QF0_BEU_WD`, `QF0_BEU_WE`","2: {Weekday, Weekend}"
+popdensnighttime,0,Night-time population density (i.e. residents) [people |ha^-1|],`PopDensNight`,Scalar
+baset,"(3,)",Base Temperature for initiating growing degree days (GDD) for leaf growth. [°C],`BaseT`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+runofftowater,0,Fraction of above-ground runoff flowing to water surface during flooding [-],`RunoffToWater`,Scalar
+startdls,0,Start of the day light savings [DOY],`StartDLS`,Scalar
+wuprofm_24hr,"(24, 2)",Hourly profile values used in manual irrigation.,"`WaterUseProfManuWD`, `WaterUseProfManuWE`","24: hours of a day
+
+        2: {Weekday, Weekend}"
+preciplimit,0,Limit for hourly snowfall when the ground is fully covered with snow [mm],`PrecipLimSnow`,Scalar
+irrfracdecid,0,Fraction of deciduous trees that are irrigated [-],`IrrFr_DecTr`,Scalar
+s2,0,A parameter related to soil moisture dependence [mm],`S2`,Scalar
+frfossilfuel_heat,0,Fraction of fossil fuels used for building heating [-],`FrFossilFuel_Heat`,Scalar
+minqfmetab,0,Minimum value for human heat emission. [W |m^-2|],`MinQFMetab`,Scalar
+snowprof_24hr,"(24, 2)",Hourly profile values used in snow clearing.,"`SnowClearingProfWD`, `SnowClearingProfWE`","24: hours of a day
+
+        2: {Weekday, Weekend}"
+tau_f,0,Time constant for snow albedo aging in melting snow [-],`tau_f`,Scalar
+faidectree,0,Frontal area index for deciduous trees [-],`FAI_DecTr`,Scalar
+irrfracgrass,0,Fraction of `Grass` that is irrigated [-],`IrrFr_Grass`,Scalar
+ef_umolco2perj,0,Emission factor for fuels used for building heating.,`EF_umolCO2perJ`,Scalar
+ah_slope_cooling,"(2,)",Cooling slope of QF calculation.,"`AHSlope_Cooling_WD`, `AHSlope_Cooling_WE`","2: {Weekday, Weekend}"
+timezone,0,Time zone [h] for site relative to UTC (east is positive). This should be set according to the times given in the meteorological forcing file(s).,`Timezone`,Scalar
+g5,0,Related to temperature dependence [°C],`G5`,Scalar
+emis,"(7,)",Effective surface emissivity.,`Emissivity`,"7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+statelimit,"(7,)",Upper limit to the surface state. [mm],`StateLimit`,"7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+evetreeh,0,Mean height of evergreen trees [m],`H_EveTr`,Scalar
+popprof_24hr,"(24, 2)",Hourly profile values used in dynamic population estimation.,"`PopProfWD`, `PopProfWE`","24: hours of a day
+
+        2: {Weekday, Weekend}"
+pormax_dec,0,full leaf-on summertime value Used only for `DecTr` (can affect roughness calculation),`PorosityMax`,Scalar
+kmax,0,Maximum incoming shortwave radiation [W |m^-2|],`Kmax`,Scalar
+pipecapacity,0,Storage capacity of pipes [mm],`PipeCapacity`,Scalar
+lat,0,Latitude [deg].,`lat`,Scalar
+s1,0,A parameter related to soil moisture dependence [-],`S1`,Scalar
+g3,0,Related to VPD dependence [units depend on `gsModel`],`G3`,Scalar
+min_res_bioco2,"(3,)",Minimum soil respiration rate (for cold-temperature limit) [umol |m^-2| |s^-1|].,`min_respi`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+faibldg,0,Frontal area index for buildings [-],`FAI_Bldgs`,Scalar
+sathydraulicconduct,"(7,)",Hydraulic conductivity for saturated soil [mm |s^-1|],`SatHydraulicCond`,"7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+pormin_dec,0,leaf-off wintertime value Used only for `DecTr` (can affect roughness calculation),`PorosityMin`,Scalar
+humactivity_24hr,"(24, 2)",Hourly profile values used in human activity calculation.,"`ActivityProfWD`, `ActivityProfWE`","24: hours of a day
+
+        2: {Weekday, Weekend}"
+daywatper,"(7,)",Fraction of properties using irrigation for each day of a week.,"`DayWatPer(1)`, `DayWatPer(2)`, `DayWatPer(3)`, `DayWatPer(4)`, `DayWatPer(5)`, `DayWatPer(6)`, `DayWatPer(7)`","7: {Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday}"
+soilstorecap,"(7,)",Limit value for `SoilDepth` [mm],`SoilStoreCap`,"7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+radmeltfact,0,Hourly radiation melt factor of snow [mm |w^-1| |h^-1|],`RadMeltFactor`,Scalar
 flowchange,0,Difference in input and output flows for water surface [mm |h^-1|],`FlowChange`,Scalar
+irrfracconif,0,Fraction of evergreen trees that are irrigated [-],`IrrFr_EveTr`,Scalar
+raincover,0,Limit when surface totally covered with water for LUMPS [mm],`LUMPS_Cover`,Scalar
+capmax_dec,0,Maximum water storage capacity for upper surfaces (i.e. canopy),`StorageMax`,Scalar
+traffprof_24hr,"(24, 2)",Hourly profile values used in traffic activity calculation.,"`TraffProfWD`, `TraffProfWE`","24: hours of a day
+
+        2: {Weekday, Weekend}"
+ie_a,"(3,)",Coefficient for automatic irrigation model.,"`Ie_a1`, `Ie_a2`, `Ie_a3`","3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+t_critic_cooling,"(2,)",Critical cooling temperature.,"`TCritic_Cooling_WD`, `TCritic_Cooling_WE`","2: {Weekday, Weekend}"
+frfossilfuel_nonheat,0,Fraction of fossil fuels used for building energy use [-],`FrFossilFuel_NonHeat`,Scalar
+chanohm,"(7,)",Bulk transfer coefficient for this surface to use in AnOHM [-],`AnOHM_Ch`,"7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+enddls,0,End of the day light savings [DOY],`EndDLS`,Scalar
+ie_m,"(3,)",Coefficient for manual irrigation model.,"`Ie_m1`, `Ie_m2`, `Ie_m3`","3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+qf_b,"(2,)",Parameter related to heating degree days.,"`QF_B_WD`, `QF_B_WE`","2: {Weekday, Weekend}"
+tau_a,0,Time constant for snow albedo aging in cold snow [-],`tau_a`,Scalar
+alb,"(7,)",Effective surface albedo (middle of the day value) for summertime.,`AlbedoMax`,"7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+beta_enh_bioco2,"(3,)",Part of the `beta` coefficient related to the fraction of vegetation.,`beta_enh`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+tl,0,Lower air temperature limit [°C],`TL`,Scalar
+basethdd,0,Base temperature for heating degree days [°C],`BaseTHDD`,Scalar
+gddfull,"(3,)",The growing degree days (GDD) needed for full capacity of the leaf area index (LAI) [°C].,`GDDFull`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+ah_slope_heating,"(2,)",Heating slope of QF calculation.,"`AHSlope_Heating_WD`, `AHSlope_Heating_WE`","2: {Weekday, Weekend}"
+qf_c,"(2,)",Parameter related to heating degree days.,"`QF_C_WD`, `QF_C_WE`","2: {Weekday, Weekend}"
+laimax,"(3,)",full leaf-on summertime value,`LAIMax`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+alpha_bioco2,"(3,)",The mean apparent ecosystem quantum. Represents the initial slope of the light-response curve.,`alpha`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+trafficrate,"(2,)",Traffic rate used for CO2 flux calculation.,"`TrafficRate_WD`, `TrafficRate_WE`","2: {Weekday, Weekend}"
+sfr,"(7,)",Surface cover fractions.,"`Fr_Bldgs`, `Fr_Bsoil`, `Fr_DecTr`, `Fr_EveTr`, `Fr_Grass`, `Fr_Paved`, `Fr_Water`","7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+theta_bioco2,"(3,)",The convexity of the curve at light saturation.,`theta`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+ah_min,"(2,)",Minimum QF values.,"`AHMin_WD`, `AHMin_WE`","2: {Weekday, Weekend}"
+storedrainprm,"(6, 7)",Coefficients used in drainage calculation.,"`DrainageCoef1`, `DrainageCoef2`, `DrainageEq`, `StorageMax`, `StorageMin`","6: { `StorageMin`, `DrainageEq`, `DrainageCoef1`, `DrainageCoef2`, `StorageMax`, current storage}
+
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+wuprofa_24hr,"(24, 2)",Hourly profile values used in automatic irrigation.,"`WaterUseProfAutoWD`, `WaterUseProfAutoWE`","24: hours of a day
+
+        2: {Weekday, Weekend}"
 tau_r,0,Time constant for snow density ageing [-],`tau_r`,Scalar
 th,0,Upper air temperature limit [°C],`TH`,Scalar
-laimin,"(3,)",leaf-off wintertime value,`LAIMin`,3: See variable description for specifics
-alt,0,Used for both the radiation and water flow between grids.,`Alt`,Scalar
-g1,0,Related to maximum surface conductance [mm |s^-1|],`G1`,Scalar
-s2,0,A parameter related to soil moisture dependence [mm],`S2`,Scalar
-ah_slope_cooling,"(2,)",Cooling slope of QF calculation.,"`AHSlope_Cooling_WD`, `AHSlope_Cooling_WE`",2: Weekday and Weekend
-g5,0,Related to temperature dependence [°C],`G5`,Scalar
-resp_a,"(3,)",Respiration coefficient a.,`resp_a`,3: See variable description for specifics
-basethdd,0,Base temperature for heating degree days [°C],`BaseTHDD`,Scalar
-albmin_dectr,0,Effective surface albedo (middle of the day value) for wintertime (not including snow).,`AlbedoMin`,Scalar
-emis,"(7,)",Effective surface emissivity.,`Emissivity`,"7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
-ie_a,"(3,)",Coefficient for automatic irrigation model.,"`Ie_a1`, `Ie_a2`, `Ie_a3`",3: See variable description for specifics
-statelimit,"(7,)",Upper limit to the surface state. [mm],`StateLimit`,"7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
-qf_c,"(2,)",Parameter related to heating degree days.,"`QF_C_WD`, `QF_C_WE`",2: Weekday and Weekend
-enddls,0,End of the day light savings [DOY],`EndDLS`,Scalar
-kmax,0,Maximum incoming shortwave radiation [W |m^-2|],`Kmax`,Scalar
-dectreeh,0,Mean height of deciduous trees [m],`H_DecTr`,Scalar
+kkanohm,"(7,)",Thermal conductivity for this surface to use in AnOHM [W m |K^-1|],`AnOHM_Kk`,"7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
 narp_emis_snow,0,Effective surface emissivity.,`Emissivity`,Scalar
-snowalbmax,0,Effective surface albedo (middle of the day value) for summertime.,`AlbedoMax`,Scalar
-narp_trans_site,0,Atmospheric transmissivity for NARP [-],`NARP_Trans`,Scalar
-rainmaxres,0,Maximum water bucket reservoir [mm] Used for LUMPS surface wetness control.,`LUMPS_MaxRes`,Scalar
-pormax_dec,0,full leaf-on summertime value Used only for `DecTr` (can affect roughness calculation),`PorosityMax`,Scalar
-t_critic_heating,"(2,)",Critical heating temperature.,"`TCritic_Heating_WD`, `TCritic_Heating_WE`",2: Weekday and Weekend
-daywatper,"(7,)",Fraction of properties using irrigation for each day of a week.,"`DayWatPer(1)`, `DayWatPer(2)`, `DayWatPer(3)`, `DayWatPer(4)`, `DayWatPer(5)`, `DayWatPer(6)`, `DayWatPer(7)`","7: Seven days of a week ordered as Sunday, Monday, Tuesday, Wednesday, Thursday, Friday and Saturday"
-waterdist,"(8, 6)",Fraction of water redistribution,"`ToBSoil`, `ToBldgs`, `ToDecTr`, `ToEveTr`, `ToGrass`, `ToPaved`, `ToRunoff`, `ToSoilStore`, `ToWater`",8: Seven SUEWS land cover types and Runoff/SoilStore as water receiver; 6: SUEWS land cover types other than water as water contributors
 enef_v_jkm,0,Emission factor for heat [J k|m^-1|].,`EnEF_v_Jkm`,Scalar
-timezone,0,Time zone [h] for site relative to UTC (east is positive). This should be set according to the times given in the meteorological forcing file(s).,`Timezone`,Scalar
-t_critic_cooling,"(2,)",Critical cooling temperature.,"`TCritic_Cooling_WD`, `TCritic_Cooling_WE`",2: Weekday and Weekend
-trafficunits,0,Units for the traffic rate for the study area. Not used in v2018a.,`TrafficUnits`,Scalar
-snowd,"(7,)",Limit for the snow water equivalent when snow cover starts to be patchy [mm],`SnowLimPatch`,"7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
-evetreeh,0,Mean height of evergreen trees [m],`H_EveTr`,Scalar
-tl,0,Lower air temperature limit [°C],`TL`,Scalar
-startdls,0,Start of the day light savings [DOY],`StartDLS`,Scalar
-g2,0,Related to Kdown dependence [W |m^-2|],`G2`,Scalar
-laipower,"(4, 3)",parameters required by LAI calculation.,"`LeafGrowthPower1`, `LeafGrowthPower2`, `LeafOffPower1`, `LeafOffPower2`","4: See variable description for specifics; 3: Three vegetated land cover types (`EveTr`, `DecTr`, `Grass`)"
-qf_b,"(2,)",Parameter related to heating degree days.,"`QF_B_WD`, `QF_B_WE`",2: Weekday and Weekend
-radmeltfact,0,Hourly radiation melt factor of snow [mm |w^-1| |h^-1|],`RadMeltFactor`,Scalar
-capmax_dec,0,Maximum water storage capacity for upper surfaces (i.e. canopy),`StorageMax`,Scalar
-wuprofm_24hr,"(24, 2)",Hourly profile values used in manual irrigation.,"`WaterUseProfManuWD`, `WaterUseProfManuWE`",24: hours of a day; 2: Weekday and Weekend
-capmin_dec,0,Minimum water storage capacity for upper surfaces (i.e. canopy).,`StorageMin`,Scalar
-surfacearea,0,Area of the grid [ha].,`SurfaceArea`,Scalar
-z0m_in,0,Roughness length for momentum [m],`z0`,Scalar
-crwmax,0,Maximum water holding capacity of snow [mm],`CRWMax`,Scalar
-ef_umolco2perj,0,Emission factor for fuels used for building heating.,`EF_umolCO2perJ`,Scalar
-g3,0,Related to VPD dependence [units depend on `gsModel`],`G3`,Scalar
-preciplimitalb,0,Limit for hourly precipitation when the ground is fully covered with snow. Then snow albedo is reset to AlbedoMax [mm],`PrecipLimAlb`,Scalar
-frfossilfuel_nonheat,0,Fraction of fossil fuels used for building energy use [-],`FrFossilFuel_NonHeat`,Scalar
-snowdensmax,0,Maximum snow density [kg |m^-3|],`SnowDensMax`,Scalar
-ohm_coef,"(8, 4, 3)",Coefficients for OHM calculation.,"`a1`, `a2`, `a3`","8: Seven SUEWS land cover types and one extra land cover type (currently NOT used); 4: SummerWet, SummerDry, WinterWet, WinterDry; 3: a1, a2, a3"
-preciplimit,0,Limit for hourly snowfall when the ground is fully covered with snow [mm],`PrecipLimSnow`,Scalar
-popprof_24hr,"(24, 2)",Hourly profile values used in dynamic population estimation.,"`PopProfWD`, `PopProfWE`",24: hours of a day; 2: Weekday and Weekend
-maxconductance,"(3,)",The maximum conductance of each vegetation or surface type. [mm |s^-1|],`MaxConductance`,3: See variable description for specifics
-gsmodel,0,Formulation choice for conductance calculation.,`gsModel`,Scalar
-laitype,"(3,)",LAI calculation choice.,`LAIEq`,3: See variable description for specifics
-g6,0,Related to soil moisture dependence [|mm^-1|],`G6`,Scalar
-chanohm,"(7,)",Bulk transfer coefficient for this surface to use in AnOHM [-],`AnOHM_Ch`,"7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
-alpha_bioco2,"(3,)",The mean apparent ecosystem quantum. Represents the initial slope of the light-response curve.,`alpha`,3: See variable description for specifics
-theta_bioco2,"(3,)",The convexity of the curve at light saturation.,`theta`,3: See variable description for specifics
-crwmin,0,Minimum water holding capacity of snow [mm],`CRWMin`,Scalar
-pormin_dec,0,leaf-off wintertime value Used only for `DecTr` (can affect roughness calculation),`PorosityMin`,Scalar
-trafficrate,"(2,)",Traffic rate used for CO2 flux calculation.,"`TrafficRate_WD`, `TrafficRate_WE`",2: Weekday and Weekend
-irrfracconif,0,Fraction of evergreen trees that are irrigated [-],`IrrFr_EveTr`,Scalar
-ie_end,0,Day when irrigation ends [DOY],`Ie_end`,Scalar
-traffprof_24hr,"(24, 2)",Hourly profile values used in traffic activity calculation.,"`TraffProfWD`, `TraffProfWE`",24: hours of a day; 2: Weekday and Weekend
-ah_slope_heating,"(2,)",Heating slope of QF calculation.,"`AHSlope_Heating_WD`, `AHSlope_Heating_WE`",2: Weekday and Weekend
-bldgh,0,Mean building height [m],`H_Bldgs`,Scalar
-alpha_enh_bioco2,"(3,)",Part of the `alpha` coefficient related to the fraction of vegetation.,`alpha_enh`,3: See variable description for specifics
 popdensdaytime,0,"Daytime population density (i.e. workers, tourists) [people |ha^-1|]",`PopDensDay`,Scalar
-snowlimpaved,0,Limit of the snow water equivalent for snow removal from roads and roofs [mm],`SnowLimRemove`,Scalar
-g4,0,Related to VPD dependence [units depend on `gsModel`],`G4`,Scalar
-daywat,"(7,)",Irrigation flag: 1 for on and 0 for off.,"`DayWat(1)`, `DayWat(2)`, `DayWat(3)`, `DayWat(4)`, `DayWat(5)`, `DayWat(6)`, `DayWat(7)`","7: Seven days of a week ordered as Sunday, Monday, Tuesday, Wednesday, Thursday, Friday and Saturday"
-cpanohm,"(7,)",Volumetric heat capacity for this surface to use in AnOHM [J |m^-3|],`AnOHM_Cp`,"7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
-sddfull,"(3,)",The sensesence degree days (SDD) needed to initiate leaf off. [°C],`SDDFull`,3: See variable description for specifics
-ohm_threshwd,"(8,)",Soil moisture threshold determining whether wet/dry OHM coefficients are applied [-],`OHMThresh_WD`,8: Seven SUEWS land cover types and one extra land cover type (currently NOT used)
-ah_min,"(2,)",Minimum QF values.,"`AHMin_WD`, `AHMin_WE`",2: Weekday and Weekend
-ie_start,0,Day when irrigation starts [DOY],`Ie_start`,Scalar
-faievetree,0,Frontal area index for evergreen trees [-],`FAI_EveTr`,Scalar
+z,0,Measurement height [m].,`z`,Scalar
+alpha_enh_bioco2,"(3,)",Part of the `alpha` coefficient related to the fraction of vegetation.,`alpha_enh`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+ohm_threshwd,"(8,)",Soil moisture threshold determining whether wet/dry OHM coefficients are applied [-],`OHMThresh_WD`,"8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)} "
 faut,0,Fraction of irrigated area that is irrigated using automated systems,`Faut`,Scalar
-snowdensmin,0,Fresh snow density [kg |m^-3|],`SnowDensMin`,Scalar
-gddfull,"(3,)",The growing degree days (GDD) needed for full capacity of the leaf area index (LAI) [°C].,`GDDFull`,3: See variable description for specifics
-resp_b,"(3,)",Respiration coefficient b - related to air temperature dependency.,`resp_b`,3: See variable description for specifics
-minqfmetab,0,Minimum value for human heat emission. [W |m^-2|],`MinQFMetab`,Scalar
-pipecapacity,0,Storage capacity of pipes [mm],`PipeCapacity`,Scalar
-alb,"(7,)",Effective surface albedo (middle of the day value) for summertime.,`AlbedoMax`,"7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
-drainrt,0,Drainage rate of bucket for LUMPS [mm |h^-1|],`LUMPS_DrRate`,Scalar
-ahprof_24hr,"(24, 2)",Hourly profile values used in energy use calculation.,"`EnergyUseProfWD`, `EnergyUseProfWE`",24: hours of a day; 2: Weekday and Weekend
-sathydraulicconduct,"(7,)",Hydraulic conductivity for saturated soil [mm |s^-1|],`SatHydraulicCond`,"7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
-qf0_beu,"(2,)",Building energy use [W |m^-2|],"`QF0_BEU_WD`, `QF0_BEU_WE`",2: Weekday and Weekend
-tempmeltfact,0,Hourly temperature melt factor of snow [mm |K^-1| |h^-1|],`TempMeltFactor`,Scalar
-snowprof_24hr,"(24, 2)",Hourly profile values used in snow clearing.,"`SnowClearingProfWD`, `SnowClearingProfWE`",24: hours of a day; 2: Weekday and Weekend
-lng,0,longitude [deg],`lng`,Scalar
-internalwateruse_h,0,Internal water use [mm |h^-1|],`InternalWaterUse`,Scalar
-irrfracdecid,0,Fraction of deciduous trees that are irrigated [-],`IrrFr_DecTr`,Scalar
-wuprofa_24hr,"(24, 2)",Hourly profile values used in automatic irrigation.,"`WaterUseProfAutoWD`, `WaterUseProfAutoWE`",24: hours of a day; 2: Weekday and Weekend
-frfossilfuel_heat,0,Fraction of fossil fuels used for building heating [-],`FrFossilFuel_Heat`,Scalar
-fcef_v_kgkm,0,CO2 emission factor [kg |km^-1|],`FcEF_v_kgkm`,Scalar
-sfr,"(7,)",Surface cover fractions.,"`Fr_Bldgs`, `Fr_Bsoil`, `Fr_DecTr`, `Fr_EveTr`, `Fr_Grass`, `Fr_Paved`, `Fr_Water`","7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
-ie_m,"(3,)",Coefficient for manual irrigation model.,"`Ie_m1`, `Ie_m2`, `Ie_m3`",3: See variable description for specifics
-faidectree,0,Frontal area index for deciduous trees [-],`FAI_DecTr`,Scalar
-lat,0,Latitude [deg].,`lat`,Scalar
-storedrainprm,"(6, 7)",Coefficients used in drainage calculation.,"`DrainageCoef1`, `DrainageCoef2`, `DrainageEq`, `StorageMax`, `StorageMin`","6: See variable description for specifics; 7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
-beta_enh_bioco2,"(3,)",Part of the `beta` coefficient related to the fraction of vegetation.,`beta_enh`,3: See variable description for specifics
-humactivity_24hr,"(24, 2)",Hourly profile values used in human activity calculation.,"`ActivityProfWD`, `ActivityProfWE`",24: hours of a day; 2: Weekday and Weekend
-tau_a,0,Time constant for snow albedo aging in cold snow [-],`tau_a`,Scalar
-ohm_threshsw,"(8,)",Temperature threshold determining whether summer/winter OHM coefficients are applied [°C],`OHMThresh_SW`,8: Seven SUEWS land cover types and one extra land cover type (currently NOT used)
-kkanohm,"(7,)",Thermal conductivity for this surface to use in AnOHM [W m |K^-1|],`AnOHM_Kk`,"7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
-popdensnighttime,0,Night-time population density (i.e. residents) [people |ha^-1|],`PopDensNight`,Scalar
-runofftowater,0,Fraction of above-ground runoff flowing to water surface during flooding [-],`RunoffToWater`,Scalar
-qf_a,"(2,)",Base value for QF calculation.,"`QF_A_WD`, `QF_A_WE`",2: Weekday and Weekend
-laimax,"(3,)",full leaf-on summertime value,`LAIMax`,3: See variable description for specifics
-min_res_bioco2,"(3,)",Minimum soil respiration rate (for cold-temperature limit) [umol |m^-2| |s^-1|].,`min_respi`,3: See variable description for specifics
-raincover,0,Limit when surface totally covered with water for LUMPS [mm],`LUMPS_Cover`,Scalar
-tau_f,0,Time constant for snow albedo aging in melting snow [-],`tau_f`,Scalar
-diagnose,0,Internal use. Please DO NOT modify,None,Scalar
-stabilitymethod,0,Defines which atmospheric stability functions are used.,`StabilityMethod`,Scalar
-smdmethod,0,Determines method for calculating soil moisture deficit (SMD).,`SMDMethod`,Scalar
-storageheatmethod,0,Determines method for calculating storage heat flux ΔQS.,`StorageHeatMethod`,Scalar
+snowdensmax,0,Maximum snow density [kg |m^-3|],`SnowDensMax`,Scalar
+waterusemethod,0,Defines how external water use is calculated.,`WaterUseMethod`,Scalar
+ohmincqf,0,Determines whether the storage heat flux calculation uses |Qstar| or ( |Qstar| +QF).,`OHMIncQF`,Scalar
+veg_type,0,Internal use. Please DO NOT modify,None,Scalar
 snowuse,0,Determines whether the snow part of the model runs.,`SnowUse`,Scalar
 roughlenheatmethod,0,Determines method for calculating roughness length for heat.,`RoughLenHeatMethod`,Scalar
-waterusemethod,0,Defines how external water use is calculated.,`WaterUseMethod`,Scalar
-netradiationmethod,0,Determines method for calculation of radiation fluxes.,`NetRadiationMethod`,Scalar
+storageheatmethod,0,Determines method for calculating storage heat flux ΔQS.,`StorageHeatMethod`,Scalar
 roughlenmommethod,0,Determines how aerodynamic roughness length (z0m) and zero displacement height (zdm) are calculated.,`RoughLenMomMethod`,Scalar
-tstep,0,Specifies the model time step [s].,`Tstep`,Scalar
-ohmincqf,0,Determines whether the storage heat flux calculation uses |Qstar| or ( |Qstar| +QF).,`OHMIncQF`,Scalar
 emissionsmethod,0,Determines method for QF calculation.,`EmissionsMethod`,Scalar
+stabilitymethod,0,Defines which atmospheric stability functions are used.,`StabilityMethod`,Scalar
+smdmethod,0,Determines method for calculating soil moisture deficit (SMD).,`SMDMethod`,Scalar
+netradiationmethod,0,Determines method for calculation of radiation fluxes.,`NetRadiationMethod`,Scalar
+tstep,0,Specifies the model time step [s].,`Tstep`,Scalar
 albdectr_id,0,Albedo of deciduous surface `DecTr` on day 0 of run,`albDecTr0`,Scalar
 albevetr_id,0,Albedo of evergreen surface `EveTr` on day 0 of run,`albEveTr0`,Scalar
 albgrass_id,0,Albedo of grass surface `Grass` on day 0 of run,`albGrass0`,Scalar
 decidcap_id,0,Storage capacity of deciduous surface `DecTr` on day 0 of run.,`decidCap0`,Scalar
-lai_id,"(3,)",Initial LAI values.,"`LAIinitialDecTr`, `LAIinitialEveTr`, `LAIinitialGrass`",3: See variable description for specifics
+lai_id,"(3,)",Initial LAI values.,"`LAIinitialDecTr`, `LAIinitialEveTr`, `LAIinitialGrass`","3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
 porosity_id,0,Porosity of deciduous vegetation on day 0 of run.,`porosity0`,Scalar
 snowalb,0,Initial snow albedo,`SnowAlb0`,Scalar
-snowdens,"(7,)",Initial snow density of each land cover.,"`SnowDensBldgs`, `SnowDensPaved`, `SnowDensDecTr`, `SnowDensEveTr`, `SnowDensGrass`, `SnowDensBSoil`, `SnowDensWater`","7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
-snowfrac,"(7,)",Initial plan area fraction of snow on each land cover`,"`SnowFracBldgs`, `SnowFracPaved`, `SnowFracDecTr`, `SnowFracEveTr`, `SnowFracGrass`, `SnowFracBSoil`, `SnowFracWater`","7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
-snowpack,"(7,)",Initial snow water equivalent on each land cover,"`SnowPackBldgs`, `SnowPackPaved`, `SnowPackDecTr`, `SnowPackEveTr`, `SnowPackGrass`, `SnowPackBSoil`, `SnowPackWater`","7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
-snowwater,"(7,)",Initial amount of liquid water in the snow on each land cover,"`SnowWaterBldgsState`, `SnowWaterPavedState`, `SnowWaterDecTrState`, `SnowWaterEveTrState`, `SnowWaterGrassState`, `SnowWaterBSoilState`, `SnowWaterWaterState`","7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
-soilstore_id,"(7,)",Initial water stored in soil beneath each land cover,"`SoilstoreBldgsState`, `SoilstorePavedState`, `SoilstoreDecTrState`, `SoilstoreEveTrState`, `SoilstoreGrassState`, `SoilstoreBSoilState`","7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
-state_id,"(7,)",Initial wetness condition on each land cover,"`BldgsState`, `PavedState`, `DecTrState`, `EveTrState`, `GrassState`, `BSoilState`, `WaterState`","7: Seven SUEWS land cover types ordered as `Paved`, `Bldgs`, `EveTr`, `DecTr`, `Grass`, `BSoil` and `Water`"
+snowdens,"(7,)",Initial snow density of each land cover.,"`SnowDensBldgs`, `SnowDensPaved`, `SnowDensDecTr`, `SnowDensEveTr`, `SnowDensGrass`, `SnowDensBSoil`, `SnowDensWater`","7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+snowfrac,"(7,)",Initial plan area fraction of snow on each land cover`,"`SnowFracBldgs`, `SnowFracPaved`, `SnowFracDecTr`, `SnowFracEveTr`, `SnowFracGrass`, `SnowFracBSoil`, `SnowFracWater`","7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+snowpack,"(7,)",Initial snow water equivalent on each land cover,"`SnowPackBldgs`, `SnowPackPaved`, `SnowPackDecTr`, `SnowPackEveTr`, `SnowPackGrass`, `SnowPackBSoil`, `SnowPackWater`","7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+snowwater,"(7,)",Initial amount of liquid water in the snow on each land cover,"`SnowWaterBldgsState`, `SnowWaterPavedState`, `SnowWaterDecTrState`, `SnowWaterEveTrState`, `SnowWaterGrassState`, `SnowWaterBSoilState`, `SnowWaterWaterState`","7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+soilstore_id,"(7,)",Initial water stored in soil beneath each land cover,"`SoilstoreBldgsState`, `SoilstorePavedState`, `SoilstoreDecTrState`, `SoilstoreEveTrState`, `SoilstoreGrassState`, `SoilstoreBSoilState`","7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+state_id,"(7,)",Initial wetness condition on each land cover,"`BldgsState`, `PavedState`, `DecTrState`, `EveTrState`, `GrassState`, `BSoilState`, `WaterState`","7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
