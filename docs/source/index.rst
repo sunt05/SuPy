@@ -37,11 +37,10 @@ SuPy: SUEWS that speaks Python
     :ref:`Parameterisations and sub-models within SUEWS`).
 
     Meanwhile, the data analysis ability of SuPy is greatly enhanced
-    by `the Python-based SciPy Stack <scipy>`_, notably `numpy`_ and `pandas`_.
+    by `the Python-based SciPy Stack <https://scipy.org>`_, notably `numpy`_ and `pandas`_.
 
 
 .. _SUEWS: https://suews-docs.readthedocs.io/en/latest/
-.. _scipy: https://scipy.org
 .. _numpy: https://www.numpy.org
 .. _pandas: http://pandas.pydata.org/
 
