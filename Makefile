@@ -53,3 +53,7 @@ docs:
 # upload wheels to pypi using twine
 upload:
 	$(MAKE) -C $(src_dir) upload
+
+# upload wheels to pypi using twine
+livehtml:
+	$(MAKE) -C $(docs_dir) livehtml

@@ -1,11 +1,8 @@
 .. _index_page:
 
-.. caution::
-
-    This site is under construction. All information might NOT be accurate and are subject to rapid change.
-
 SuPy: SUEWS that speaks Python
 ----------------------------------------------------
+
 .. image:: https://img.shields.io/pypi/pyversions/supy.svg
     :target: https://pypi.org/project/supy
     :alt: Python Version Support Status
@@ -28,7 +25,14 @@ SuPy: SUEWS that speaks Python
     :alt: Build Status
 
 
-- What is SuPy?
+.. caution::
+
+    This site is under construction. All information might NOT be accurate and are subject to rapid change.
+
+
+
+- **What is SuPy?**
+
     **SuPy** is a Python-enhanced urban climate model
     with `SUEWS`_ as its computation core.
 
@@ -45,7 +49,7 @@ SuPy: SUEWS that speaks Python
 .. _pandas: http://pandas.pydata.org/
 
 
-- How to get SuPy?
+- **How to get SuPy?**
 
   SuPy is available on all major platforms (macOS, Windows, Linux) for Python 3.5+
   via `PyPI <https://pypi.org/project/supy/>`_:
@@ -54,9 +58,10 @@ SuPy: SUEWS that speaks Python
 
     python3 -m pip install supy --upgrade
 
-- How to use SuPy?
+- **How to use SuPy?**
 
   Please follow :ref:`Quickstart of SuPy`.
+  Please see `api` for details.
 
 
 .. toctree::
