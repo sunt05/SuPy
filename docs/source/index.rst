@@ -60,9 +60,16 @@ SuPy: SUEWS that speaks Python
 
 - **How to use SuPy?**
 
-  Please follow :ref:`Quickstart of SuPy`.
-  Please see `api` for details.
+    * Please follow :ref:`Quickstart of SuPy`
+    and :ref:`other tutorials <tutorial_index>`.
 
+    * Please see `api` for details.
+
+- **How to contribute to SuPy?**
+
+    * Add your development via `Pull Request <https://help.github.com/articles/about-pull-requests/>`
+    * Report issues via the `GitHub page <https://github.com/sunt05/SuPy/issues/new?template=issue-report.md>`_.
+    * Provide suggestions and feedback.
 
 .. toctree::
   :hidden:
