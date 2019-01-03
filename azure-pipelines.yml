@@ -9,6 +9,7 @@ jobs:
   pool:
     vmImage:          'ubuntu-16.04'
   strategy:
+    maxParallel:      4
     matrix:
       Python35:
         python.version: '3.5'
@@ -16,7 +17,7 @@ jobs:
         python.version: '3.6'
       Python37:
         python.version: '3.7'
-    maxParallel:      4
+
 
   steps:
   - task:             UsePythonVersion@0
