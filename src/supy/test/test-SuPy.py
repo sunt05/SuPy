@@ -75,7 +75,7 @@ class TestSuPy(TestCase):
         df_res_s = df_output_s\
             .loc[:, ['SUEWS', 'DailyState']]\
             .sort_index(axis=1)\
-            .round(10)
+            .round(6)
         # multi-step results
         df_output_m, df_state_m = sp.run_supy(
             df_forcing_part, df_state_init,
@@ -84,7 +84,7 @@ class TestSuPy(TestCase):
             .loc[:, ['SUEWS', 'DailyState']]\
             .fillna(-999.)\
             .sort_index(axis=1)\
-            .round(10)
+            .round(6)
         pd.testing.assert_frame_equal(
             left=df_res_s,
             right=df_res_m,
