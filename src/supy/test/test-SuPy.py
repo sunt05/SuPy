@@ -11,6 +11,7 @@ import pandas as pd
 import supy as sp
 import platform
 
+
 class TestSuPy(TestCase):
     def setUp(self):
         warnings.simplefilter('ignore', category=ImportWarning)
@@ -71,14 +72,19 @@ class TestSuPy(TestCase):
         df_output_s, df_state_s = sp.run_supy(
             df_forcing_part, df_state_init,
             save_state=True)
-        df_res_s = df_output_s.loc[
-            :, ['SUEWS', 'DailyState']].sort_index(axis=1)
+        df_res_s = df_output_s\
+            .loc[:, ['SUEWS', 'DailyState']]\
+            .sort_index(axis=1)\
+            .round(10)
         # multi-step results
         df_output_m, df_state_m = sp.run_supy(
             df_forcing_part, df_state_init,
             save_state=False)
-        df_res_m = df_output_m.loc[
-            :, ['SUEWS', 'DailyState']].fillna(-999.).sort_index(axis=1)
+        df_res_m = df_output_m\
+            .loc[:, ['SUEWS', 'DailyState']]\
+            .fillna(-999.)\
+            .sort_index(axis=1)\
+            .round(10)
         pd.testing.assert_frame_equal(
             left=df_res_s,
             right=df_res_m,
