@@ -1,4 +1,4 @@
-# %% Change working directory from the workspace root to the ipynb file location. Turn this addition off with the DataSciece.changeDirOnImportExport setting
+# %% Change working directory from the workspace root to the ipynb file location. Turn this addition off with the DataScience.changeDirOnImportExport setting
 from ast import literal_eval
 from pathlib import Path
 import os
@@ -50,7 +50,7 @@ df_init_sample, df_forcing_sample = sp.load_SampleData()
 
 print('loading in', 'gen_df_state', 'done')
 # %%
-# generate df_site: site chracteristics related dataframe
+# generate df_site: site characteristics related dataframe
 
 
 def extract_var_suews(dict_var_full: dict, var_supy: str)->list:
