@@ -27,7 +27,7 @@ SuPy: SUEWS that speaks Python
 
 .. caution::
 
-    This site is under construction. All information might NOT be accurate and are subject to rapid change.
+    This site is under construction. Some information might NOT be accurate and are subject to rapid change.
 
 
 
