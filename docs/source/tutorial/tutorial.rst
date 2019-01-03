@@ -7,6 +7,6 @@ Tutorials
 .. toctree::
   :maxdepth: 2
 
-  quickstart
+  quick-start
   impact-studies-parallel
   external-interaction
