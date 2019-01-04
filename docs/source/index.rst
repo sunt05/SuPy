@@ -60,8 +60,7 @@ SuPy: SUEWS that speaks Python
 
 - **How to use SuPy?**
 
-    * Please follow :ref:`Quickstart of SuPy`
-    and :ref:`other tutorials <tutorial_index>`.
+    * Please follow :ref:`Quickstart of SuPy` and :ref:`other tutorials <tutorial_index>`.
 
     * Please see `api` for details.
 
