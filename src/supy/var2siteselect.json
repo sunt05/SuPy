@@ -645,7 +645,7 @@
   "snowalbmin": {
     "SnowCode": "AlbedoMin"
   },
-  "snowd": {
+  "snowpacklimit": {
     "Code_Paved": "SnowLimPatch",
     "Code_Bldgs": "SnowLimPatch",
     "Code_EveTr": "SnowLimPatch",
@@ -660,7 +660,7 @@
   "snowdensmin": {
     "SnowCode": "SnowDensMin"
   },
-  "snowlimbuild": {
+  "snowlimbldg": {
     "Code_Bldgs": "SnowLimRemove"
   },
   "snowlimpaved": {

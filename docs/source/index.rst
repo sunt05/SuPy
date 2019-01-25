@@ -11,10 +11,13 @@ SuPy: SUEWS that speaks Python
     :target: https://pypi.org/project/supy
     :alt: Latest Version Status
 
+.. image:: https://pepy.tech/badge/supy
+    :target: https://pepy.tech/project/supy
+    :alt: Downloads
+
 .. image:: https://mybinder.org/badge_logo.svg
     :target: https://mybinder.org/v2/gh/sunt05/SuPy/master
     :alt: Binder Status
-
 
 .. image:: https://readthedocs.org/projects/supy/badge/?version=latest
     :target: https://supy.readthedocs.io/en/latest/?badge=latest
