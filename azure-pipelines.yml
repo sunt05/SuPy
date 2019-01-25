@@ -78,7 +78,7 @@ jobs:
       externalFeeds: 'PyPI'
 
   - script:  |
-      pip3 install twine
+      pip3 install twine wheel
       cd src
       make
       twine upload -r SuPy --config-file $(PYPIRC_PATH) --skip-existing dist/*whl
