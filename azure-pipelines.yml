@@ -79,7 +79,7 @@ jobs:
 
   - script:  |
       pip3 install twine
-      twine upload -r SuPy --config-file $(PYPIRC_PATH) --skip-existing supy-driver/dist/*whl
+      twine upload -r SuPy --config-file $(PYPIRC_PATH) --skip-existing src/dist/*whl
     displayName:        'upload supy'
     continueOnError:    true
 
