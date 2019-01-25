@@ -38,7 +38,7 @@ jobs:
     displayName:      'pytest'
 
 
-- job:                  'Build_Test_macOS'
+- job:                  'Build_Test_Upload_macOS'
   pool:
     vmImage:            'macOS-10.13'
   strategy:
