@@ -79,7 +79,9 @@ jobs:
 
   - script:  |
       pip3 install twine
-      twine upload -r SuPy --config-file $(PYPIRC_PATH) --skip-existing src/dist/*whl
+      cd src
+      make
+      twine upload -r SuPy --config-file $(PYPIRC_PATH) --skip-existing dist/*whl
     displayName:        'upload supy'
     continueOnError:    true
 
