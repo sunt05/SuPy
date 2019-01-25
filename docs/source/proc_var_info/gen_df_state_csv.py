@@ -525,10 +525,17 @@ def gen_df_state(
     # further processing by modifying several entries
     df_var_state = proc_df_state(
         df_var_site, df_var_runcontrol, df_var_initcond)
+
+    # reorganising the result:
+    df_var_state = df_var_state.sort_index()
+    # delete duplicates while considering the variable name (stored as index)
+    df_var_state = df_var_state.reset_index()
     df_var_state = df_var_state.drop_duplicates()
+    # convert index back
+    df_var_state = df_var_state.set_index('variable')
     return df_var_state
 
 
-# df_var_state = gen_df_state(
-#     list_table, set_initcond, set_runcontrol, set_input_runcontrol)
-# df_var_state.to_csv('df_state.csv')
+df_var_state = gen_df_state(
+    list_table, set_initcond, set_runcontrol, set_input_runcontrol)
+df_var_state.to_csv('df_state.csv')

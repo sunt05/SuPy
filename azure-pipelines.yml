@@ -72,6 +72,16 @@ jobs:
       make test
     displayName:        'pytest'
 
+  - task: TwineAuthenticate@0
+    inputs:
+      # artifactFeeds: 'feed_name1, feed_name2'
+      externalFeeds: 'PyPI'
+
+  - script:  |
+      twine upload -r SuPy --config-file $(PYPIRC_PATH) --skip-existing supy-driver/dist/*whl
+    displayName:        'upload supy'
+    continueOnError:    true
+
 
 - job:                  'Build_Test_Windows'
   pool:

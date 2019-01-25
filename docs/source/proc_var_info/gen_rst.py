@@ -118,7 +118,7 @@ def gen_rst(path_rst, path_df_csv, rst_title):
 # %%
 def gen_group_dict(
     group,
-    path_rst_base=Path('../source/data-structure/')
+    path_rst_base=Path('../data-structure/')
 )->dict:
 
     rst_title = f'''
