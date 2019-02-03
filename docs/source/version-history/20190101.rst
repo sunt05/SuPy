@@ -1,5 +1,3 @@
-.. _new_latest:
-
 .. _new_20190101:
 
 Version 2019.1.1 (preview release, 01 Jan 2019)

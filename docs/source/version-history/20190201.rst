@@ -1,0 +1,32 @@
+.. _new_latest:
+
+.. _new_20190201:
+
+Version 2019.2.1 (released on 01 Feb 2019)
+======================================================
+
+This is a release that fixes recent bugs found in SUEWS that
+may lead to abnormal simulation results of storage heat flux,
+in particular when `SnowUse` is enabled (i.e., `snowuse=1`).
+
+- **New**
+
+  None.
+
+- **Improvement**
+
+  None.
+
+
+- **Changes**
+
+  None.
+
+
+- **Fix**
+
+  Fixed a bug in the calculation of storage heat flux.
+
+- **Known issue**
+
+  None
