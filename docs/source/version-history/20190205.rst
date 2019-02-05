@@ -1,0 +1,33 @@
+.. _new_latest:
+
+.. _new_20190205:
+
+Version 2019.2.5 (released on 05 Feb 2019)
+======================================================
+
+This is a release that fixes recent bugs found in SUEWS that
+may lead to abnormal simulation results of storage heat flux,
+in particular when `SnowUse` is enabled (i.e., `snowuse=1`).
+
+- **New**
+
+  None.
+
+- **Improvement**
+
+  Improved the performance in loading
+  initial model state from a large number of grids (>1k)
+
+
+- **Changes**
+
+  None.
+
+
+- **Fix**
+
+  Fixed a bug in the calculation of storage heat flux.
+
+- **Known issue**
+
+  None

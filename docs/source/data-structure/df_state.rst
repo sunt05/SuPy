@@ -5,6 +5,18 @@
 ============================
 
 
+.. option:: aerodynamicresistancemethod
+
+    :Description:
+        Internal use. Please DO NOT modify
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        None
+
+
 .. option:: ah_min
 
     :Description:
@@ -103,7 +115,67 @@
         `albGrass0`
 
 
+.. option:: albmax_dectr
+
+    :Description:
+        Effective surface albedo (middle of the day value) for summertime.
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        `AlbedoMax`
+
+
+.. option:: albmax_evetr
+
+    :Description:
+        Effective surface albedo (middle of the day value) for summertime.
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        `AlbedoMax`
+
+
+.. option:: albmax_grass
+
+    :Description:
+        Effective surface albedo (middle of the day value) for summertime.
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        `AlbedoMax`
+
+
+.. option:: albmin_dectr
+
+    :Description:
+        Effective surface albedo (middle of the day value) for wintertime (not including snow).
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        `AlbedoMin`
+
+
 .. option:: albmin_evetr
+
+    :Description:
+        Effective surface albedo (middle of the day value) for wintertime (not including snow).
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        `AlbedoMin`
+
+
+.. option:: albmin_grass
 
     :Description:
         Effective surface albedo (middle of the day value) for wintertime (not including snow).
@@ -343,6 +415,42 @@
         `H_DecTr`
 
 
+.. option:: diagnose
+
+    :Description:
+        Internal use. Please DO NOT modify
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        None
+
+
+.. option:: diagqn
+
+    :Description:
+        Internal use. Please DO NOT modify
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        None
+
+
+.. option:: diagqs
+
+    :Description:
+        Internal use. Please DO NOT modify
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        None
+
+
 .. option:: drainrt
 
     :Description:
@@ -413,6 +521,18 @@
         Scalar
     :SUEWS-related variables:
         `EnEF_v_Jkm`
+
+
+.. option:: evapmethod
+
+    :Description:
+        Internal use. Please DO NOT modify
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        None
 
 
 .. option:: evetreeh
@@ -765,6 +885,18 @@
         `LAIinitialDecTr`, `LAIinitialEveTr`, `LAIinitialGrass`
 
 
+.. option:: laicalcyes
+
+    :Description:
+        Internal use. Please DO NOT modify
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        None
+
+
 .. option:: laimax
 
     :Description:
@@ -946,7 +1078,7 @@
     :Dimensionality:
         (8,)
     :Dimensionality Remarks:
-        8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)}
+        8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)} 
     :SUEWS-related variables:
         `OHMThresh_SW`
 
@@ -958,7 +1090,7 @@
     :Dimensionality:
         (8,)
     :Dimensionality Remarks:
-        8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)}
+        8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)} 
     :SUEWS-related variables:
         `OHMThresh_WD`
 
@@ -1325,16 +1457,16 @@
         `AlbedoMax`
 
 
-.. option:: snowd
+.. option:: snowalbmin
 
     :Description:
-        Limit for the snow water equivalent when snow cover starts to be patchy [mm]
+        Effective surface albedo (middle of the day value) for wintertime (not including snow).
     :Dimensionality:
-        (7,)
+        0
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        Scalar
     :SUEWS-related variables:
-        `SnowLimPatch`
+        `AlbedoMin`
 
 
 .. option:: snowdens
@@ -1385,7 +1517,19 @@
         `SnowFracBldgs`, `SnowFracPaved`, `SnowFracDecTr`, `SnowFracEveTr`, `SnowFracGrass`, `SnowFracBSoil`, `SnowFracWater`
 
 
-.. option:: snowlimbuild
+.. option:: snowlimbldg
+
+    :Description:
+        Limit of the snow water equivalent for snow removal from roads and roofs [mm]
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        `SnowLimRemove`
+
+
+.. option:: snowlimpaved
 
     :Description:
         Limit of the snow water equivalent for snow removal from roads and roofs [mm]
@@ -1407,6 +1551,18 @@
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         `SnowPackBldgs`, `SnowPackPaved`, `SnowPackDecTr`, `SnowPackEveTr`, `SnowPackGrass`, `SnowPackBSoil`, `SnowPackWater`
+
+
+.. option:: snowpacklimit
+
+    :Description:
+        Limit for the snow water equivalent when snow cover starts to be patchy [mm]
+    :Dimensionality:
+        (7,)
+    :Dimensionality Remarks:
+        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+    :SUEWS-related variables:
+        `SnowLimPatch`
 
 
 .. option:: snowprof_24hr

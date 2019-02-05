@@ -38,7 +38,7 @@ jobs:
     displayName:      'pytest'
 
 
-- job:                  'Build_Test_macOS'
+- job:                  'Build_Test_Upload_macOS'
   pool:
     vmImage:            'macOS-10.13'
   strategy:
@@ -71,6 +71,19 @@ jobs:
       cd src
       make test
     displayName:        'pytest'
+
+  - task: TwineAuthenticate@0
+    inputs:
+      # artifactFeeds: 'feed_name1, feed_name2'
+      externalFeeds: 'PyPI'
+
+  - script:  |
+      pip3 install twine wheel
+      cd src
+      make
+      twine upload -r SuPy --config-file $(PYPIRC_PATH) --skip-existing dist/*whl
+    displayName:        'upload supy'
+    continueOnError:    true
 
 
 - job:                  'Build_Test_Windows'

@@ -8,18 +8,31 @@
 
 # -- Path setup --------------------------------------------------------------
 
-# sys.path.insert(0, os.path.abspath('.'))
+import os
 import platform
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-# import os
+import subprocess
 import sys
 
 import supy
 
+# If extensions (or modules to document with autodoc) are in another directory,
+# add these directories to sys.path here. If the directory is relative to the
+# documentation root, use os.path.abspath to make it absolute, like shown here.
+sys.path.insert(0, os.path.abspath('.'))
+
 print(r'this build is made by:', '\n', sys.version)
+
+
+def subprocess_cmd(command):
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+    proc_stdout = process.communicate()[0].strip()
+    print(proc_stdout.decode())
+
+
+subprocess_cmd('cd proc_var_info; python3 gen_rst.py')
+
+
+
 
 
 # -- Project information -----------------------------------------------------

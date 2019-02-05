@@ -1,0 +1,26 @@
+variable,Description
+iy,Year [YYYY]
+id,Day of year [DOY]
+it,Hour [H]
+imin,Minute [M]
+qn,Net all-wave radiation [W |m^-2|] Required if `NetRadiationMethod` = 0.
+qh,Sensible heat flux [W |m^-2|]
+qe,Latent heat flux [W |m^-2|]
+qs,Storage heat flux [W |m^-2|]
+qf,Anthropogenic heat flux [W |m^-2|]
+U,Wind speed [m s-1] Height of the wind speed measurement (z) is needed in `SUEWS_SiteSelect.txt`.
+RH,Relative Humidity [%]
+Tair,Air temperature [°C]
+pres,Barometric pressure [kPa]
+rain,Rainfall [mm]
+kdown,Incoming shortwave radiation [W |m^-2|] Must be > 0 W |m^-2|.
+snow,Snow [mm]Required if `SnowUse` = 1
+ldown,Incoming longwave radiation [W |m^-2|]
+fcld,Cloud fraction [tenths]
+Wuh,External water use [|m^3|]
+xsmd,Observed soil moisture [|m^3| |m^-3|] or [kg |kg^-1|]
+lai,Observed leaf area index [|m^-2| |m^-2|]
+kdiff,Diffuse radiation [W |m^-2|] |Recmd| if `SOLWEIGUse` = 1
+kdir,Direct radiation [W |m^-2|] |Recmd| if `SOLWEIGUse` = 1
+wdir,Wind direction [°] |NotAvail|
+isec,Second [S]
