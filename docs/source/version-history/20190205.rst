@@ -1,8 +1,8 @@
 .. _new_latest:
 
-.. _new_20190201:
+.. _new_20190205:
 
-Version 2019.2.1 (released on 01 Feb 2019)
+Version 2019.2.5 (released on 05 Feb 2019)
 ======================================================
 
 This is a release that fixes recent bugs found in SUEWS that
@@ -15,7 +15,8 @@ in particular when `SnowUse` is enabled (i.e., `snowuse=1`).
 
 - **Improvement**
 
-  None.
+  Improved the performance in loading
+  initial model state from a large number of grids (>1k)
 
 
 - **Changes**

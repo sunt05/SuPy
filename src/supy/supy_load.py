@@ -1127,29 +1127,37 @@ def load_SUEWS_SurfaceChar_df(path_input):
 
 # filter out unnecessary entries by re-arranging the columns
 def trim_df_state(df_state: pd.DataFrame, set_var_use=set_var_use) -> pd.DataFrame:
-    df_state_slim = df_state.copy().stack().filter(items=set_var_use).unstack(0)
-    # scalar variables
-    df_state_slim_scalar = df_state_slim.loc[['0']].copy()
-    # array variables, which need to be sorted to get layout correct
-    df_state_slim_array = df_state_slim.filter(like='(', axis=0)
-    # convert index to list for numerical sorting
-    df_state_slim_array.index = df_state_slim_array.index.map(
-        lambda x: list(literal_eval(x)))
-    df_state_slim_array = df_state_slim_array.sort_index()
-    # after sorting, convert index back to str-tuple for hashing used in MultiIndex-ing
-    df_state_slim_array.index = df_state_slim_array.index.map(
-        lambda x: str(tuple(x)))
-    # concat scalar and array variables together
-    # and sort columns by variable names
-    df_state_slim = pd.concat(
-        [df_state_slim_scalar, df_state_slim_array],
-        axis=0).sort_index(axis=1)
+    # get indices of variables that are included in `set_var_use`: those used by SuPy simulation
+    ind_incl = df_state.columns.get_level_values('var').isin(set_var_use)
+    # retrieve only necessary columns
+    df_state_slim = df_state.loc[:, ind_incl]
+    # remove redundant `MultiIndex` levels
+    df_state_slim.columns = df_state_slim.columns.remove_unused_levels()
 
-    # rearrange layout back to the previous one
-    df_state_slim = df_state_slim\
-        .stack('grid')\
-        .unstack('ind_dim')\
-        .dropna(axis=1)
+    # df_state_slim = df_state.copy().stack().filter(items=set_var_use).unstack(0)
+
+    # # scalar variables
+    # df_state_slim_scalar = df_state_slim.loc[['0']].copy()
+    # # array variables, which need to be sorted to get layout correct
+    # df_state_slim_array = df_state_slim.filter(like='(', axis=0)
+    # # convert index to list for numerical sorting
+    # df_state_slim_array.index = df_state_slim_array.index.map(
+    #     lambda x: list(literal_eval(x)))
+    # df_state_slim_array = df_state_slim_array.sort_index()
+    # # after sorting, convert index back to str-tuple for hashing used in MultiIndex-ing
+    # df_state_slim_array.index = df_state_slim_array.index.map(
+    #     lambda x: str(tuple(x)))
+    # # concat scalar and array variables together
+    # # and sort columns by variable names
+    # df_state_slim = pd.concat(
+    #     [df_state_slim_scalar, df_state_slim_array],
+    #     axis=0).sort_index(axis=1)
+
+    # # rearrange layout back to the previous one
+    # df_state_slim = df_state_slim\
+    #     .stack('grid')\
+    #     .unstack('ind_dim')\
+    #     .dropna(axis=1)
     return df_state_slim
 
 
@@ -1497,7 +1505,15 @@ def load_InitialCond_grid_df(path_runcontrol):
     # df_init = df_init.sort_index(axis=1)
     df_init.index.set_names('grid', inplace=True)
 
+    # df_init.to_pickle('df_init.pkl')
+    # print('df_init.pkl done!')
+
     # filter out unnecessary entries by re-arranging the columns
     df_init = trim_df_state(df_init)
+
+    # normalise surface fractions to prevent non-1 sums
+    df_sfr = df_init.sfr
+    df_sfr = df_sfr.div(df_sfr.sum(axis=1), axis=0)
+    df_init.sfr = df_sfr
 
     return df_init

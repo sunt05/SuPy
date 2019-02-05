@@ -39,7 +39,7 @@ setup(name='supy',
           'f90nml',
           'matplotlib',
           'seaborn',
-          'supy_driver>=2018rc2'  # a separate f2py-based driver
+          'supy_driver>=2018rc3'  # a separate f2py-based driver
       ],
       include_package_data=True,
       test_suite='nose.collector',
