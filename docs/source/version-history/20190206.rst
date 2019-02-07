@@ -1,8 +1,8 @@
 .. _new_latest:
 
-.. _new_20190205:
+.. _new_20190206:
 
-Version 2019.2.5 (released on 05 Feb 2019)
+Version 2019.2.6 (released on 06 Feb 2019)
 ======================================================
 
 This is a release that fixes recent bugs found in SUEWS that
@@ -21,7 +21,9 @@ in particular when `SnowUse` is enabled (i.e., `snowuse=1`).
 
 - **Changes**
 
-  None.
+  Updated `SampleRun` dataset by:
+  1. setting surface fractions (`sfr`) to a more realistic value based on London KCL case;
+  2. enabling snow module (`snowuse=1`).
 
 
 - **Fix**
