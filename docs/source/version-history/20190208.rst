@@ -1,8 +1,8 @@
 .. _new_latest:
 
-.. _new_20190206:
+.. _new_20190208:
 
-Version 2019.2.6 (released on 06 Feb 2019)
+Version 2019.2.8 (under development)
 ======================================================
 
 This is a release that fixes recent bugs found in SUEWS that
@@ -22,13 +22,15 @@ in particular when `SnowUse` is enabled (i.e., `snowuse=1`).
 - **Changes**
 
   Updated `SampleRun` dataset by:
-  1. setting surface fractions (`sfr`) to a more realistic value based on London KCL case;
+  1. setting surface fractions (`sfr`) to a
+  more realistic value based on London KCL case;
   2. enabling snow module (`snowuse=1`).
 
 
 - **Fix**
 
-  Fixed a bug in the calculation of storage heat flux.
+  1. Fixed a bug in the calculation of storage heat flux.
+  2. Fixed a bug in loading ``popdens`` for calculating anthropogenic heat flux.
 
 - **Known issue**
 
