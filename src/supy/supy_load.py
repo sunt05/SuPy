@@ -1473,6 +1473,19 @@ def add_state_init_df(df_init):
     # `gdd_id` corrections:
     df_init[('gdd_id', '(2,)')] = 90
     df_init[('gdd_id', '(3,)')] = -90
+
+    # `popdens` corrections:
+    ser_popdens_day = df_init[('popdensdaytime', '0')]
+    ser_popdens_night = df_init[('popdensnighttime', '0')]
+    # if daytime popdens missing and nighttime one existing:
+    flag_replace_day = (ser_popdens_day < 0) & (ser_popdens_night >= 0)
+    df_init.loc[flag_replace_day, 'popdensdaytime'] = \
+        ser_popdens_night[flag_replace_day]
+    # if nighttime popdens missing and daytime one existing:
+    flag_replace_night = (ser_popdens_night < 0) & (ser_popdens_day >= 0)
+    df_init.loc[flag_replace_night, 'popdensnighttime'] = \
+        ser_popdens_day[flag_replace_night]
+
     # `numcapita` calculation:
     df_init[('numcapita', '0')] = \
         df_init[['popdensdaytime', 'popdensnighttime']]\

@@ -73,21 +73,35 @@ class TestSuPy(TestCase):
             df_forcing_part, df_state_init,
             save_state=True)
         df_res_s = df_output_s\
-            .loc[:, ['SUEWS', 'DailyState']]\
+            .loc[:, [
+                'SUEWS',
+                'DailyState',
+                'snow',
+            ]]\
+            .fillna(-999.)\
             .sort_index(axis=1)\
-            .round(6)
+            .round(6)\
+            .applymap(lambda x: -999. if np.abs(x) > 3e4 else x)
 
+        df_state_init, df_forcing_tstep = sp.load_SampleData()
         # multi-step results
         df_output_m, df_state_m = sp.run_supy(
             df_forcing_part, df_state_init,
             save_state=False)
         df_res_m = df_output_m\
-            .loc[:, ['SUEWS', 'DailyState']]\
+            .loc[:, [
+                'SUEWS',
+                 'DailyState',
+                 'snow',
+            ]]\
             .fillna(-999.)\
             .sort_index(axis=1)\
-            .round(6)
-
+            .round(6)\
+            .applymap(lambda x: -999. if np.abs(x) > 3e4 else x)
+        # print(df_res_m.iloc[:3, 86], df_res_s.iloc[:3, 86])
         pd.testing.assert_frame_equal(
             left=df_res_s,
             right=df_res_m,
         )
+        # test_equal_mode = df_res_s.eq(df_res_m).all(None)
+        # self.assertTrue(test_equal_mode)
