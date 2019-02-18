@@ -244,7 +244,7 @@ def load_SUEWS_table(path_file):
     else:
         # fileX = path_insensitive(fileX)
         str_file = str(path_file)
-        rawdata = pd.read_table(
+        rawdata = pd.read_csv(
             str_file,
             delim_whitespace=True,
             comment='!',
@@ -572,7 +572,7 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
     # print(list_file_MetForcing)
     # load raw data
     df_forcing_met = pd.concat(
-        [pd.read_table(
+        [pd.read_csv(
             fileX,
             delim_whitespace=True,
             comment='!',

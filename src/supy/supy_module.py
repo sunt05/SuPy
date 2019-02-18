@@ -304,10 +304,16 @@ def run_supy(
     dict_state = {}
     dict_output = {}
 
+
+    # initial and final tsteps retrieved from forcing data
+    tstep_init = df_forcing.index[0]
+    tstep_final = df_forcing.index[-1]
+    # tstep size retrieved from forcing data
+    freq = df_forcing.index.freq
+
     if save_state:
         # use slower more functional single step wrapper
-        # start tstep retrived from forcing data
-        t_start = df_forcing.index[0]
+
         # convert df to dict with `itertuples` for better performance
         dict_forcing = {row.Index: row._asdict()
                         for row in df_forcing.itertuples()}
@@ -315,10 +321,11 @@ def run_supy(
         # dict_state is used to save model states for later use
         dict_state = {
             # (t_start, grid): series_state_init.to_dict()
-            (t_start, grid): pack_grid_dict(series_state_init)
+            (tstep_init, grid): pack_grid_dict(series_state_init)
             for grid, series_state_init
             in df_init.iterrows()
         }
+
         for tstep in df_forcing.index:
             # temporal loop
             # initialise output of tstep:
@@ -335,7 +342,7 @@ def run_supy(
 
                 # update output & model state at tstep for the current grid
                 dict_output.update({(tstep, grid): dict_output_tstep})
-                dict_state.update({(tstep + 1, grid): dict_state_end})
+                dict_state.update({(tstep + 1*freq, grid): dict_state_end})
 
         # pack results as easier DataFrames
         df_output = pack_df_output(dict_output).swaplevel(0, 1)
@@ -346,9 +353,7 @@ def run_supy(
     else:
         # use higher level wrapper that calculate at a `block` level
         # for better performance
-        # last timestep for this run
-        tstep_init = df_forcing.index[0]
-        tstep_final = df_forcing.index[-1]
+
         dict_state = {
             # grid: df_init.loc[grid]
             (tstep_init, grid): pack_grid_dict(series_state_init)
@@ -363,7 +368,7 @@ def run_supy(
             # update output & model state at tstep for the current grid
             dict_output.update({grid: dict_output_array})
             # model state for the next run
-            dict_state.update({(tstep_final + 1, grid): dict_state_end})
+            dict_state.update({(tstep_final + freq, grid): dict_state_end})
 
         # save results as time-aware DataFrame
         df_output0 = pack_df_output_array(dict_output, df_forcing)
