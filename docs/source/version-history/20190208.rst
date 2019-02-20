@@ -1,8 +1,7 @@
-.. _new_latest:
 
 .. _new_20190208:
 
-Version 2019.2.8 (under development)
+Version 2019.2.8
 ======================================================
 
 This is a release that fixes recent bugs found in SUEWS that
