@@ -1,0 +1,33 @@
+.. _new_latest:
+
+.. _new_20190219:
+
+Version 2019.2.19
+======================================================
+
+This is a release that improved the exception handling due to
+fatal error in `supy_driver`.
+
+- **New**
+
+  Added support to handle python kernel crash caused by
+  fatal error in `supy_driver` kernel; so python kernel won't
+  crash any more even `supy_driver` is stopped.
+
+- **Improvement**
+
+  None.
+
+
+- **Changes**
+
+  None
+
+
+- **Fix**
+
+  None.
+
+- **Known issue**
+
+  None

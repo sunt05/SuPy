@@ -16,13 +16,15 @@
 
 from __future__ import division, print_function
 
+import os
 # import functools
 from pathlib import Path
 from typing import Tuple
 
+import pandas
+
 import numpy as np
 import pandas as pd
-import pandas
 
 from .supy_env import path_supy_module
 from .supy_load import (load_InitialCond_grid_df, load_SUEWS_dict_ModConfig,
@@ -310,6 +312,11 @@ def run_supy(
     tstep_final = df_forcing.index[-1]
     # tstep size retrieved from forcing data
     freq = df_forcing.index.freq
+
+    # remove 'problems.txt'
+    if Path('problems.txt').exists():
+        os.remove('problems.txt')
+
 
     if save_state:
         # use slower more functional single step wrapper

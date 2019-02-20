@@ -1,15 +1,18 @@
 import copy
+import sys
+import os
+import traceback
 from ast import literal_eval
 
 import numpy as np
 import pandas as pd
+
 from supy_driver import suews_driver as sd
 
-from .supy_load import (list_var_input, list_var_inout, list_var_output,
-                        list_var_input_multitsteps,
-                        list_var_inout_multitsteps,
-                        list_var_output_multitsteps,
-                        df_var_info)
+from .supy_load import (df_var_info, list_var_inout,
+                        list_var_inout_multitsteps, list_var_input,
+                        list_var_input_multitsteps, list_var_output,
+                        list_var_output_multitsteps)
 
 ##############################################################################
 # main calculation
@@ -38,27 +41,37 @@ def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep):
     #     print('\n')
 
     # main calculation:
-    res_suews_tstep = sd.suews_cal_main(**dict_input)
+    try:
+        res_suews_tstep = sd.suews_cal_main(**dict_input)
+    except Exception as ex:
+        # show trace info
+        print(traceback.format_exc())
+        # show SUEWS fatal error details produced by SUEWS kernel
+        with open('problems.txt', 'r') as f:
+            print(f.read())
+        # clean slate
+        os.remove('problems.txt')
+        sys.exit()
+    else:
+        # update state variables
+        # if save_state:  # deep copy states results
+        dict_state_end = copy.deepcopy(dict_state_start)
+        dict_state_end.update(
+            {
+                var: copy.copy(dict_input[var])
+                for var in list_var_inout
+            }
+        )
 
-    # update state variables
-    # if save_state:  # deep copy states results
-    dict_state_end = copy.deepcopy(dict_state_start)
-    dict_state_end.update(
-        {
-            var: copy.copy(dict_input[var])
-            for var in list_var_inout
-        }
-    )
+        # update timestep info
+        dict_state_end['tstep_prev'] = dict_state_end['tstep']
+        dict_state_end['dt_since_start'] += dict_state_end['tstep']
 
-    # update timestep info
-    dict_state_end['tstep_prev'] = dict_state_end['tstep']
-    dict_state_end['dt_since_start'] += dict_state_end['tstep']
+        # pack output
+        dict_output = {k: v for k, v in zip(
+            list_var_output, res_suews_tstep)}
 
-    # pack output
-    dict_output = {k: v for k, v in zip(
-        list_var_output, res_suews_tstep)}
-
-    return dict_state_end, dict_output
+        return dict_state_end, dict_output
 
 
 # high-level wrapper: suews_cal_tstep
@@ -90,28 +103,38 @@ def suews_cal_tstep_multi(dict_state_start_grid, df_met_forcing_block):
     #     print(dict_input[var].shape, '\n')
 
     # main calculation:
-    res_suews_tstep_multi = sd.suews_cal_multitsteps(**dict_input)
+    try:
+        res_suews_tstep_multi = sd.suews_cal_multitsteps(**dict_input)
+    except Exception as ex:
+        # show trace info
+        print(traceback.format_exc())
+        # show SUEWS fatal error details produced by SUEWS kernel
+        with open('problems.txt','r') as f:
+            print(f.read())
+        # clean slate
+        os.remove('problems.txt')
+        sys.exit()
+    else:
+        # update state variables
+        # dict_state_end = copy.copy(dict_input)
+        dict_state_end = copy.deepcopy(dict_state_start_grid)
+        dict_state_end.update(
+            {
+                var: dict_input[var] for var in list_var_inout_multitsteps
+            }
+        )
 
-    # update state variables
-    # dict_state_end = copy.copy(dict_input)
-    dict_state_end = copy.deepcopy(dict_state_start_grid)
-    dict_state_end.update(
-        {
-            var: dict_input[var] for var in list_var_inout_multitsteps
-        }
-    )
+        # update timestep info
+        dict_state_end['tstep_prev'] = dict_state_end['tstep']
+        idx_dt = df_met_forcing_block.index
+        duration_s = int((idx_dt[-1] - idx_dt[0]).total_seconds())
+        dict_state_end['dt_since_start'] += duration_s + dict_state_end['tstep']
 
-    # update timestep info
-    dict_state_end['tstep_prev'] = dict_state_end['tstep']
-    idx_dt = df_met_forcing_block.index
-    duration_s = int((idx_dt[-1] - idx_dt[0]).total_seconds())
-    dict_state_end['dt_since_start'] += duration_s + dict_state_end['tstep']
+        # pack output
+        dict_output_array = {k: v for k, v in zip(
+            list_var_output[1:], res_suews_tstep_multi)}
 
-    # pack output
-    dict_output_array = {k: v for k, v in zip(
-        list_var_output[1:], res_suews_tstep_multi)}
-
-    return dict_state_end, dict_output_array
+        return dict_state_end, dict_output_array
 
 # main calculation end here
 ##############################################################################
