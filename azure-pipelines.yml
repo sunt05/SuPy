@@ -38,7 +38,7 @@ jobs:
     displayName:      'pytest'
 
 
-- job:                  'Build_Test_macOS'
+- job:                  'Build_Test_Upload_macOS'
   pool:
     vmImage:            'macOS-10.13'
   strategy:
@@ -49,7 +49,7 @@ jobs:
         python.version: '3.6'
       Python37:
         python.version: '3.7'
-    maxParallel:        1
+    maxParallel:        4
 
   steps:
   - task:               UsePythonVersion@0
