@@ -27,6 +27,9 @@ SuPy: SUEWS that speaks Python
     :target: https://dev.azure.com/sunt05/SuPy/_build/latest?definitionId=11?branchName=master
     :alt: Build Status
 
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.2574404.svg
+   :target: https://doi.org/10.5281/zenodo.2574404
+   :alt: DOI
 
 .. caution::
 
