@@ -49,3 +49,4 @@ The above code will produce a plot of surface energy balance components as follo
 ## Tutorial
 
 Please check out [more SuPy tutorials here!](https://supy.readthedocs.io/en/latest/tutorial/tutorial.html)
+
