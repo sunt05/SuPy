@@ -21,22 +21,26 @@ SuPy requires `python` 3.5+ and can be installed with `pip` in command line prom
 python3 -m pip install supy --upgrade
 ```
 
-## Quickstart
+## Quick Demo
 
 Once installed, `supy` can be quickly started to get [SUEWS](https://suews-docs.readthedocs.io) simulations done:
 
-```python
+```python {cmd}
 import supy as sp
+import matplotlib.pyplot as plt
 
-# load sample data
+#load sample data
 df_state_init, df_forcing = sp.load_SampleData()
+grid = df_state_init.index[0]
 
-# run supy/SUEWS simulation
+#run supy/SUEWS simulation
 df_output, df_state_end = sp.run_supy(df_forcing, df_state_init)
 
-# plot results
-res_plot = df_output.SUEWS.loc[1, ['QN', 'QF', 'QS', 'QE', 'QH']]
-res_plot.loc['2012 6 4':'2012 6 6'].resample('30T').mean().plot()
+#plot results and save figure
+res_plot = df_output.SUEWS.loc[grid, ['QN', 'QF', 'QS', 'QE', 'QH']]
+ax=res_plot.loc['2012 6 4':'2012 6 6'].resample('30T').mean().plot()
+plt.show()
+ax.figure.savefig('sample_plot.png')
 ```
 
 The above code will produce a plot of surface energy balance components as follows:
@@ -46,3 +50,4 @@ The above code will produce a plot of surface energy balance components as follo
 ## Tutorial
 
 Please check out [more SuPy tutorials here!](https://supy.readthedocs.io/en/latest/tutorial/tutorial.html)
+
