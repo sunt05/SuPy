@@ -31,10 +31,6 @@ SuPy: SUEWS that speaks Python
    :target: https://doi.org/10.5281/zenodo.2574404
    :alt: DOI
 
-.. caution::
-
-    This site is under construction. Some information might NOT be accurate and are subject to rapid change.
-
 
 
 - **What is SuPy?**
