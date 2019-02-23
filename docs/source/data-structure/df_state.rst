@@ -26,7 +26,7 @@
     :Dimensionality Remarks:
         2: {Weekday, Weekend}
     :SUEWS-related variables:
-        `AHMin_WD`, `AHMin_WE`
+        :option:`AHMin_WD <suews:AHMin_WD>`, :option:`AHMin_WE <suews:AHMin_WE>`
 
 
 .. option:: ah_slope_cooling
@@ -38,7 +38,7 @@
     :Dimensionality Remarks:
         2: {Weekday, Weekend}
     :SUEWS-related variables:
-        `AHSlope_Cooling_WD`, `AHSlope_Cooling_WE`
+        :option:`AHSlope_Cooling_WD <suews:AHSlope_Cooling_WD>`, :option:`AHSlope_Cooling_WE <suews:AHSlope_Cooling_WE>`
 
 
 .. option:: ah_slope_heating
@@ -50,7 +50,7 @@
     :Dimensionality Remarks:
         2: {Weekday, Weekend}
     :SUEWS-related variables:
-        `AHSlope_Heating_WD`, `AHSlope_Heating_WE`
+        :option:`AHSlope_Heating_WD <suews:AHSlope_Heating_WD>`, :option:`AHSlope_Heating_WE <suews:AHSlope_Heating_WE>`
 
 
 .. option:: ahprof_24hr
@@ -64,7 +64,7 @@
 
         2: {Weekday, Weekend}
     :SUEWS-related variables:
-        `EnergyUseProfWD`, `EnergyUseProfWE`
+        :option:`EnergyUseProfWD <suews:EnergyUseProfWD>`, :option:`EnergyUseProfWE <suews:EnergyUseProfWE>`
 
 
 .. option:: alb
@@ -76,7 +76,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `AlbedoMax`
+        :option:`AlbedoMax <suews:AlbedoMax>`
 
 
 .. option:: albdectr_id
@@ -88,7 +88,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `albDecTr0`
+        :option:`albDecTr0 <suews:albDecTr0>`
 
 
 .. option:: albevetr_id
@@ -100,7 +100,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `albEveTr0`
+        :option:`albEveTr0 <suews:albEveTr0>`
 
 
 .. option:: albgrass_id
@@ -112,7 +112,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `albGrass0`
+        :option:`albGrass0 <suews:albGrass0>`
 
 
 .. option:: albmax_dectr
@@ -124,7 +124,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `AlbedoMax`
+        :option:`AlbedoMax <suews:AlbedoMax>`
 
 
 .. option:: albmax_evetr
@@ -136,7 +136,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `AlbedoMax`
+        :option:`AlbedoMax <suews:AlbedoMax>`
 
 
 .. option:: albmax_grass
@@ -148,7 +148,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `AlbedoMax`
+        :option:`AlbedoMax <suews:AlbedoMax>`
 
 
 .. option:: albmin_dectr
@@ -160,7 +160,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `AlbedoMin`
+        :option:`AlbedoMin <suews:AlbedoMin>`
 
 
 .. option:: albmin_evetr
@@ -172,7 +172,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `AlbedoMin`
+        :option:`AlbedoMin <suews:AlbedoMin>`
 
 
 .. option:: albmin_grass
@@ -184,7 +184,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `AlbedoMin`
+        :option:`AlbedoMin <suews:AlbedoMin>`
 
 
 .. option:: alpha_bioco2
@@ -196,7 +196,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `alpha`
+        :option:`alpha <suews:alpha>`
 
 
 .. option:: alpha_enh_bioco2
@@ -208,7 +208,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `alpha_enh`
+        :option:`alpha_enh <suews:alpha_enh>`
 
 
 .. option:: alt
@@ -220,7 +220,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `Alt`
+        :option:`Alt <suews:Alt>`
 
 
 .. option:: baset
@@ -232,7 +232,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `BaseT`
+        :option:`BaseT <suews:BaseT>`
 
 
 .. option:: basete
@@ -244,7 +244,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `BaseTe`
+        :option:`BaseTe <suews:BaseTe>`
 
 
 .. option:: basethdd
@@ -256,7 +256,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `BaseTHDD`
+        :option:`BaseTHDD <suews:BaseTHDD>`
 
 
 .. option:: beta_bioco2
@@ -268,7 +268,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `beta`
+        :option:`beta <suews:beta>`
 
 
 .. option:: beta_enh_bioco2
@@ -280,7 +280,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `beta_enh`
+        :option:`beta_enh <suews:beta_enh>`
 
 
 .. option:: bldgh
@@ -292,7 +292,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `H_Bldgs`
+        :option:`H_Bldgs <suews:H_Bldgs>`
 
 
 .. option:: capmax_dec
@@ -304,7 +304,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `StorageMax`
+        :option:`StorageMax <suews:StorageMax>`
 
 
 .. option:: capmin_dec
@@ -316,7 +316,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `StorageMin`
+        :option:`StorageMin <suews:StorageMin>`
 
 
 .. option:: chanohm
@@ -328,7 +328,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `AnOHM_Ch`
+        :option:`AnOHM_Ch <suews:AnOHM_Ch>`
 
 
 .. option:: cpanohm
@@ -340,7 +340,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `AnOHM_Cp`
+        :option:`AnOHM_Cp <suews:AnOHM_Cp>`
 
 
 .. option:: crwmax
@@ -352,7 +352,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `CRWMax`
+        :option:`CRWMax <suews:CRWMax>`
 
 
 .. option:: crwmin
@@ -364,7 +364,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `CRWMin`
+        :option:`CRWMin <suews:CRWMin>`
 
 
 .. option:: daywat
@@ -376,7 +376,7 @@
     :Dimensionality Remarks:
         7: {Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday}
     :SUEWS-related variables:
-        `DayWat(1)`, `DayWat(2)`, `DayWat(3)`, `DayWat(4)`, `DayWat(5)`, `DayWat(6)`, `DayWat(7)`
+        :option:`DayWat(1) <suews:DayWat(1)>`, :option:`DayWat(2) <suews:DayWat(2)>`, :option:`DayWat(3) <suews:DayWat(3)>`, :option:`DayWat(4) <suews:DayWat(4)>`, :option:`DayWat(5) <suews:DayWat(5)>`, :option:`DayWat(6) <suews:DayWat(6)>`, :option:`DayWat(7) <suews:DayWat(7)>`
 
 
 .. option:: daywatper
@@ -388,7 +388,7 @@
     :Dimensionality Remarks:
         7: {Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday}
     :SUEWS-related variables:
-        `DayWatPer(1)`, `DayWatPer(2)`, `DayWatPer(3)`, `DayWatPer(4)`, `DayWatPer(5)`, `DayWatPer(6)`, `DayWatPer(7)`
+        :option:`DayWatPer(1) <suews:DayWatPer(1)>`, :option:`DayWatPer(2) <suews:DayWatPer(2)>`, :option:`DayWatPer(3) <suews:DayWatPer(3)>`, :option:`DayWatPer(4) <suews:DayWatPer(4)>`, :option:`DayWatPer(5) <suews:DayWatPer(5)>`, :option:`DayWatPer(6) <suews:DayWatPer(6)>`, :option:`DayWatPer(7) <suews:DayWatPer(7)>`
 
 
 .. option:: decidcap_id
@@ -400,7 +400,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `decidCap0`
+        :option:`decidCap0 <suews:decidCap0>`
 
 
 .. option:: dectreeh
@@ -412,7 +412,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `H_DecTr`
+        :option:`H_DecTr <suews:H_DecTr>`
 
 
 .. option:: diagnose
@@ -460,7 +460,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `LUMPS_DrRate`
+        :option:`LUMPS_DrRate <suews:LUMPS_DrRate>`
 
 
 .. option:: ef_umolco2perj
@@ -472,7 +472,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `EF_umolCO2perJ`
+        :option:`EF_umolCO2perJ <suews:EF_umolCO2perJ>`
 
 
 .. option:: emis
@@ -484,7 +484,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `Emissivity`
+        :option:`Emissivity <suews:Emissivity>`
 
 
 .. option:: emissionsmethod
@@ -496,7 +496,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `EmissionsMethod`
+        :option:`EmissionsMethod <suews:EmissionsMethod>`
 
 
 .. option:: enddls
@@ -508,7 +508,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `EndDLS`
+        :option:`EndDLS <suews:EndDLS>`
 
 
 .. option:: enef_v_jkm
@@ -520,7 +520,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `EnEF_v_Jkm`
+        :option:`EnEF_v_Jkm <suews:EnEF_v_Jkm>`
 
 
 .. option:: evapmethod
@@ -544,7 +544,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `H_EveTr`
+        :option:`H_EveTr <suews:H_EveTr>`
 
 
 .. option:: faibldg
@@ -556,7 +556,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `FAI_Bldgs`
+        :option:`FAI_Bldgs <suews:FAI_Bldgs>`
 
 
 .. option:: faidectree
@@ -568,7 +568,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `FAI_DecTr`
+        :option:`FAI_DecTr <suews:FAI_DecTr>`
 
 
 .. option:: faievetree
@@ -580,7 +580,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `FAI_EveTr`
+        :option:`FAI_EveTr <suews:FAI_EveTr>`
 
 
 .. option:: faut
@@ -592,7 +592,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `Faut`
+        :option:`Faut <suews:Faut>`
 
 
 .. option:: fcef_v_kgkm
@@ -604,7 +604,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `FcEF_v_kgkm`
+        :option:`FcEF_v_kgkm <suews:FcEF_v_kgkm>`
 
 
 .. option:: flowchange
@@ -616,7 +616,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `FlowChange`
+        :option:`FlowChange <suews:FlowChange>`
 
 
 .. option:: frfossilfuel_heat
@@ -628,7 +628,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `FrFossilFuel_Heat`
+        :option:`FrFossilFuel_Heat <suews:FrFossilFuel_Heat>`
 
 
 .. option:: frfossilfuel_nonheat
@@ -640,7 +640,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `FrFossilFuel_NonHeat`
+        :option:`FrFossilFuel_NonHeat <suews:FrFossilFuel_NonHeat>`
 
 
 .. option:: g1
@@ -652,7 +652,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `G1`
+        :option:`G1 <suews:G1>`
 
 
 .. option:: g2
@@ -664,7 +664,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `G2`
+        :option:`G2 <suews:G2>`
 
 
 .. option:: g3
@@ -676,7 +676,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `G3`
+        :option:`G3 <suews:G3>`
 
 
 .. option:: g4
@@ -688,7 +688,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `G4`
+        :option:`G4 <suews:G4>`
 
 
 .. option:: g5
@@ -700,7 +700,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `G5`
+        :option:`G5 <suews:G5>`
 
 
 .. option:: g6
@@ -712,7 +712,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `G6`
+        :option:`G6 <suews:G6>`
 
 
 .. option:: gddfull
@@ -724,7 +724,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `GDDFull`
+        :option:`GDDFull <suews:GDDFull>`
 
 
 .. option:: gsmodel
@@ -736,7 +736,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `gsModel`
+        :option:`gsModel <suews:gsModel>`
 
 
 .. option:: humactivity_24hr
@@ -750,7 +750,7 @@
 
         2: {Weekday, Weekend}
     :SUEWS-related variables:
-        `ActivityProfWD`, `ActivityProfWE`
+        :option:`ActivityProfWD <suews:ActivityProfWD>`, :option:`ActivityProfWE <suews:ActivityProfWE>`
 
 
 .. option:: ie_a
@@ -762,7 +762,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `Ie_a1`, `Ie_a2`, `Ie_a3`
+        :option:`Ie_a1 <suews:Ie_a1>`, :option:`Ie_a2 <suews:Ie_a2>`, :option:`Ie_a3 <suews:Ie_a3>`
 
 
 .. option:: ie_end
@@ -774,7 +774,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `Ie_end`
+        :option:`Ie_end <suews:Ie_end>`
 
 
 .. option:: ie_m
@@ -786,7 +786,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `Ie_m1`, `Ie_m2`, `Ie_m3`
+        :option:`Ie_m1 <suews:Ie_m1>`, :option:`Ie_m2 <suews:Ie_m2>`, :option:`Ie_m3 <suews:Ie_m3>`
 
 
 .. option:: ie_start
@@ -798,7 +798,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `Ie_start`
+        :option:`Ie_start <suews:Ie_start>`
 
 
 .. option:: internalwateruse_h
@@ -810,7 +810,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `InternalWaterUse`
+        :option:`InternalWaterUse <suews:InternalWaterUse>`
 
 
 .. option:: irrfracconif
@@ -822,7 +822,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `IrrFr_EveTr`
+        :option:`IrrFr_EveTr <suews:IrrFr_EveTr>`
 
 
 .. option:: irrfracdecid
@@ -834,7 +834,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `IrrFr_DecTr`
+        :option:`IrrFr_DecTr <suews:IrrFr_DecTr>`
 
 
 .. option:: irrfracgrass
@@ -846,7 +846,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `IrrFr_Grass`
+        :option:`IrrFr_Grass <suews:IrrFr_Grass>`
 
 
 .. option:: kkanohm
@@ -858,7 +858,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `AnOHM_Kk`
+        :option:`AnOHM_Kk <suews:AnOHM_Kk>`
 
 
 .. option:: kmax
@@ -870,7 +870,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `Kmax`
+        :option:`Kmax <suews:Kmax>`
 
 
 .. option:: lai_id
@@ -882,7 +882,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `LAIinitialDecTr`, `LAIinitialEveTr`, `LAIinitialGrass`
+        :option:`LAIinitialDecTr <suews:LAIinitialDecTr>`, :option:`LAIinitialEveTr <suews:LAIinitialEveTr>`, :option:`LAIinitialGrass <suews:LAIinitialGrass>`
 
 
 .. option:: laicalcyes
@@ -906,7 +906,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `LAIMax`
+        :option:`LAIMax <suews:LAIMax>`
 
 
 .. option:: laimin
@@ -918,7 +918,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `LAIMin`
+        :option:`LAIMin <suews:LAIMin>`
 
 
 .. option:: laipower
@@ -932,7 +932,7 @@
 
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `LeafGrowthPower1`, `LeafGrowthPower2`, `LeafOffPower1`, `LeafOffPower2`
+        :option:`LeafGrowthPower1 <suews:LeafGrowthPower1>`, :option:`LeafGrowthPower2 <suews:LeafGrowthPower2>`, :option:`LeafOffPower1 <suews:LeafOffPower1>`, :option:`LeafOffPower2 <suews:LeafOffPower2>`
 
 
 .. option:: laitype
@@ -944,7 +944,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `LAIEq`
+        :option:`LAIEq <suews:LAIEq>`
 
 
 .. option:: lat
@@ -956,7 +956,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `lat`
+        :option:`lat <suews:lat>`
 
 
 .. option:: lng
@@ -968,7 +968,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `lng`
+        :option:`lng <suews:lng>`
 
 
 .. option:: maxconductance
@@ -980,7 +980,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `MaxConductance`
+        :option:`MaxConductance <suews:MaxConductance>`
 
 
 .. option:: maxqfmetab
@@ -992,7 +992,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `MaxQFMetab`
+        :option:`MaxQFMetab <suews:MaxQFMetab>`
 
 
 .. option:: min_res_bioco2
@@ -1004,7 +1004,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `min_respi`
+        :option:`min_respi <suews:min_respi>`
 
 
 .. option:: minqfmetab
@@ -1016,7 +1016,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `MinQFMetab`
+        :option:`MinQFMetab <suews:MinQFMetab>`
 
 
 .. option:: narp_emis_snow
@@ -1028,7 +1028,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `Emissivity`
+        :option:`Emissivity <suews:Emissivity>`
 
 
 .. option:: narp_trans_site
@@ -1040,7 +1040,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `NARP_Trans`
+        :option:`NARP_Trans <suews:NARP_Trans>`
 
 
 .. option:: netradiationmethod
@@ -1052,7 +1052,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `NetRadiationMethod`
+        :option:`NetRadiationMethod <suews:NetRadiationMethod>`
 
 
 .. option:: ohm_coef
@@ -1068,7 +1068,7 @@
 
         3: {a1, a2, a3}
     :SUEWS-related variables:
-        `a1`, `a2`, `a3`
+        :option:`a1 <suews:a1>`, :option:`a2 <suews:a2>`, :option:`a3 <suews:a3>`
 
 
 .. option:: ohm_threshsw
@@ -1080,7 +1080,7 @@
     :Dimensionality Remarks:
         8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)} 
     :SUEWS-related variables:
-        `OHMThresh_SW`
+        :option:`OHMThresh_SW <suews:OHMThresh_SW>`
 
 
 .. option:: ohm_threshwd
@@ -1092,7 +1092,7 @@
     :Dimensionality Remarks:
         8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)} 
     :SUEWS-related variables:
-        `OHMThresh_WD`
+        :option:`OHMThresh_WD <suews:OHMThresh_WD>`
 
 
 .. option:: ohmincqf
@@ -1104,7 +1104,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `OHMIncQF`
+        :option:`OHMIncQF <suews:OHMIncQF>`
 
 
 .. option:: pipecapacity
@@ -1116,7 +1116,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `PipeCapacity`
+        :option:`PipeCapacity <suews:PipeCapacity>`
 
 
 .. option:: popdensdaytime
@@ -1128,7 +1128,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `PopDensDay`
+        :option:`PopDensDay <suews:PopDensDay>`
 
 
 .. option:: popdensnighttime
@@ -1140,7 +1140,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `PopDensNight`
+        :option:`PopDensNight <suews:PopDensNight>`
 
 
 .. option:: popprof_24hr
@@ -1154,7 +1154,7 @@
 
         2: {Weekday, Weekend}
     :SUEWS-related variables:
-        `PopProfWD`, `PopProfWE`
+        :option:`PopProfWD <suews:PopProfWD>`, :option:`PopProfWE <suews:PopProfWE>`
 
 
 .. option:: pormax_dec
@@ -1166,7 +1166,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `PorosityMax`
+        :option:`PorosityMax <suews:PorosityMax>`
 
 
 .. option:: pormin_dec
@@ -1178,7 +1178,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `PorosityMin`
+        :option:`PorosityMin <suews:PorosityMin>`
 
 
 .. option:: porosity_id
@@ -1190,7 +1190,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `porosity0`
+        :option:`porosity0 <suews:porosity0>`
 
 
 .. option:: preciplimit
@@ -1202,7 +1202,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `PrecipLimSnow`
+        :option:`PrecipLimSnow <suews:PrecipLimSnow>`
 
 
 .. option:: preciplimitalb
@@ -1214,7 +1214,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `PrecipLimAlb`
+        :option:`PrecipLimAlb <suews:PrecipLimAlb>`
 
 
 .. option:: qf0_beu
@@ -1226,7 +1226,7 @@
     :Dimensionality Remarks:
         2: {Weekday, Weekend}
     :SUEWS-related variables:
-        `QF0_BEU_WD`, `QF0_BEU_WE`
+        :option:`QF0_BEU_WD <suews:QF0_BEU_WD>`, :option:`QF0_BEU_WE <suews:QF0_BEU_WE>`
 
 
 .. option:: qf_a
@@ -1238,7 +1238,7 @@
     :Dimensionality Remarks:
         2: {Weekday, Weekend}
     :SUEWS-related variables:
-        `QF_A_WD`, `QF_A_WE`
+        :option:`QF_A_WD <suews:QF_A_WD>`, :option:`QF_A_WE <suews:QF_A_WE>`
 
 
 .. option:: qf_b
@@ -1250,7 +1250,7 @@
     :Dimensionality Remarks:
         2: {Weekday, Weekend}
     :SUEWS-related variables:
-        `QF_B_WD`, `QF_B_WE`
+        :option:`QF_B_WD <suews:QF_B_WD>`, :option:`QF_B_WE <suews:QF_B_WE>`
 
 
 .. option:: qf_c
@@ -1262,7 +1262,7 @@
     :Dimensionality Remarks:
         2: {Weekday, Weekend}
     :SUEWS-related variables:
-        `QF_C_WD`, `QF_C_WE`
+        :option:`QF_C_WD <suews:QF_C_WD>`, :option:`QF_C_WE <suews:QF_C_WE>`
 
 
 .. option:: radmeltfact
@@ -1274,7 +1274,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `RadMeltFactor`
+        :option:`RadMeltFactor <suews:RadMeltFactor>`
 
 
 .. option:: raincover
@@ -1286,7 +1286,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `LUMPS_Cover`
+        :option:`LUMPS_Cover <suews:LUMPS_Cover>`
 
 
 .. option:: rainmaxres
@@ -1298,7 +1298,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `LUMPS_MaxRes`
+        :option:`LUMPS_MaxRes <suews:LUMPS_MaxRes>`
 
 
 .. option:: resp_a
@@ -1310,7 +1310,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `resp_a`
+        :option:`resp_a <suews:resp_a>`
 
 
 .. option:: resp_b
@@ -1322,7 +1322,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `resp_b`
+        :option:`resp_b <suews:resp_b>`
 
 
 .. option:: roughlenheatmethod
@@ -1334,7 +1334,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `RoughLenHeatMethod`
+        :option:`RoughLenHeatMethod <suews:RoughLenHeatMethod>`
 
 
 .. option:: roughlenmommethod
@@ -1346,7 +1346,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `RoughLenMomMethod`
+        :option:`RoughLenMomMethod <suews:RoughLenMomMethod>`
 
 
 .. option:: runofftowater
@@ -1358,7 +1358,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `RunoffToWater`
+        :option:`RunoffToWater <suews:RunoffToWater>`
 
 
 .. option:: s1
@@ -1370,7 +1370,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `S1`
+        :option:`S1 <suews:S1>`
 
 
 .. option:: s2
@@ -1382,7 +1382,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `S2`
+        :option:`S2 <suews:S2>`
 
 
 .. option:: sathydraulicconduct
@@ -1394,7 +1394,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `SatHydraulicCond`
+        :option:`SatHydraulicCond <suews:SatHydraulicCond>`
 
 
 .. option:: sddfull
@@ -1406,7 +1406,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `SDDFull`
+        :option:`SDDFull <suews:SDDFull>`
 
 
 .. option:: sfr
@@ -1418,7 +1418,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `Fr_Bldgs`, `Fr_Bsoil`, `Fr_DecTr`, `Fr_EveTr`, `Fr_Grass`, `Fr_Paved`, `Fr_Water`
+        :option:`Fr_Bldgs <suews:Fr_Bldgs>`, :option:`Fr_Bsoil <suews:Fr_Bsoil>`, :option:`Fr_DecTr <suews:Fr_DecTr>`, :option:`Fr_EveTr <suews:Fr_EveTr>`, :option:`Fr_Grass <suews:Fr_Grass>`, :option:`Fr_Paved <suews:Fr_Paved>`, :option:`Fr_Water <suews:Fr_Water>`
 
 
 .. option:: smdmethod
@@ -1430,7 +1430,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `SMDMethod`
+        :option:`SMDMethod <suews:SMDMethod>`
 
 
 .. option:: snowalb
@@ -1442,7 +1442,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `SnowAlb0`
+        :option:`SnowAlb0 <suews:SnowAlb0>`
 
 
 .. option:: snowalbmax
@@ -1454,7 +1454,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `AlbedoMax`
+        :option:`AlbedoMax <suews:AlbedoMax>`
 
 
 .. option:: snowalbmin
@@ -1466,7 +1466,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `AlbedoMin`
+        :option:`AlbedoMin <suews:AlbedoMin>`
 
 
 .. option:: snowdens
@@ -1478,7 +1478,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `SnowDensBldgs`, `SnowDensPaved`, `SnowDensDecTr`, `SnowDensEveTr`, `SnowDensGrass`, `SnowDensBSoil`, `SnowDensWater`
+        :option:`SnowDensBldgs <suews:SnowDensBldgs>`, :option:`SnowDensPaved <suews:SnowDensPaved>`, :option:`SnowDensDecTr <suews:SnowDensDecTr>`, :option:`SnowDensEveTr <suews:SnowDensEveTr>`, :option:`SnowDensGrass <suews:SnowDensGrass>`, :option:`SnowDensBSoil <suews:SnowDensBSoil>`, :option:`SnowDensWater <suews:SnowDensWater>`
 
 
 .. option:: snowdensmax
@@ -1490,7 +1490,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `SnowDensMax`
+        :option:`SnowDensMax <suews:SnowDensMax>`
 
 
 .. option:: snowdensmin
@@ -1502,7 +1502,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `SnowDensMin`
+        :option:`SnowDensMin <suews:SnowDensMin>`
 
 
 .. option:: snowfrac
@@ -1514,7 +1514,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `SnowFracBldgs`, `SnowFracPaved`, `SnowFracDecTr`, `SnowFracEveTr`, `SnowFracGrass`, `SnowFracBSoil`, `SnowFracWater`
+        :option:`SnowFracBldgs <suews:SnowFracBldgs>`, :option:`SnowFracPaved <suews:SnowFracPaved>`, :option:`SnowFracDecTr <suews:SnowFracDecTr>`, :option:`SnowFracEveTr <suews:SnowFracEveTr>`, :option:`SnowFracGrass <suews:SnowFracGrass>`, :option:`SnowFracBSoil <suews:SnowFracBSoil>`, :option:`SnowFracWater <suews:SnowFracWater>`
 
 
 .. option:: snowlimbldg
@@ -1526,7 +1526,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `SnowLimRemove`
+        :option:`SnowLimRemove <suews:SnowLimRemove>`
 
 
 .. option:: snowlimpaved
@@ -1538,7 +1538,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `SnowLimRemove`
+        :option:`SnowLimRemove <suews:SnowLimRemove>`
 
 
 .. option:: snowpack
@@ -1550,7 +1550,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `SnowPackBldgs`, `SnowPackPaved`, `SnowPackDecTr`, `SnowPackEveTr`, `SnowPackGrass`, `SnowPackBSoil`, `SnowPackWater`
+        :option:`SnowPackBldgs <suews:SnowPackBldgs>`, :option:`SnowPackPaved <suews:SnowPackPaved>`, :option:`SnowPackDecTr <suews:SnowPackDecTr>`, :option:`SnowPackEveTr <suews:SnowPackEveTr>`, :option:`SnowPackGrass <suews:SnowPackGrass>`, :option:`SnowPackBSoil <suews:SnowPackBSoil>`, :option:`SnowPackWater <suews:SnowPackWater>`
 
 
 .. option:: snowpacklimit
@@ -1562,7 +1562,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `SnowLimPatch`
+        :option:`SnowLimPatch <suews:SnowLimPatch>`
 
 
 .. option:: snowprof_24hr
@@ -1576,7 +1576,7 @@
 
         2: {Weekday, Weekend}
     :SUEWS-related variables:
-        `SnowClearingProfWD`, `SnowClearingProfWE`
+        :option:`SnowClearingProfWD <suews:SnowClearingProfWD>`, :option:`SnowClearingProfWE <suews:SnowClearingProfWE>`
 
 
 .. option:: snowuse
@@ -1588,7 +1588,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `SnowUse`
+        :option:`SnowUse <suews:SnowUse>`
 
 
 .. option:: snowwater
@@ -1600,7 +1600,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `SnowWaterBldgsState`, `SnowWaterPavedState`, `SnowWaterDecTrState`, `SnowWaterEveTrState`, `SnowWaterGrassState`, `SnowWaterBSoilState`, `SnowWaterWaterState`
+        :option:`SnowWaterBldgsState <suews:SnowWaterBldgsState>`, :option:`SnowWaterPavedState <suews:SnowWaterPavedState>`, :option:`SnowWaterDecTrState <suews:SnowWaterDecTrState>`, :option:`SnowWaterEveTrState <suews:SnowWaterEveTrState>`, :option:`SnowWaterGrassState <suews:SnowWaterGrassState>`, :option:`SnowWaterBSoilState <suews:SnowWaterBSoilState>`, :option:`SnowWaterWaterState <suews:SnowWaterWaterState>`
 
 
 .. option:: soildepth
@@ -1612,7 +1612,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `SoilDepth`
+        :option:`SoilDepth <suews:SoilDepth>`
 
 
 .. option:: soilstore_id
@@ -1624,7 +1624,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `SoilstoreBldgsState`, `SoilstorePavedState`, `SoilstoreDecTrState`, `SoilstoreEveTrState`, `SoilstoreGrassState`, `SoilstoreBSoilState`
+        :option:`SoilstoreBldgsState <suews:SoilstoreBldgsState>`, :option:`SoilstorePavedState <suews:SoilstorePavedState>`, :option:`SoilstoreDecTrState <suews:SoilstoreDecTrState>`, :option:`SoilstoreEveTrState <suews:SoilstoreEveTrState>`, :option:`SoilstoreGrassState <suews:SoilstoreGrassState>`, :option:`SoilstoreBSoilState <suews:SoilstoreBSoilState>`
 
 
 .. option:: soilstorecap
@@ -1636,7 +1636,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `SoilStoreCap`
+        :option:`SoilStoreCap <suews:SoilStoreCap>`
 
 
 .. option:: stabilitymethod
@@ -1648,7 +1648,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `StabilityMethod`
+        :option:`StabilityMethod <suews:StabilityMethod>`
 
 
 .. option:: startdls
@@ -1660,7 +1660,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `StartDLS`
+        :option:`StartDLS <suews:StartDLS>`
 
 
 .. option:: state_id
@@ -1672,7 +1672,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `BldgsState`, `PavedState`, `DecTrState`, `EveTrState`, `GrassState`, `BSoilState`, `WaterState`
+        :option:`BldgsState <suews:BldgsState>`, :option:`PavedState <suews:PavedState>`, :option:`DecTrState <suews:DecTrState>`, :option:`EveTrState <suews:EveTrState>`, :option:`GrassState <suews:GrassState>`, :option:`BSoilState <suews:BSoilState>`, :option:`WaterState <suews:WaterState>`
 
 
 .. option:: statelimit
@@ -1684,7 +1684,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `StateLimit`
+        :option:`StateLimit <suews:StateLimit>`
 
 
 .. option:: storageheatmethod
@@ -1696,7 +1696,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `StorageHeatMethod`
+        :option:`StorageHeatMethod <suews:StorageHeatMethod>`
 
 
 .. option:: storedrainprm
@@ -1710,7 +1710,7 @@
 
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `DrainageCoef1`, `DrainageCoef2`, `DrainageEq`, `StorageMax`, `StorageMin`
+        :option:`DrainageCoef1 <suews:DrainageCoef1>`, :option:`DrainageCoef2 <suews:DrainageCoef2>`, :option:`DrainageEq <suews:DrainageEq>`, :option:`StorageMax <suews:StorageMax>`, :option:`StorageMin <suews:StorageMin>`
 
 
 .. option:: surfacearea
@@ -1722,7 +1722,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `SurfaceArea`
+        :option:`SurfaceArea <suews:SurfaceArea>`
 
 
 .. option:: t_critic_cooling
@@ -1734,7 +1734,7 @@
     :Dimensionality Remarks:
         2: {Weekday, Weekend}
     :SUEWS-related variables:
-        `TCritic_Cooling_WD`, `TCritic_Cooling_WE`
+        :option:`TCritic_Cooling_WD <suews:TCritic_Cooling_WD>`, :option:`TCritic_Cooling_WE <suews:TCritic_Cooling_WE>`
 
 
 .. option:: t_critic_heating
@@ -1746,7 +1746,7 @@
     :Dimensionality Remarks:
         2: {Weekday, Weekend}
     :SUEWS-related variables:
-        `TCritic_Heating_WD`, `TCritic_Heating_WE`
+        :option:`TCritic_Heating_WD <suews:TCritic_Heating_WD>`, :option:`TCritic_Heating_WE <suews:TCritic_Heating_WE>`
 
 
 .. option:: tau_a
@@ -1758,7 +1758,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `tau_a`
+        :option:`tau_a <suews:tau_a>`
 
 
 .. option:: tau_f
@@ -1770,7 +1770,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `tau_f`
+        :option:`tau_f <suews:tau_f>`
 
 
 .. option:: tau_r
@@ -1782,7 +1782,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `tau_r`
+        :option:`tau_r <suews:tau_r>`
 
 
 .. option:: tempmeltfact
@@ -1794,7 +1794,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `TempMeltFactor`
+        :option:`TempMeltFactor <suews:TempMeltFactor>`
 
 
 .. option:: th
@@ -1806,7 +1806,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `TH`
+        :option:`TH <suews:TH>`
 
 
 .. option:: theta_bioco2
@@ -1818,7 +1818,7 @@
     :Dimensionality Remarks:
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
-        `theta`
+        :option:`theta <suews:theta>`
 
 
 .. option:: timezone
@@ -1830,7 +1830,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `Timezone`
+        :option:`Timezone <suews:Timezone>`
 
 
 .. option:: tl
@@ -1842,7 +1842,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `TL`
+        :option:`TL <suews:TL>`
 
 
 .. option:: trafficrate
@@ -1854,7 +1854,7 @@
     :Dimensionality Remarks:
         2: {Weekday, Weekend}
     :SUEWS-related variables:
-        `TrafficRate_WD`, `TrafficRate_WE`
+        :option:`TrafficRate_WD <suews:TrafficRate_WD>`, :option:`TrafficRate_WE <suews:TrafficRate_WE>`
 
 
 .. option:: trafficunits
@@ -1866,7 +1866,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `TrafficUnits`
+        :option:`TrafficUnits <suews:TrafficUnits>`
 
 
 .. option:: traffprof_24hr
@@ -1880,7 +1880,7 @@
 
         2: {Weekday, Weekend}
     :SUEWS-related variables:
-        `TraffProfWD`, `TraffProfWE`
+        :option:`TraffProfWD <suews:TraffProfWD>`, :option:`TraffProfWE <suews:TraffProfWE>`
 
 
 .. option:: tstep
@@ -1892,7 +1892,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `Tstep`
+        :option:`Tstep <suews:Tstep>`
 
 
 .. option:: veg_type
@@ -1918,7 +1918,7 @@
 
         6: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`}
     :SUEWS-related variables:
-        `ToBSoil`, `ToBldgs`, `ToDecTr`, `ToEveTr`, `ToGrass`, `ToPaved`, `ToRunoff`, `ToSoilStore`, `ToWater`
+        :option:`ToBSoil <suews:ToBSoil>`, :option:`ToBldgs <suews:ToBldgs>`, :option:`ToDecTr <suews:ToDecTr>`, :option:`ToEveTr <suews:ToEveTr>`, :option:`ToGrass <suews:ToGrass>`, :option:`ToPaved <suews:ToPaved>`, :option:`ToRunoff <suews:ToRunoff>`, :option:`ToSoilStore <suews:ToSoilStore>`, :option:`ToWater <suews:ToWater>`
 
 
 .. option:: waterusemethod
@@ -1930,7 +1930,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `WaterUseMethod`
+        :option:`WaterUseMethod <suews:WaterUseMethod>`
 
 
 .. option:: wetthresh
@@ -1942,7 +1942,7 @@
     :Dimensionality Remarks:
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
-        `WetThreshold`
+        :option:`WetThreshold <suews:WetThreshold>`
 
 
 .. option:: wuprofa_24hr
@@ -1956,7 +1956,7 @@
 
         2: {Weekday, Weekend}
     :SUEWS-related variables:
-        `WaterUseProfAutoWD`, `WaterUseProfAutoWE`
+        :option:`WaterUseProfAutoWD <suews:WaterUseProfAutoWD>`, :option:`WaterUseProfAutoWE <suews:WaterUseProfAutoWE>`
 
 
 .. option:: wuprofm_24hr
@@ -1970,7 +1970,7 @@
 
         2: {Weekday, Weekend}
     :SUEWS-related variables:
-        `WaterUseProfManuWD`, `WaterUseProfManuWE`
+        :option:`WaterUseProfManuWD <suews:WaterUseProfManuWD>`, :option:`WaterUseProfManuWE <suews:WaterUseProfManuWE>`
 
 
 .. option:: z
@@ -1982,7 +1982,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `z`
+        :option:`z <suews:z>`
 
 
 .. option:: z0m_in
@@ -1994,7 +1994,7 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `z0`
+        :option:`z0 <suews:z0>`
 
 
 .. option:: zdm_in
@@ -2006,5 +2006,5 @@
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        `zd`
+        :option:`zd <suews:zd>`
 
