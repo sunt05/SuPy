@@ -19,7 +19,7 @@ This release added the ability to save output files.
 
 - **Changes**
 
-  None
+  Dropped support for Python 3.5 and below.
 
 
 - **Fix**
