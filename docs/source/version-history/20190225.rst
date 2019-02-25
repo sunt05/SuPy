@@ -1,0 +1,30 @@
+.. _new_latest:
+
+.. _new_20190225:
+
+Version 2019.2.25
+======================================================
+
+This release dropped support for Python 3.5 and below.
+
+- **New**
+
+  None.
+
+- **Improvement**
+
+  None.
+
+
+- **Changes**
+
+  Dropped support for Python 3.5 and below.
+
+
+- **Fix**
+
+  None.
+
+- **Known issue**
+
+  None
