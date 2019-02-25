@@ -1,4 +1,3 @@
-.. _new_latest:
 
 .. _new_20190224:
 
@@ -19,7 +18,7 @@ This release added the ability to save output files.
 
 - **Changes**
 
-  Dropped support for Python 3.5 and below.
+  None.
 
 
 - **Fix**
