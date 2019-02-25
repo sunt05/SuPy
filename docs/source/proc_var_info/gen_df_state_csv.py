@@ -145,7 +145,6 @@ def gen_df_site(
             lambda x: x.replace('`', ''))
 
         # retrieve SUEWS-related variables
-
         dict_var_full = sp.supy_load.exp_dict_full(
             sp.supy_load.dict_var2SiteSelect)
         dict_var_ref_suews = {
@@ -343,11 +342,28 @@ def gen_df_initcond(set_initcond, set_runcontrol):
 #     return rst_str
 
 def gen_rst_url_split_opts(opts_str):
+    """generate option list for RST docs
+
+    Parameters
+    ----------
+    opts_str : str
+        a string including all SUEWS related options/variables.
+        e.g. 'SUEWS_a, SUEWS_b'
+
+
+    Returns
+    -------
+    list
+        a list of parsed RST `:ref:` roles.
+        e.g. [':option:`SUEWS_a <suews:SUEWS_a>`']
+    """
     if opts_str is not 'None':
         list_opts = opts_str.split(',')
         # list_rst = [gen_rst_url_opt(opt.strip()) for opt in list_opts]
         list_rst = [opt.strip() for opt in list_opts]
-        list_rst = [f'`{opt}`' for opt in list_rst]
+        # list_rst = [f'`{opt}`' for opt in list_rst]
+        # more properly handle SUEWS options by explicitly adding prefix `suews`:
+        list_rst = [f':option:`{opt} <suews:{opt}>`' for opt in list_rst]
         list_url_rst = ', '.join(list_rst)
     else:
         list_url_rst = 'None'

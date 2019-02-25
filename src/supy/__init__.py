@@ -10,7 +10,7 @@
 ###########################################################################
 
 from .supy_module import (init_supy, load_SampleData,
-                          load_forcing_grid, run_supy)
+                          load_forcing_grid, run_supy, save_supy)
 
 from .supy_util import *
 from .supy_plot import plot_day_clm, plot_comp

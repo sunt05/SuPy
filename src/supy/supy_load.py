@@ -1530,3 +1530,28 @@ def load_InitialCond_grid_df(path_runcontrol):
     df_init.sfr = df_sfr
 
     return df_init
+
+
+# load df_state from csv
+def load_df_state(path_csv: Path)->pd.DataFrame:
+    '''load `df_state` from `path_csv`
+
+    Parameters
+    ----------
+    path_csv : Path
+        path to the csv file that stores `df_state` produced by a supy run
+
+    Returns
+    -------
+    pd.DataFrame
+        `df_state` produced by a supy run
+    '''
+
+    df_state = pd.read_csv(
+        path_csv,
+        header=[0, 1],
+        index_col=[0, 1],
+        parse_dates=True,
+        infer_datetime_format=True,
+    )
+    return df_state

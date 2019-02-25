@@ -1,4 +1,4 @@
-.. _api:
+.. _api_ref:
 
 .. currentmodule:: supy
 
@@ -15,6 +15,7 @@ Top-level Functions
     init_supy
     load_forcing_grid
     run_supy
+    save_supy
     load_SampleData
 
 
