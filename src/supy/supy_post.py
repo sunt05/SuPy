@@ -26,6 +26,21 @@ var_df = get_output_info_df()
 var_df_lower = {group.lower(): group
                 for group in var_df.index.levels[0].str.strip()}
 
+#  generate dict of functions to apply for each variable
+dict_func_aggm = {
+    'T': 'last',
+    'A': 'mean',
+    'S': 'sum',
+    'L': 'last',
+}
+var_df['func'] = var_df.aggm.apply(lambda x: dict_func_aggm[x])
+
+# dict of resampling ruls:
+#  {group: {var: agg_method}}
+dict_var_aggm = {
+    group: var_df.loc[group, 'func'].to_dict()
+    for group in var_df.index.levels[0]}
+
 
 # generate index for variables in different model groups
 def gen_group_cols(group_x):
@@ -141,3 +156,37 @@ def pack_df_output_array(dict_output_array, df_forcing):
     df_grid_res.index.set_names(['grid', 'datetime'], inplace=True)
 
     return df_grid_res
+
+
+# resample supy output
+def resample_output(
+        df_output,
+        freq='60T',
+        dict_aggm=dict_var_aggm):
+
+    # get grid and group names
+    list_grid = df_output.index.get_level_values('grid').unique()
+    list_group = df_output.columns.get_level_values('group').unique()
+
+    # resampling output according to different rules defined in dict_aggm
+    # note the setting in .resample: (closed='right',label='right')
+    # which is to conform to SUEWS convention
+    # that timestamp refer to the ending of previous period
+    df_rsmp = pd.concat({
+        grid: pd.concat(
+            {group: df_output.loc[grid, group]
+             .resample(
+                 freq,
+                 closed='right',
+                 label='right',
+            )
+                .agg(dict_aggm[group])
+                for group in list_group},
+            axis=1, names=['group', 'var'])
+        for grid in list_grid},
+        names=['grid'])
+
+    # clean results
+    df_rsmp = df_rsmp.dropna(how='all', axis=0)
+
+    return df_rsmp

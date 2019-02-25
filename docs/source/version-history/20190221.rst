@@ -1,0 +1,31 @@
+.. _new_latest:
+
+.. _new_20190221:
+
+Version 2019.2.21
+======================================================
+
+This release added the ability to save output files.
+
+- **New**
+
+  1. Added support to save output files. See: :py:func:`supy.save_supy`
+  2. Added support to initialise SuPy from saved ``df_state.csv``. See: :py:func:`supy.init_supy`
+
+- **Improvement**
+
+  None.
+
+
+- **Changes**
+
+  None
+
+
+- **Fix**
+
+  None.
+
+- **Known issue**
+
+  None

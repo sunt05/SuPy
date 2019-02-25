@@ -187,6 +187,10 @@ def pack_df_state_final(df_state_end, df_state_start):
 
     df_state_end_packed = pd.DataFrame(dict_packed, index=idx)
     df_state_end_packed.columns.set_names(['var', 'ind_dim'], inplace=True)
+
+    # swap index levels to form: {datetime, grid}
+    # so using loc to retrieve the last index can get a dataframe for a restart run
+    df_state_end_packed=df_state_end_packed.swaplevel()
     # df_state_end_packed.index.set_names('grid', inplace=True)
 
     return df_state_end_packed
