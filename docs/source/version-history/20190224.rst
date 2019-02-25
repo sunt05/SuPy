@@ -1,8 +1,8 @@
 .. _new_latest:
 
-.. _new_20190221:
+.. _new_20190224:
 
-Version 2019.2.21
+Version 2019.2.24
 ======================================================
 
 This release added the ability to save output files.
