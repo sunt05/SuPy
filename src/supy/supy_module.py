@@ -253,7 +253,7 @@ def run_supy(
         df_state_init: pandas.DataFrame,
         save_state=False,
 )->Tuple[pandas.DataFrame, pandas.DataFrame]:
-    '''Perform supy simulaiton.
+    '''Perform supy simulation.
 
     Parameters
     ----------
@@ -263,8 +263,8 @@ def run_supy(
         initial model states;
         or a collection of model states with multiple timestamps, whose last temporal record will be used as the initial model states.
     save_state : bool, optional
-        flag for saving model states at each timestep, which can be useful in diagnosing model runtime performance or performing a restart run.
-        (the default is False, which intructs supy not to save runtime model states).
+        flag for saving model states at each time step, which can be useful in diagnosing model runtime performance or performing a restart run.
+        (the default is False, which instructs supy not to save runtime model states).
 
     Returns
     -------
