@@ -252,6 +252,7 @@ def run_supy(
         df_forcing: pandas.DataFrame,
         df_state_init: pandas.DataFrame,
         save_state=False,
+        n_yr=10,
 )->Tuple[pandas.DataFrame, pandas.DataFrame]:
     '''Perform supy simulation.
 
@@ -265,6 +266,9 @@ def run_supy(
     save_state : bool, optional
         flag for saving model states at each time step, which can be useful in diagnosing model runtime performance or performing a restart run.
         (the default is False, which instructs supy not to save runtime model states).
+    n_yr : int, optional
+        chunk size (`n_yr` years) to split simulation periods so memory usage can be reduced.
+        (the default is 10, which implies 10-year forcing chunks used in simulations).
 
     Returns
     -------
@@ -393,31 +397,48 @@ def run_supy(
         df_state_final = pack_df_state(dict_state).swaplevel(0, 1)
 
     else:
-        # use higher level wrapper that calculate at a `block` level
-        # for better performance
+        # for multi-year run, reduce the whole df_forcing into {n_yr}-year chunks for less memory consumption
+        grp_forcing_yr = df_forcing.groupby(df_forcing.index.year // n_yr)
+        if len(grp_forcing_yr) > 1:
+            df_state_init_yr = df_state_init.copy()
+            list_df_output=[]
+            list_df_state = []
+            for grp in grp_forcing_yr.groups:
+                # get forcing of a specific year
+                df_forcing_yr = grp_forcing_yr.get_group(grp)
+                # run supy: actual execution done in the `else` clause below
+                df_output_yr, df_state_final_yr = run_supy(
+                    df_forcing_yr, df_state_init_yr)
+                df_state_init_yr = df_state_final_yr.copy()
+                # collect results
+                list_df_output.append(df_output_yr)
+                list_df_state.append(df_state_final_yr)
 
-        # dict_state = {
-        #     # grid: df_init.loc[grid]
-        #     (tstep_init, grid): pack_grid_dict(series_state_init)
-        #     for grid, series_state_init
-        #     in df_init.iterrows()
-        # }
+            # re-organise results of each year
+            df_output = pd.concat(list_df_output).sort_index()
+            df_state_final = pd.concat(list_df_state).sort_index().drop_duplicates()
+            return df_output, df_state_final
 
-        for grid in grid_list:
-            dict_state_start_grid = dict_state[(tstep_init, grid)]
-            dict_state_end, dict_output_array = suews_cal_tstep_multi(
-                dict_state_start_grid, df_forcing)
-            # update output & model state at tstep for the current grid
-            dict_output.update({grid: dict_output_array})
-            # model state for the next run
-            dict_state.update({(tstep_final + freq, grid): dict_state_end})
+        else:
+            # for single-year run, directly put df_forcing into supy_driver for calculation
+            # use higher level wrapper that calculate at a `block` level
+            # for better performance
+            for grid in grid_list:
+                dict_state_start_grid = dict_state[(tstep_init, grid)]
+                dict_state_end, dict_output_array = suews_cal_tstep_multi(
+                    dict_state_start_grid,
+                    df_forcing)
+                # update output & model state at tstep for the current grid
+                dict_output.update({grid: dict_output_array})
+                # model state for the next run
+                dict_state.update({(tstep_final + freq, grid): dict_state_end})
 
-        # save results as time-aware DataFrame
-        df_output0 = pack_df_output_array(dict_output, df_forcing)
-        df_output = df_output0.replace(-999., np.nan)
-        df_state_final = pack_df_state(dict_state).swaplevel(0, 1)
-        # df_state = pd.DataFrame(dict_state).T
-        # df_state.index.set_names('grid')
+            # save results as time-aware DataFrame
+            df_output0 = pack_df_output_array(dict_output, df_forcing)
+            df_output = df_output0.replace(-999., np.nan)
+            df_state_final = pack_df_state(dict_state).swaplevel(0, 1)
+            # df_state = pd.DataFrame(dict_state).T
+            # df_state.index.set_names('grid')
 
     # drop ESTM for now as it is not supported yet
     # select only those supported output groups
