@@ -105,7 +105,7 @@ def plot_comp(df_var, fig=None, ax=None, **kwargs):
         ax=ax,
         fit_reg=True,
         line_kws={
-            'label': "y={0:.2f}x+{1:.2f}".format(slope, intercept) +
+            'label': "y={0:.2f}x{1}{2:.2f}".format(slope, '+' if intercept>0 else '', intercept) +
             '\n' + '$R^2$={0:.4f}'.format(r_value) +
             '\n' + 'MAE={0:.2f}'.format(mae) +
             '\n' + 'n={}'.format(df_var.shape[0])

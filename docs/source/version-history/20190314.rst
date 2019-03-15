@@ -1,9 +1,11 @@
-.. _new_20190225:
+.. _new_latest:
 
-Version 2019.2.25
+.. _new_20190314:
+
+Version 2019.3.14
 ======================================================
 
-This release dropped support for Python 3.5 and below.
+This release improved memory usage.
 
 - **New**
 
@@ -11,12 +13,12 @@ This release dropped support for Python 3.5 and below.
 
 - **Improvement**
 
-  None.
+  Optimised memory consumption for longterm simulations.
 
 
 - **Changes**
 
-  Dropped support for Python 3.5 and below.
+  None.
 
 
 - **Fix**
