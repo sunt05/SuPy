@@ -1,6 +1,6 @@
 numpy>=1.15.4
 nbsphinx>=0.3.5
-nbconvert>=5.3.1
+nbconvert>=5.4.1
 nbformat>=4.4.0
 docutils>=0.14
 Sphinx>=1.8.1
