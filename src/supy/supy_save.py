@@ -170,8 +170,10 @@ def save_df_output(
 
     # resample output if freq_s is different from runtime freq (usually 5 min)
     freq_save = pd.Timedelta(freq_s, 'second')
-    # 'DailyState' group will be dropped in `resample_output` as resampling is not needed
+    # resample `df_output` at `freq_save`
     df_rsmp = resample_output(df_output, freq_save)
+    # 'DailyState' group will be dropped in `resample_output` as resampling is not needed
+    df_rsmp = df_rsmp.drop(columns='DailyState')
 
     list_group = df_rsmp.columns.get_level_values('group').unique()
     list_grid = df_rsmp.index.get_level_values('grid').unique()
@@ -214,7 +216,7 @@ def save_df_state(
     # trim filename if site == ''
     file_state_save = file_state_save.replace('_.csv', '.csv')
     path_state_save = path_dir_save/file_state_save
-    df_state_final.to_csv(path_state_save)
+    df_state.to_csv(path_state_save)
     return path_state_save
 
 
