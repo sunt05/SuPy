@@ -17,4 +17,4 @@ seaborn
 matplotlib
 dask
 urlpath
-git+git://github.com/atmos-python/atmos#egg=atmos
+atmosp
