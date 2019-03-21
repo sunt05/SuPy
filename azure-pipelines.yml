@@ -27,7 +27,6 @@ jobs:
 
   - script:           |
       python -m pip install --upgrade
-      pip install pip==9.0.1
       pip install pipreqs
       pipreqs src
       cat src/requirements.txt
@@ -64,7 +63,6 @@ jobs:
       touch ~/.matplotlib/matplotlibrc
       echo "backend:    TkAgg" >> ~/.matplotlib/matplotlibrc
       python -m pip install --upgrade pip
-      pip install pip==9.0.1
       pip install pipreqs
       pipreqs src
       cat src/requirements.txt
@@ -111,7 +109,6 @@ jobs:
 
   - bash:               |
       python -m pip install --upgrade pip
-      pip install pip==9.0.1
       pip install pipreqs
       pipreqs src
       pip install -r src/requirements.txt

@@ -1,7 +1,7 @@
 # supy utilities
 
 from pathlib import Path
-import atmos
+import atmosp
 import numpy as np
 import pandas as pd
 
@@ -366,13 +366,13 @@ def gen_epw(df_tmy, path_epw=Path('./uTMY.epw'), ratio_dif_dir=0.15):
     df_tmy = df_tmy.copy()
     # df_tmy = pd.concat([df_tmy.iloc[1:], df_tmy.iloc[[0]]])
     # adding necessary variables that can be derive from supy output
-    df_tmy['Dew Point Temperature'] = atmos.calculate(
+    df_tmy['Dew Point Temperature'] = atmosp.calculate(
         "Td",
         T=df_tmy['T2'].values + 273.15,
         qv=(df_tmy['Q2'].values), qv_unit='g/kg',
         RH=df_tmy['RH2'].values,
         rho=1.23)-273.15
-    df_tmy['Atmospheric Station Pressure'] = atmos.calculate(
+    df_tmy['Atmospheric Station Pressure'] = atmosp.calculate(
         "p",
         T=df_tmy['T2'].values + 273.15,
         qv=(df_tmy['Q2'].values), qv_unit='g/kg',

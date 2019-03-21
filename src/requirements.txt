@@ -1,0 +1,14 @@
+coverage==4.5.2
+docutils==0.14
+atmosp
+seaborn==0.9.0
+matplotlib==3.0.2
+typing==3.6.6
+pandas==0.24.1
+unittest2==1.1.0
+setuptools==40.8.0
+scipy==1.2.0
+numpy==1.15.4
+f90nml==1.0.2
+clr==1.0.3
+Twisted==18.9.0
