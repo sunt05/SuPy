@@ -28,8 +28,7 @@ jobs:
   - script:           |
       python -m pip install --upgrade
       pip install pipreqs
-      conda install -c mcgibbon atmos
-      # pip install git+git://github.com/atmos-python/atmos#egg=atmos
+      pip install git+git://github.com/atmos-python/atmos
       pipreqs src
       pip install -r src/requirements.txt
     displayName:      'Install dependencies'
@@ -65,8 +64,7 @@ jobs:
       echo "backend:    TkAgg" >> ~/.matplotlib/matplotlibrc
       python -m pip install --upgrade pip
       pip install pipreqs
-      conda install -c mcgibbon atmos
-      # pip install git+git://github.com/atmos-python/atmos#egg=atmos
+      pip install git+git://github.com/atmos-python/atmos
       pipreqs src
       pip install -r src/requirements.txt
     displayName:        'Install dependencies'
@@ -113,7 +111,7 @@ jobs:
       python -m pip install --upgrade pip
       pip install pipreqs
       conda install -c mcgibbon atmos
-      # pip install git+git://github.com/atmos-python/atmos#egg=atmos
+      pip install git+git://github.com/atmos-python/atmos
       pipreqs src
       pip install -r src/requirements.txt
     displayName:        'Install dependencies'
