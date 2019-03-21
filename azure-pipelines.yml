@@ -30,6 +30,7 @@ jobs:
       pip install pipreqs
       pip install git+git://github.com/atmos-python/atmos
       pipreqs src
+      cat src/requirements.txt
       pip install -r src/requirements.txt
     displayName:      'Install dependencies'
 
@@ -66,6 +67,7 @@ jobs:
       pip install pipreqs
       pip install git+git://github.com/atmos-python/atmos
       pipreqs src
+      cat src/requirements.txt
       pip install -r src/requirements.txt
     displayName:        'Install dependencies'
 
