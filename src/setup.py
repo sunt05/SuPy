@@ -39,6 +39,7 @@ setup(name='supy',
           'f90nml',
           'matplotlib',
           'seaborn',
+          'atmosp',  # my own `atmosp` module forked from `atmos-python`
           'supy_driver>=2018rc7'  # a separate f2py-based driver
       ],
       include_package_data=True,

@@ -194,4 +194,3 @@ def pack_df_state_final(df_state_end, df_state_start):
     # df_state_end_packed.index.set_names('grid', inplace=True)
 
     return df_state_end_packed
-

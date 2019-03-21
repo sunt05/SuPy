@@ -1,19 +1,19 @@
+.. _new_latest:
 
-.. _new_20190314:
+.. _new_20190321:
 
 Version 2019.3.14
 ======================================================
 
-This release improved memory usage.
+TMY generation.
 
 - **New**
 
-  None.
+  Added preliminary support for generating TMY dataset with SuPy output.
 
 - **Improvement**
 
-  Optimised memory consumption for longterm simulations.
-
+  None.
 
 - **Changes**
 

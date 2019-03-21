@@ -476,7 +476,8 @@ def save_supy(
     path_dir_save : str, optional
         Path to directory to saving the files (the default is Path('.'), which indicates the current working directory)
     path_runcontrol : str, optional
-        Path to SUEWS :ref:`RunControl.nml <suews:RunControl.nml>` (the default is None, which is unset)
+        Path to SUEWS :ref:`RunControl.nml <suews:RunControl.nml>`, which, if set, will be preferably used to derive `freq_s`, `site` and `path_dir_save`.
+        (the default is None, which is unset)
 
     Returns
     -------
