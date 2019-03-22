@@ -88,17 +88,9 @@
 .. option:: DensSnow_BSoil
 
     :Description:
-        Snow density – bare soil surface [kg |m^-3|]
-    :Group:
-        DailyState
-
-
-.. option:: DensSnow_BSoil
-
-    :Description:
         Snow density - bare soil surface [kg |m^-3|]
     :Group:
-        DailyState
+        snow
 
 
 .. option:: DensSnow_BSoil
@@ -114,7 +106,15 @@
     :Description:
         Snow density - bare soil surface [kg |m^-3|]
     :Group:
-        snow
+        DailyState
+
+
+.. option:: DensSnow_BSoil
+
+    :Description:
+        Snow density – bare soil surface [kg |m^-3|]
+    :Group:
+        DailyState
 
 
 .. option:: DensSnow_Bldgs
@@ -122,7 +122,7 @@
     :Description:
         Snow density – building surface [kg |m^-3|]
     :Group:
-        snow
+        DailyState
 
 
 .. option:: DensSnow_Bldgs
@@ -138,7 +138,7 @@
     :Description:
         Snow density – building surface [kg |m^-3|]
     :Group:
-        DailyState
+        snow
 
 
 .. option:: DensSnow_Bldgs
@@ -160,23 +160,39 @@
 .. option:: DensSnow_DecTr
 
     :Description:
+        Snow density – deciduous surface [kg |m^-3|]
+    :Group:
+        snow
+
+
+.. option:: DensSnow_DecTr
+
+    :Description:
+        Snow density – deciduous surface [kg |m^-3|]
+    :Group:
+        DailyState
+
+
+.. option:: DensSnow_DecTr
+
+    :Description:
         Snow density - deciduous surface [kg |m^-3|]
     :Group:
         snow
 
 
-.. option:: DensSnow_DecTr
+.. option:: DensSnow_EveTr
 
     :Description:
-        Snow density – deciduous surface [kg |m^-3|]
+        Snow density – evergreen surface [kg |m^-3|]
     :Group:
-        snow
+        DailyState
 
 
-.. option:: DensSnow_DecTr
+.. option:: DensSnow_EveTr
 
     :Description:
-        Snow density – deciduous surface [kg |m^-3|]
+        Snow density - evergreen surface [kg |m^-3|]
     :Group:
         DailyState
 
@@ -192,25 +208,9 @@
 .. option:: DensSnow_EveTr
 
     :Description:
-        Snow density – evergreen surface [kg |m^-3|]
-    :Group:
-        DailyState
-
-
-.. option:: DensSnow_EveTr
-
-    :Description:
         Snow density - evergreen surface [kg |m^-3|]
     :Group:
         snow
-
-
-.. option:: DensSnow_EveTr
-
-    :Description:
-        Snow density - evergreen surface [kg |m^-3|]
-    :Group:
-        DailyState
 
 
 .. option:: DensSnow_Grass
@@ -224,41 +224,25 @@
 .. option:: DensSnow_Grass
 
     :Description:
-        Snow density - grass surface [kg |m^-3|]
-    :Group:
-        DailyState
-
-
-.. option:: DensSnow_Grass
-
-    :Description:
-        Snow density - grass surface [kg |m^-3|]
-    :Group:
-        snow
-
-
-.. option:: DensSnow_Grass
-
-    :Description:
         Snow density – grass surface [kg |m^-3|]
     :Group:
         snow
 
 
-.. option:: DensSnow_Paved
+.. option:: DensSnow_Grass
 
     :Description:
-        Snow density – paved surface [kg |m^-3|]
+        Snow density - grass surface [kg |m^-3|]
     :Group:
         snow
 
 
-.. option:: DensSnow_Paved
+.. option:: DensSnow_Grass
 
     :Description:
-        Snow density - paved surface [kg |m^-3|]
+        Snow density - grass surface [kg |m^-3|]
     :Group:
-        snow
+        DailyState
 
 
 .. option:: DensSnow_Paved
@@ -277,6 +261,30 @@
         DailyState
 
 
+.. option:: DensSnow_Paved
+
+    :Description:
+        Snow density – paved surface [kg |m^-3|]
+    :Group:
+        snow
+
+
+.. option:: DensSnow_Paved
+
+    :Description:
+        Snow density - paved surface [kg |m^-3|]
+    :Group:
+        snow
+
+
+.. option:: DensSnow_Water
+
+    :Description:
+        Snow density – water surface [kg |m^-3|]
+    :Group:
+        snow
+
+
 .. option:: DensSnow_Water
 
     :Description:
@@ -288,15 +296,7 @@
 .. option:: DensSnow_Water
 
     :Description:
-        Snow density – water surface [kg |m^-3|]
-    :Group:
-        snow
-
-
-.. option:: DensSnow_Water
-
-    :Description:
-        Snow density – water surface [kg |m^-3|]
+        Snow density - water surface [kg |m^-3|]
     :Group:
         DailyState
 
@@ -304,7 +304,7 @@
 .. option:: DensSnow_Water
 
     :Description:
-        Snow density - water surface [kg |m^-3|]
+        Snow density – water surface [kg |m^-3|]
     :Group:
         DailyState
 
@@ -985,6 +985,14 @@
 
     :Description:
         Aerodynamic resistance [s |m^-1|]
+    :Group:
+        SUEWS
+
+
+.. option:: RH2
+
+    :Description:
+        Relative humidity at 2 m agl [%]
     :Group:
         SUEWS
 
