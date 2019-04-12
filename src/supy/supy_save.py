@@ -169,7 +169,7 @@ def save_df_output(
             list_path_save.append(path_save)
 
     # resample output if freq_s is different from runtime freq (usually 5 min)
-    freq_save = pd.Timedelta(freq_s, 'second')
+    freq_save = pd.Timedelta(freq_s, 's')
     # resample `df_output` at `freq_save`
     df_rsmp = resample_output(df_output, freq_save)
     # 'DailyState' group will be dropped in `resample_output` as resampling is not needed

@@ -1,0 +1,29 @@
+.. _new_latest:
+
+.. _new_20190412:
+
+Version 2019.4.12
+======================================================
+
+ERA-5 download.
+
+- **New**
+
+  Added experimental support for downloading and processing ERA-5 data to force supy simulations.
+
+- **Improvement**
+
+  Improved compatibility with earlier `pandas` version in resampling output.
+
+- **Changes**
+
+  None.
+
+
+- **Fix**
+
+  None.
+
+- **Known issue**
+
+  None
