@@ -2,8 +2,8 @@
 
 from supy_driver import __version__ as sd_ver
 ver_milestone = 2019
-ver_major = 3
-ver_minor = 21
+ver_major = 4
+ver_minor = 12
 ver_remark = ''
 __version__ = '{ver_milestone}.{ver_major}.{ver_minor}{ver_remark}'.format(
     ver_milestone=ver_milestone,
