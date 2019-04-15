@@ -503,7 +503,7 @@ def save_supy(
 
     # get necessary information for saving procedure
     if path_runcontrol is not None:
-        freq_s, dir_save, site = get_save_info(path_runcontrol)
+        freq_s, path_dir_save, site = get_save_info(path_runcontrol)
 
     # save df_output to several files
     list_path_save = save_df_output(df_output, freq_s, site, path_dir_save)
