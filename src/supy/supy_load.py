@@ -213,7 +213,7 @@ df_var_info = df_info_suews_cal_multitsteps.merge(
 # this function can handle all SUEWS nml files
 
 
-@functools.lru_cache(maxsize=128)
+# @functools.lru_cache(maxsize=128)
 def load_SUEWS_nml(path_file):
     # remove case issues
     # xfile = path_insensitive(xfile)
@@ -1269,7 +1269,7 @@ dict_InitCond_default = {
 # load initial conditions of all grids as a DataFrame
 
 
-@functools.lru_cache(maxsize=16)
+# @functools.lru_cache(maxsize=16)
 def load_SUEWS_InitialCond_df(path_runcontrol):
     # load basic model settings
     dict_ModConfig = load_SUEWS_dict_ModConfig(path_runcontrol)

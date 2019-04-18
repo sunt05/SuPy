@@ -1,0 +1,29 @@
+.. _new_latest:
+
+.. _new_20190417:
+
+Version 2019.4.17
+======================================================
+
+UMEP compatibility tweaks.
+
+- **New**
+
+  None.
+
+- **Improvement**
+
+  None.
+
+- **Changes**
+
+  `problems.txt` will be written out in addition to the console error message similarly as SUEWS binary.
+
+
+- **Fix**
+
+  Incorrect caching of input libraries.
+
+- **Known issue**
+
+  None
