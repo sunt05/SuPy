@@ -112,7 +112,7 @@ def suews_cal_tstep_multi(dict_state_start_grid, df_met_forcing_block):
         with open('problems.txt','r') as f:
             print(f.read())
         # clean slate
-        os.remove('problems.txt')
+        # os.remove('problems.txt')
         sys.exit()
     else:
         # update state variables

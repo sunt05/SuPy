@@ -216,6 +216,7 @@ def save_df_state(
     # trim filename if site == ''
     file_state_save = file_state_save.replace('_.csv', '.csv')
     path_state_save = path_dir_save/file_state_save
+    print('writing out: {path_out}'.format(path_out=path_state_save))
     df_state.to_csv(path_state_save)
     return path_state_save
 
