@@ -559,7 +559,7 @@ def resample_linear(data_raw, tstep_in, tstep_mod):
 
 
 # resample input met foring to tstep required by model
-def resample_forcing_met_x(
+def resample_forcing_met(
         data_met_raw, tstep_in, tstep_mod, lat, lon, alt, timezone, kdownzen):
     # overall resample by linear interpolation
     # data_met_raw.to_pickle('data_met_raw.pkl')
