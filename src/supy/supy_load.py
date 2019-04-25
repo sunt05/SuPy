@@ -1,12 +1,14 @@
-from ast import literal_eval
-
+from scipy.interpolate import interp1d
 import functools
+from ast import literal_eval
 from datetime import timedelta
+from multiprocessing import cpu_count
 from pathlib import Path
 
 import f90nml
 import numpy as np
 import pandas as pd
+from dask import dataframe as dd
 from supy_driver import suews_driver as sd
 
 from .supy_env import path_supy_module
@@ -477,17 +479,18 @@ def resample_precip(data_raw_precip, tstep_mod, tstep_in):
 
 
 # resample input forcing by linear interpolation
-def resample_linear(data_raw, tstep_in, tstep_mod):
+def resample_linear_pd(data_raw, tstep_in, tstep_mod):
     # reset index as timestamps
     # shift by half-tstep_in to generate a time series with instantaneous
     # values
-    data_raw_shift = data_raw.copy().shift(-tstep_in / 2, freq='S')
+    data_raw_shift = data_raw.shift(-tstep_in / 2, freq='S')
 
     # downscale input data to desired time step
-    data_raw_tstep = data_raw_shift.resample(
-        '{tstep}S'.format(tstep=tstep_mod)).interpolate(
-        method='polynomial', order=1).rolling(
-        window=2, center=False).mean()
+    data_raw_tstep = data_raw_shift\
+        .resample('{tstep}S'.format(tstep=tstep_mod))\
+        .interpolate(method='linear')\
+        .rolling(window=2, center=False)\
+        .mean()
 
     # assign a new start with nan
     t_start = data_raw.index.shift(-tstep_in + tstep_mod, freq='S')[0]
@@ -510,11 +513,59 @@ def resample_linear(data_raw, tstep_in, tstep_mod):
     return data_tstep
 
 
+def resample_linear(data_raw, tstep_in, tstep_mod):
+    # reset index as timestamps
+    # shift by half-tstep_in to generate a time series with instantaneous
+    # values
+    data_raw_shift = data_raw.shift(-tstep_in / 2, freq='S')
+    xt = data_raw_shift.index
+    dt = (xt-xt.min()).total_seconds()
+    xt_new = pd.date_range(xt.min(), xt.max(), freq=f'{tstep_mod}S')
+    dt_new = (xt_new-xt_new.min()).total_seconds()
+    # using `interp1d` for better performance
+    f = interp1d(dt, data_raw_shift.values, axis=0)
+    val_new = f(dt_new)
+    # manual running mean for better performance
+    val_new_mvavg=0.5*(val_new[:-1]+val_new[1:])
+    # construct a dataframe
+    data_raw_tstep = pd.DataFrame(
+        val_new_mvavg,
+        columns=data_raw_shift.columns,
+        index=xt_new[1:]
+    )
+#     data_raw_tstep = dd.from_pandas(data_raw_tstep, npartitions=cpu_count())
+#     data_raw_tstep = data_raw_tstep.rolling(window=2, center=False).mean()
+    # val_new.shape
+    # assign a new start with nan
+    t_start = data_raw.index.shift(-tstep_in + tstep_mod, freq='S')[0]
+    t_end = data_raw.index[-1]
+    ind_t = pd.date_range(t_start, t_end, freq=f'{tstep_mod}S')
+    # re-align the index so after resampling we can have filled heading part
+#     data_raw_tstep = data_raw_tstep.compute()
+    data_tstep = data_raw_tstep.reindex(ind_t)
+#     data_tstep = dd.from_pandas(data_raw_tstep, npartitions=cpu_count())
+    data_tstep = data_tstep.bfill()
+    data_tstep = data_tstep.ffill()
+#     data_tstep = data_tstep.dropna()
+#     data_tstep = data_tstep.compute()
+    # correct temporal information
+    ser_t = ind_t.to_series()
+    data_tstep['iy'] = ser_t.dt.year
+    data_tstep['id'] = ser_t.dt.dayofyear
+    data_tstep['it'] = ser_t.dt.hour
+    data_tstep['imin'] = ser_t.dt.minute
+    return data_tstep
+
+
+
 # resample input met foring to tstep required by model
-def resample_forcing_met(
+def resample_forcing_met_x(
         data_met_raw, tstep_in, tstep_mod, lat, lon, alt, timezone, kdownzen):
     # overall resample by linear interpolation
+    # data_met_raw.to_pickle('data_met_raw.pkl')
+    # data_met_tstep = resample_linear(data_met_raw, tstep_in, tstep_mod)
     data_met_tstep = resample_linear(data_met_raw, tstep_in, tstep_mod)
+    # data_met_tstep.to_pickle('data_met_tstep.pkl')
 
     # adjust solar radiation by zenith correction and total amount distribution
     if kdownzen == 1:
@@ -544,9 +595,20 @@ def load_SUEWS_Forcing_met_df_raw(
         path_input, forcingfile_met_pattern)
     return df_forcing_met
 
+# # helper function to load a single forcing file
+# def load_forcing_csv(fileX):
+#     df_forcing_csv = pd.read_csv(
+#         fileX,
+#         delim_whitespace=True,
+#         comment='!',
+#         error_bad_lines=True
+#     ).dropna()
+#     return df_forcing_csv
+
+
 
 # caching loaded met df for better performance in initialisation
-@functools.lru_cache(maxsize=None)
+# @functools.lru_cache(maxsize=None)
 def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
     """Short summary.
 
@@ -561,6 +623,7 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
         Description of returned object.
 
     """
+
     # list of met forcing files
     path_input = path_input.resolve()
     # forcingfile_met_pattern = os.path.abspath(forcingfile_met_pattern)
@@ -571,14 +634,15 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
     # print(forcingfile_met_pattern)
     # print(list_file_MetForcing)
     # load raw data
-    df_forcing_met = pd.concat(
-        [pd.read_csv(
-            fileX,
-            delim_whitespace=True,
-            comment='!',
-            error_bad_lines=True
-        ).dropna() for fileX in list_file_MetForcing],
-        ignore_index=True)
+    # read in forcing with dask.dataframe in parallel
+    dd_forcing_met = dd.read_csv(
+        list_file_MetForcing,
+        delim_whitespace=True,
+        comment='!',
+        error_bad_lines=True
+    )
+    # convert to normal pandas dataframe
+    df_forcing_met = dd_forcing_met.compute()
     # `drop_duplicates` in case some duplicates mixed
     df_forcing_met = df_forcing_met.drop_duplicates()
     col_suews_met_forcing = [
