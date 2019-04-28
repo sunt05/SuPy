@@ -430,8 +430,7 @@ def run_supy(
             #     dict_state.update({(tstep_final + freq, grid): dict_state_end})
 
             # parallel run of grid_list for better efficiency
-            # try parallel run
-            p = Pool()
+            p = Pool(min([len(list_grid), cpu_count()]))
 
             # construct input list for `Pool.starmap`
             list_input = [
@@ -445,7 +444,7 @@ def run_supy(
             dict_output = {
                 grid: dict_output_array
                 for grid, dict_output_array in zip(list_grid, list_output_array)
-                }
+            }
 
             # collect final states
             dict_state_final = {
@@ -458,8 +457,6 @@ def run_supy(
             df_output0 = pack_df_output_array(dict_output, df_forcing)
             df_output = df_output0.replace(-999., np.nan)
             df_state_final = pack_df_state(dict_state).swaplevel(0, 1)
-            # df_state = pd.DataFrame(dict_state).T
-            # df_state.index.set_names('grid')
 
     # drop ESTM for now as it is not supported yet
     # select only those supported output groups
