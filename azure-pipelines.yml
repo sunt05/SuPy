@@ -30,7 +30,7 @@ jobs:
       pip install pipreqs
       pipreqs src
       cat src/requirements.txt
-      pip install -r src/requirements.txt
+      pip install -r src/requirements.txt --upgrade
     displayName:      'Install dependencies'
 
   - script:           |
