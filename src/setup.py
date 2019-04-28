@@ -36,6 +36,7 @@ setup(name='supy',
           'numpy>=1.15.2',
           'pandas>=0.23.4',
           'scipy',
+          'dask[complete]', #needs all dask and its dependencies
           'f90nml',
           'matplotlib',
           'seaborn',
