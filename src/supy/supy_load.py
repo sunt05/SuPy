@@ -9,6 +9,7 @@ import f90nml
 import numpy as np
 import pandas as pd
 from dask import dataframe as dd
+import toolz
 from supy_driver import suews_driver as sd
 
 from .supy_env import path_supy_module
