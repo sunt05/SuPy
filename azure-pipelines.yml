@@ -31,6 +31,7 @@ jobs:
       pipreqs src
       cat src/requirements.txt
       pip install -r src/requirements.txt
+      pip install dask[complete] --upgrade
     displayName:      'Install dependencies'
 
   - script:           |
@@ -113,6 +114,7 @@ jobs:
       pip install pipreqs
       pipreqs src
       pip install -r src/requirements.txt
+      pip install dask[complete] --upgrade
     displayName:        'Install dependencies'
 
   - bash:               |
@@ -149,6 +151,7 @@ jobs:
   - script:             |
       python -m pip install --upgrade pip
       pip install pipreqs
+      pip install dask[complete] --upgrade
       cd docs
       sudo apt-get install pandoc
       make html
