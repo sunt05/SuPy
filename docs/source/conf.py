@@ -41,7 +41,7 @@ project = u'SuPy'
 doc_name = u'SuPy Documentation'
 author = u'Dr Ting Sun and Prof Sue Grimmond'
 year = u'2018–2019'
-copyright = ','.join([year, author])
+copyright = ', '.join([year, author])
 
 
 # The short X.Y version
