@@ -512,7 +512,7 @@ def resample_linear_pd(data_raw, tstep_in, tstep_mod):
 
     return data_tstep
 
-
+# a more performant version of `resample_linear_pd` using explicit interpolation methods
 def resample_linear(data_raw, tstep_in, tstep_mod):
     # reset index as timestamps
     # shift by half-tstep_in to generate a time series with instantaneous

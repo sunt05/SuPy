@@ -1,0 +1,29 @@
+.. _new_latest:
+
+.. _new_20190428:
+
+Version 2019.4.28
+======================================================
+
+Parallel run.
+
+- **New**
+
+  Added support for parallel run on the fly.
+
+- **Improvement**
+
+  None.
+
+- **Changes**
+
+  None.
+
+
+- **Fix**
+
+  None.
+
+- **Known issue**
+
+  None
