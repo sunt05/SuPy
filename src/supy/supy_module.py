@@ -444,9 +444,11 @@ def run_supy(
                 dict_state[(tstep_init, grid)]
                 for grid in list_grid
             ]
-            b = db.from_sequence(list_input)
+
+            # on windows `processes` has issues when importing
+            # so set `threads` here
             method_parallel = 'threads' if os.name == 'nt' else 'processes'
-            list_res = b\
+            list_res = db.from_sequence(list_input)\
                 .map(suews_cal_tstep_multi, df_forcing)\
                 .compute(scheduler=method_parallel)
             list_state_end, list_output_array = zip(*list_res)
