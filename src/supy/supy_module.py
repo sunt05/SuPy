@@ -445,7 +445,10 @@ def run_supy(
                 for grid in list_grid
             ]
             b = db.from_sequence(list_input)
-            list_res = b.map(suews_cal_tstep_multi, df_forcing).compute()
+            method_parallel = 'threads' if os.name == 'nt' else 'processes'
+            list_res = b\
+                .map(suews_cal_tstep_multi, df_forcing)\
+                .compute(scheduler=method_parallel)
             list_state_end, list_output_array = zip(*list_res)
 
             # collect output arrays
