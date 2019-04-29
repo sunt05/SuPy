@@ -31,6 +31,7 @@ jobs:
       pipreqs src
       cat src/requirements.txt
       pip install -r src/requirements.txt
+      pip install dask[complete] --upgrade
     displayName:      'Install dependencies'
 
   - script:           |
@@ -67,6 +68,7 @@ jobs:
       pipreqs src
       cat src/requirements.txt
       pip install -r src/requirements.txt
+      pip install dask[complete] --upgrade
     displayName:        'Install dependencies'
 
   - script:             |
@@ -112,6 +114,7 @@ jobs:
       pip install pipreqs
       pipreqs src
       pip install -r src/requirements.txt
+      pip install dask[complete] --upgrade
     displayName:        'Install dependencies'
 
   - bash:               |
@@ -148,61 +151,8 @@ jobs:
   - script:             |
       python -m pip install --upgrade pip
       pip install pipreqs
+      pip install dask[complete] --upgrade
       cd docs
       sudo apt-get install pandoc
       make html
     displayName:        'test docs'
-
-# - job:                  'Upload_macOS'
-#   pool:
-#     vmImage:            'macOS-10.13'
-#   strategy:
-#     matrix:
-#       # Python35:
-#       #   python.version: '3.5'
-#       # Python36:
-#       #   python.version: '3.6'
-#       Python37:
-#         python.version: '3.7'
-#     maxParallel:        2
-
-#   steps:
-#   - task:               UsePythonVersion@0
-#     inputs:
-#       versionSpec:      '$(python.version)'
-#       architecture:     'x64'
-
-#   - script:             |
-#       mkdir -p ~/.matplotlib
-#       touch ~/.matplotlib/matplotlibrc
-#       echo "backend:    TkAgg" >> ~/.matplotlib/matplotlibrc
-#       python -m pip install --upgrade pip
-#       pip install pipreqs
-#       pipreqs src
-#       pip install -r src/requirements.txt
-#     displayName:        'Install dependencies'
-
-#   - script:             |
-#       cd src
-#       make test
-#     displayName:        'pytest'
-
-#   # Python Twine Upload Authenticate
-#   # Authentication for uploading Python distributions using twine.
-#   # Please add '-r FeedName/EndpointName --config-file $(PYPIRC_PATH)' to your twine upload command.
-#   # For feeds present in this organization, use the feed name as the repository (-r).
-#   # Otherwise, use the endpoint name defined in the service connection.
-#   - task: TwineAuthenticate@0
-#     inputs:
-#       # artifactFeeds: 'feed_name1, feed_name2'
-#       externalFeeds: 'PyPI'
-
-#   - script:  |
-#       pip3 install twine wheel
-#       cd src
-#       make
-#       cat $(PYPIRC_PATH)
-#       twine upload -r SuPy --config-file $(PYPIRC_PATH) --skip-existing dist/*whl
-#     displayName:        'upload supy'
-#     continueOnError:    true
-

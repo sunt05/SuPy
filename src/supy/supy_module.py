@@ -11,10 +11,12 @@
 # 08 Mar 2018: pypi packaging
 # 04 Oct 2018: overhaul of structure
 # 05 Oct 2018: added sample run data
+# 28 Apr 2019: added support for parallel run
 ###########################################################################
 
 
-from __future__ import division, print_function
+import dask.bag as db
+# from multiprocessing import Pool, cpu_count, freeze_support
 
 import os
 import sys
@@ -259,7 +261,7 @@ def run_supy(
     Parameters
     ----------
     df_forcing : pandas.DataFrame
-        forcing data.
+        forcing data for all grids in `df_state_init`.
     df_state_init : pandas.DataFrame
         initial model states;
         or a collection of model states with multiple timestamps, whose last temporal record will be used as the initial model states.
@@ -333,7 +335,7 @@ def run_supy(
             }
         )
     # grid list determined by initial states
-    grid_list = df_init.index
+    list_grid = df_init.index
 
     # initialise dicts for holding results and model states
     dict_state = {}
@@ -364,21 +366,13 @@ def run_supy(
         dict_forcing = {row.Index: row._asdict()
                         for row in df_forcing.itertuples()}
 
-        # # dict_state is used to save model states for later use
-        # dict_state = {
-        #     # (t_start, grid): series_state_init.to_dict()
-        #     (tstep_init, grid): pack_grid_dict(series_state_init)
-        #     for grid, series_state_init
-        #     in df_init.iterrows()
-        # }
-
         for tstep in df_forcing.index:
             # temporal loop
             # initialise output of tstep:
             # load met_forcing if the same across all grids:
             met_forcing_tstep = dict_forcing[tstep]
             # spatial loop
-            for grid in grid_list:
+            for grid in list_grid:
                 dict_state_start = dict_state[(tstep, grid)]
                 # calculation at one step:
                 # series_state_end, series_output_tstep = suews_cal_tstep_df(
@@ -401,7 +395,7 @@ def run_supy(
         grp_forcing_yr = df_forcing.groupby(df_forcing.index.year // n_yr)
         if len(grp_forcing_yr) > 1:
             df_state_init_yr = df_state_init.copy()
-            list_df_output=[]
+            list_df_output = []
             list_df_state = []
             for grp in grp_forcing_yr.groups:
                 # get forcing of a specific year
@@ -416,29 +410,66 @@ def run_supy(
 
             # re-organise results of each year
             df_output = pd.concat(list_df_output).sort_index()
-            df_state_final = pd.concat(list_df_state).sort_index().drop_duplicates()
+            df_state_final = pd.concat(
+                list_df_state).sort_index().drop_duplicates()
             return df_output, df_state_final
 
         else:
-            # for single-year run, directly put df_forcing into supy_driver for calculation
+            # for single-chunk run (1 chunk = {n_yr} years), directly put df_forcing into supy_driver for calculation
             # use higher level wrapper that calculate at a `block` level
             # for better performance
-            for grid in grid_list:
-                dict_state_start_grid = dict_state[(tstep_init, grid)]
-                dict_state_end, dict_output_array = suews_cal_tstep_multi(
-                    dict_state_start_grid,
-                    df_forcing)
-                # update output & model state at tstep for the current grid
-                dict_output.update({grid: dict_output_array})
-                # model state for the next run
-                dict_state.update({(tstep_final + freq, grid): dict_state_end})
+
+            # for grid in list_grid:
+            #     dict_state_start_grid = dict_state[(tstep_init, grid)]
+            #     dict_state_end, dict_output_array = suews_cal_tstep_multi(
+            #         dict_state_start_grid,
+            #         df_forcing)
+            #     # update output & model state at tstep for the current grid
+            #     dict_output.update({grid: dict_output_array})
+            #     # model state for the next run
+            #     dict_state.update({(tstep_final + freq, grid): dict_state_end})
+
+
+            # # parallel run of grid_list for better efficiency
+            # if os.name == 'nt':
+            #     if __name__ == '__main__':
+            #         p = Pool(min([len(list_grid), cpu_count()]))
+            # else:
+            #     p = Pool(min([len(list_grid), cpu_count()]))
+
+            # # construct input list for `Pool.starmap`
+            # construct input list for `dask.bag`
+            list_input = [
+                # (dict_state[(tstep_init, grid)], df_forcing)
+                dict_state[(tstep_init, grid)]
+                for grid in list_grid
+            ]
+
+            # on windows `processes` has issues when importing
+            # so set `threads` here
+            method_parallel = 'threads' if os.name == 'nt' else 'processes'
+            list_res = db.from_sequence(list_input)\
+                .map(suews_cal_tstep_multi, df_forcing)\
+                .compute(scheduler=method_parallel)
+            list_state_end, list_output_array = zip(*list_res)
+
+            # collect output arrays
+            dict_output = {
+                grid: dict_output_array
+                for grid, dict_output_array in zip(list_grid, list_output_array)
+            }
+
+            # collect final states
+            dict_state_final_tstep = {
+                (tstep_final + freq, grid): dict_state_end
+                for grid, dict_state_end in zip(list_grid, list_state_end)
+            }
+            dict_state.update(dict_state_final_tstep)
 
             # save results as time-aware DataFrame
             df_output0 = pack_df_output_array(dict_output, df_forcing)
             df_output = df_output0.replace(-999., np.nan)
             df_state_final = pack_df_state(dict_state).swaplevel(0, 1)
-            # df_state = pd.DataFrame(dict_state).T
-            # df_state.index.set_names('grid')
 
     # drop ESTM for now as it is not supported yet
     # select only those supported output groups
@@ -461,7 +492,7 @@ def save_supy(
         site: str = '',
         path_dir_save: str = Path('.'),
         path_runcontrol: str = None,)->list:
-    '''save supy run results to files
+    '''Save SuPy run results to files
 
     Parameters
     ----------
