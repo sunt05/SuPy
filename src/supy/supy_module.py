@@ -430,9 +430,6 @@ def run_supy(
             #     dict_state.update({(tstep_final + freq, grid): dict_state_end})
 
             # parallel run of grid_list for better efficiency
-            import os
-
-
             if os.name == 'nt':
                 if __name__ == '__main__':
                     p = Pool(min([len(list_grid), cpu_count()]))
