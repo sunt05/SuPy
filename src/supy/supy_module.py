@@ -15,8 +15,8 @@
 ###########################################################################
 
 
-from __future__ import division, print_function
-from multiprocessing import Pool, cpu_count, freeze_support
+import dask.bag as db
+# from multiprocessing import Pool, cpu_count, freeze_support
 
 import os
 import sys
@@ -419,15 +419,16 @@ def run_supy(
             # use higher level wrapper that calculate at a `block` level
             # for better performance
 
-            for grid in list_grid:
-                dict_state_start_grid = dict_state[(tstep_init, grid)]
-                dict_state_end, dict_output_array = suews_cal_tstep_multi(
-                    dict_state_start_grid,
-                    df_forcing)
-                # update output & model state at tstep for the current grid
-                dict_output.update({grid: dict_output_array})
-                # model state for the next run
-                dict_state.update({(tstep_final + freq, grid): dict_state_end})
+            # for grid in list_grid:
+            #     dict_state_start_grid = dict_state[(tstep_init, grid)]
+            #     dict_state_end, dict_output_array = suews_cal_tstep_multi(
+            #         dict_state_start_grid,
+            #         df_forcing)
+            #     # update output & model state at tstep for the current grid
+            #     dict_output.update({grid: dict_output_array})
+            #     # model state for the next run
+            #     dict_state.update({(tstep_final + freq, grid): dict_state_end})
+
 
             # # parallel run of grid_list for better efficiency
             # if os.name == 'nt':
@@ -437,25 +438,28 @@ def run_supy(
             #     p = Pool(min([len(list_grid), cpu_count()]))
 
             # # construct input list for `Pool.starmap`
-            # list_input = [
-            #     (dict_state[(tstep_init, grid)], df_forcing)
-            #     for grid in list_grid
-            # ]
-            # list_res = p.starmap(suews_cal_tstep_multi, list_input)
-            # list_state_end, list_output_array = zip(*list_res)
+            # construct input list for `dask.bag`
+            list_input = [
+                # (dict_state[(tstep_init, grid)], df_forcing)
+                dict_state[(tstep_init, grid)]
+                for grid in list_grid
+            ]
+            b = db.from_sequence(list_input)
+            list_res = b.map(suews_cal_tstep_multi, df_forcing).compute()
+            list_state_end, list_output_array = zip(*list_res)
 
-            # # collect output arrays
-            # dict_output = {
-            #     grid: dict_output_array
-            #     for grid, dict_output_array in zip(list_grid, list_output_array)
-            # }
+            # collect output arrays
+            dict_output = {
+                grid: dict_output_array
+                for grid, dict_output_array in zip(list_grid, list_output_array)
+            }
 
-            # # collect final states
-            # dict_state_final_tstep = {
-            #     (tstep_final + freq, grid): dict_state_end
-            #     for grid, dict_state_end in zip(list_grid, list_state_end)
-            # }
-            # dict_state.update(dict_state_final_tstep)
+            # collect final states
+            dict_state_final_tstep = {
+                (tstep_final + freq, grid): dict_state_end
+                for grid, dict_state_end in zip(list_grid, list_state_end)
+            }
+            dict_state.update(dict_state_final_tstep)
 
             # save results as time-aware DataFrame
             df_output0 = pack_df_output_array(dict_output, df_forcing)
