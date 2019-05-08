@@ -31,17 +31,17 @@ import pathlib
 import numpy as np
 import pandas as pd
 
-from .supy_env import path_supy_module
-from .supy_load import (load_InitialCond_grid_df, load_SUEWS_dict_ModConfig,
+from .env import path_supy_module
+from .load import (load_InitialCond_grid_df, load_SUEWS_dict_ModConfig,
                         load_SUEWS_Forcing_ESTM_df_raw,
                         load_SUEWS_Forcing_met_df_raw,
                         load_df_state,
                         resample_forcing_met,
                         resample_linear)
-from .supy_post import pack_df_output, pack_df_output_array, pack_df_state
-from .supy_run import (pack_df_state_final, pack_grid_dict, suews_cal_tstep,
+from .post import pack_df_output, pack_df_output_array, pack_df_state
+from .run import (pack_df_state_final, pack_grid_dict, suews_cal_tstep,
                        suews_cal_tstep_multi)
-from .supy_save import get_save_info, save_df_output, save_df_state
+from .save import get_save_info, save_df_output, save_df_state
 
 
 ##############################################################################
@@ -418,24 +418,6 @@ def run_supy(
             # for single-chunk run (1 chunk = {n_yr} years), directly put df_forcing into supy_driver for calculation
             # use higher level wrapper that calculate at a `block` level
             # for better performance
-
-            # for grid in list_grid:
-            #     dict_state_start_grid = dict_state[(tstep_init, grid)]
-            #     dict_state_end, dict_output_array = suews_cal_tstep_multi(
-            #         dict_state_start_grid,
-            #         df_forcing)
-            #     # update output & model state at tstep for the current grid
-            #     dict_output.update({grid: dict_output_array})
-            #     # model state for the next run
-            #     dict_state.update({(tstep_final + freq, grid): dict_state_end})
-
-
-            # # parallel run of grid_list for better efficiency
-            # if os.name == 'nt':
-            #     if __name__ == '__main__':
-            #         p = Pool(min([len(list_grid), cpu_count()]))
-            # else:
-            #     p = Pool(min([len(list_grid), cpu_count()]))
 
             # # construct input list for `Pool.starmap`
             # construct input list for `dask.bag`

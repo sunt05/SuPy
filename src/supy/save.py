@@ -1,12 +1,9 @@
-# %%
 from typing import Tuple
-from .supy_post import resample_output
-from .supy_load import load_SUEWS_dict_ModConfig
+from .post import resample_output
+from .load import load_SUEWS_dict_ModConfig
 import os
 import pandas as pd
 from pathlib import Path
-
-# %%
 
 
 def gen_df_save(df_grid_group: pd.DataFrame)->pd.DataFrame:
@@ -189,7 +186,6 @@ def save_df_output(
     return list_path_save
 
 
-# %%
 # save model state for restart runs
 def save_df_state(
         df_state: pd.DataFrame,
@@ -221,7 +217,6 @@ def save_df_state(
     return path_state_save
 
 
-# %%
 # get information for saving results
 def get_save_info(path_runcontrol: str)->Tuple[int, Path, str]:
     '''get necessary information for saving supy results, which are (freq_s, dir_save, site)

@@ -9,7 +9,7 @@ import pandas as pd
 
 from supy_driver import suews_driver as sd
 
-from .supy_load import (df_var_info, list_var_inout,
+from .load import (df_var_info, list_var_inout,
                         list_var_inout_multitsteps, list_var_input,
                         list_var_input_multitsteps, list_var_output,
                         list_var_output_multitsteps)

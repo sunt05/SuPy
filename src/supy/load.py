@@ -11,8 +11,8 @@ import pandas as pd
 from dask import dataframe as dd
 from supy_driver import suews_driver as sd
 
-from .supy_env import path_supy_module
-from .supy_misc import path_insensitive
+from .env import path_supy_module
+from .misc import path_insensitive
 
 
 ########################################################################
@@ -1271,14 +1271,14 @@ dict_InitCond_default = {
     'leavesoutinitially':  int(nan),
     'gdd_1_0':  nan,
     'gdd_2_0':  nan,
-    'laiinitialevetr':  nan,
-    'laiinitialdectr':  nan,
-    'laiinitialgrass':  nan,
     'albevetr0':  nan,
     'albdectr0':  nan,
     'albgrass0':  nan,
     'decidcap0':  nan,
     'porosity0':  nan,
+    'laiinitialevetr':  nan,
+    'laiinitialdectr':  nan,
+    'laiinitialgrass':  nan,
     'pavedstate':  0,
     'bldgsstate':  0,
     'evetrstate':  0,
