@@ -15,7 +15,7 @@
 
 ## Installation
 
-SuPy requires `python` 3.6+ and can be installed with `pip` in command line prompt:
+SuPy requires 64-bit `python` 3.6+ and can be installed with `pip` in command line prompt:
 
 ```shell
 python3 -m pip install supy --upgrade
