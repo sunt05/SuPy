@@ -1,10 +1,8 @@
 from setuptools import setup
-from supy.version import __version__
-# from setuptools import Distribution
-# from numpy.distutils.core import setup
-# import platform
-# import glob
-# import os
+import pandas as pd
+
+ser_ver = pd.read_json('./supy/supy_version.json', typ='series')
+__version__ = f'{ser_ver.ver_milestone}.{ser_ver.ver_major}.{ser_ver.ver_minor}{ser_ver.ver_remark}'
 
 
 def readme():
@@ -36,11 +34,13 @@ setup(name='supy',
           'numpy>=1.15.2',
           'pandas>=0.23.4',
           'scipy',
-          'dask[complete]', #needs all dask and its dependencies
+          'dask[complete]',  # needs all dask and its dependencies
           'f90nml',
           'matplotlib',
           'seaborn',
           'atmosp',  # my own `atmosp` module forked from `atmos-python`
+          'cdsapi',
+          'xarray',
           'supy_driver>=2018rc7'  # a separate f2py-based driver
       ],
       include_package_data=True,

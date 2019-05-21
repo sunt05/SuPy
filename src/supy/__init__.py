@@ -9,9 +9,8 @@
 # 08 Mar 2018: pypi packaging
 ###########################################################################
 
-from .supy_module import (init_supy, load_SampleData,
+from ._supy_module import (init_supy, load_SampleData,
                           load_forcing_grid, run_supy, save_supy)
 
-from .util import *
-from .plot import plot_day_clm, plot_comp
-from .version import __version__, __version_driver__, show_version
+# from .util import *
+from ._version import show_version

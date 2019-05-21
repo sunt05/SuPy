@@ -9,7 +9,7 @@ import pandas as pd
 
 from supy_driver import suews_driver as sd
 
-from .load import (df_var_info, list_var_inout,
+from ._load import (df_var_info, list_var_inout,
                         list_var_inout_multitsteps, list_var_input,
                         list_var_input_multitsteps, list_var_output,
                         list_var_output_multitsteps)
@@ -50,8 +50,9 @@ def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep):
         with open('problems.txt', 'r') as f:
             print(f.read())
         # clean slate
-        os.remove('problems.txt')
-        sys.exit()
+        # os.remove('problems.txt')
+        # sys.exit()
+        return 'SUEWS kernel error'
     else:
         # update state variables
         # if save_state:  # deep copy states results
@@ -107,13 +108,15 @@ def suews_cal_tstep_multi(dict_state_start_grid, df_met_forcing_block):
         res_suews_tstep_multi = sd.suews_cal_multitsteps(**dict_input)
     except Exception as ex:
         # show trace info
-        print(traceback.format_exc())
+        # print(traceback.format_exc())
         # show SUEWS fatal error details produced by SUEWS kernel
         with open('problems.txt','r') as f:
             print(f.read())
         # clean slate
         # os.remove('problems.txt')
-        sys.exit()
+        # sys.exit()
+        # raise RuntimeError("Something bad happened") from exs
+        return 'SUEWS kernel error'
     else:
         # update state variables
         # dict_state_end = copy.copy(dict_input)
