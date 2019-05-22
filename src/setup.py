@@ -41,8 +41,14 @@ setup(name='supy',
           'atmosp',  # my own `atmosp` module forked from `atmos-python`
           'cdsapi',
           'xarray',
-          'supy_driver>=2018rc7'  # a separate f2py-based driver
+          'click', # cmd tool
+          'supy_driver>=2018rc8'  # a separate f2py-based driver
       ],
+      entry_points={
+          'console_scripts':[
+            #   'SUEWS=supy.cmd.SUEWS:SUEWS',
+              'SUEWS-table-converter=supy.cmd.table_converter:convert_table_cmd',
+              ]},
       include_package_data=True,
       test_suite='nose.collector',
       tests_require=['nose'],
