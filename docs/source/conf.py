@@ -45,9 +45,9 @@ copyright = ', '.join([year, author])
 
 
 # The short X.Y version
-version = supy._version.__version__
+version = supy.__version__
 # The full version, including alpha/beta/rc tags
-release = supy._version.__version__
+release = supy.__version__
 
 
 # -- General configuration ---------------------------------------------------
