@@ -34,7 +34,7 @@ url_repo_output = URL(url_repo_base)/'output_files'
 
 # list of `SUEWS_**.csv `tables
 list_table = [file.replace('.txt', '.csv')
-              for file in sp.supy_load.list_file_input
+              for file in sp._load.list_file_input
               if 'Profile' not in file]
 
 # list of namelist based variables
@@ -59,7 +59,7 @@ def extract_var_suews(dict_var_full: dict, var_supy: str)->list:
     Parameters
     ----------
     dict_var_full : dict
-        dict_var_full = sp.supy_load.exp_dict_full(sp.supy_load.dict_var2SiteSelect)
+        dict_var_full = sp._load.exp_dict_full(sp._load.dict_var2SiteSelect)
     var_supy : str
         supy variable name
 
@@ -69,7 +69,7 @@ def extract_var_suews(dict_var_full: dict, var_supy: str)->list:
         related SUEWS variables for `var_supy`
     '''
 
-    x = sp.supy_load.flatten_list(dict_var_full[var_supy])
+    x = sp._load.flatten_list(dict_var_full[var_supy])
     x = np.unique(x)
     x = [
         xx for xx in x
@@ -145,8 +145,8 @@ def gen_df_site(
             lambda x: x.replace('`', ''))
 
         # retrieve SUEWS-related variables
-        dict_var_full = sp.supy_load.exp_dict_full(
-            sp.supy_load.dict_var2SiteSelect)
+        dict_var_full = sp._load.exp_dict_full(
+            sp._load.dict_var2SiteSelect)
         dict_var_ref_suews = {
             k: extract_var_suews(dict_var_full, k)
             for k in dict_var_full
