@@ -7,6 +7,7 @@ Sphinx>=1.8.1
 sphinx-autobuild>=0.7.1
 sphinx-rtd-theme>=0.4.2
 sphinxcontrib-websupport>=1.1.0
+sphinx-click
 ipykernel>=4.8.2
 sympy
 jinja2>=2.10

@@ -1,11 +1,12 @@
 # command line tools
 import click
 import sys
+from pathlib import Path
 
 from ..util._converter import convert_table, list_ver_from, list_ver_to
 
 # run the whole supy workflow mimicking SUEWS binary
-@click.command(short_help='convert SUEWS input tables between different versions.')
+@click.command(short_help='Convert SUEWS input tables from older versions to newer ones (one-way only)')
 @click.option('-f', '--from', 'fromVer',
               help='Version to convert from',
               type=click.Choice(list_ver_from),
@@ -22,6 +23,9 @@ from ..util._converter import convert_table, list_ver_from, list_ver_to
               help='New directory to create for converted tables',
               type=click.Path(),
               required=True)
-def convert_table_cmd(fromDir, toDir, fromVer, toVer):
-    '''convert SUEWS input tables between different versions.'''
+def convert_table_cmd(fromDir:Path, toDir:Path, fromVer:str, toVer:str):
+    """Convert SUEWS input tables from older versions to newer ones (one-way only).
+    """
     convert_table(fromDir, toDir, fromVer, toVer)
+
+

@@ -46,8 +46,8 @@ setup(name='supy',
       ],
       entry_points={
           'console_scripts':[
-              'SUEWS=supy.cmd.SUEWS:SUEWS',
-              'SUEWS-table-converter=supy.cmd.table_converter:convert_table_cmd',
+              'suews-run=supy.cmd.SUEWS:SUEWS',
+              'suews-convert=supy.cmd.table_converter:convert_table_cmd',
               ]},
       include_package_data=True,
       test_suite='nose.collector',

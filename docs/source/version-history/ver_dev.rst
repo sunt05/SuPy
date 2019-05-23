@@ -12,10 +12,9 @@ Compatibility Improvement.
   1. Added version info function: `show_version`.
   2. Added command line tools:
 
-    - `SUEWS-table-converter`: convert input tables
-        from older versions to newer ones (one-way only).
+    - `suews-run`: SuPy wrapper to mimic SUEWS-binary-based simulation.
 
-    - `SUEWS`: SuPy wrapper to mimic SUEWS-binary-based simulation.
+    - `suews-convert`: convert input tables from older versions to newer ones (one-way only).
 
 
 - **Improvement**
@@ -35,3 +34,6 @@ Compatibility Improvement.
 - **Known issue**
 
   None
+
+
+

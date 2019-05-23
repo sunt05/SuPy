@@ -79,6 +79,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'IPython.sphinxext.ipython_directive',
     'IPython.sphinxext.ipython_console_highlighting',
+    'sphinx_click.ext',
     # 'sphinx_gallery.gen_gallery',
 
 ]
