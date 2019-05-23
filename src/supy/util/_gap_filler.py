@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 # locate the first position of period with in-between gaps
 def loc_gap(ser_test, freq='1D', pattern='010'):
     rsmp = ser_test.resample(freq)
@@ -60,14 +61,30 @@ def fill_gap_one(ser_test, freq='1D', pattern='010'):
 
 
 # fill gaps iteratively
-def fill_gap_all(ser_test, freq='1D'):
-    ser_test_filled = ser_test.copy()
+def fill_gap_all(ser_to_fill:pd.Series, freq='1D')->pd.Series:
+    """Fill all gaps in a time series.
+
+    Parameters
+    ----------
+    ser_to_fill : pd.Series
+        Time series to gap-fill
+    freq : str, optional
+        Frequency to identify gapped divisions, by default '1D'
+
+    Returns
+    -------
+    ser_test_filled: pd.Series
+        Gap-filled time series.
+    """
+
+    ser_test_filled = ser_to_fill.copy()
     ptn_list = ['010', '01', '10']
     while ser_test_filled.isna().any():
         # try to different gap patterns and fill gaps
         try:
-            ptn_gap = next(ptn for ptn in ptn_list if len(
-                loc_gap(ser_test_filled, freq, ptn)) > 0)
+            ptn_gap = next(
+                ptn for ptn in ptn_list
+                if len(loc_gap(ser_test_filled, freq, ptn)) > 0)
             ser_test_filled = fill_gap_one(ser_test_filled, freq, ptn_gap)
         except StopIteration:
             pass

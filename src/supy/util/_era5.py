@@ -18,6 +18,8 @@ from scipy.interpolate import interp1d
 ################################################
 
 # utility functions
+
+
 def roundPartial(value, resolution):
     return round(value / resolution) * resolution
 
@@ -98,7 +100,7 @@ def geopotential2geometric(h: float, latitude: float) -> float:
 # functions to interpolate the atmospheric variables to a specified height/altitude
 def get_ser_val_alt(lat: float, lon: float,
                     da_alt_x: xr.DataArray,
-                    da_alt: xr.DataArray, da_val: xr.DataArray)->pd.Series:
+                    da_alt: xr.DataArray, da_val: xr.DataArray) -> pd.Series:
     '''interpolate atmospheric variable to a specified altitude
 
     Parameters
@@ -388,7 +390,33 @@ def gen_req_ml(fn_sfc, grid=[0.125, 0.125], scale=0):
     return dict_req_ml
 
 
-def download_era5(lat_x, lon_x, start, end, grid=[0.125, 0.125], scale=0):
+def download_era5(
+        lat_x: float, lon_x: float,
+        start: str, end: str,
+        grid=[0.125, 0.125], scale=0)->dict:
+    """Generate ERA-5 cdsapi-based requests and download data for area of interests.
+
+    Parameters
+    ----------
+    lat_x : float
+        Latitude of centre at the area of interest.
+    lon_x : float
+        Longitude of centre at the area of interest.
+    start : str
+        [description]
+    end : str
+        [description]
+    grid : list, optional
+        [description], by default [0.125, 0.125]
+    scale : int, optional
+        [description], by default 0
+
+    Returns
+    -------
+    dict
+        [description]
+    """
+
     c = cdsapi.Client()
     dict_req_sfc = gen_req_sfc(lat_x, lon_x, start, end, grid=[
                                0.125, 0.125], scale=0)

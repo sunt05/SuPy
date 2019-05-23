@@ -14,5 +14,7 @@ __version_driver__ = sd_ver
 
 
 def show_version():
+    """print `supy` and `supy_driver` version information.
+    """
     print(f'supy: {__version__}')
     print(f'supy_driver: {__version_driver__}')

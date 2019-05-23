@@ -2,6 +2,7 @@ from setuptools import setup
 import pandas as pd
 
 ser_ver = pd.read_json('./supy/supy_version.json', typ='series')
+print(ser_ver)
 __version__ = f'{ser_ver.ver_milestone}.{ser_ver.ver_major}.{ser_ver.ver_minor}{ser_ver.ver_remark}'
 
 

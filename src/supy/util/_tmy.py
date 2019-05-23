@@ -1,3 +1,4 @@
+from typing import Tuple
 import pandas as pd
 import numpy as np
 import atmosp
@@ -274,7 +275,19 @@ def gen_TMY(df_output):
 
 
 # function to read in EPW file
-def read_epw(path_epw):
+def read_epw(path_epw:Path)->pd.DataFrame:
+    """Read in `epw` file as a DataFrame
+
+    Parameters
+    ----------
+    path_epw : Path
+        path to `epw` file
+
+    Returns
+    -------
+    df_tmy: pd.DataFrame
+        TMY results of `epw` file
+    """
     df_tmy = pd.read_csv(path_epw, skiprows=8, sep=u',', header=None)
     df_tmy.columns = [x.strip() for x in header_EPW.split('\n')[1:-1]]
     df_tmy['DateTime'] = pd.to_datetime(
@@ -286,7 +299,26 @@ def read_epw(path_epw):
 
 
 # generate EPW file from `df_TMY`
-def gen_epw(df_tmy, path_epw=Path('./uTMY.epw'), ratio_dif_dir=0.15):
+def gen_epw(df_tmy: pd.DataFrame, path_epw=Path('./uTMY.epw'), ratio_dif_dir=0.15) -> Tuple[pd.DataFrame, str, Path]:
+    """Generate an `epw` file of uTMY (urbanised Typical Meteorological Year) using SUEWS simulation results
+
+    Parameters
+    ----------
+    df_tmy : pd.DataFrame
+        SUEWS simulation results.
+    path_epw : Path, optional
+        Path to store generated epw file, by default Path('./uTMY.epw')
+    ratio_dif_dir : float, optional
+        Ratio between direct and diffuse solar radiation, by default 0.15
+
+    Returns
+    -------
+    df_epw, text_meta, path_epw: Tuple[pd.DataFrame, str, Path]
+        - df_epw: uTMY result
+        - text_meta: meta-info text
+        - path_epw: path to generated `epw` file
+
+    """
     df_tmy = df_tmy.copy()
     # df_tmy = pd.concat([df_tmy.iloc[1:], df_tmy.iloc[[0]]])
     # adding necessary variables that can be derive from supy output
