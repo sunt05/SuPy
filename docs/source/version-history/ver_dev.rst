@@ -9,8 +9,14 @@ Compatibility Improvement.
 
 - **New**
 
-  1. added version info function: `sp.show_version()`.
-  2. incorporated SUEWS table converter into the utility bundle.
+  1. Added version info function: `show_version`.
+  2. Added command line tools:
+
+    - `SUEWS-table-converter`: convert input tables
+        from older versions to newer ones (one-way only).
+
+    - `SUEWS`: SuPy wrapper to mimic SUEWS-binary-based simulation.
+
 
 - **Improvement**
 
@@ -23,7 +29,8 @@ Compatibility Improvement.
 
 - **Fix**
 
-  None.
+  1. Fixed a bug in writing out multi-grid output files
+  caused by incorrect dropping of temporal information by pandas .
 
 - **Known issue**
 

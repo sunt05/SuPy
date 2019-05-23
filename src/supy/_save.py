@@ -87,6 +87,9 @@ def save_df_grid_group(df_grid_group, grid, group, site='test', dir_save='.'):
     # processing path
     path_dir = Path(dir_save)
 
+    # pandas bug here: monotonic datetime index would lose `freq` once `pd.concat`ed
+    if df_grid_group.shape[0]>0:
+        df_grid_group.index.freq = df_grid_group.index[1]-df_grid_group.index[0]
     # output frequency in min
     freq_min = int(df_grid_group.index.freq.delta.total_seconds()/60)
     # staring year
@@ -97,7 +100,7 @@ def save_df_grid_group(df_grid_group, grid, group, site='test', dir_save='.'):
     # 'DailyState_1440' will be trimmed
     file_out = file_out.replace('DailyState_1440', 'DailyState')
     path_out = path_dir/file_out
-    print('writing out: {path_out}'.format(path_out=path_out))
+    # print('writing out: {path_out}'.format(path_out=path_out))
     import time
     t_start = time.time()
     # generate df_save with datetime info prepended to each row
@@ -212,7 +215,7 @@ def save_df_state(
     # trim filename if site == ''
     file_state_save = file_state_save.replace('_.csv', '.csv')
     path_state_save = path_dir_save/file_state_save
-    print('writing out: {path_out}'.format(path_out=path_state_save))
+    # print('writing out: {path_out}'.format(path_out=path_state_save))
     df_state.to_csv(path_state_save)
     return path_state_save
 

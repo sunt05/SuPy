@@ -46,7 +46,7 @@ setup(name='supy',
       ],
       entry_points={
           'console_scripts':[
-            #   'SUEWS=supy.cmd.SUEWS:SUEWS',
+              'SUEWS=supy.cmd.SUEWS:SUEWS',
               'SUEWS-table-converter=supy.cmd.table_converter:convert_table_cmd',
               ]},
       include_package_data=True,

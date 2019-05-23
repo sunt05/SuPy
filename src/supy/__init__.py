@@ -17,7 +17,7 @@ from ._supy_module import (init_supy, load_SampleData,
 
 
 # utilities
-from . import util
+from . import util,cmd
 
 
 # version info

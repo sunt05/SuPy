@@ -260,7 +260,6 @@ def load_SampleData() -> Tuple[pandas.DataFrame, pandas.DataFrame]:
 # 2. compact wrapper for running a whole simulation
 # # main calculation
 # input as DataFrame
-
 def run_supy(
         df_forcing: pandas.DataFrame,
         df_state_init: pandas.DataFrame,
@@ -298,7 +297,7 @@ def run_supy(
     '''
 
     # save df_init without changing its original data
-    # df.copy() in pandas does work as a standard python deepcopy
+    # df.copy() in pandas works as a standard python deepcopy
     df_init = df_state_init.copy()
 
     # retrieve the last temporal record as `df_init`
@@ -546,7 +545,7 @@ def save_supy(
     else:
         # save as supy csv for later use
         path_state_save = save_df_state(df_state_final, site, path_dir_save)
+        # update list_path_save
+        list_path_save.append(path_state_save)
 
-    # update list_path_save
-    list_path_save.append(path_state_save)
     return list_path_save
