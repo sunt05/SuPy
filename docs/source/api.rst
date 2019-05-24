@@ -46,9 +46,7 @@ Gap Filling
 .. autosummary::
     :toctree: api/supy.util
 
-    loc_gap
     fill_gap_all
-    fill_gap_one
 
 Plotting
 ~~~~~~~~
