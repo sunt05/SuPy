@@ -101,7 +101,6 @@ def plot_comp(df_var, fig=None, ax=None):
             '\n' + 'MAE={0:.2f}'.format(mae) +
             '\n' + 'n={}'.format(df_var.shape[0])
         },
-        **kwargs
     )
 
     ax.legend()
