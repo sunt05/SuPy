@@ -1,11 +1,11 @@
 .. _new_latest:
 
-.. _new_ver_dev:
+.. _new_20190524:
 
-Version ver_dev
+Version 2019.5.24
 ======================================================
 
-Compatibility Improvement.
+Spring house cleaning with long-await command line tools (more on the way!).
 
 - **New**
 
@@ -33,7 +33,7 @@ Compatibility Improvement.
 
 - **Known issue**
 
-  None
+  ESTM is not supported yet.
 
 
 
