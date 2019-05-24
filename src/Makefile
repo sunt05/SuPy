@@ -42,7 +42,9 @@ test:
 clean:
 	rm -rf ${MODULE}/*.so ${MODULE}/*.pyc ${MODULE}/__pycache__ ${MODULE}/*.dSYM
 	rm -rf ${MODULE}/test/*.pyc ${MODULE}/test/__pycache__
-
+	rm -rf ${MODULE}/util/*.pyc ${MODULE}/util/__pycache__
+	rm -rf ${MODULE}/cmd/*.pyc ${MODULE}/cmd/__pycache__
+	rm -rf build dist
 
 # upload wheels to pypi using twine
 upload:

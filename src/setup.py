@@ -26,7 +26,9 @@ setup(name='supy',
           [
               'sample_run/*',
               'sample_run/Input/*',
-              '*.json'
+              '*.json',
+              'util/*',
+              'cmd/*',
           ]
       },
       # distclass=BinaryDistribution,
