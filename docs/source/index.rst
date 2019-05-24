@@ -54,7 +54,7 @@ SuPy: SUEWS that speaks Python
 
 - **How to get SuPy?**
 
-  SuPy is available on all major platforms (macOS, Windows, Linux) for Python 3.6+
+  SuPy is available on all major platforms (macOS, Windows, Linux) for Python 3.6+ (64-bit only)
   via `PyPI <https://pypi.org/project/supy/>`_:
 
   .. code-block:: shell
