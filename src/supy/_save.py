@@ -1,12 +1,10 @@
-# %%
+import f90nml
 from typing import Tuple
-from .supy_post import resample_output
-from .supy_load import load_SUEWS_dict_ModConfig
+from ._post import resample_output
+from ._load import load_SUEWS_dict_ModConfig, dict_InitCond_out
 import os
 import pandas as pd
 from pathlib import Path
-
-# %%
 
 
 def gen_df_save(df_grid_group: pd.DataFrame)->pd.DataFrame:
@@ -38,7 +36,6 @@ def gen_df_save(df_grid_group: pd.DataFrame)->pd.DataFrame:
         'd').total_seconds()/(24*60*60)
     df_save = pd.concat([df_datetime, df_grid_group], axis=1)
     return df_save
-
 
 
 def format_df_save(df_save):
@@ -90,6 +87,9 @@ def save_df_grid_group(df_grid_group, grid, group, site='test', dir_save='.'):
     # processing path
     path_dir = Path(dir_save)
 
+    # pandas bug here: monotonic datetime index would lose `freq` once `pd.concat`ed
+    if df_grid_group.shape[0]>0:
+        df_grid_group.index.freq = df_grid_group.index[1]-df_grid_group.index[0]
     # output frequency in min
     freq_min = int(df_grid_group.index.freq.delta.total_seconds()/60)
     # staring year
@@ -100,7 +100,7 @@ def save_df_grid_group(df_grid_group, grid, group, site='test', dir_save='.'):
     # 'DailyState_1440' will be trimmed
     file_out = file_out.replace('DailyState_1440', 'DailyState')
     path_out = path_dir/file_out
-    print('writing out: {path_out}'.format(path_out=path_out))
+    # print('writing out: {path_out}'.format(path_out=path_out))
     import time
     t_start = time.time()
     # generate df_save with datetime info prepended to each row
@@ -189,7 +189,6 @@ def save_df_output(
     return list_path_save
 
 
-# %%
 # save model state for restart runs
 def save_df_state(
         df_state: pd.DataFrame,
@@ -216,12 +215,11 @@ def save_df_state(
     # trim filename if site == ''
     file_state_save = file_state_save.replace('_.csv', '.csv')
     path_state_save = path_dir_save/file_state_save
-    print('writing out: {path_out}'.format(path_out=path_state_save))
+    # print('writing out: {path_out}'.format(path_out=path_state_save))
     df_state.to_csv(path_state_save)
     return path_state_save
 
 
-# %%
 # get information for saving results
 def get_save_info(path_runcontrol: str)->Tuple[int, Path, str]:
     '''get necessary information for saving supy results, which are (freq_s, dir_save, site)
@@ -258,3 +256,102 @@ def get_save_info(path_runcontrol: str)->Tuple[int, Path, str]:
         if not dir_save.exists():
             dir_save.mkdir()
         return freq_s, dir_save, site
+
+
+# dict for {nml_save:(df_state_var,index)}
+dict_init_nml = {
+    'dayssincerain': ('hdd_id', '(11,)'),
+    'temp_c0': ('hdd_id', '(8,)'),
+    'gdd_1_0': ('gdd_id', '(0,)'),
+    'gdd_2_0': ('gdd_id', '(1,)'),
+    'laiinitialevetr': ('lai_id', '(0,)'),
+    'laiinitialdectr': ('lai_id', '(1,)'),
+    'laiinitialgrass': ('lai_id', '(2,)'),
+    'albevetr0': ('albevetr_id', '0'),
+    'albdectr0': ('albdectr_id', '0'),
+    'albgrass0': ('albgrass_id', '0'),
+    'decidcap0': ('decidcap_id', '0'),
+    'porosity0': ('porosity_id', '0'),
+    'soilstorepavedstate': ('soilstore_id', '(0,)'),
+    'soilstorebldgsstate': ('soilstore_id', '(1,)'),
+    'soilstoreevetrstate': ('soilstore_id', '(2,)'),
+    'soilstoredectrstate': ('soilstore_id', '(3,)'),
+    'soilstoregrassstate': ('soilstore_id', '(4,)'),
+    'soilstorebsoilstate': ('soilstore_id', '(5,)'),
+    'pavedstate': ('state_id', '(0,)'),
+    'bldgsstate': ('state_id', '(1,)'),
+    'evetrstate': ('state_id', '(2,)'),
+    'dectrstate': ('state_id', '(3,)'),
+    'grassstate': ('state_id', '(4,)'),
+    'bsoilstate': ('state_id', '(5,)'),
+    'waterstate': ('state_id', '(6,)'),
+    'snowwaterpavedstate': ('snowwater', '(0,)'),
+    'snowwaterbldgsstate': ('snowwater', '(1,)'),
+    'snowwaterevetrstate': ('snowwater', '(2,)'),
+    'snowwaterdectrstate': ('snowwater', '(3,)'),
+    'snowwatergrassstate': ('snowwater', '(4,)'),
+    'snowwaterbsoilstate': ('snowwater', '(5,)'),
+    'snowwaterwaterstate': ('snowwater', '(6,)'),
+    'snowpackpaved': ('snowpack', '(0,)'),
+    'snowpackbldgs': ('snowpack', '(1,)'),
+    'snowpackevetr': ('snowpack', '(2,)'),
+    'snowpackdectr': ('snowpack', '(3,)'),
+    'snowpackgrass': ('snowpack', '(4,)'),
+    'snowpackbsoil': ('snowpack', '(5,)'),
+    'snowpackwater': ('snowpack', '(6,)'),
+    'snowfracpaved': ('snowfrac', '(0,)'),
+    'snowfracbldgs': ('snowfrac', '(1,)'),
+    'snowfracevetr': ('snowfrac', '(2,)'),
+    'snowfracdectr': ('snowfrac', '(3,)'),
+    'snowfracgrass': ('snowfrac', '(4,)'),
+    'snowfracbsoil': ('snowfrac', '(5,)'),
+    'snowfracwater': ('snowfrac', '(6,)'),
+    'snowdenspaved': ('snowdens', '(0,)'),
+    'snowdensbldgs': ('snowdens', '(1,)'),
+    'snowdensevetr': ('snowdens', '(2,)'),
+    'snowdensdectr': ('snowdens', '(3,)'),
+    'snowdensgrass': ('snowdens', '(4,)'),
+    'snowdensbsoil': ('snowdens', '(5,)'),
+    'snowdenswater': ('snowdens', '(6,)'),
+    'snowalb0': ('snowalb', '0'),
+}
+
+
+# save initcond namelist as SUEWS binary
+def save_initcond_nml(
+        df_state: pd.DataFrame,
+        site: str = '',
+        path_dir_save: Path = Path('.'),)->Path:
+    # get last time step
+    try:
+        tstep_last = df_state.index.levels[0].max()
+    except AttributeError:
+        print('incorrect structure detected; check if `df_state` is the final model state.')
+        return
+
+    # get year for filename formatting
+    year_last = tstep_last.year
+    # generate a df with records of the last tstep
+    df_state_last_tstep = df_state.loc[tstep_last]
+    # get grid list
+    list_grid = df_state_last_tstep.index
+
+    # list holder for paths written out in nml
+    list_path_nml = []
+    for grid in list_grid:
+        # generate nml filename
+        filename_out_grid = f'InitialConditions{site}{grid}_{year_last}_EndofRun.nml'
+        # derive a save path
+        path_nml = path_dir_save/filename_out_grid
+        # retrieve initcond values from `df_state_last_tstep`
+        nml = {
+            'InitialConditions': {
+                key: df_state_last_tstep.loc[grid, var]
+                for key, var in dict_init_nml.items()
+            }
+        }
+        # save nml
+        f90nml.write(nml, path_nml, force=True)
+            # f90nml.write(nml, nml_file,force=True)
+        list_path_nml.append(path_nml)
+    return list_path_nml

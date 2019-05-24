@@ -140,7 +140,7 @@
 .. option:: snow
 
     :Description:
-        Snow [mm]Required if `SnowUse` = 1
+        Snow cover fraction (0 – 1) [-] Required if `SnowUse` = 1
 
 
 .. option:: wdir

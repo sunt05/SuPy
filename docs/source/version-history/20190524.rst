@@ -1,0 +1,39 @@
+.. _new_latest:
+
+.. _new_20190524:
+
+Version 2019.5.24
+======================================================
+
+Spring house cleaning with long-await command line tools (more on the way!).
+
+- **New**
+
+  1. Added version info function: `show_version`.
+  2. Added command line tools:
+
+    - `suews-run`: SuPy wrapper to mimic SUEWS-binary-based simulation.
+
+    - `suews-convert`: convert input tables from older versions to newer ones (one-way only).
+
+
+- **Improvement**
+
+  None.
+
+- **Changes**
+
+  None.
+
+
+- **Fix**
+
+  1. Fixed a bug in writing out multi-grid output files
+  caused by incorrect dropping of temporal information by pandas .
+
+- **Known issue**
+
+  ESTM is not supported yet.
+
+
+

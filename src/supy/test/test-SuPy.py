@@ -18,7 +18,7 @@ class TestSuPy(TestCase):
 
     # test if supy_driver can be connected
     def test_is_driver_connected(self):
-        s = sp.supy_run.list_var_output
+        s = sp._run.list_var_output
         self.assertTrue(isinstance(s[0], np.str_))
 
     # test if single-tstep mode can run

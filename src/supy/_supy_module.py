@@ -31,23 +31,26 @@ import pathlib
 import numpy as np
 import pandas as pd
 
-from .supy_env import path_supy_module
-from .supy_load import (load_InitialCond_grid_df, load_SUEWS_dict_ModConfig,
-                        load_SUEWS_Forcing_ESTM_df_raw,
-                        load_SUEWS_Forcing_met_df_raw,
-                        load_df_state,
-                        resample_forcing_met,
-                        resample_linear)
-from .supy_post import pack_df_output, pack_df_output_array, pack_df_state
-from .supy_run import (pack_df_state_final, pack_grid_dict, suews_cal_tstep,
-                       suews_cal_tstep_multi)
-from .supy_save import get_save_info, save_df_output, save_df_state
+from ._env import path_supy_module
+from ._load import (load_InitialCond_grid_df,
+                    load_SUEWS_dict_ModConfig,
+                    load_SUEWS_Forcing_ESTM_df_raw,
+                    load_SUEWS_Forcing_met_df_raw,
+                    load_df_state,
+                    resample_forcing_met,
+                    resample_linear)
+from ._post import pack_df_output, pack_df_output_array, pack_df_state
+from ._run import (pack_df_state_final,
+                   pack_grid_dict,
+                   suews_cal_tstep,
+                   suews_cal_tstep_multi)
+from ._save import get_save_info, save_df_output, save_df_state, save_initcond_nml
 
 
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
 # @functools.lru_cache(maxsize=16)
-def init_supy(path_init: str)->pd.DataFrame:
+def init_supy(path_init: str) -> pd.DataFrame:
     '''Initialise supy by loading initial model states.
 
     Parameters
@@ -95,7 +98,14 @@ def init_supy(path_init: str)->pd.DataFrame:
         return df_state_init
 
 
-def load_forcing_grid(path_runcontrol: str, grid: int)->pd.DataFrame:
+# # TODO:
+# def load_forcing(path_pattern: str, grid: int = 0) -> pd.DataFrame:
+#     pass
+
+
+# TODO:
+# to be superseded by a more generic wrapper: load_forcing
+def load_forcing_grid(path_runcontrol: str, grid: int) -> pd.DataFrame:
     '''Load forcing data for a specific grid included in the index of `df_state_init </data-structure/supy-io.ipynb#df_state_init:-model-initial-states>`.
 
     Parameters
@@ -215,7 +225,8 @@ def load_forcing_grid(path_runcontrol: str, grid: int)->pd.DataFrame:
 
 
 # load sample data for quickly starting a demo run
-def load_SampleData()->Tuple[pandas.DataFrame, pandas.DataFrame]:
+# TODO: to deprecate this by renaming for case consistency: load_SampleData-->load_sample_data
+def load_SampleData() -> Tuple[pandas.DataFrame, pandas.DataFrame]:
     '''Load sample data for quickly starting a demo run.
 
     Returns
@@ -249,13 +260,12 @@ def load_SampleData()->Tuple[pandas.DataFrame, pandas.DataFrame]:
 # 2. compact wrapper for running a whole simulation
 # # main calculation
 # input as DataFrame
-
 def run_supy(
         df_forcing: pandas.DataFrame,
         df_state_init: pandas.DataFrame,
         save_state=False,
         n_yr=10,
-)->Tuple[pandas.DataFrame, pandas.DataFrame]:
+) -> Tuple[pandas.DataFrame, pandas.DataFrame]:
     '''Perform supy simulation.
 
     Parameters
@@ -287,7 +297,7 @@ def run_supy(
     '''
 
     # save df_init without changing its original data
-    # df.copy() in pandas does work as a standard python deepcopy
+    # df.copy() in pandas works as a standard python deepcopy
     df_init = df_state_init.copy()
 
     # retrieve the last temporal record as `df_init`
@@ -377,8 +387,11 @@ def run_supy(
                 # calculation at one step:
                 # series_state_end, series_output_tstep = suews_cal_tstep_df(
                 #     series_state_start, met_forcing_tstep)
-                dict_state_end, dict_output_tstep = suews_cal_tstep(
-                    dict_state_start, met_forcing_tstep)
+                try:
+                    dict_state_end, dict_output_tstep = suews_cal_tstep(
+                        dict_state_start, met_forcing_tstep)
+                except:
+                    raise RuntimeError('SUEWS kernel error')
 
                 # update output & model state at tstep for the current grid
                 dict_output.update({(tstep, grid): dict_output_tstep})
@@ -419,24 +432,6 @@ def run_supy(
             # use higher level wrapper that calculate at a `block` level
             # for better performance
 
-            # for grid in list_grid:
-            #     dict_state_start_grid = dict_state[(tstep_init, grid)]
-            #     dict_state_end, dict_output_array = suews_cal_tstep_multi(
-            #         dict_state_start_grid,
-            #         df_forcing)
-            #     # update output & model state at tstep for the current grid
-            #     dict_output.update({grid: dict_output_array})
-            #     # model state for the next run
-            #     dict_state.update({(tstep_final + freq, grid): dict_state_end})
-
-
-            # # parallel run of grid_list for better efficiency
-            # if os.name == 'nt':
-            #     if __name__ == '__main__':
-            #         p = Pool(min([len(list_grid), cpu_count()]))
-            # else:
-            #     p = Pool(min([len(list_grid), cpu_count()]))
-
             # # construct input list for `Pool.starmap`
             # construct input list for `dask.bag`
             list_input = [
@@ -451,7 +446,10 @@ def run_supy(
             list_res = db.from_sequence(list_input)\
                 .map(suews_cal_tstep_multi, df_forcing)\
                 .compute(scheduler=method_parallel)
-            list_state_end, list_output_array = zip(*list_res)
+            try:
+                list_state_end, list_output_array = zip(*list_res)
+            except:
+                raise RuntimeError('SUEWS kernel error')
 
             # collect output arrays
             dict_output = {
@@ -491,7 +489,7 @@ def save_supy(
         freq_s: int = 3600,
         site: str = '',
         path_dir_save: str = Path('.'),
-        path_runcontrol: str = None,)->list:
+        path_runcontrol: str = None,) -> list:
     '''Save SuPy run results to files
 
     Parameters
@@ -540,8 +538,14 @@ def save_supy(
     list_path_save = save_df_output(df_output, freq_s, site, path_dir_save)
 
     # save df_state
-    path_state_save = save_df_state(df_state_final, site, path_dir_save)
+    if path_runcontrol is not None:
+        # save as nml as SUEWS binary
+        list_path_nml = save_initcond_nml(df_state_final, site, path_dir_save)
+        list_path_save = list_path_save+list_path_nml
+    else:
+        # save as supy csv for later use
+        path_state_save = save_df_state(df_state_final, site, path_dir_save)
+        # update list_path_save
+        list_path_save.append(path_state_save)
 
-    # update list_path_save
-    list_path_save.append(path_state_save)
     return list_path_save

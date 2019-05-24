@@ -14,7 +14,7 @@ Tair,Air temperature [°C]
 pres,Barometric pressure [kPa]
 rain,Rainfall [mm]
 kdown,Incoming shortwave radiation [W |m^-2|] Must be > 0 W |m^-2|.
-snow,Snow [mm]Required if `SnowUse` = 1
+snow,Snow cover fraction (0 – 1) [-] Required if `SnowUse` = 1
 ldown,Incoming longwave radiation [W |m^-2|]
 fcld,Cloud fraction [tenths]
 Wuh,External water use [|m^3|]

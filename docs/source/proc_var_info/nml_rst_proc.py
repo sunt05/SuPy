@@ -10,8 +10,8 @@ os.getcwd()
 # %% [markdown]
 # ### filter input variables
 # %%
-set_input = sp.supy_load.set_var_input.copy()
-set_input.update(sp.supy_load.set_var_input_multitsteps)
+set_input = sp._load.set_var_input.copy()
+set_input.update(sp._load.set_var_input_multitsteps)
 df_init_sample, df_forcing_sample = sp.load_SampleData()
 set_input.difference_update(set(df_forcing_sample.columns))
 # set_input, len(set_input)
@@ -20,13 +20,13 @@ set_input.difference_update(set(df_forcing_sample.columns))
 # #### retrieve SUEWS-related variables
 
 # %%
-dict_var2SiteSelect = sp.supy_load.dict_var2SiteSelect
+dict_var2SiteSelect = sp._load.dict_var2SiteSelect
 
-dict_var_full = sp.supy_load.exp_dict_full(dict_var2SiteSelect)
+dict_var_full = sp._load.exp_dict_full(dict_var2SiteSelect)
 
 
 def extract_var_suews(dict_var_full, k):
-    x = sp.supy_load.flatten_list(dict_var_full[k])
+    x = sp._load.flatten_list(dict_var_full[k])
     x = np.unique(x)
     x = [
         xx for xx in x
@@ -60,8 +60,8 @@ set_site = set(
 # ### filter `runcontrol` related variables
 # %%
 # runcontrol variables for supy input
-path_runcontrol = sp.supy_env.path_supy_module / 'sample_run'/'Runcontrol.nml'
-dict_runcontrol = sp.supy_load.load_SUEWS_dict_ModConfig(
+path_runcontrol = sp._env.path_supy_module / 'sample_run'/'Runcontrol.nml'
+dict_runcontrol = sp._load.load_SUEWS_dict_ModConfig(
     path_runcontrol).copy()
 set_runcontrol = set(dict_runcontrol.keys())
 set_input_runcontrol = set_runcontrol.intersection(set_input)
@@ -71,7 +71,7 @@ set_input_runcontrol, len(set_input_runcontrol)
 # ### filter `initialcondition` related variables
 # %%
 # initcond variables for supy input
-dict_initcond = sp.supy_load.dict_InitCond_default.copy()
+dict_initcond = sp._load.dict_InitCond_default.copy()
 set_initcond = set(dict_initcond.keys())
 set_input_initcond = set_initcond.intersection(set_input)
 # set_input_initcond, len(set_input_initcond)
@@ -152,12 +152,12 @@ def choose_page(str_opt, set_site=set_site, set_runcontrol=set_runcontrol, set_i
 
 # %%
 def gen_url_option(
-    str_opt, 
-    set_site=set_site, 
-    set_runcontrol=set_runcontrol, 
-    set_initcond=set_initcond, 
+    str_opt,
+    set_site=set_site,
+    set_runcontrol=set_runcontrol,
+    set_initcond=set_initcond,
     source='docs'):
-    '''construct a URL for option based on source 
+    '''construct a URL for option based on source
 
     :param str_opt: option name, defaults to ''
     :param str_opt: str, optional

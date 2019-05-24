@@ -1,10 +1,9 @@
 from setuptools import setup
-from supy.version import __version__
-# from setuptools import Distribution
-# from numpy.distutils.core import setup
-# import platform
-# import glob
-# import os
+import pandas as pd
+
+ser_ver = pd.read_json('./supy/supy_version.json', typ='series')
+print(ser_ver)
+__version__ = f'{ser_ver.ver_milestone}.{ser_ver.ver_major}.{ser_ver.ver_minor}{ser_ver.ver_remark}'
 
 
 def readme():
@@ -27,7 +26,9 @@ setup(name='supy',
           [
               'sample_run/*',
               'sample_run/Input/*',
-              '*.json'
+              '*.json',
+              'util/*',
+              'cmd/*',
           ]
       },
       # distclass=BinaryDistribution,
@@ -36,13 +37,21 @@ setup(name='supy',
           'numpy>=1.15.2',
           'pandas>=0.23.4',
           'scipy',
-          'dask[complete]', #needs all dask and its dependencies
+          'dask[complete]',  # needs all dask and its dependencies
           'f90nml',
           'matplotlib',
           'seaborn',
           'atmosp',  # my own `atmosp` module forked from `atmos-python`
-          'supy_driver>=2018rc7'  # a separate f2py-based driver
+          'cdsapi',
+          'xarray',
+          'click', # cmd tool
+          'supy_driver>=2018rc8'  # a separate f2py-based driver
       ],
+      entry_points={
+          'console_scripts':[
+              'suews-run=supy.cmd.SUEWS:SUEWS',
+              'suews-convert=supy.cmd.table_converter:convert_table_cmd',
+              ]},
       include_package_data=True,
       test_suite='nose.collector',
       tests_require=['nose'],

@@ -11,8 +11,8 @@ import pandas as pd
 from dask import dataframe as dd
 from supy_driver import suews_driver as sd
 
-from .supy_env import path_supy_module
-from .supy_misc import path_insensitive
+from ._env import path_supy_module
+from ._misc import path_insensitive
 
 
 ########################################################################
@@ -1263,12 +1263,10 @@ def load_SUEWS_dict_ModConfig(path_runcontrol, dict_default=dict_RunControl_defa
 
 # initialise InitialCond_df with default values
 nan = -999.
-dict_InitCond_default = {
+# default initcond list when output as SUEWS binary
+dict_InitCond_out={
     'dayssincerain':  0,
-    # `temp_c0` defaults to daily mean air temperature of the first day
-    # 'temp_c0':  df_forcing_met['temp_c'].iloc[:(24 * nsh) - 1].mean(),
     'temp_c0':  10,
-    'leavesoutinitially':  int(nan),
     'gdd_1_0':  nan,
     'gdd_2_0':  nan,
     'laiinitialevetr':  nan,
@@ -1279,14 +1277,6 @@ dict_InitCond_default = {
     'albgrass0':  nan,
     'decidcap0':  nan,
     'porosity0':  nan,
-    'pavedstate':  0,
-    'bldgsstate':  0,
-    'evetrstate':  0,
-    'dectrstate':  0,
-    'grassstate':  0,
-    'bsoilstate':  0,
-    # 'waterstate':  df_gridSurfaceChar.at[grid, 'waterdepth'],
-    'waterstate':  10,
     'soilstorepavedstate':  nan,
     'soilstorebldgsstate':  nan,
     'soilstoreevetrstate':  nan,
@@ -1294,6 +1284,13 @@ dict_InitCond_default = {
     'soilstoregrassstate':  nan,
     'soilstorebsoilstate':  nan,
     'soilstorewaterstate': 0,
+    'pavedstate':  0,
+    'bldgsstate':  0,
+    'evetrstate':  0,
+    'dectrstate':  0,
+    'grassstate':  0,
+    'bsoilstate':  0,
+    'waterstate':  10,
     'snowinitially':  int(nan),
     'snowwaterpavedstate':  nan,
     'snowwaterbldgsstate':  nan,
@@ -1324,11 +1321,18 @@ dict_InitCond_default = {
     'snowdensbsoil':  nan,
     'snowdenswater':  nan,
     'snowalb0':  nan,
+}
+# extra items used in supy
+dict_InitCond_extra={
+    'leavesoutinitially':  int(nan),
     'qn1_av': 0,
     'qn1_s_av': 0,
     'dqndt': 0,
     'dqnsdt': 0,
 }
+# default items for supy initialisation
+dict_InitCond_default = dict_InitCond_extra.copy()
+dict_InitCond_default.update(dict_InitCond_out)
 
 # load initial conditions of all grids as a DataFrame
 
