@@ -1,5 +1,5 @@
 ###########################################################################
-# SUEWS for Python
+# SuPy: SUEWS that speaks Python
 # Authors:
 # Ting Sun, ting.sun@reading.ac.uk
 # History:

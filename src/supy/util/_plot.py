@@ -7,8 +7,8 @@ import seaborn as sns
 from scipy import stats
 
 
-def plot_day_clm(df_var, fig=None, ax=None, **kwargs):
-    """Short summary.
+def plot_day_clm(df_var, fig=None, ax=None):
+    """Produce a ensemble diurnal climatologies with uncertainties shown in inter-quartile ranges.
 
     Parameters
     ----------
@@ -60,13 +60,14 @@ def plot_day_clm(df_var, fig=None, ax=None, **kwargs):
 # comparison plot with 1:1 line added:
 
 
-def plot_comp(df_var, fig=None, ax=None, **kwargs):
-    """Short summary.
+def plot_comp(df_var, fig=None, ax=None):
+    """Produce a scatter plot with linear regression line to compare simulation results and observations.
 
     Parameters
     ----------
     df_var : pd.DataFrame
-        DataFrame containing variables to plot with datetime as index
+        DataFrame containing variables to plot with datetime as index.
+        Two columns, 'Obs' and 'Sim' for observations and simulation results, respectively, must exist.
 
     Returns
     -------
@@ -80,19 +81,9 @@ def plot_comp(df_var, fig=None, ax=None, **kwargs):
         fig = ax.get_figure()
     elif ax is None:
         ax = fig.gca()
-    # plt.clf()
-    # plt.cla()
-    # ax = sns.regplot(
-    #     x='Obs', y='Sim',
-    #     data=df_var,
-    #     fit_reg=True)
 
     # add regression expression
     df_var_fit = df_var.dropna(how='any')
-    # regr = linear_model.LinearRegression()
-    # val_x = df_var_fit['Obs'].values.reshape(-1, 1)
-    # val_y = df_var_fit['Sim'].values.reshape(-1, 1)
-    # regr.fit(val_x, val_y)
     val_x = df_var_fit['Obs']
     val_y = df_var_fit['Sim']
     slope, intercept, r_value, p_value, std_err = stats.linregress(
@@ -112,13 +103,8 @@ def plot_comp(df_var, fig=None, ax=None, **kwargs):
         },
         **kwargs
     )
-    # ax.plot(val_x, y_pred, color='red', linewidth=2,
-    #         label='r2= ' + str("%.3f" % r2) + '\n' +
-    #         'y=' + str("%.3f" % a[0][0]) + 'x+' + str("%.2f" % b[0]))
 
-    # ax.legend(fontsize=15)
     ax.legend()
-    # ax.set_title(var + '_' + title)
 
     # set equal plotting range
     x0, x1 = ax.get_xlim()
