@@ -1,5 +1,9 @@
 From,To,Action,File,Variable,Column,Value
 2018c,2019a,Rename_File,SUEWS_AnthropogenicHeat.txt,-999,-999,SUEWS_AnthropogenicEmission.txt
+2018c,2019a,Add,SUEWS_AnthropogenicHeat.txt,CO2PointSource,38,0
+2018c,2019a,Add,SUEWS_AnthropogenicHeat.txt,FcEF_v_kgkmWE,37,0.285
+2018c,2019a,Add,SUEWS_AnthropogenicHeat.txt,FcEF_v_kgkmWD,36,0.285
+2018c,2019a,Delete,SUEWS_AnthropogenicHeat.txt,FcEF_v_kgkm,-999,-999
 2018c,2019a,Add,SUEWS_AnthropogenicHeat.txt,FrPDDwe,31,1
 2018c,2019a,Add,SUEWS_AnthropogenicHeat.txt,MaxFCMetab,30,280
 2018c,2019a,Add,SUEWS_AnthropogenicHeat.txt,MinFCMetab,29,120
