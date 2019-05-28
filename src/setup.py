@@ -45,7 +45,7 @@ setup(name='supy',
           'cdsapi',
           'xarray',
           'click', # cmd tool
-          'supy_driver>=2018rc8'  # a separate f2py-based driver
+          'supy_driver>=2018rc8, <2019a1'  # a separate f2py-based driver
       ],
       entry_points={
           'console_scripts':[
