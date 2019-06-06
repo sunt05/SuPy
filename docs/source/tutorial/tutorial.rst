@@ -49,16 +49,3 @@ Admittedly, this header is somewhat misleading: given the enormity of Python, it
     * `Introduction to pandas <https://github.com/fonnesbeck/Bios8366/blob/master/notebooks/Section2_1-Introduction-to-Pandas.ipynb>`_
     * `pandas fundamentals <https://github.com/fonnesbeck/Bios8366/blob/master/notebooks/Section2_2-Pandas-Fundamentals.ipynb>`_
     * `Data Wrangling with pandas <https://github.com/fonnesbeck/Bios8366/blob/master/notebooks/Section2_3-Data-Wrangling-with-Pandas.ipynb>`_
-  
-  
-
-
-
-Jupyter Notebook
-----------------
-
-
-
-
-
-
