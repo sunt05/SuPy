@@ -14,7 +14,7 @@ To familiarise users with SuPy urban climate modelling and to demonstrate the fu
   external-interaction
 
 .. Note:: 
-    For users with less experience in Python, the following section is suggested to be gone through first before using SuPy.
+    Users with less experience in Python are suggested to go through the following section first before using SuPy.
 
 Python 101 before SuPy
 ----------------------
