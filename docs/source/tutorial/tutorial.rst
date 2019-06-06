@@ -3,8 +3,6 @@
 Tutorials
 ==================================
 
-Introduction
-------------
 
 To familiarise users with SuPy urban climate modelling and to demonstrate the functionality of SuPy, we provide the following tutorials in `Jupyter notebooks <https://jupyter.org/>`_:
 
