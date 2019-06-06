@@ -21,7 +21,21 @@ Python 101
 
 Admittedly, this header is somewhat misleading: given the enormity of Python, it's more challenging to get this section *correct* than coding SuPy per se. As such, here a collection of data analysis oriented links to useful Python resources is provided to help novices start using Python and **then** SuPy.
 
-- `The gist of Python <https://medium.com/@louwjlabuschagne/the-gist-of-python-ff5cc05c3318>`_
+- `The gist of Python <https://medium.com/@louwjlabuschagne/the-gist-of-python-ff5cc05c3318>`_: a quick introductory blog that covers Python basics for data analysis.
+
+- pandas: `pandas` is heavily used in SuPy and thus better understanding of pandas is essential in SuPy workflows.
+  
+  - introductory blogs:
+    
+    * `Quick dive into Pandas for Data Science <https://towardsdatascience.com/quick-dive-into-pandas-for-data-science-cc1c1a80d9c4>`_: introduction to pandas.
+    * `Basic Time Series Manipulation with Pandas <https://towardsdatascience.com/basic-time-series-manipulation-with-pandas-4432afee64ea>`_: pandas-based time series manipulation.
+    * `Introduction to Data Visualization in Python <https://towardsdatascience.com/introduction-to-data-visualization-in-python-89a54c97fbed>`_: plotting using pandas and related libraries.
+  
+  - a detailed tutorial in Jupyter Notebooks:
+
+    * `Introduction to pandas <https://github.com/fonnesbeck/Bios8366/blob/master/notebooks/Section2_1-Introduction-to-Pandas.ipynb>`_
+    * `pandas fundamentals <https://github.com/fonnesbeck/Bios8366/blob/master/notebooks/Section2_2-Pandas-Fundamentals.ipynb>`_
+    * `Data Wrangling with pandas <https://github.com/fonnesbeck/Bios8366/blob/master/notebooks/Section2_3-Data-Wrangling-with-Pandas.ipynb>`_
   
   
 
