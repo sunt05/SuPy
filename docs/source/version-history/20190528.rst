@@ -1,8 +1,8 @@
 .. _new_latest:
 
-.. _new_20190529:
+.. _new_20190528:
 
-Version 2019.5.29
+Version 2019.5.28
 ======================================================
 
 Spring house cleaning with long-await command line tools (more on the way!).
