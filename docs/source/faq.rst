@@ -69,7 +69,7 @@ Use the following code:
     import supy
     supy.show_version()
 
-.. note:: `show_version` is introduced after supy v2019.5.28; previous versions doesn't have this function.
+.. note:: `show_version` is only available after v2019.5.28.
 
 
 
