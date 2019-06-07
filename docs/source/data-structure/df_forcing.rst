@@ -5,6 +5,9 @@
 ============================
 
 
+
+.. note:: Data structure of ``df_forcing`` is explained :ref:`here </data-structure/supy-io.ipynb#df_forcing:-forcing-data>`.
+
 .. option:: RH
 
     :Description:

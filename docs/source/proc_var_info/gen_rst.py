@@ -120,6 +120,9 @@ def gen_group_dict(
     group,
     path_rst_base=Path('../data-structure/')
 )->dict:
+    '''generate dict of rst strings for df groups.
+
+    '''
 
     rst_title = f'''
 .. _df_{group}_var:
@@ -127,12 +130,21 @@ def gen_group_dict(
 ``df_{group}`` variables
 ============================
 
+
+'''
+    dict_info_group={
+        'output': '/data-structure/supy-io.ipynb#df_output:-model-output-results',
+        'forcing': '/data-structure/supy-io.ipynb#df_forcing:-forcing-data',
+        'state': '/data-structure/supy-io.ipynb#df_state_init:-model-initial-states',
+        }
+    rst_info_group = f'''
+.. note:: Data structure of ``df_{group}`` is explained :ref:`here <{dict_info_group[group]}>`.
 '''
 
     dict_group = {
         'path_rst': path_rst_base/('df_'+group+'.rst'),
         'path_df_csv': 'df_'+group+'.csv',
-        'rst_title': rst_title,
+        'rst_title': rst_title+rst_info_group,
     }
 
     return dict_group
