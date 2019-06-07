@@ -5,6 +5,9 @@
 ============================
 
 
+
+.. note:: Data structure of ``df_state`` is explained :ref:`here </data-structure/supy-io.ipynb#df_state_init:-model-initial-states>`.
+
 .. option:: aerodynamicresistancemethod
 
     :Description:

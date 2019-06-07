@@ -29,6 +29,7 @@ def subprocess_cmd(command):
     print(proc_stdout.decode())
 
 
+# run script to generate rst files for df_{group}
 subprocess_cmd('cd proc_var_info; python3 gen_rst.py')
 
 
