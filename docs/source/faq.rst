@@ -14,7 +14,7 @@ I cannot install SuPy following the docs, what is wrong there?
 
 please check if your environment meets the following requirements:
 
-1. operating system (OS):
+1. Operating system (OS):
 
   a. is it 64 bit? only 64 bit systems are supported.
 
@@ -23,14 +23,15 @@ please check if your environment meets the following requirements:
     - Windows 10 and above
     - macOS 10.13 and above
     - Linux: no restriction;
-      if SuPy cannot run on your specific Linux distribution, please report it to us.
+      If SuPy cannot run on your specific Linux distribution,
+      please report it to us.
 
-you can get the OS information with the following code:
+    You can get the OS information with the following code:
 
-.. code-block:: python
+    .. code-block:: python
 
-    import platform
-    platform.platform()
+        import platform
+        platform.platform()
 
 2. Python interpreter:
 
@@ -40,7 +41,6 @@ you can get the OS information with the following code:
 
     .. code-block:: python
 
-        # 32bit or 64bit mode?
         import struct
         struct.calcsize('P')*8
 
@@ -51,12 +51,13 @@ you can get the OS information with the following code:
     .. code-block:: python
 
         import sys
-        # version info
         sys.version
 
 If your environment doesn't meet the requirement by SuPy,
 please use a proper environment;
-otherwise, `please report your issue <new_issue>`.
+otherwise, `please report your issue`__.
+
+__ new_issue_
 
 How do I know which version of SuPy I am using?
 -----------------------------------------------
@@ -72,12 +73,12 @@ Use the following code:
 
 
 
-A `kernel died` exception happened, where did I go wrong?
------------------------------------------------------------
+A `kernel may have died` exception happened, where did I go wrong?
+------------------------------------------------------------------
 
 The issue is highly likely due to invalid input to SuPy and SUEWS kernel.
-We are trying to avoid such cases but unfortunately such issues might happen
-in some edge cases.
+We are trying to avoid such exceptions,
+but unfortunately they might happen in some edge cases.
 
 Please `report such issues to us`__ with your input files for debugging.
 Thanks!
@@ -88,7 +89,10 @@ __ new_issue_
 How can I upgrade SuPy to an up-to-date version?
 ------------------------------------------------
 Run the following code in your terminal:
-`python3 -m pip install supy --upgrade`
+
+.. code-block:: python
+
+    python3 -m pip install supy --upgrade
 
 
 
