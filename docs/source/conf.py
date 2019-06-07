@@ -181,13 +181,15 @@ rst_prolog = """
 .. |NotAvail| replace:: **Not available in this version.**
 .. |NotUsed| replace:: **Not used in this version.**
 
-.. _GitHub page: https://github.com/sunt05/SuPy/issues/new?template=issue-report.md
+.. _new_issue : https://github.com/sunt05/SuPy/issues/new?template=issue-report.md
 
 .. only:: html
 
     .. note::
 
-      Please report issues with the manual on the `GitHub page`_.
+      Please report issues with this page on the `GitHub page`__.
+
+    __ new_issue_
 
 
 """
