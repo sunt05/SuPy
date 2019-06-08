@@ -433,9 +433,8 @@ def dectime(timestamp):
     ) / 24
     return dectime
 
+
 # resample solar radiation by zenith correction and total amount distribution
-
-
 def resample_kdn(data_raw_kdn, tstep_mod, timezone, lat, lon, alt):
     # adjust solar radiation
     datetime_mid_local = data_raw_kdn.index - timedelta(
@@ -447,14 +446,26 @@ def resample_kdn(data_raw_kdn, tstep_mod, timezone, lat, lon, alt):
     sol_elev_reset[sol_elev <= 90] = 1.
     data_tstep_kdn_adj = sol_elev_reset * data_raw_kdn.copy()
 
-    # rescale daily amounts
+    # calculate daily mean values for later rescaling
     avg_raw = data_raw_kdn.resample('D').mean()
     avg_tstep = data_tstep_kdn_adj.resample('D').mean()
-    ratio_SWdown = (avg_raw / avg_tstep).reindex(
-        index=avg_tstep.index).resample(
-        '{tstep}S'.format(tstep=tstep_mod)).mean().fillna(method='pad')
-    data_tstep_kdn_adj = ratio_SWdown * \
-        data_tstep_kdn_adj.fillna(method='pad')
+    # calculate rescaling ratio
+    ratio_SWdown = (avg_raw / avg_tstep)
+    # replace nan with zero as `avg_tstep` might be zero if incomplete days included
+    ratio_SWdown = ratio_SWdown.fillna(0)
+    # conform to `avg_tstep` index for actual days used
+    ratio_SWdown = ratio_SWdown.reindex(index=avg_tstep.index)
+    # resample into `tstep_mod` steps
+    ratio_SWdown = ratio_SWdown.resample(f'{tstep_mod}S').mean()
+    # fill nan as the above resample will place valid values at the daily start
+    ratio_SWdown = ratio_SWdown.fillna(method='pad')
+    # conform to `data_tstep_kdn_adj` index for actual period used
+    ratio_SWdown = ratio_SWdown.reindex(index=data_tstep_kdn_adj.index)
+    # fill nan as the above resample will place valid values at the daily start
+    ratio_SWdown = ratio_SWdown.fillna(method='pad')
+    # rescale daily amounts
+    data_tstep_kdn_adj = ratio_SWdown * data_tstep_kdn_adj
+    # data_tstep_kdn_adj = data_tstep_kdn_adj.fillna(method='pad')
 
     return data_tstep_kdn_adj
 
@@ -513,6 +524,8 @@ def resample_linear_pd(data_raw, tstep_in, tstep_mod):
     return data_tstep
 
 # a more performant version of `resample_linear_pd` using explicit interpolation methods
+
+
 def resample_linear(data_raw, tstep_in, tstep_mod):
     # reset index as timestamps
     # shift by half-tstep_in to generate a time series with instantaneous
@@ -526,7 +539,7 @@ def resample_linear(data_raw, tstep_in, tstep_mod):
     f = interp1d(dt, data_raw_shift.values, axis=0)
     val_new = f(dt_new)
     # manual running mean for better performance
-    val_new_mvavg=0.5*(val_new[:-1]+val_new[1:])
+    val_new_mvavg = 0.5*(val_new[:-1]+val_new[1:])
     # construct a dataframe
     data_raw_tstep = pd.DataFrame(
         val_new_mvavg,
@@ -555,7 +568,6 @@ def resample_linear(data_raw, tstep_in, tstep_mod):
     data_tstep['it'] = ser_t.dt.hour
     data_tstep['imin'] = ser_t.dt.minute
     return data_tstep
-
 
 
 # resample input met foring to tstep required by model
@@ -604,7 +616,6 @@ def load_SUEWS_Forcing_met_df_raw(
 #         error_bad_lines=True
 #     ).dropna()
 #     return df_forcing_csv
-
 
 
 # caching loaded met df for better performance in initialisation
@@ -1264,7 +1275,7 @@ def load_SUEWS_dict_ModConfig(path_runcontrol, dict_default=dict_RunControl_defa
 # initialise InitialCond_df with default values
 nan = -999.
 # default initcond list when output as SUEWS binary
-dict_InitCond_out={
+dict_InitCond_out = {
     'dayssincerain':  0,
     'temp_c0':  10,
     'gdd_1_0':  nan,
@@ -1323,7 +1334,7 @@ dict_InitCond_out={
     'snowalb0':  nan,
 }
 # extra items used in supy
-dict_InitCond_extra={
+dict_InitCond_extra = {
     'leavesoutinitially':  int(nan),
     'qn1_av': 0,
     'qn1_s_av': 0,
@@ -1601,7 +1612,7 @@ def load_InitialCond_grid_df(path_runcontrol):
 
 
 # load df_state from csv
-def load_df_state(path_csv: Path)->pd.DataFrame:
+def load_df_state(path_csv: Path) -> pd.DataFrame:
     '''load `df_state` from `path_csv`
 
     Parameters
