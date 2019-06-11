@@ -14,7 +14,8 @@ To familiarise users with SuPy urban climate modelling and to demonstrate the fu
   external-interaction
 
 .. Note:: 
-    Users with less experience in Python are suggested to go through the following section first before using SuPy.
+    1. The Anaconda distribution is suggested as the scientific Python 3 environment for its completeness in necessary packages. Please follow the official guide for its `installation <https://docs.anaconda.com/anaconda/install/>`__.
+    2. Users with less experience in Python are suggested to go through the following section first before using SuPy.
 
 Python 101 before SuPy
 ----------------------
