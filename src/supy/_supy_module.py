@@ -344,7 +344,6 @@ def run_supy(
                 'wdir': 'wdir',
             }
         )
-    df_forcing.to_pickle('df_forcing.test')
     # reorder columns of df_forcing to comply with SUEWS kernel convention in receiving the input
     # TODO: this re-ordering can be later put into the planned input checker
     list_var_forcing = [
