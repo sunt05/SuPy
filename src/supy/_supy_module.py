@@ -315,8 +315,8 @@ def run_supy(
             ts5mindata_ir=0,
         )\
         .rename(
-            # remanae is a workaround to resolve naming inconsistency between
-            # suews fortran code interface and input forcing file hearders
+            # rename is a workaround to resolve naming inconsistency between
+            # suews fortran code interface and input forcing file headers
             columns={
                 '%' + 'iy': 'iy',
                 'id': 'id',
@@ -344,6 +344,39 @@ def run_supy(
                 'wdir': 'wdir',
             }
         )
+    df_forcing.to_pickle('df_forcing.test')
+    # reorder columns of df_forcing to comply with SUEWS kernel convention in receiving the input
+    # TODO: this re-ordering can be later put into the planned input checker
+    list_var_forcing = [
+        'iy',
+        'id',
+        'it',
+        'imin',
+        'qn1_obs',
+        'qh_obs',
+        'qe',
+        'qs_obs',
+        'qf_obs',
+        'avu1',
+        'avrh',
+        'temp_c',
+        'press_hpa',
+        'precip',
+        'avkdn',
+        'snow_obs',
+        'ldown_obs',
+        'fcld_obs',
+        'wu_m3',
+        'xsmd',
+        'lai_obs',
+        'kdiff',
+        'kdir',
+        'wdir',
+        'isec',
+        'metforcingdata_grid', 'ts5mindata_ir',
+    ]
+    df_forcing = df_forcing.loc[:, list_var_forcing]
+
     # grid list determined by initial states
     list_grid = df_init.index
 
@@ -472,7 +505,7 @@ def run_supy(
     # drop ESTM for now as it is not supported yet
     # select only those supported output groups
     df_output = df_output.loc[:, ['SUEWS', 'snow', 'DailyState']]
-    # trim multiindex based columns
+    # trim multi-index based columns
     df_output.columns = df_output.columns.remove_unused_levels()
 
     # pack final model states into a proper dataframe
