@@ -44,7 +44,7 @@ SuPy: SUEWS that speaks Python
 
     Meanwhile, the data analysis ability of SuPy is greatly enhanced
     by `the Python-based SciPy Stack <https://scipy.org>`_, notably `numpy`_ and `pandas`_.
-    More details are described in `our SuPy paper <https://www.geosci-model-dev-discuss.net/gmd-2019-39/>`_.
+    More details are described in `our SuPy paper <https://doi.org/10.5194/gmd-12-2781-2019>`_.
 
 
 .. _SUEWS: https://suews-docs.readthedocs.io/en/latest/
