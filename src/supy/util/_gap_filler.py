@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 
 # locate the first position of period with in-between gaps
@@ -46,8 +47,10 @@ def fill_gap_one(ser_test, freq='1D', pattern='010'):
 
     # calculate rescaling factor
     scale_fill = (ser_fill / ser_gap).median()
+    # correct scale_fill for edge cases
     scale_fill = (1 if abs(scale_fill) > 10 else scale_fill)
     scale_fill = (1 if abs(scale_fill) < 0.1 else scale_fill)
+    scale_fill = (1 if np.isnan(scale_fill) else scale_fill)
     ser_fill_gap = ser_fill / scale_fill
 
     # fill in gaps with rescaled values of the
