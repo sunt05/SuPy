@@ -342,8 +342,9 @@ def gen_epw(df_tmy: pd.DataFrame, path_epw=Path('./uTMY.epw'), ratio_dif_dir=0.1
     df_tmy['Day'] = df_tmy.index.day
     df_tmy['Hour'] = df_tmy.index.hour
     df_tmy['Minute'] = df_tmy.index.minute
+
     # convert air pressure to Pa
-    df_tmy['Atmospheric Station Pressure'] *= 1000
+    # df_tmy['Atmospheric Station Pressure'] *= 1000
 
     # df_TMY['Kdown'] = df_TMY['Kdown']*2.4
     # processing solar radiation components
