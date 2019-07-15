@@ -48,6 +48,25 @@ Gap Filling
 
     fill_gap_all
 
+OHM
+~~~~~~~~~~~
+
+.. autosummary::
+    :toctree: api/supy.util
+
+    derive_ohm_coef
+    sim_ohm
+
+Surface Conductance
+~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+    :toctree: api/supy.util
+
+    cal_gs_mod
+    cal_gs_obs
+    calib_g
+
 Plotting
 ~~~~~~~~
 
