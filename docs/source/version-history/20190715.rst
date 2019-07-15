@@ -1,0 +1,33 @@
+.. _new_latest:
+
+.. _new_20190715:
+
+Version 2019.7.15
+======================================================
+
+
+- **New**
+
+  1. added OHM related functions.
+  2. added surface conductance related functions.
+
+- **Improvement**
+
+  None.
+
+- **Changes**
+
+  None.
+
+
+- **Fix**
+
+  1. Fixed a bug in unit conversion for TMY data generation.
+
+
+- **Known issue**
+
+  ESTM is not supported yet.
+
+
+
