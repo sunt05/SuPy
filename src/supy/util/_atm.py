@@ -203,6 +203,22 @@ def cal_g_ta(ta_c, g5, tl=-10., th=55.):
 
 
 def cal_g_smd(smd, g6, wp=120.):
+    """Calculate soil moisture-related correction coefficient for surface conductance.
+
+    Parameters
+    ----------
+    smd : numeric
+        Soil moisture deficit [mm].
+    g6 : numeric
+        Soil moisture-related correction parameter.
+    wp : numeric, optional
+        Wilting point indicated as deficit [mm], by default 120.
+
+    Returns
+    -------
+    numeric
+        Soil moisture-related correction coefficient
+    """
     g_smd_nom = 1-np.exp(g6*(smd-wp))
     g_smd_denom = 1-np.exp(g6*(0-wp))
     g_smd = g_smd_nom/g_smd_denom
