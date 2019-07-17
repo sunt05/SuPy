@@ -342,46 +342,32 @@ def calib_g(df_fc_suews, g_max=33.1, lai_max=5.9, s1=5.56, method='cobyla', prms
     gs_obs = cal_gs_obs(df_obs.qh, df_obs.qe, df_obs.Tair,
                         df_obs.RH, df_obs.pres)
 
-    # # function for least_square optimiser
-    # def cal_prm_g(prm_g):
-    #     gs_mod = cal_gs_mod(df_obs.kdown, df_obs.Tair,
-    #                         df_obs.RH, df_obs.pres, df_obs.xsmd,
-    #                         df_obs.lai, prm_g, g_max, lai_max)
-    #     resid_gs = gs_obs - gs_mod
-    #     resid_gs = resid_gs.dropna()
-    #     return resid_gs
-
-    # initial guess
-    # calibrated model
-    # res_ls = least_squares(cal_prm_g,
-    #                        prm_g_0,
-    #                        bounds=(
-    #                            [0, 0, 0, 0, -10, 0],
-    #                            [np.inf, np.inf, np.inf, np.inf, np.inf, np.inf]))
-
-    # res = res_ls if debug else res_ls.x
-
-    def func_fit(kd, ta, rh, pa, smd, lai, g1, g2, g3, g4, g5, g6):
+    def func_fit_g(kd, ta, rh, pa, smd, lai, g1, g2, g3, g4, g5, g6):
         return cal_gs_mod(kd, ta, rh, pa, smd, lai,
                           [g1, g2, g3, g4, g5, g6],
                           g_max, lai_max, s1)
 
-    gmodel = Model(func_fit,
+    gmodel = Model(func_fit_g,
                    independent_vars=['lai', 'kd', 'ta', 'rh', 'pa', 'smd'],
                    param_names=['g1', 'g2', 'g3', 'g4', 'g5', 'g6'])
     if prms_init is None:
+        print('Preset parameters will be loaded!')
+        print('Please use with caution.')
         prms = Parameters()
         prm_g_0 = [3.5, 200.0, 0.13, 0.7, 30.0, 0.05]
         list_g = (Parameter(f'g{i+1}', prm_g_0[i], True, 0, None, None,
                             None) for i in range(6))
         prms.add_many(*list_g)
         # set specific bounds:
+        # g3, g4: specific humidity related
+        prms['g3'].set(min=0, max=1)
+        prms['g4'].set(min=0, max=1)
         # g5: within reasonable temperature ranges
         prms['g5'].set(min=-10, max=55)
         # g6: within sensitive ranges of SMD
         prms['g6'].set(min=.02, max=.1)
     else:
-        print('preset parameters loaded!')
+        print('User provided parameters are loaded!')
         prms = prms_init
 
     res_fit = gmodel.fit(
