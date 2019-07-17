@@ -45,9 +45,11 @@ setup(name='supy',
           'cdsapi',
           'xarray',
           'click', # cmd tool
-          'supy_driver>=2018rc8, <2019a1'  # a separate f2py-based driver
+          'lmfit', # optimiser
+          'supy_driver>=2018rc8, <2019a1',  # a separate f2py-based driver
       ],
       entry_points={
+        #   command line tools
           'console_scripts':[
               'suews-run=supy.cmd.SUEWS:SUEWS',
               'suews-convert=supy.cmd.table_converter:convert_table_cmd',
