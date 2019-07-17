@@ -1,4 +1,5 @@
-from scipy.optimize import least_squares
+from lmfit import Model, Parameters, Parameter
+# from scipy.optimize import least_squares
 import numpy as np
 import pandas as pd
 from atmosp import calculate as ac
@@ -49,7 +50,7 @@ def cal_rs_obs(qh, qe, ta, rh, pa):
     Returns
     -------
     numeric
-        Surface resistance based on observations [mm s-1]
+        Surface resistance based on observations [s m-1]
     """
 
     # surface resistance at water surface [s m-1]
@@ -107,7 +108,7 @@ def cal_gs_obs(qh, qe, ta, rh, pa):
         Surface conductance based on observations [mm s-1]
     """
     rs_obs = cal_rs_obs(qh, qe, ta, rh, pa)
-    gs_obs = 1/rs_obs
+    gs_obs = 1e3/rs_obs
     return gs_obs
 
 
@@ -196,13 +197,18 @@ def cal_g_ta(ta_c, g5, tl=-10., th=55.):
         Air temperature-related correction coefficient
     """
 
-
     tc = (th-g5)/(g5-tl)
-    g_ta = ((ta_c-tl)*(th-ta_c)**tc)/((g5-tl)*(th-g5)**tc)
+    # set a threshold for avoiding numeric difficulty
+    tc = np.min([tc, 20])
+    # g_ta = ((ta_c-tl)*(th-ta_c)**tc)/((g5-tl)*(th-g5)**tc)
+    g_ta_nom = (ta_c-tl)*np.power((th-ta_c), tc)
+    g_ta_denom = (g5-tl)*np.power((th-g5), tc)
+    g_ta = g_ta_nom/g_ta_denom
+
     return g_ta
 
 
-def cal_g_smd(smd, g6, wp=120.):
+def cal_g_smd(smd, g6, s1=5.56):
     """Calculate soil moisture-related correction coefficient for surface conductance.
 
     Parameters
@@ -211,21 +217,24 @@ def cal_g_smd(smd, g6, wp=120.):
         Soil moisture deficit [mm].
     g6 : numeric
         Soil moisture-related correction parameter.
-    wp : numeric, optional
-        Wilting point indicated as deficit [mm], by default 120.
+    s1 : numeric, optional
+        Wilting point (WP=s1/g6, indicated as deficit [mm]) related parameter, by default 5.56
 
     Returns
     -------
     numeric
         Soil moisture-related correction coefficient
     """
+    # Wilting point calculated following SUEWS
+    wp = s1/g6
+
     g_smd_nom = 1-np.exp(g6*(smd-wp))
     g_smd_denom = 1-np.exp(g6*(0-wp))
     g_smd = g_smd_nom/g_smd_denom
     return g_smd
 
 
-def cal_gs_mod(kd, ta_k, rh, pa, smd, lai, g_cst, g_max=30., lai_max=6.):
+def cal_gs_mod(kd, ta_k, rh, pa, smd, lai, g_cst, g_max=30., lai_max=6., s1=5.56):
     """Model surface conductance/resistance using phenology and atmospheric forcing conditions.
 
     Parameters
@@ -252,6 +261,9 @@ def cal_gs_mod(kd, ta_k, rh, pa, smd, lai, g_cst, g_max=30., lai_max=6.):
         Maximum surface conductance [mm s-1], by default 30
     lai_max : numeric, optional
         Maximum LAI [m2 m-2], by default 6
+    s1 : numeric, optional
+        Wilting point (WP=s1/g6, indicated as deficit [mm]) related parameter, by default 5.56
+
 
     Returns
     -------
@@ -260,6 +272,7 @@ def cal_gs_mod(kd, ta_k, rh, pa, smd, lai, g_cst, g_max=30., lai_max=6.):
     """
 
     # broadcast g1 – g6
+    # print('g_cst', g_cst)
     g1, g2, g3, g4, g5, g6 = g_cst
     # print(g1, g2, g3, g4, g5, g6)
     # lai related
@@ -279,7 +292,7 @@ def cal_gs_mod(kd, ta_k, rh, pa, smd, lai, g_cst, g_max=30., lai_max=6.):
     g_ta = cal_g_ta(ta_c, g5)
     # print('g_ta', g_ta)
     # smd related
-    g_smd = cal_g_smd(smd, g6)
+    g_smd = cal_g_smd(smd, g6, s1)
     # print('g_smd', g_smd)
     # combine all corrections
     gs_c = g_lai*g_kd*g_dq*g_ta*g_smd
@@ -288,8 +301,8 @@ def cal_gs_mod(kd, ta_k, rh, pa, smd, lai, g_cst, g_max=30., lai_max=6.):
     return gs
 
 
-def calib_g(df_fc_suews, g_max=30., lai_max=6., debug=False):
-    """Calibrate parameters for modelling surface conductance over vegetated surfaces.
+def calib_g(df_fc_suews, g_max=33.1, lai_max=5.9, s1=5.56, method='cobyla', prms_init=None, debug=False):
+    """Calibrate parameters for modelling surface conductance over vegetated surfaces using `LMFIT <https://lmfit.github.io/lmfit-py/model.html>`.
 
     Parameters
     ----------
@@ -299,41 +312,94 @@ def calib_g(df_fc_suews, g_max=30., lai_max=6., debug=False):
         Maximum surface conductance [mm s-1], by default 30
     lai_max : numeric, optional
         Maximum LAI [m2 m-2], by default 6
+    s1 : numeric, optional
+        Wilting point (WP=s1/g6, indicated as deficit [mm]) related parameter, by default 5.56
+    method: str, optional
+        Method used in minimisation by `lmfit.minimize`: details refer to its `method<lmfit:minimize>`.
+    prms_init: lmfit.Parameters
+        Initial parameters for calibration
     debug : bool, optional
-        Option to output final calibrated `scipy.least_squares`, by default False
+        Option to output final calibrated `ModelResult <lmfit:ModelResult>`, by default False
 
     Returns
     -------
-    `numpy.array`, or `scipy.least_squares` if `debug==True`
-        Calibrated parameters for surface conductance:
-        g1 (LAI related), g2 (solar radiation related),
-        g3 (humidity related), g4 (humidity related),
-        g5 (air temperature related),
-        g6 (soil moisture related)
+    dict, or `ModelResult <lmfit:ModelResult>` if `debug==True`
+        1. dict: {parameter_name -> best_fit_value}
+        2. `ModelResult`
+
+        Note:
+            Parameters for surface conductance:
+            g1 (LAI related), g2 (solar radiation related),
+            g3 (humidity related), g4 (humidity related),
+            g5 (air temperature related),
+            g6 (soil moisture related)
     """
 
-    df_obs = df_fc_suews.copy()
+    df_obs = df_fc_suews.copy().dropna()
     df_obs.pres *= 100
     df_obs.Tair += 273.15
 
-    # function for least_square optimiser
-    def cal_prm_g(prm_g):
-        gs_obs = cal_gs_obs(df_obs.qh, df_obs.qe, df_obs.Tair,
-                            df_obs.RH, df_obs.pres)
-        gs_mod = cal_gs_mod(df_obs.kdown, df_obs.Tair,
-                            df_obs.RH, df_obs.pres, df_obs.xsmd,
-                            df_obs.lai, prm_g, g_max, lai_max)
-        resid_gs = gs_obs - gs_mod
-        resid_gs = resid_gs.dropna()
-        return resid_gs
+    gs_obs = cal_gs_obs(df_obs.qh, df_obs.qe, df_obs.Tair,
+                        df_obs.RH, df_obs.pres)
+
+    # # function for least_square optimiser
+    # def cal_prm_g(prm_g):
+    #     gs_mod = cal_gs_mod(df_obs.kdown, df_obs.Tair,
+    #                         df_obs.RH, df_obs.pres, df_obs.xsmd,
+    #                         df_obs.lai, prm_g, g_max, lai_max)
+    #     resid_gs = gs_obs - gs_mod
+    #     resid_gs = resid_gs.dropna()
+    #     return resid_gs
 
     # initial guess
-    prm_g_0 = [3.5, 200.0, 0.13, 0.7, 30.0, 0.05]
     # calibrated model
-    res_ls = least_squares(cal_prm_g,
-                           prm_g_0,
-                           bounds=([0, 0, 0, 0, 0, 0], np.inf))
+    # res_ls = least_squares(cal_prm_g,
+    #                        prm_g_0,
+    #                        bounds=(
+    #                            [0, 0, 0, 0, -10, 0],
+    #                            [np.inf, np.inf, np.inf, np.inf, np.inf, np.inf]))
 
-    res = res_ls if debug else res_ls.x
+    # res = res_ls if debug else res_ls.x
+
+    def func_fit(kd, ta, rh, pa, smd, lai, g1, g2, g3, g4, g5, g6):
+        return cal_gs_mod(kd, ta, rh, pa, smd, lai,
+                          [g1, g2, g3, g4, g5, g6],
+                          g_max, lai_max, s1)
+
+    gmodel = Model(func_fit,
+                   independent_vars=['lai', 'kd', 'ta', 'rh', 'pa', 'smd'],
+                   param_names=['g1', 'g2', 'g3', 'g4', 'g5', 'g6'])
+    if prms_init is None:
+        prms = Parameters()
+        prm_g_0 = [3.5, 200.0, 0.13, 0.7, 30.0, 0.05]
+        list_g = (Parameter(f'g{i+1}', prm_g_0[i], True, 0, None, None,
+                            None) for i in range(6))
+        prms.add_many(*list_g)
+        # set specific bounds:
+        # g5: within reasonable temperature ranges
+        prms['g5'].set(min=-10, max=55)
+        # g6: within sensitive ranges of SMD
+        prms['g6'].set(min=.02, max=.1)
+    else:
+        print('preset parameters loaded!')
+        prms = prms_init
+
+    res_fit = gmodel.fit(
+        gs_obs,
+        kd=df_obs.kdown,
+        ta=df_obs.Tair,
+        rh=df_obs.RH,
+        pa=df_obs.pres,
+        smd=df_obs.xsmd,
+        lai=df_obs.lai,
+        params=prms,
+        # useful ones: ['nelder', 'powell', 'cg', 'cobyla', 'bfgs', 'trust-tnc']
+        method=method,
+        #     nan_policy='omit',
+        verbose=True,
+    )
+
+    # provide full fitted model if debug == True otherwise only a dict with best fit parameters
+    res = res_fit if debug else res_fit.best_values
 
     return res
