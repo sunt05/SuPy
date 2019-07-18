@@ -15,6 +15,7 @@
 ###########################################################################
 
 
+import time
 import dask.bag as db
 # from multiprocessing import Pool, cpu_count, freeze_support
 
@@ -296,9 +297,20 @@ def run_supy(
 
     '''
 
+
+    # set up a timer for simulation time
+    start = time.time()
+
     # save df_init without changing its original data
     # df.copy() in pandas works as a standard python deepcopy
     df_init = df_state_init.copy()
+
+    # print some diagnostic info
+    print(f'No. of grids: {df_init.index.size}\n')
+    print(f'Simulation period:')
+    print(f'Start: {df_forcing.index[0]}')
+    print(f'End: {df_forcing.index[-1]}')
+    print('')
 
     # retrieve the last temporal record as `df_init`
     # if a `datetime` level existing in the index
@@ -372,7 +384,8 @@ def run_supy(
         'kdir',
         'wdir',
         'isec',
-        'metforcingdata_grid', 'ts5mindata_ir',
+        'metforcingdata_grid',
+        'ts5mindata_ir',
     ]
     df_forcing = df_forcing.loc[:, list_var_forcing]
 
@@ -509,6 +522,10 @@ def run_supy(
 
     # pack final model states into a proper dataframe
     df_state_final = pack_df_state_final(df_state_final, df_init)
+
+    # show simulation time
+    end = time.time()
+    print(f'Execution time: {(end - start):.1f}')
 
     return df_output, df_state_final
 
