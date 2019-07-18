@@ -308,8 +308,8 @@ def run_supy(
     # print some diagnostic info
     print(f'No. of grids: {df_init.index.size}\n')
     print(f'Simulation period:')
-    print(f'Start: {df_forcing.index[0]}')
-    print(f'End: {df_forcing.index[-1]}')
+    print(f'  Start: {df_forcing.index[0]}')
+    print(f'  End: {df_forcing.index[-1]}')
     print('')
 
     # retrieve the last temporal record as `df_init`
@@ -525,7 +525,7 @@ def run_supy(
 
     # show simulation time
     end = time.time()
-    print(f'Execution time: {(end - start):.1f}')
+    print(f'Execution time: {(end - start):.1f} s')
 
     return df_output, df_state_final
 
