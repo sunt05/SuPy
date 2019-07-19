@@ -680,7 +680,7 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
     idx_dt = pd.date_range(
         *df_forcing_met.iloc[[0, -1], :4].astype(int).astype(str).apply(
             lambda ser: ser.str.cat(sep=' '), axis=1).map(
-            lambda dt: pd.Timestamp.strptime(dt, '%Y %j %H %M')),
+            lambda dt: pd.to_datetime(dt, format='%Y %j %H %M')),
         periods=df_forcing_met.shape[0])
 
     df_forcing_met = df_forcing_met.set_index(idx_dt)

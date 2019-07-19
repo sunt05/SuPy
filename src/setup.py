@@ -35,7 +35,7 @@ setup(name='supy',
       ext_modules=[],
       install_requires=[
           'numpy>=1.15.2',
-          'pandas>=0.23.4',
+          'pandas>=0.25.0',
           'scipy',
           'dask[complete]',  # needs all dask and its dependencies
           'f90nml',
