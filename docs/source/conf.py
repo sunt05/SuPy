@@ -388,4 +388,5 @@ intersphinx_mapping = {
     'pandas': ('http://pandas.pydata.org/pandas-docs/stable/', None),
     'numpy': ('https://docs.scipy.org/doc/numpy/', None),
     'suews': ('https://suews-docs.readthedocs.io/en/latest/', None),
+    'lmfit': ('https://lmfit.github.io/lmfit-py/', None),
 }

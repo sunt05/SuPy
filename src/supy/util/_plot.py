@@ -39,8 +39,14 @@ def plot_day_clm(df_var, fig=None, ax=None):
     idx = mdates.date2num(idx)
 
     # calculate quartiles
-    quar_sel_pos_clm = grp_sdf_var.quantile(
-        [.75, .5, .25]).unstack().set_index(idx)
+    quar_sel_pos_clm = grp_sdf_var.apply(
+        lambda grp: grp.quantile([.75, .5, .25]))
+    # rearrangement
+    quar_sel_pos_clm = quar_sel_pos_clm.unstack()
+    # indexing with proper datetime
+    quar_sel_pos_clm = quar_sel_pos_clm.set_index(idx)
+    # quar_sel_pos_clm = grp_sdf_var.quantile(
+    #     [.75, .5, .25]).unstack().set_index(idx)
     # fig, ax = plt.subplots(1)
 
     for var in quar_sel_pos_clm.columns.levels[0]:
@@ -96,7 +102,7 @@ def plot_comp(df_var, fig=None, ax=None):
         ax=ax,
         fit_reg=True,
         line_kws={
-            'label': "y={0:.2f}x{1}{2:.2f}".format(slope, '+' if intercept>0 else '', intercept) +
+            'label': "y={0:.2f}x{1}{2:.2f}".format(slope, '+' if intercept > 0 else '', intercept) +
             '\n' + '$R^2$={0:.4f}'.format(r_value) +
             '\n' + 'MAE={0:.2f}'.format(mae) +
             '\n' + 'n={}'.format(df_var.shape[0])

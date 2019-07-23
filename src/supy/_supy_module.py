@@ -15,6 +15,7 @@
 ###########################################################################
 
 
+import time
 import dask.bag as db
 # from multiprocessing import Pool, cpu_count, freeze_support
 
@@ -296,9 +297,20 @@ def run_supy(
 
     '''
 
+
+    # set up a timer for simulation time
+    start = time.time()
+
     # save df_init without changing its original data
     # df.copy() in pandas works as a standard python deepcopy
     df_init = df_state_init.copy()
+
+    # print some diagnostic info
+    print(f'No. of grids: {df_init.index.size}\n')
+    print(f'Simulation period:')
+    print(f'  Start: {df_forcing.index[0]}')
+    print(f'  End: {df_forcing.index[-1]}')
+    print('')
 
     # retrieve the last temporal record as `df_init`
     # if a `datetime` level existing in the index
@@ -315,8 +327,8 @@ def run_supy(
             ts5mindata_ir=0,
         )\
         .rename(
-            # remanae is a workaround to resolve naming inconsistency between
-            # suews fortran code interface and input forcing file hearders
+            # rename is a workaround to resolve naming inconsistency between
+            # suews fortran code interface and input forcing file headers
             columns={
                 '%' + 'iy': 'iy',
                 'id': 'id',
@@ -344,6 +356,39 @@ def run_supy(
                 'wdir': 'wdir',
             }
         )
+    # reorder columns of df_forcing to comply with SUEWS kernel convention in receiving the input
+    # TODO: this re-ordering can be later put into the planned input checker
+    list_var_forcing = [
+        'iy',
+        'id',
+        'it',
+        'imin',
+        'qn1_obs',
+        'qh_obs',
+        'qe',
+        'qs_obs',
+        'qf_obs',
+        'avu1',
+        'avrh',
+        'temp_c',
+        'press_hpa',
+        'precip',
+        'avkdn',
+        'snow_obs',
+        'ldown_obs',
+        'fcld_obs',
+        'wu_m3',
+        'xsmd',
+        'lai_obs',
+        'kdiff',
+        'kdir',
+        'wdir',
+        'isec',
+        'metforcingdata_grid',
+        'ts5mindata_ir',
+    ]
+    df_forcing = df_forcing.loc[:, list_var_forcing]
+
     # grid list determined by initial states
     list_grid = df_init.index
 
@@ -472,11 +517,15 @@ def run_supy(
     # drop ESTM for now as it is not supported yet
     # select only those supported output groups
     df_output = df_output.loc[:, ['SUEWS', 'snow', 'DailyState']]
-    # trim multiindex based columns
+    # trim multi-index based columns
     df_output.columns = df_output.columns.remove_unused_levels()
 
     # pack final model states into a proper dataframe
     df_state_final = pack_df_state_final(df_state_final, df_init)
+
+    # show simulation time
+    end = time.time()
+    print(f'Execution time: {(end - start):.1f} s')
 
     return df_output, df_state_final
 
