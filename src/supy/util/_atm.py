@@ -333,6 +333,12 @@ def calib_g(df_fc_suews, g_max=33.1, lai_max=5.9, s1=5.56, method='cobyla', prms
             g3 (humidity related), g4 (humidity related),
             g5 (air temperature related),
             g6 (soil moisture related)
+
+    Note
+    ----
+    For calibration validity, turbulent fluxes, QH and QE, in `df_fc_suews` should ONLY be observations, i.e., interpolated values should be avoided.
+    To do so, please place `np.nan` as missing values for QH and QE.
+
     """
 
     df_obs = df_fc_suews.copy().dropna()
