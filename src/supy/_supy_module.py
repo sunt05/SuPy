@@ -527,7 +527,7 @@ def run_supy(
     # show simulation time
     end = time.time()
     print(f'Execution time: {(end - start):.1f} s')
-    print(f'====================')
+    print(f'====================\n')
 
     return df_output, df_state_final
 
