@@ -340,8 +340,8 @@ def calib_g(df_fc_suews, g_max=33.1, lai_max=5.9, s1=5.56, method='cobyla', prms
     To do so, please place `np.nan` as missing values for QH and QE.
 
     """
-
-    df_obs = df_fc_suews.copy().dropna()
+    list_var_sel = ['qh', 'qe', 'Tair', 'RH', 'pres', 'kdown', 'xsmd', 'lai']
+    df_obs = df_fc_suews[list_var_sel].copy().dropna()
     df_obs.pres *= 100
     df_obs.Tair += 273.15
 
@@ -376,14 +376,17 @@ def calib_g(df_fc_suews, g_max=33.1, lai_max=5.9, s1=5.56, method='cobyla', prms
         print('User provided parameters are loaded!')
         prms = prms_init
 
+    # pack into a DataFrame for filtering out nan
+    df_fit = pd.concat([gs_obs.rename('gs_obs'), df_obs], axis=1).dropna()
+
     res_fit = gmodel.fit(
-        gs_obs,
-        kd=df_obs.kdown,
-        ta=df_obs.Tair,
-        rh=df_obs.RH,
-        pa=df_obs.pres,
-        smd=df_obs.xsmd,
-        lai=df_obs.lai,
+        df_fit.gs_obs,
+        kd=df_fit.kdown,
+        ta=df_fit.Tair,
+        rh=df_fit.RH,
+        pa=df_fit.pres,
+        smd=df_fit.xsmd,
+        lai=df_fit.lai,
         params=prms,
         # useful ones: ['nelder', 'powell', 'cg', 'cobyla', 'bfgs', 'trust-tnc']
         method=method,
