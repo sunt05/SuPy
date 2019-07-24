@@ -666,8 +666,10 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
     # rename these columns to match variables via the driver interface
     df_forcing_met.columns = col_suews_met_forcing
 
-    # convert unit from kPa to hPa
-    df_forcing_met['pres'] *= 10
+    # # convert unit from kPa to hPa
+    # # move this conversion to simulation stage;
+    # # otherwise inconsistent with manual and previous SUEWS conversions
+    # df_forcing_met['pres'] *= 10
 
     # add `isec` for WRF-SUEWS interface
     df_forcing_met['isec'] = 0

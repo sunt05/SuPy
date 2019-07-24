@@ -318,6 +318,12 @@ def run_supy(
         idx_dt = df_init.index.get_level_values('datetime').unique()
         dt_last = idx_dt.max()
         df_init = df_init.loc[dt_last]
+
+    # convert unit from kPa to hPa
+    # moved from loading stage to this simulation stage;
+    # so it's consistent with manual and previous SUEWS conversions
+    df_forcing['pres'] *= 10
+
     # add placeholder variables for df_forcing
     # `metforcingdata_grid` and `ts5mindata_ir` are used by AnOHM and ESTM, respectively
     # they are now temporarily disabled in supy
@@ -356,6 +362,7 @@ def run_supy(
                 'wdir': 'wdir',
             }
         )
+
     # reorder columns of df_forcing to comply with SUEWS kernel convention in receiving the input
     # TODO: this re-ordering can be later put into the planned input checker
     list_var_forcing = [
