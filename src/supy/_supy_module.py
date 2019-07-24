@@ -217,7 +217,8 @@ def load_forcing_grid(path_runcontrol: str, grid: int) -> pd.DataFrame:
         # disable the AnOHM and ESTM components for now and for better performance
 
         # coerced precision here to prevent numerical errors inside Fortran
-        df_forcing = np.around(df_forcing_tstep, decimals=10)
+        df_forcing = df_forcing_tstep.round(10)
+
         # new columns for later use in main calculation
         df_forcing[['iy', 'id', 'it', 'imin']] = df_forcing[[
             'iy', 'id', 'it', 'imin']].astype(np.int64)
@@ -318,6 +319,7 @@ def run_supy(
         idx_dt = df_init.index.get_level_values('datetime').unique()
         dt_last = idx_dt.max()
         df_init = df_init.loc[dt_last]
+
     # add placeholder variables for df_forcing
     # `metforcingdata_grid` and `ts5mindata_ir` are used by AnOHM and ESTM, respectively
     # they are now temporarily disabled in supy
