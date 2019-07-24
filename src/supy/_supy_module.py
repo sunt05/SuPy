@@ -306,7 +306,6 @@ def run_supy(
     df_init = df_state_init.copy()
 
     # print some diagnostic info
-    print(f'No. of grids: {df_init.index.size}\n')
     print(f'Simulation period:')
     print(f'  Start: {df_forcing.index[0]}')
     print(f'  End: {df_forcing.index[-1]}')
@@ -391,6 +390,7 @@ def run_supy(
 
     # grid list determined by initial states
     list_grid = df_init.index
+    print(f'No. of grids: {list_grid.size}\n')
 
     # initialise dicts for holding results and model states
     dict_state = {}
