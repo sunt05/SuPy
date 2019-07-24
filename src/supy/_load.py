@@ -650,7 +650,8 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
         list_file_MetForcing,
         delim_whitespace=True,
         comment='!',
-        error_bad_lines=True
+        error_bad_lines=True,
+        assume_missing=True,
     )
     # convert to normal pandas dataframe
     df_forcing_met = dd_forcing_met.compute()
