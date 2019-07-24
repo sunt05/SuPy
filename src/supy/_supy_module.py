@@ -306,6 +306,7 @@ def run_supy(
     df_init = df_state_init.copy()
 
     # print some diagnostic info
+    print(f'====================')
     print(f'Simulation period:')
     print(f'  Start: {df_forcing.index[0]}')
     print(f'  End: {df_forcing.index[-1]}')
@@ -526,6 +527,7 @@ def run_supy(
     # show simulation time
     end = time.time()
     print(f'Execution time: {(end - start):.1f} s')
+    print(f'====================')
 
     return df_output, df_state_final
 
