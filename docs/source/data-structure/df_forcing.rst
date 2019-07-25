@@ -101,7 +101,7 @@
 .. option:: pres
 
     :Description:
-        Barometric pressure [kPa]
+        Barometric pressure [hPa]
 
 
 .. option:: qe
