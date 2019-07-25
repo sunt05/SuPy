@@ -71,6 +71,7 @@ SuPy: SUEWS that speaks Python
 
     * Add your development via `Pull Request <https://help.github.com/articles/about-pull-requests/>`_
     * Report issues via the `GitHub page <new_issue>`_.
+    * Cite `our SuPy paper <https://doi.org/10.5194/gmd-12-2781-2019>`_.
     * Provide suggestions and feedback.
 
 .. toctree::
