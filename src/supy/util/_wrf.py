@@ -126,7 +126,7 @@ def in_ipynb():
 def plot_reclassification(path_nml: str, path_save='LC-WRF-SUEWS.png',
                           width=800, height=360,
                           top=10, bottom=10, left=260, right=60):
-    """Plot Sankey Diagram to visualise the reclassification specified in `path_nml`
+    """Produce Sankey Diagram to visualise the reclassification specified in `path_nml`
 
     Parameters
     ----------
