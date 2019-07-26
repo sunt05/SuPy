@@ -43,6 +43,18 @@ list_cat_suews = [
 
 
 def extract_reclassification(path_nml: str) -> pd.DataFrame:
+    """Extract reclassification info from `path_nml` as a DataFrame.
+
+    Parameters
+    ----------
+    path_nml : str
+        Path to `namelist.suews`
+
+    Returns
+    -------
+    pd.DataFrame
+        Reclassification DataFrame with rows for WRF land covers while columns for SUEWS.
+    """
     df_lc = load_SUEWS_nml(path_nml).landuse
 
     ser_cat_suews = pd.Series(list_cat_suews, name='lc_suews')
@@ -114,6 +126,32 @@ def in_ipynb():
 def plot_reclassification(path_nml: str, path_save='LC-WRF-SUEWS.png',
                           width=800, height=360,
                           top=10, bottom=10, left=260, right=60):
+    """Plot Sankey Diagram to visualise the reclassification specified in `path_nml`
+
+    Parameters
+    ----------
+    path_nml : str
+        Path to `namelist.suews`
+    path_save : str, optional
+        Path to save Sankey diagram, by default 'LC-WRF-SUEWS.png'
+    width : int, optional
+        Width of diagram, by default 800
+    height : int, optional
+        Height of diagram, by default 360
+    top : int, optional
+        Top margin of diagram, by default 10
+    bottom : int, optional
+        Bottom margin of diagram, by default 10
+    left : int, optional
+        Left margin of diagram, by default 260
+    right : int, optional
+        Right margin of diagram, by default 60
+
+    Returns
+    -------
+    Sankey Diagram
+        Sankey Diagram showing the reclassification.
+    """
 
     # derive DataFrames required by Sankey
     df_flow, df_process = gen_df_sankey(path_nml)
