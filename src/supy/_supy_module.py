@@ -51,7 +51,7 @@ from ._save import get_save_info, save_df_output, save_df_state, save_initcond_n
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
 # @functools.lru_cache(maxsize=16)
-def init_supy(path_init: str, force_reload=False) -> pd.DataFrame:
+def init_supy(path_init: str, force_reload=True) -> pd.DataFrame:
     '''Initialise supy by loading initial model states.
 
     Parameters
@@ -62,7 +62,8 @@ def init_supy(path_init: str, force_reload=False) -> pd.DataFrame:
             * SuPy `df_state.csv`: a CSV file including model states produced by a SuPy run via :py:func:`supy.save_supy`
 
     force_reload: boolean, optional
-        Flag to force reload all initialisation files by clearing all cached states, with default value `False` (i.e., use cached states for faster initialisation).
+        Flag to force reload all initialisation files by clearing all cached states, with default value `True` (i.e., force reload all files).
+        Note: If the number of simulation grids is large (e.g., > 100), `force_reload=False` is strongly recommended for better performance.
 
 
     Returns
@@ -92,7 +93,8 @@ def init_supy(path_init: str, force_reload=False) -> pd.DataFrame:
     else:
         if path_init_x.suffix == '.nml':
             # SUEWS `RunControl.nml`:
-            df_state_init = load_InitialCond_grid_df(path_init_x)
+            df_state_init = load_InitialCond_grid_df(
+                path_init_x, force_reload=force_reload)
         elif path_init_x.suffix == '.csv':
             # SuPy `df_state.csv`:
             df_state_init = load_df_state(path_init_x)
