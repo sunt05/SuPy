@@ -51,7 +51,7 @@ from ._save import get_save_info, save_df_output, save_df_state, save_initcond_n
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
 # @functools.lru_cache(maxsize=16)
-def init_supy(path_init: str) -> pd.DataFrame:
+def init_supy(path_init: str, force_reload=False) -> pd.DataFrame:
     '''Initialise supy by loading initial model states.
 
     Parameters
@@ -60,6 +60,10 @@ def init_supy(path_init: str) -> pd.DataFrame:
         Path to a file that can initialise SuPy, which can be either of the follows:
             * SUEWS :ref:`RunControl.nml<suews:RunControl.nml>`: a namelist file for SUEWS configurations
             * SuPy `df_state.csv`: a CSV file including model states produced by a SuPy run via :py:func:`supy.save_supy`
+
+    force_reload: boolean, optional
+        Flag to force reload all initialisation files by clearing all cached states, with default value `False` (i.e., use cached states for faster initialisation).
+
 
     Returns
     -------
