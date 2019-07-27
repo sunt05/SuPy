@@ -1,13 +1,14 @@
-.. _new_20190717:
+.. _new_latest:
 
-Version 2019.7.17
+.. _new_20190726:
+
+Version 2019.7.26.dev0
 ======================================================
 
 
 - **New**
 
-  1. added OHM related functions.
-  2. added surface conductance related functions.
+  1. added WRF-SUEWS related functions.
 
 - **Improvement**
 
@@ -20,7 +21,7 @@ Version 2019.7.17
 
 - **Fix**
 
-  1. Fixed a bug in unit conversion for TMY data generation.
+  None.
 
 
 - **Known issue**

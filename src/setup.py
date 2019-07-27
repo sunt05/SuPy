@@ -46,6 +46,7 @@ setup(name='supy',
           'xarray',
           'click', # cmd tool
           'lmfit', # optimiser
+          'floweaver', # wrf reclassification Sankey chart
           'supy_driver>=2018rc8, <2019a1',  # a separate f2py-based driver
       ],
       entry_points={

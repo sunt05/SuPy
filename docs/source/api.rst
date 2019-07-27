@@ -67,6 +67,15 @@ Surface Conductance
     cal_gs_obs
     calib_g
 
+WRF-SUEWS
+~~~~~~~~~
+
+.. autosummary::
+    :toctree: api/supy.util
+
+    extract_reclassification
+    plot_reclassification
+
 Plotting
 ~~~~~~~~
 

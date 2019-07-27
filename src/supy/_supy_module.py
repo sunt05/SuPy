@@ -51,7 +51,7 @@ from ._save import get_save_info, save_df_output, save_df_state, save_initcond_n
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
 # @functools.lru_cache(maxsize=16)
-def init_supy(path_init: str) -> pd.DataFrame:
+def init_supy(path_init: str, force_reload=True) -> pd.DataFrame:
     '''Initialise supy by loading initial model states.
 
     Parameters
@@ -60,6 +60,11 @@ def init_supy(path_init: str) -> pd.DataFrame:
         Path to a file that can initialise SuPy, which can be either of the follows:
             * SUEWS :ref:`RunControl.nml<suews:RunControl.nml>`: a namelist file for SUEWS configurations
             * SuPy `df_state.csv`: a CSV file including model states produced by a SuPy run via :py:func:`supy.save_supy`
+
+    force_reload: boolean, optional
+        Flag to force reload all initialisation files by clearing all cached states, with default value `True` (i.e., force reload all files).
+        Note: If the number of simulation grids is large (e.g., > 100), `force_reload=False` is strongly recommended for better performance.
+
 
     Returns
     -------
@@ -88,7 +93,8 @@ def init_supy(path_init: str) -> pd.DataFrame:
     else:
         if path_init_x.suffix == '.nml':
             # SUEWS `RunControl.nml`:
-            df_state_init = load_InitialCond_grid_df(path_init_x)
+            df_state_init = load_InitialCond_grid_df(
+                path_init_x, force_reload=force_reload)
         elif path_init_x.suffix == '.csv':
             # SuPy `df_state.csv`:
             df_state_init = load_df_state(path_init_x)
@@ -217,7 +223,8 @@ def load_forcing_grid(path_runcontrol: str, grid: int) -> pd.DataFrame:
         # disable the AnOHM and ESTM components for now and for better performance
 
         # coerced precision here to prevent numerical errors inside Fortran
-        df_forcing = np.around(df_forcing_tstep, decimals=10)
+        df_forcing = df_forcing_tstep.round(10)
+
         # new columns for later use in main calculation
         df_forcing[['iy', 'id', 'it', 'imin']] = df_forcing[[
             'iy', 'id', 'it', 'imin']].astype(np.int64)
@@ -306,7 +313,7 @@ def run_supy(
     df_init = df_state_init.copy()
 
     # print some diagnostic info
-    print(f'No. of grids: {df_init.index.size}\n')
+    print(f'====================')
     print(f'Simulation period:')
     print(f'  Start: {df_forcing.index[0]}')
     print(f'  End: {df_forcing.index[-1]}')
@@ -318,6 +325,7 @@ def run_supy(
         idx_dt = df_init.index.get_level_values('datetime').unique()
         dt_last = idx_dt.max()
         df_init = df_init.loc[dt_last]
+
     # add placeholder variables for df_forcing
     # `metforcingdata_grid` and `ts5mindata_ir` are used by AnOHM and ESTM, respectively
     # they are now temporarily disabled in supy
@@ -391,6 +399,7 @@ def run_supy(
 
     # grid list determined by initial states
     list_grid = df_init.index
+    print(f'No. of grids: {list_grid.size}\n')
 
     # initialise dicts for holding results and model states
     dict_state = {}
@@ -526,6 +535,7 @@ def run_supy(
     # show simulation time
     end = time.time()
     print(f'Execution time: {(end - start):.1f} s')
+    print(f'====================\n')
 
     return df_output, df_state_final
 

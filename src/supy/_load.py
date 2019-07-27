@@ -523,9 +523,8 @@ def resample_linear_pd(data_raw, tstep_in, tstep_mod):
 
     return data_tstep
 
+
 # a more performant version of `resample_linear_pd` using explicit interpolation methods
-
-
 def resample_linear(data_raw, tstep_in, tstep_mod):
     # reset index as timestamps
     # shift by half-tstep_in to generate a time series with instantaneous
@@ -607,15 +606,6 @@ def load_SUEWS_Forcing_met_df_raw(
         path_input, forcingfile_met_pattern)
     return df_forcing_met
 
-# # helper function to load a single forcing file
-# def load_forcing_csv(fileX):
-#     df_forcing_csv = pd.read_csv(
-#         fileX,
-#         delim_whitespace=True,
-#         comment='!',
-#         error_bad_lines=True
-#     ).dropna()
-#     return df_forcing_csv
 
 
 # caching loaded met df for better performance in initialisation
@@ -650,7 +640,8 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
         list_file_MetForcing,
         delim_whitespace=True,
         comment='!',
-        error_bad_lines=True
+        error_bad_lines=True,
+        assume_missing=True,
     )
     # convert to normal pandas dataframe
     df_forcing_met = dd_forcing_met.compute()
@@ -1209,30 +1200,6 @@ def trim_df_state(df_state: pd.DataFrame, set_var_use=set_var_use) -> pd.DataFra
     # remove redundant `MultiIndex` levels
     df_state_slim.columns = df_state_slim.columns.remove_unused_levels()
 
-    # df_state_slim = df_state.copy().stack().filter(items=set_var_use).unstack(0)
-
-    # # scalar variables
-    # df_state_slim_scalar = df_state_slim.loc[['0']].copy()
-    # # array variables, which need to be sorted to get layout correct
-    # df_state_slim_array = df_state_slim.filter(like='(', axis=0)
-    # # convert index to list for numerical sorting
-    # df_state_slim_array.index = df_state_slim_array.index.map(
-    #     lambda x: list(literal_eval(x)))
-    # df_state_slim_array = df_state_slim_array.sort_index()
-    # # after sorting, convert index back to str-tuple for hashing used in MultiIndex-ing
-    # df_state_slim_array.index = df_state_slim_array.index.map(
-    #     lambda x: str(tuple(x)))
-    # # concat scalar and array variables together
-    # # and sort columns by variable names
-    # df_state_slim = pd.concat(
-    #     [df_state_slim_scalar, df_state_slim_array],
-    #     axis=0).sort_index(axis=1)
-
-    # # rearrange layout back to the previous one
-    # df_state_slim = df_state_slim\
-    #     .stack('grid')\
-    #     .unstack('ind_dim')\
-    #     .dropna(axis=1)
     return df_state_slim
 
 
@@ -1577,7 +1544,16 @@ def add_state_init_df(df_init):
 
 # add additional parameters to `df` produced by `load_SUEWS_InitialCond_df`
 # @functools.lru_cache(maxsize=16)
-def load_InitialCond_grid_df(path_runcontrol):
+def load_InitialCond_grid_df(path_runcontrol, force_reload=True):
+    if force_reload: # clean all cached states
+        gen_df_siteselect_exp.cache_clear()
+        load_SUEWS_table.cache_clear()
+        lookup_code_lib.cache_clear()
+        lookup_KeySeq_lib.cache_clear()
+        gen_all_code_df.cache_clear()
+        build_code_exp_df.cache_clear()
+        print('All cache cleared.')
+
     # load base df of InitialCond
     df_init = load_SUEWS_InitialCond_df(path_runcontrol)
 
