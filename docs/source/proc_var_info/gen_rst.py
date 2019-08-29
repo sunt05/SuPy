@@ -57,6 +57,7 @@ df_output = gen_df_output(
         'SSss_YYYY_SUEWS_TT.csv',
         'SSss_DailyState.csv',
         'SSss_YYYY_snow_TT.csv',
+        'SSss_YYYY_RSL_TT.csv',
     ],
 )
 df_output.to_csv('df_output.csv')

@@ -27,10 +27,9 @@ print('loading in', 'gen_df_state', '...')
 # list of useful URLs
 url_repo_base = ('https://github.com/'
                  + 'Urban-Meteorology-Reading/'
-                 + 'SUEWS-Docs/raw/master/docs/source')
+                 + 'SUEWS/raw/master/docs/source')
 url_repo_input = URL(url_repo_base)/'input_files'
 url_repo_input_site = url_repo_input/'SUEWS_SiteInfo/csv-table'
-url_repo_output = URL(url_repo_base)/'output_files'
 
 # list of `SUEWS_**.csv `tables
 list_table = [file.replace('.txt', '.csv')

@@ -18,7 +18,7 @@ albmin_evetr,0,Effective surface albedo (middle of the day value) for wintertime
 albmin_grass,0,Effective surface albedo (middle of the day value) for wintertime (not including snow).,:option:`AlbedoMin <suews:AlbedoMin>`,Scalar
 alpha_bioco2,"(3,)",The mean apparent ecosystem quantum. Represents the initial slope of the light-response curve.,:option:`alpha <suews:alpha>`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
 alpha_enh_bioco2,"(3,)",Part of the `alpha` coefficient related to the fraction of vegetation.,:option:`alpha_enh <suews:alpha_enh>`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
-alt,0,Used for both the radiation and water flow between grids.,:option:`Alt <suews:Alt>`,Scalar
+alt,0,Altitude of grids [m].,:option:`Alt <suews:Alt>`,Scalar
 baset,"(3,)",Base Temperature for initiating growing degree days (GDD) for leaf growth. [°C],:option:`BaseT <suews:BaseT>`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
 basete,"(3,)",Base temperature for initiating sensesance degree days (SDD) for leaf off. [°C],:option:`BaseTe <suews:BaseTe>`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
 basethdd,0,Base temperature for heating degree days [°C],:option:`BaseTHDD <suews:BaseTHDD>`,Scalar
@@ -28,6 +28,7 @@ bldgh,0,Mean building height [m],:option:`H_Bldgs <suews:H_Bldgs>`,Scalar
 capmax_dec,0,Maximum water storage capacity for upper surfaces (i.e. canopy),:option:`StorageMax <suews:StorageMax>`,Scalar
 capmin_dec,0,Minimum water storage capacity for upper surfaces (i.e. canopy).,:option:`StorageMin <suews:StorageMin>`,Scalar
 chanohm,"(7,)",Bulk transfer coefficient for this surface to use in AnOHM [-],:option:`AnOHM_Ch <suews:AnOHM_Ch>`,"7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
+co2pointsource,0,CO2 emission factor [kg |km^-1|],:option:`CO2PointSource <suews:CO2PointSource>`,Scalar
 cpanohm,"(7,)",Volumetric heat capacity for this surface to use in AnOHM [J |m^-3|],:option:`AnOHM_Cp <suews:AnOHM_Cp>`,"7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
 crwmax,0,Maximum water holding capacity of snow [mm],:option:`CRWMax <suews:CRWMax>`,Scalar
 crwmin,0,Minimum water holding capacity of snow [mm],:option:`CRWMin <suews:CRWMin>`,Scalar
@@ -50,7 +51,7 @@ faibldg,0,Frontal area index for buildings [-],:option:`FAI_Bldgs <suews:FAI_Bld
 faidectree,0,Frontal area index for deciduous trees [-],:option:`FAI_DecTr <suews:FAI_DecTr>`,Scalar
 faievetree,0,Frontal area index for evergreen trees [-],:option:`FAI_EveTr <suews:FAI_EveTr>`,Scalar
 faut,0,Fraction of irrigated area that is irrigated using automated systems,:option:`Faut <suews:Faut>`,Scalar
-fcef_v_kgkm,0,CO2 emission factor [kg |km^-1|],:option:`FcEF_v_kgkm <suews:FcEF_v_kgkm>`,Scalar
+fcef_v_kgkm,"(2,)",CO2 emission factor for weekdays [kg |km^-1|];;CO2 emission factor for weekends [kg |km^-1|],":option:`FcEF_v_kgkmWD <suews:FcEF_v_kgkmWD>`, :option:`FcEF_v_kgkmWE <suews:FcEF_v_kgkmWE>`","2: {Weekday, Weekend}"
 flowchange,0,Difference in input and output flows for water surface [mm |h^-1|],:option:`FlowChange <suews:FlowChange>`,Scalar
 frfossilfuel_heat,0,Fraction of fossil fuels used for building heating [-],:option:`FrFossilFuel_Heat <suews:FrFossilFuel_Heat>`,Scalar
 frfossilfuel_nonheat,0,Fraction of fossil fuels used for building energy use [-],:option:`FrFossilFuel_NonHeat <suews:FrFossilFuel_NonHeat>`,Scalar
@@ -86,8 +87,10 @@ laitype,"(3,)",LAI calculation choice.,:option:`LAIEq <suews:LAIEq>`,"3: { :term
 lat,0,Latitude [deg].,:option:`lat <suews:lat>`,Scalar
 lng,0,longitude [deg],:option:`lng <suews:lng>`,Scalar
 maxconductance,"(3,)",The maximum conductance of each vegetation or surface type. [mm |s^-1|],:option:`MaxConductance <suews:MaxConductance>`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+maxfcmetab,0,Maximum (day) CO2 from human metabolism. [W |m^-2|],:option:`MaxFCMetab <suews:MaxFCMetab>`,Scalar
 maxqfmetab,0,Maximum value for human heat emission. [W |m^-2|],:option:`MaxQFMetab <suews:MaxQFMetab>`,Scalar
 min_res_bioco2,"(3,)",Minimum soil respiration rate (for cold-temperature limit) [umol |m^-2| |s^-1|].,:option:`min_respi <suews:min_respi>`,"3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
+minfcmetab,0,Minimum (night) CO2 from human metabolism. [W |m^-2|],:option:`MinFCMetab <suews:MinFCMetab>`,Scalar
 minqfmetab,0,Minimum value for human heat emission. [W |m^-2|],:option:`MinQFMetab <suews:MinQFMetab>`,Scalar
 narp_emis_snow,0,Effective surface emissivity.,:option:`Emissivity <suews:Emissivity>`,Scalar
 narp_trans_site,0,Atmospheric transmissivity for NARP [-],:option:`NARP_Trans <suews:NARP_Trans>`,Scalar
@@ -101,7 +104,7 @@ ohm_threshsw,"(8,)",Temperature threshold determining whether summer/winter OHM 
 ohm_threshwd,"(8,)",Soil moisture threshold determining whether wet/dry OHM coefficients are applied [-],:option:`OHMThresh_WD <suews:OHMThresh_WD>`,"8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)} "
 ohmincqf,0,Determines whether the storage heat flux calculation uses |Qstar| or ( |Qstar| +QF).,:option:`OHMIncQF <suews:OHMIncQF>`,Scalar
 pipecapacity,0,Storage capacity of pipes [mm],:option:`PipeCapacity <suews:PipeCapacity>`,Scalar
-popdensdaytime,0,"Daytime population density (i.e. workers, tourists) [people |ha^-1|]",:option:`PopDensDay <suews:PopDensDay>`,Scalar
+popdensdaytime,"(2,)","Daytime population density (i.e. workers, tourists) [people |ha^-1|]",:option:`PopDensDay <suews:PopDensDay>`,"2: {Weekday, Weekend}"
 popdensnighttime,0,Night-time population density (i.e. residents) [people |ha^-1|],:option:`PopDensNight <suews:PopDensNight>`,Scalar
 popprof_24hr,"(24, 2)",Hourly profile values used in dynamic population estimation.,":option:`PopProfWD <suews:PopProfWD>`, :option:`PopProfWE <suews:PopProfWE>`","24: hours of a day
 
@@ -109,8 +112,8 @@ popprof_24hr,"(24, 2)",Hourly profile values used in dynamic population estimati
 pormax_dec,0,full leaf-on summertime value Used only for `DecTr` (can affect roughness calculation),:option:`PorosityMax <suews:PorosityMax>`,Scalar
 pormin_dec,0,leaf-off wintertime value Used only for `DecTr` (can affect roughness calculation),:option:`PorosityMin <suews:PorosityMin>`,Scalar
 porosity_id,0,Porosity of deciduous vegetation on day 0 of run.,:option:`porosity0 <suews:porosity0>`,Scalar
-preciplimit,0,Limit for hourly snowfall when the ground is fully covered with snow [mm],:option:`PrecipLimSnow <suews:PrecipLimSnow>`,Scalar
-preciplimitalb,0,Limit for hourly precipitation when the ground is fully covered with snow. Then snow albedo is reset to AlbedoMax [mm],:option:`PrecipLimAlb <suews:PrecipLimAlb>`,Scalar
+preciplimit,0,Temperature limit when precipitation falls as snow [°C],:option:`PrecipLimSnow <suews:PrecipLimSnow>`,Scalar
+preciplimitalb,0,Limit for hourly precipitation when the ground is fully covered with snow [mm],:option:`PrecipLimAlb <suews:PrecipLimAlb>`,Scalar
 qf0_beu,"(2,)",Building energy use [W |m^-2|],":option:`QF0_BEU_WD <suews:QF0_BEU_WD>`, :option:`QF0_BEU_WE <suews:QF0_BEU_WE>`","2: {Weekday, Weekend}"
 qf_a,"(2,)",Base value for QF calculation.,":option:`QF_A_WD <suews:QF_A_WD>`, :option:`QF_A_WE <suews:QF_A_WE>`","2: {Weekday, Weekend}"
 qf_b,"(2,)",Parameter related to heating degree days.,":option:`QF_B_WD <suews:QF_B_WD>`, :option:`QF_B_WE <suews:QF_B_WE>`","2: {Weekday, Weekend}"

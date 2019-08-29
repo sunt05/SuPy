@@ -30,7 +30,7 @@ print('loading in', 'gen_df_forcing', '...')
 # %%
 url_repo_base = ('https://github.com/'
                  + 'Urban-Meteorology-Reading/'
-                 + 'SUEWS-Docs/raw/master/docs/source')
+                 + 'SUEWS/raw/master/docs/source')
 url_repo_input = URL(url_repo_base)/'input_files'
 url_repo_output = URL(url_repo_base)/'output_files'
 
@@ -86,6 +86,7 @@ def gen_df_output(
             'SSss_YYYY_SUEWS_TT.csv',
             'SSss_DailyState.csv',
             'SSss_YYYY_snow_TT.csv',
+            'SSss_YYYY_RSL_TT.csv',
         ],
         url_base=url_repo_output)->Path:
     '''Generate description info of supy output results into dataframe
