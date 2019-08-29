@@ -8,6 +8,7 @@ Version dev
 - **New**
 
   1. added WRF-SUEWS related functions.
+  2. added `diagnostics of canyon profiles <https://suews-docs.readthedocs.io/en/test-dev/parameterisations-and-sub-models.html#wind-temperature-and-humidity-profiles-in-the-roughness-sublayer>`_.
 
 - **Improvement**
 

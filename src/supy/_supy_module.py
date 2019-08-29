@@ -536,7 +536,11 @@ def run_supy(
 
     # drop ESTM for now as it is not supported yet
     # select only those supported output groups
-    df_output = df_output.loc[:, ['SUEWS', 'snow', 'DailyState']]
+    list_group_use = [
+        group for group in df_output.columns.levels[0]
+        if group not in ['ESTM']
+    ]
+    df_output = df_output.loc[:, list_group_use]
     # trim multi-index based columns
     df_output.columns = df_output.columns.remove_unused_levels()
 
