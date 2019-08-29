@@ -1,8 +1,7 @@
 .. _new_latest:
 
-.. _new_20190726:
 
-Version 2019.7.26.dev0
+Version dev
 ======================================================
 
 
@@ -16,7 +15,7 @@ Version 2019.7.26.dev0
 
 - **Changes**
 
-  None.
+  1. synchronised with v2019a interface: minimum supy_driver v2019a2.
 
 
 - **Fix**
