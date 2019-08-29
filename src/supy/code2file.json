@@ -1,7 +1,7 @@
 {
   "ActivityProfWD": "SUEWS_Profiles.txt",
   "ActivityProfWE": "SUEWS_Profiles.txt",
-  "AnthropogenicCode": "SUEWS_AnthropogenicHeat.txt",
+  "AnthropogenicCode": "SUEWS_AnthropogenicEmission.txt",
   "BiogenCO2Code": "SUEWS_BiogenCO2.txt",
   "Code_Bldgs": "SUEWS_NonVeg.txt",
   "Code_Bsoil": "SUEWS_NonVeg.txt",

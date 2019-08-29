@@ -27,13 +27,16 @@ def plot_day_clm(df_var, fig=None, ax=None):
         fig = ax.get_figure()
     elif ax is None:
         ax = fig.gca()
-    # plt.clf()
+
     # group by hour and minute
     grp_sdf_var = df_var.groupby(
         [df_var.index.hour.rename('hr'),
          df_var.index.minute.rename('min')])
     # get index
-    idx = [pd.datetime(2014, 1, 1, h, m)
+    year = df_var.index.year.min()
+    month = df_var.index.month.min()
+    day = df_var.index.day.min()
+    idx = [pd.datetime(year, month, day, h, m)
            for h, m in sorted(grp_sdf_var.groups.keys())]
     idx = pd.date_range(idx[0], idx[-1], periods=len(idx))
     idx = mdates.date2num(idx)

@@ -35,7 +35,7 @@ import pandas as pd
 from ._env import path_supy_module
 from ._load import (load_InitialCond_grid_df,
                     load_SUEWS_dict_ModConfig,
-                    load_SUEWS_Forcing_ESTM_df_raw,
+                    # load_SUEWS_Forcing_ESTM_df_raw,
                     load_SUEWS_Forcing_met_df_raw,
                     load_df_state,
                     resample_forcing_met,
@@ -352,7 +352,7 @@ def run_supy(
                 'pres': 'press_hpa',
                 'rain': 'precip',
                 'kdown': 'avkdn',
-                'snow': 'snow_obs',
+                'snow': 'snowfrac_obs',
                 'ldown': 'ldown_obs',
                 'fcld': 'fcld_obs',
                 'Wuh': 'wu_m3',
@@ -381,7 +381,7 @@ def run_supy(
         'press_hpa',
         'precip',
         'avkdn',
-        'snow_obs',
+        'snowfrac_obs',
         'ldown_obs',
         'fcld_obs',
         'wu_m3',
@@ -434,6 +434,7 @@ def run_supy(
             # initialise output of tstep:
             # load met_forcing if the same across all grids:
             met_forcing_tstep = dict_forcing[tstep]
+            # print(met_forcing_tstep.keys())
             # spatial loop
             for grid in list_grid:
                 dict_state_start = dict_state[(tstep, grid)]
