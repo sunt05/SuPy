@@ -1,5 +1,8 @@
 try:
     import cdsapi
+    # suppress pandas warnings
+    import warnings
+    warnings.simplefilter(action='ignore', category=FutureWarning)
     import xarray as xr
     import atmosp
 except:
