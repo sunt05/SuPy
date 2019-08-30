@@ -49,7 +49,7 @@ from ._save import get_save_info, save_df_output, save_df_state, save_initcond_n
 
 # set up logging module
 logging.basicConfig()
-logging.getLogger().setLevel(logging.DEBUG)
+logging.getLogger().setLevel(logging.INFO)
 
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
