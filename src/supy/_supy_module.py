@@ -44,7 +44,7 @@ from ._load import (load_InitialCond_grid_df,
 from ._post import pack_df_output, pack_df_output_array, pack_df_state
 from ._run import run_supy_ser, run_supy_par
 from ._save import get_save_info, save_df_output, save_df_state, save_initcond_nml
-
+from ._check import check_forcing
 
 # set up logging module
 logging.basicConfig()
@@ -185,47 +185,8 @@ def load_forcing_grid(path_runcontrol: str, grid: int) -> pd.DataFrame:
             df_forcing_met, tstep_met_in, tstep_mod,
             lat, lon, alt, timezone, kdownzen)
 
-        # merge forcing datasets (met and ESTM)
-        df_forcing_tstep = df_forcing_met_tstep.copy()
-
-        # disable the AnOHM and ESTM components for now and for better performance
-        # |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-        # TS 28 Dec 2018
-        # pack all records of `id` into `metforcingdata_grid` for AnOHM
-        # df_grp = df_forcing_tstep.groupby('id')
-        # dict_id_all = {xid: df_grp.get_group(xid)
-        #                for xid in df_forcing_tstep['id'].unique()}
-        # id_all = df_forcing_tstep['id'].apply(lambda xid: dict_id_all[xid])
-        # df_forcing_tstep = df_forcing_tstep.merge(
-        #     id_all.to_frame(name='metforcingdata_grid'),
-        #     left_index=True,
-        #     right_index=True)
-        # # add Ts forcing for ESTM
-        # if np.asscalar(df_state_init.iloc[0]['storageheatmethod'].values) == 4:
-        #     # load ESTM forcing
-        #     df_forcing_estm = load_SUEWS_Forcing_ESTM_df_raw(
-        #         path_input, filecode, grid, tstep_ESTM_in, multipleestmfiles)
-        #     # resample raw data from tstep_in to tstep_mod
-        #     df_forcing_estm_tstep = resample_linear(
-        #         df_forcing_estm, tstep_met_in, tstep_mod)
-        #     df_forcing_tstep = df_forcing_tstep.merge(
-        #         df_forcing_estm_tstep,
-        #         left_on=['iy', 'id', 'it', 'imin'],
-        #         right_on=['iy', 'id', 'it', 'imin'])
-        #     # insert `ts5mindata_ir` into df_forcing_tstep
-        #     ts_col = df_forcing_estm.columns[4:]
-        #     df_forcing_tstep['ts5mindata_ir'] = (
-        #         df_forcing_tstep.loc[:, ts_col].values.tolist())
-        #     df_forcing_tstep['ts5mindata_ir'] = df_forcing_tstep[
-        #         'ts5mindata_ir'].map(lambda x: np.array(x, order='F'))
-        # else:
-        #     # insert some placeholder values
-        #     df_forcing_tstep['ts5mindata_ir'] = df_forcing_tstep['Tair']
-        # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        # disable the AnOHM and ESTM components for now and for better performance
-
         # coerced precision here to prevent numerical errors inside Fortran
-        df_forcing = df_forcing_tstep.round(10)
+        df_forcing = df_forcing_met_tstep.round(10)
 
         # new columns for later use in main calculation
         df_forcing[['iy', 'id', 'it', 'imin']] = df_forcing[[

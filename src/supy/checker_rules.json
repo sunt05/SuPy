@@ -1,0 +1,1283 @@
+{
+    "ah_min": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "ah_slope_cooling": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "ah_slope_heating": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "ahprof_24hr": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "alb": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "albmax_dectr": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "albmax_evetr": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "albmax_grass": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "albmin_dectr": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "albmin_evetr": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "albmin_grass": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "alpha_bioco2": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "alpha_enh_bioco2": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "alt": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "baset": {
+        "logic": "range",
+        "param": {
+            "min": "-inf",
+            "max": "inf"
+        }
+    },
+    "basete": {
+        "logic": "range",
+        "param": {
+            "min": "-inf",
+            "max": "inf"
+        }
+    },
+    "basethdd": {
+        "logic": "range",
+        "param": {
+            "min": "-inf",
+            "max": "inf"
+        }
+    },
+    "beta_bioco2": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "beta_enh_bioco2": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "bldgh": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "capmax_dec": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 10
+        }
+    },
+    "capmin_dec": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "chanohm": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "cpanohm": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "crwmax": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "crwmin": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "daywat": {
+        "logic": "method",
+        "param": {
+            "allowed": [0,1]
+        }
+    },
+    "daywatper": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "dectreeh": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "drainrt": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "ef_umolco2perj": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "emis": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "enddls": {
+        "logic": "range",
+        "param": {
+            "min": 1,
+            "max": 366
+        }
+    },
+    "enef_v_jkm": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "evetreeh": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "faibldg": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "faidectree": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "faievetree": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "faut": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "fcef_v_kgkm": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "flowchange": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "frfossilfuel_heat": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "frfossilfuel_nonheat": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "g1": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 10
+        }
+    },
+    "g2": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "g3": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "g4": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "g5": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "g6": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "gddfull": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "gsmodel": {
+        "logic": "method",
+        "param": {
+            "allowed": [1,2]
+        }
+    },
+    "humactivity_24hr": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "ie_a": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "ie_end": {
+        "logic": "range",
+        "param": {
+            "min": 1,
+            "max": 366
+        }
+    },
+    "ie_m": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "ie_start": {
+        "logic": "range",
+        "param": {
+            "min": 1,
+            "max": 366
+        }
+    },
+    "internalwateruse_h": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "irrfracconif": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "irrfracdecid": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "irrfracgrass": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "kkanohm": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "kmax": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "laimax": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "laimin": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "laipower": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "laitype": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "lat": {
+        "logic": "range",
+        "param": {
+            "min": -90,
+            "max": 90
+        }
+    },
+    "lng": {
+        "logic": "range",
+        "param": {
+            "min": -180,
+            "max": 180
+        }
+    },
+    "maxconductance": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "maxqfmetab": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "min_res_bioco2": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "minqfmetab": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "narp_emis_snow": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "narp_trans_site": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "ohm_coef": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "ohm_threshsw": {
+        "logic": "range",
+        "param": {
+            "min": "-inf",
+            "max": "inf"
+        }
+    },
+    "ohm_threshwd": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "pipecapacity": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "popdensdaytime": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "popdensnighttime": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "popprof_24hr": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "pormax_dec": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "pormin_dec": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "preciplimit": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "preciplimitalb": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "qe": {
+        "logic": "range",
+        "unit": "W m-2",
+        "param": {
+            "min": -500,
+            "max": 1300
+        }
+    },
+    "qf0_beu": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "qf": {
+        "logic": "range",
+        "unit": "W m-2",
+        "param": {
+            "min": -500,
+            "max": 1300
+        }
+    },
+    "qf_a": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "qf_b": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "qf_c": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "qh": {
+        "logic": "range",
+        "unit": "W m-2",
+        "param": {
+            "min": -500,
+            "max": 1300
+        }
+    },
+    "qn": {
+        "logic": "range",
+        "unit": "W m-2",
+        "param": {
+            "min": -500,
+            "max": 1300
+        }
+    },
+    "qs": {
+        "logic": "range",
+        "unit": "W m-2",
+        "param": {
+            "min": -100,
+            "max": 650
+        }
+    },
+    "U": {
+        "logic": "range",
+        "unit": "m s-1",
+        "param": {
+            "min": 0.0001,
+            "max": 60
+        }
+    },
+    "RH": {
+        "logic": "range",
+        "unit": "%",
+        "param": {
+            "min": 0.0001,
+            "max": 105
+        }
+    },
+    "Tair": {
+        "logic": "range",
+        "unit": "degC",
+        "param": {
+            "min": -60,
+            "max": 90
+        }
+    },
+    "pres": {
+        "logic": "range",
+        "unit":"hPa",
+        "param": {
+            "min": 800,
+            "max": 1300
+        }
+    },
+    "rain": {
+        "logic": "range",
+        "unit": "mm",
+        "param": {
+            "min": 0.0001,
+            "max": "inf"
+        }
+    },
+    "kdown": {
+        "logic": "range",
+        "unit": "W m-2",
+        "param": {
+            "min": 0,
+            "max": 1400
+        }
+    },
+    "snow": {
+        "logic": "range",
+        "unit": "",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "ldown": {
+        "logic": "range",
+        "unit":"W m-2",
+        "param": {
+            "min": 800,
+            "max": 1300
+        }
+    },
+    "fcld": {
+        "logic": "range",
+        "unit":"",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "wuh": {
+        "logic": "range",
+        "unit":"m3",
+        "param": {
+            "min": 0,
+            "max": 10
+        }
+    },
+    "xsmd": {
+        "logic": "range",
+        "unit":"",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "lai": {
+        "logic": "range",
+        "unit":"m2 m-2",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "kdiff": {
+        "logic": "range",
+        "unit":"W m-2",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "kdir": {
+        "logic": "range",
+        "unit":"W m-2",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "wdir": {
+        "logic": "range",
+        "unit":"degree",
+        "param": {
+            "min": 0,
+            "max": 360
+        }
+    },
+    "radmeltfact": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "raincover": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "rainmaxres": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "resp_a": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "resp_b": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "runofftowater": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "s1": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "s2": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "sathydraulicconduct": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "sddfull": {
+        "logic": "range",
+        "param": {
+            "min": "-inf",
+            "max": "inf"
+        }
+    },
+    "sfr": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "snowalbmax": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "snowalbmin": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "snowdensmax": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "snowdensmin": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "snowlimbldg": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "snowlimpaved": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "snowpacklimit": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "snowprof_24hr": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "soildepth": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "soilstorecap": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "startdls": {
+        "logic": "range",
+        "param": {
+            "min": 1,
+            "max": 366
+        }
+    },
+    "statelimit": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "storedrainprm": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "surfacearea": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "t_critic_cooling": {
+        "logic": "range",
+        "param": {
+            "min": "-inf",
+            "max": "inf"
+        }
+    },
+    "t_critic_heating": {
+        "logic": "range",
+        "param": {
+            "min": "-inf",
+            "max": "inf"
+        }
+    },
+    "tau_a": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 10
+        }
+    },
+    "tau_f": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "tau_r": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "tempmeltfact": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "th": {
+        "logic": "range",
+        "param": {
+            "min": "-inf",
+            "max": "inf"
+        }
+    },
+    "theta_bioco2": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "timezone": {
+        "logic": "range",
+        "param": {
+            "min": -24,
+            "max": 24
+        }
+    },
+    "tl": {
+        "logic": "range",
+        "param": {
+            "min": "-inf",
+            "max": "inf"
+        }
+    },
+    "trafficrate": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "trafficunits": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "traffprof_24hr": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "waterdist": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "wetthresh": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "wuprofa_24hr": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "wuprofm_24hr": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "z": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "z0m_in": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "zdm_in": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "aerodynamicresistancemethod": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "evapmethod": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "laicalcyes": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "veg_type": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "diagnose": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "diagqn": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "diagqs": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "emissionsmethod": {
+        "logic": "method",
+        "param": {
+            "allowed": [0,1,2,3]
+        }
+    },
+    "netradiationmethod": {
+        "logic": "method",
+        "param": {
+            "allowed": [0,1,2,3,100,200,300]
+        }
+    },
+    "ohmincqf": {
+        "logic": "method",
+        "param": {
+            "allowed": [0,1]
+        }
+    },
+    "roughlenheatmethod": {
+        "logic": "method",
+        "param": {
+            "allowed": [1,2,3,4]
+        }
+    },
+    "roughlenmommethod": {
+        "logic": "method",
+        "param": {
+            "allowed": [1,2,3]
+        }
+    },
+    "smdmethod": {
+        "logic": "method",
+        "param": {
+            "allowed": [0,1,2]
+        }
+    },
+    "snowuse": {
+        "logic": "method",
+        "param": {
+            "allowed": [0,1]
+        }
+    },
+    "stabilitymethod": {
+        "logic": "method",
+        "param": {
+            "allowed": [0,1,2,3,4]
+        }
+    },
+    "storageheatmethod": {
+        "logic": "method",
+        "param": {
+            "allowed": [1,2,3,4]
+        }
+    },
+    "tstep": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "waterusemethod": {
+        "logic": "method",
+        "param": {
+            "allowed": [0,1]
+        }
+    },
+    "qn1_av": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "qn1_s_av": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "dqndt": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "dqnsdt": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "snowdens": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "snowfrac": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "snowpack": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "snowwater": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "soilstore_id": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "state_id": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "icefrac": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "snowfallcum": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "snowalb": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "porosity_id": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "albdectr_id": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "albevetr_id": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "albgrass_id": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": 1
+        }
+    },
+    "decidcap_id": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "lai_id": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "gdd_id": {
+        "logic": "range",
+        "param": {
+            "min": "-inf",
+            "max": "inf"
+        }
+    },
+    "hdd_id": {
+        "logic": "range",
+        "param": {
+            "min": "-inf",
+            "max": "inf"
+        }
+    },
+    "wuday_id": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "dt_since_start": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "tstep_prev": {
+        "logic": "NA",
+        "param": {
+        }
+    },
+    "tair24hr": {
+        "logic": "range",
+        "param": {
+            "min": "-inf",
+            "max": "inf"
+        }
+    },
+    "numcapita": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "gridiv": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    }
+}
