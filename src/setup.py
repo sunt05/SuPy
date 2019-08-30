@@ -36,6 +36,7 @@ setup(name='supy',
       install_requires=[
           'numpy>=1.15.2',
           'pandas>=0.25.1',
+          'tables', # for dumping in hdf5
           'scipy',
           'dask[complete]',  # needs all dask and its dependencies
           'f90nml',
