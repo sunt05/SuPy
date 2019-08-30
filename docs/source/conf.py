@@ -40,7 +40,7 @@ subprocess_cmd('cd proc_var_info; python3 gen_rst.py')
 
 project = u'SuPy'
 doc_name = u'SuPy Documentation'
-author = u'Dr Ting Sun and Prof Sue Grimmond'
+author = u'Dr Ting Sun, Dr Hamidreza Omidvar and Prof Sue Grimmond'
 year = u'2018–2019'
 copyright = ', '.join([year, author])
 

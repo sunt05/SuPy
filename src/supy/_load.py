@@ -679,57 +679,6 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
     return df_forcing_met
 
 
-# load raw data: met forcing
-# def load_SUEWS_Forcing_ESTM_df_raw(
-#         path_input, filecode, grid, tstep_ESTM_in, multipleestmfiles):
-#     # file name pattern for met files
-#     forcingfile_ESTM_pattern = '{site}{grid}*{tstep}*txt'.format(
-#         site=filecode,
-#         grid=(grid if multipleestmfiles == 1 else ''),
-#         tstep=tstep_ESTM_in / 60)
-
-#     # list of met forcing files
-#     list_file_MetForcing = [
-#         f for f in path_input.glob(forcingfile_ESTM_pattern)
-#         if 'ESTM' in f]
-
-#     # load raw data
-#     df_forcing_estm = pd.concat(
-#         [pd.read_table(
-#             fileX,
-#             delim_whitespace=True,
-#             comment='!',
-#             error_bad_lines=True
-#             # parse_dates={'datetime': [0, 1, 2, 3]},
-#             # keep_date_col=True,
-#             # date_parser=func_parse_date
-#         ).dropna() for fileX in list_file_MetForcing],
-#         ignore_index=True).rename(
-#         columns={
-#             '%' + 'iy': 'iy',
-#             'id': 'id',
-#             'it': 'it',
-#             'imin': 'imin',
-#             'kdown': 'avkdn',
-#             'RH': 'avrh',
-#             'U': 'avu1',
-#             'fcld': 'fcld_obs',
-#             'lai': 'lai_obs',
-#             'ldown': 'ldown_obs',
-#             'rain': 'precip',
-#             'pres': 'press_hpa',
-#             'qh': 'qh_obs',
-#             'qn': 'qn1_obs',
-#             'snow': 'snowfrac_obs',
-#             'Tair': 'temp_c',
-#             # 'all': 'metforcingdata_grid',
-#             'xsmd': 'xsmd'})
-
-#     # set correct data types
-#     df_forcing_estm[['iy', 'id', 'it', 'imin']] = df_forcing_estm[[
-#         'iy', 'id', 'it', 'imin']].astype(np.int64)
-
-#     return df_forcing_estm
 
 
 # TODO: add support for loading multi-grid forcing datasets
