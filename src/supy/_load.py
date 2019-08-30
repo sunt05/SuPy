@@ -128,7 +128,7 @@ set_var_use = set_var_input.intersection(set_var_input_multitsteps)
 # descriptive list/dicts for variables
 # minimal required input files for configuration:
 list_file_input = [
-    'SUEWS_AnthropogenicHeat.txt',
+    'SUEWS_AnthropogenicEmission.txt',
     'SUEWS_BiogenCO2.txt',
     'SUEWS_Conductance.txt',
     'SUEWS_ESTMCoefficients.txt',
@@ -680,56 +680,56 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
 
 
 # load raw data: met forcing
-def load_SUEWS_Forcing_ESTM_df_raw(
-        path_input, filecode, grid, tstep_ESTM_in, multipleestmfiles):
-    # file name pattern for met files
-    forcingfile_ESTM_pattern = '{site}{grid}*{tstep}*txt'.format(
-        site=filecode,
-        grid=(grid if multipleestmfiles == 1 else ''),
-        tstep=tstep_ESTM_in / 60)
+# def load_SUEWS_Forcing_ESTM_df_raw(
+#         path_input, filecode, grid, tstep_ESTM_in, multipleestmfiles):
+#     # file name pattern for met files
+#     forcingfile_ESTM_pattern = '{site}{grid}*{tstep}*txt'.format(
+#         site=filecode,
+#         grid=(grid if multipleestmfiles == 1 else ''),
+#         tstep=tstep_ESTM_in / 60)
 
-    # list of met forcing files
-    list_file_MetForcing = [
-        f for f in path_input.glob(forcingfile_ESTM_pattern)
-        if 'ESTM' in f]
+#     # list of met forcing files
+#     list_file_MetForcing = [
+#         f for f in path_input.glob(forcingfile_ESTM_pattern)
+#         if 'ESTM' in f]
 
-    # load raw data
-    df_forcing_estm = pd.concat(
-        [pd.read_table(
-            fileX,
-            delim_whitespace=True,
-            comment='!',
-            error_bad_lines=True
-            # parse_dates={'datetime': [0, 1, 2, 3]},
-            # keep_date_col=True,
-            # date_parser=func_parse_date
-        ).dropna() for fileX in list_file_MetForcing],
-        ignore_index=True).rename(
-        columns={
-            '%' + 'iy': 'iy',
-            'id': 'id',
-            'it': 'it',
-            'imin': 'imin',
-            'kdown': 'avkdn',
-            'RH': 'avrh',
-            'U': 'avu1',
-            'fcld': 'fcld_obs',
-            'lai': 'lai_obs',
-            'ldown': 'ldown_obs',
-            'rain': 'precip',
-            'pres': 'press_hpa',
-            'qh': 'qh_obs',
-            'qn': 'qn1_obs',
-            'snow': 'snow_obs',
-            'Tair': 'temp_c',
-            # 'all': 'metforcingdata_grid',
-            'xsmd': 'xsmd'})
+#     # load raw data
+#     df_forcing_estm = pd.concat(
+#         [pd.read_table(
+#             fileX,
+#             delim_whitespace=True,
+#             comment='!',
+#             error_bad_lines=True
+#             # parse_dates={'datetime': [0, 1, 2, 3]},
+#             # keep_date_col=True,
+#             # date_parser=func_parse_date
+#         ).dropna() for fileX in list_file_MetForcing],
+#         ignore_index=True).rename(
+#         columns={
+#             '%' + 'iy': 'iy',
+#             'id': 'id',
+#             'it': 'it',
+#             'imin': 'imin',
+#             'kdown': 'avkdn',
+#             'RH': 'avrh',
+#             'U': 'avu1',
+#             'fcld': 'fcld_obs',
+#             'lai': 'lai_obs',
+#             'ldown': 'ldown_obs',
+#             'rain': 'precip',
+#             'pres': 'press_hpa',
+#             'qh': 'qh_obs',
+#             'qn': 'qn1_obs',
+#             'snow': 'snowfrac_obs',
+#             'Tair': 'temp_c',
+#             # 'all': 'metforcingdata_grid',
+#             'xsmd': 'xsmd'})
 
-    # set correct data types
-    df_forcing_estm[['iy', 'id', 'it', 'imin']] = df_forcing_estm[[
-        'iy', 'id', 'it', 'imin']].astype(np.int64)
+#     # set correct data types
+#     df_forcing_estm[['iy', 'id', 'it', 'imin']] = df_forcing_estm[[
+#         'iy', 'id', 'it', 'imin']].astype(np.int64)
 
-    return df_forcing_estm
+#     return df_forcing_estm
 
 
 # TODO: add support for loading multi-grid forcing datasets
@@ -1521,21 +1521,31 @@ def add_state_init_df(df_init):
     df_init[('gdd_id', '(3,)')] = -90
 
     # `popdens` corrections:
-    ser_popdens_day = df_init[('popdensdaytime', '0')]
+    # daytime population density on weekdays
+    ser_popdens_day_1 = df_init[('popdensdaytime', '(0,)')]
+    # nighttime population density on weekdays
     ser_popdens_night = df_init[('popdensnighttime', '0')]
+
     # if daytime popdens missing and nighttime one existing:
-    flag_replace_day = (ser_popdens_day < 0) & (ser_popdens_night >= 0)
-    df_init.loc[flag_replace_day, 'popdensdaytime'] = \
+    flag_replace_day = (ser_popdens_day_1 < 0) & (ser_popdens_night >= 0)
+    df_init.loc[flag_replace_day, ('popdensdaytime', '(0,)')] = \
         ser_popdens_night[flag_replace_day]
     # if nighttime popdens missing and daytime one existing:
-    flag_replace_night = (ser_popdens_night < 0) & (ser_popdens_day >= 0)
-    df_init.loc[flag_replace_night, 'popdensnighttime'] = \
-        ser_popdens_day[flag_replace_night]
+    flag_replace_night = (ser_popdens_night < 0) & (ser_popdens_day_1 >= 0)
+    df_init.loc[flag_replace_night, ('popdensnighttime', '0')] = \
+        ser_popdens_day_1[flag_replace_night]
+
+    # Fraction of weekend population to weekday population
+    ser_frpddwe = df_init[('frpddwe', '0')]
+    ser_popdens_day_2 = ser_popdens_night + \
+        (ser_popdens_day_1-ser_popdens_night)*ser_frpddwe
+    df_init[('popdensdaytime', '(1,)')] = ser_popdens_day_2
 
     # `numcapita` calculation:
-    df_init[('numcapita', '0')] = \
-        df_init[['popdensdaytime', 'popdensnighttime']]\
-        .mean(axis=1)
+    df_init[('numcapita', '(0,)')] = df_init[[
+        ('popdensdaytime', '(0,)'), ('popdensnighttime', '0')]].mean(axis=1)
+    df_init[('numcapita', '(1,)')] = df_init[[
+        ('popdensdaytime', '(1,)'), ('popdensnighttime', '0')]].mean(axis=1)
     # `gridiv` addition:
     df_init[('gridiv', '0')] = df_init.index
 

@@ -124,6 +124,9 @@
     "Code_Bsoil": "AnOHM_Ch",
     "Code_Water": "AnOHM_Ch"
   },
+  "co2pointsource":{
+    "AnthropogenicCode": "CO2PointSource"
+  },
   "cpanohm": {
     "Code_Paved": "AnOHM_Cp",
     "Code_Bldgs": "AnOHM_Cp",
@@ -187,7 +190,10 @@
     "IrrigationCode": "Faut"
   },
   "fcef_v_kgkm": {
-    "AnthropogenicCode": "FcEF_v_kgkm"
+    "AnthropogenicCode": [
+      "FcEF_v_kgkmWD",
+      "FcEF_v_kgkmWE"
+    ]
   },
   "flowchange": "FlowChange",
   "frfossilfuel_heat": {
@@ -195,6 +201,9 @@
   },
   "frfossilfuel_nonheat": {
     "AnthropogenicCode": "FrFossilFuel_NonHeat"
+  },
+  "frpddwe": {
+    "AnthropogenicCode": "FrPDDwe"
   },
   "g1": {
     "CondCode": "G1"
@@ -308,6 +317,9 @@
     "Code_DecTr": "MaxConductance",
     "Code_Grass": "MaxConductance"
   },
+  "maxfcmetab": {
+    "AnthropogenicCode": "MaxFCMetab"
+  },
   "maxqfmetab": {
     "AnthropogenicCode": "MaxQFMetab"
   },
@@ -321,6 +333,9 @@
     "Code_Grass": {
       "BiogenCO2Code": "min_respi"
     }
+  },
+  "minfcmetab": {
+    "AnthropogenicCode": "MinFCMetab"
   },
   "minqfmetab": {
     "AnthropogenicCode": "MinQFMetab"
@@ -528,7 +543,10 @@
     "SnowCode": "OHMThresh_WD"
   },
   "pipecapacity": "PipeCapacity",
-  "popdensdaytime": "PopDensDay",
+  "popdensdaytime": [
+    "PopDensDay",
+    "PopDensDay"
+  ],
   "popdensnighttime": "PopDensNight",
   "popprof_24hr": {
     "AnthropogenicCode": {

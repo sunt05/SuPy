@@ -93,7 +93,7 @@
     :Description:
         Snow density - bare soil surface [kg |m^-3|]
     :Group:
-        snow
+        DailyState
 
 
 .. option:: DensSnow_BSoil
@@ -102,6 +102,14 @@
         Snow density – bare soil surface [kg |m^-3|]
     :Group:
         snow
+
+
+.. option:: DensSnow_BSoil
+
+    :Description:
+        Snow density – bare soil surface [kg |m^-3|]
+    :Group:
+        DailyState
 
 
 .. option:: DensSnow_BSoil
@@ -109,15 +117,7 @@
     :Description:
         Snow density - bare soil surface [kg |m^-3|]
     :Group:
-        DailyState
-
-
-.. option:: DensSnow_BSoil
-
-    :Description:
-        Snow density – bare soil surface [kg |m^-3|]
-    :Group:
-        DailyState
+        snow
 
 
 .. option:: DensSnow_Bldgs
@@ -157,14 +157,6 @@
     :Description:
         Snow density - deciduous surface [kg |m^-3|]
     :Group:
-        DailyState
-
-
-.. option:: DensSnow_DecTr
-
-    :Description:
-        Snow density – deciduous surface [kg |m^-3|]
-    :Group:
         snow
 
 
@@ -173,7 +165,7 @@
     :Description:
         Snow density – deciduous surface [kg |m^-3|]
     :Group:
-        DailyState
+        snow
 
 
 .. option:: DensSnow_DecTr
@@ -181,21 +173,13 @@
     :Description:
         Snow density - deciduous surface [kg |m^-3|]
     :Group:
-        snow
-
-
-.. option:: DensSnow_EveTr
-
-    :Description:
-        Snow density – evergreen surface [kg |m^-3|]
-    :Group:
         DailyState
 
 
-.. option:: DensSnow_EveTr
+.. option:: DensSnow_DecTr
 
     :Description:
-        Snow density - evergreen surface [kg |m^-3|]
+        Snow density – deciduous surface [kg |m^-3|]
     :Group:
         DailyState
 
@@ -213,21 +197,21 @@
     :Description:
         Snow density - evergreen surface [kg |m^-3|]
     :Group:
-        snow
+        DailyState
 
 
-.. option:: DensSnow_Grass
+.. option:: DensSnow_EveTr
 
     :Description:
-        Snow density – grass surface [kg |m^-3|]
+        Snow density – evergreen surface [kg |m^-3|]
     :Group:
         DailyState
 
 
-.. option:: DensSnow_Grass
+.. option:: DensSnow_EveTr
 
     :Description:
-        Snow density – grass surface [kg |m^-3|]
+        Snow density - evergreen surface [kg |m^-3|]
     :Group:
         snow
 
@@ -248,6 +232,22 @@
         DailyState
 
 
+.. option:: DensSnow_Grass
+
+    :Description:
+        Snow density – grass surface [kg |m^-3|]
+    :Group:
+        snow
+
+
+.. option:: DensSnow_Grass
+
+    :Description:
+        Snow density – grass surface [kg |m^-3|]
+    :Group:
+        DailyState
+
+
 .. option:: DensSnow_Paved
 
     :Description:
@@ -261,7 +261,7 @@
     :Description:
         Snow density - paved surface [kg |m^-3|]
     :Group:
-        DailyState
+        snow
 
 
 .. option:: DensSnow_Paved
@@ -276,6 +276,14 @@
 
     :Description:
         Snow density - paved surface [kg |m^-3|]
+    :Group:
+        DailyState
+
+
+.. option:: DensSnow_Water
+
+    :Description:
+        Snow density - water surface [kg |m^-3|]
     :Group:
         snow
 
@@ -284,14 +292,6 @@
 
     :Description:
         Snow density – water surface [kg |m^-3|]
-    :Group:
-        snow
-
-
-.. option:: DensSnow_Water
-
-    :Description:
-        Snow density - water surface [kg |m^-3|]
     :Group:
         snow
 
@@ -331,7 +331,7 @@
 .. option:: Fc
 
     :Description:
-        CO2 flux [umol |m^-2| |s^-1|] |NotAvail| 
+        CO2 flux [umol |m^-2| |s^-1|]
     :Group:
         SUEWS
 
@@ -339,7 +339,7 @@
 .. option:: FcBuild
 
     :Description:
-        CO2 flux from buildings [umol |m^-2| |s^-1|] |NotAvail| 
+        CO2 flux from buildings [umol |m^-2| |s^-1|]
     :Group:
         SUEWS
 
@@ -347,7 +347,7 @@
 .. option:: FcMetab
 
     :Description:
-        CO2 flux from metabolism [umol |m^-2| |s^-1|] |NotAvail| 
+        CO2 flux from metabolism [umol |m^-2| |s^-1|]
     :Group:
         SUEWS
 
@@ -355,7 +355,15 @@
 .. option:: FcPhoto
 
     :Description:
-        CO2 flux from photosynthesis [umol |m^-2| |s^-1|] |NotAvail| 
+        CO2 flux from photosynthesis [umol |m^-2| |s^-1|]
+    :Group:
+        SUEWS
+
+
+.. option:: FcPoint
+
+    :Description:
+        CO2 flux from point source [umol |m^-2| |s^-1|]
     :Group:
         SUEWS
 
@@ -363,7 +371,7 @@
 .. option:: FcRespi
 
     :Description:
-        CO2 flux from respiration [umol |m^-2| |s^-1|] |NotAvail| 
+        CO2 flux from respiration [umol |m^-2| |s^-1|]
     :Group:
         SUEWS
 
@@ -371,7 +379,7 @@
 .. option:: FcTraff
 
     :Description:
-        CO2 flux from traffic [umol |m^-2| |s^-1|] |NotAvail| 
+        CO2 flux from traffic [umol |m^-2| |s^-1|]
     :Group:
         SUEWS
 
@@ -1400,6 +1408,246 @@
         SUEWS
 
 
+.. option:: T_1
+
+    :Description:
+        Air temperature at level 1 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_10
+
+    :Description:
+        Air temperature at level 10 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_11
+
+    :Description:
+        Air temperature at level 11 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_12
+
+    :Description:
+        Air temperature at level 12 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_13
+
+    :Description:
+        Air temperature at level 13 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_14
+
+    :Description:
+        Air temperature at level 14 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_15
+
+    :Description:
+        Air temperature at level 15 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_16
+
+    :Description:
+        Air temperature at level 16 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_17
+
+    :Description:
+        Air temperature at level 17 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_18
+
+    :Description:
+        Air temperature at level 18 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_19
+
+    :Description:
+        Air temperature at level 19 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_2
+
+    :Description:
+        Air temperature at level 2 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_20
+
+    :Description:
+        Air temperature at level 20 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_21
+
+    :Description:
+        Air temperature at level 21 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_22
+
+    :Description:
+        Air temperature at level 22 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_23
+
+    :Description:
+        Air temperature at level 23 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_24
+
+    :Description:
+        Air temperature at level 24 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_25
+
+    :Description:
+        Air temperature at level 25 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_26
+
+    :Description:
+        Air temperature at level 26 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_27
+
+    :Description:
+        Air temperature at level 27 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_28
+
+    :Description:
+        Air temperature at level 28 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_29
+
+    :Description:
+        Air temperature at level 29 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_3
+
+    :Description:
+        Air temperature at level 3 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_30
+
+    :Description:
+        Air temperature at level 30 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_4
+
+    :Description:
+        Air temperature at level 4 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_5
+
+    :Description:
+        Air temperature at level 5 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_6
+
+    :Description:
+        Air temperature at level 6 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_7
+
+    :Description:
+        Air temperature at level 7 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_8
+
+    :Description:
+        Air temperature at level 8 [°C]
+    :Group:
+        RSL
+
+
+.. option:: T_9
+
+    :Description:
+        Air temperature at level 9 [°C]
+    :Group:
+        RSL
+
+
 .. option:: TotCh
 
     :Description:
@@ -1486,6 +1734,246 @@
         Wind speed at 10 m agl [m |s^-1|]
     :Group:
         SUEWS
+
+
+.. option:: U_1
+
+    :Description:
+        Wind speed at level 1 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_10
+
+    :Description:
+        Wind speed at level 10 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_11
+
+    :Description:
+        Wind speed at level 11 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_12
+
+    :Description:
+        Wind speed at level 12 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_13
+
+    :Description:
+        Wind speed at level 13 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_14
+
+    :Description:
+        Wind speed at level 14 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_15
+
+    :Description:
+        Wind speed at level 15 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_16
+
+    :Description:
+        Wind speed at level 16 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_17
+
+    :Description:
+        Wind speed at level 17 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_18
+
+    :Description:
+        Wind speed at level 18 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_19
+
+    :Description:
+        Wind speed at level 19 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_2
+
+    :Description:
+        Wind speed at level 2 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_20
+
+    :Description:
+        Wind speed at level 20 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_21
+
+    :Description:
+        Wind speed at level 21 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_22
+
+    :Description:
+        Wind speed at level 22 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_23
+
+    :Description:
+        Wind speed at level 23 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_24
+
+    :Description:
+        Wind speed at level 24 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_25
+
+    :Description:
+        Wind speed at level 25 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_26
+
+    :Description:
+        Wind speed at level 26 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_27
+
+    :Description:
+        Wind speed at level 27 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_28
+
+    :Description:
+        Wind speed at level 28 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_29
+
+    :Description:
+        Wind speed at level 29 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_3
+
+    :Description:
+        Wind speed at level 3 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_30
+
+    :Description:
+        Wind speed at level 30 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_4
+
+    :Description:
+        Wind speed at level 4 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_5
+
+    :Description:
+        Wind speed at level 5 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_6
+
+    :Description:
+        Wind speed at level 6 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_7
+
+    :Description:
+        Wind speed at level 7 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_8
+
+    :Description:
+        Wind speed at level 8 [m |s^-1|]
+    :Group:
+        RSL
+
+
+.. option:: U_9
+
+    :Description:
+        Wind speed at level 9 [m |s^-1|]
+    :Group:
+        RSL
 
 
 .. option:: WUDecTr
@@ -1784,12 +2272,492 @@
         snow
 
 
+.. option:: q_1
+
+    :Description:
+        Specific humidity at level 1 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_10
+
+    :Description:
+        Specific humidity at level 10 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_11
+
+    :Description:
+        Specific humidity at level 11 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_12
+
+    :Description:
+        Specific humidity at level 12 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_13
+
+    :Description:
+        Specific humidity at level 13 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_14
+
+    :Description:
+        Specific humidity at level 14 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_15
+
+    :Description:
+        Specific humidity at level 15 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_16
+
+    :Description:
+        Specific humidity at level 16 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_17
+
+    :Description:
+        Specific humidity at level 17 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_18
+
+    :Description:
+        Specific humidity at level 18 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_19
+
+    :Description:
+        Specific humidity at level 19 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_2
+
+    :Description:
+        Specific humidity at level 2 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_20
+
+    :Description:
+        Specific humidity at level 20 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_21
+
+    :Description:
+        Specific humidity at level 21 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_22
+
+    :Description:
+        Specific humidity at level 22 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_23
+
+    :Description:
+        Specific humidity at level 23 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_24
+
+    :Description:
+        Specific humidity at level 24 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_25
+
+    :Description:
+        Specific humidity at level 25 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_26
+
+    :Description:
+        Specific humidity at level 26 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_27
+
+    :Description:
+        Specific humidity at level 27 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_28
+
+    :Description:
+        Specific humidity at level 28 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_29
+
+    :Description:
+        Specific humidity at level 29 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_3
+
+    :Description:
+        Specific humidity at level 3 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_30
+
+    :Description:
+        Specific humidity at level 30 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_4
+
+    :Description:
+        Specific humidity at level 4 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_5
+
+    :Description:
+        Specific humidity at level 5 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_6
+
+    :Description:
+        Specific humidity at level 6 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_7
+
+    :Description:
+        Specific humidity at level 7 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_8
+
+    :Description:
+        Specific humidity at level 8 [g |kg^-1|]
+    :Group:
+        RSL
+
+
+.. option:: q_9
+
+    :Description:
+        Specific humidity at level 9 [g |kg^-1|]
+    :Group:
+        RSL
+
+
 .. option:: z0m
 
     :Description:
         Roughness length for momentum [m]
     :Group:
         SUEWS
+
+
+.. option:: z_1
+
+    :Description:
+        Height at level 1 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_10
+
+    :Description:
+        Height at level 10 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_11
+
+    :Description:
+        Height at level 11 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_12
+
+    :Description:
+        Height at level 12 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_13
+
+    :Description:
+        Height at level 13 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_14
+
+    :Description:
+        Height at level 14 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_15
+
+    :Description:
+        Height at level 15 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_16
+
+    :Description:
+        Height at level 16 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_17
+
+    :Description:
+        Height at level 17 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_18
+
+    :Description:
+        Height at level 18 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_19
+
+    :Description:
+        Height at level 19 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_2
+
+    :Description:
+        Height at level 2 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_20
+
+    :Description:
+        Height at level 20 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_21
+
+    :Description:
+        Height at level 21 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_22
+
+    :Description:
+        Height at level 22 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_23
+
+    :Description:
+        Height at level 23 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_24
+
+    :Description:
+        Height at level 24 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_25
+
+    :Description:
+        Height at level 25 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_26
+
+    :Description:
+        Height at level 26 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_27
+
+    :Description:
+        Height at level 27 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_28
+
+    :Description:
+        Height at level 28 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_29
+
+    :Description:
+        Height at level 29 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_3
+
+    :Description:
+        Height at level 3 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_30
+
+    :Description:
+        Height at level 30 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_4
+
+    :Description:
+        Height at level 4 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_5
+
+    :Description:
+        Height at level 5 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_6
+
+    :Description:
+        Height at level 6 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_7
+
+    :Description:
+        Height at level 7 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_8
+
+    :Description:
+        Height at level 8 [m]
+    :Group:
+        RSL
+
+
+.. option:: z_9
+
+    :Description:
+        Height at level 9 [m]
+    :Group:
+        RSL
 
 
 .. option:: zdm

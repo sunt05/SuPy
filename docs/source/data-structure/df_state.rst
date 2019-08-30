@@ -217,7 +217,7 @@
 .. option:: alt
 
     :Description:
-        Used for both the radiation and water flow between grids.
+        Altitude of grids [m].
     :Dimensionality:
         0
     :Dimensionality Remarks:
@@ -332,6 +332,18 @@
         7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
     :SUEWS-related variables:
         :option:`AnOHM_Ch <suews:AnOHM_Ch>`
+
+
+.. option:: co2pointsource
+
+    :Description:
+        CO2 emission factor [kg |km^-1|]
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        :option:`CO2PointSource <suews:CO2PointSource>`
 
 
 .. option:: cpanohm
@@ -601,13 +613,13 @@
 .. option:: fcef_v_kgkm
 
     :Description:
-        CO2 emission factor [kg |km^-1|]
+        CO2 emission factor for weekdays [kg |km^-1|];;CO2 emission factor for weekends [kg |km^-1|]
     :Dimensionality:
-        0
+        (2,)
     :Dimensionality Remarks:
-        Scalar
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
-        :option:`FcEF_v_kgkm <suews:FcEF_v_kgkm>`
+        :option:`FcEF_v_kgkmWD <suews:FcEF_v_kgkmWD>`, :option:`FcEF_v_kgkmWE <suews:FcEF_v_kgkmWE>`
 
 
 .. option:: flowchange
@@ -986,6 +998,18 @@
         :option:`MaxConductance <suews:MaxConductance>`
 
 
+.. option:: maxfcmetab
+
+    :Description:
+        Maximum (day) CO2 from human metabolism. [W |m^-2|]
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        :option:`MaxFCMetab <suews:MaxFCMetab>`
+
+
 .. option:: maxqfmetab
 
     :Description:
@@ -1008,6 +1032,18 @@
         3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
     :SUEWS-related variables:
         :option:`min_respi <suews:min_respi>`
+
+
+.. option:: minfcmetab
+
+    :Description:
+        Minimum (night) CO2 from human metabolism. [W |m^-2|]
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        :option:`MinFCMetab <suews:MinFCMetab>`
 
 
 .. option:: minqfmetab
@@ -1127,9 +1163,9 @@
     :Description:
         Daytime population density (i.e. workers, tourists) [people |ha^-1|]
     :Dimensionality:
-        0
+        (2,)
     :Dimensionality Remarks:
-        Scalar
+        2: {Weekday, Weekend}
     :SUEWS-related variables:
         :option:`PopDensDay <suews:PopDensDay>`
 
@@ -1199,7 +1235,7 @@
 .. option:: preciplimit
 
     :Description:
-        Limit for hourly snowfall when the ground is fully covered with snow [mm]
+        Temperature limit when precipitation falls as snow [°C]
     :Dimensionality:
         0
     :Dimensionality Remarks:
@@ -1211,7 +1247,7 @@
 .. option:: preciplimitalb
 
     :Description:
-        Limit for hourly precipitation when the ground is fully covered with snow. Then snow albedo is reset to AlbedoMax [mm]
+        Limit for hourly precipitation when the ground is fully covered with snow [mm]
     :Dimensionality:
         0
     :Dimensionality Remarks:

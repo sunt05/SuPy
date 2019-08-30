@@ -35,7 +35,7 @@ import pandas as pd
 from ._env import path_supy_module
 from ._load import (load_InitialCond_grid_df,
                     load_SUEWS_dict_ModConfig,
-                    load_SUEWS_Forcing_ESTM_df_raw,
+                    # load_SUEWS_Forcing_ESTM_df_raw,
                     load_SUEWS_Forcing_met_df_raw,
                     load_df_state,
                     resample_forcing_met,
@@ -252,7 +252,7 @@ def load_SampleData() -> Tuple[pandas.DataFrame, pandas.DataFrame]:
 
     path_SampleData = Path(path_supy_module) / 'sample_run'
     path_runcontrol = path_SampleData / 'RunControl.nml'
-    df_state_init = init_supy(path_runcontrol)
+    df_state_init = init_supy(path_runcontrol, force_reload=False)
     # path_input = path_runcontrol.parent / ser_mod_cfg['fileinputpath']
     df_forcing = load_forcing_grid(
         path_runcontrol,
@@ -304,7 +304,6 @@ def run_supy(
 
     '''
 
-
     # set up a timer for simulation time
     start = time.time()
 
@@ -353,7 +352,7 @@ def run_supy(
                 'pres': 'press_hpa',
                 'rain': 'precip',
                 'kdown': 'avkdn',
-                'snow': 'snow_obs',
+                'snow': 'snowfrac_obs',
                 'ldown': 'ldown_obs',
                 'fcld': 'fcld_obs',
                 'Wuh': 'wu_m3',
@@ -382,7 +381,7 @@ def run_supy(
         'press_hpa',
         'precip',
         'avkdn',
-        'snow_obs',
+        'snowfrac_obs',
         'ldown_obs',
         'fcld_obs',
         'wu_m3',
@@ -435,6 +434,7 @@ def run_supy(
             # initialise output of tstep:
             # load met_forcing if the same across all grids:
             met_forcing_tstep = dict_forcing[tstep]
+            # print(met_forcing_tstep.keys())
             # spatial loop
             for grid in list_grid:
                 dict_state_start = dict_state[(tstep, grid)]
@@ -459,7 +459,9 @@ def run_supy(
 
     else:
         # for multi-year run, reduce the whole df_forcing into {n_yr}-year chunks for less memory consumption
-        grp_forcing_yr = df_forcing.groupby(df_forcing.index.year // n_yr)
+        yr_start = df_forcing.index.min().year
+        yr_all = df_forcing.index.year
+        grp_forcing_yr = df_forcing.groupby((yr_all-yr_start) // n_yr)
         if len(grp_forcing_yr) > 1:
             df_state_init_yr = df_state_init.copy()
             list_df_output = []
@@ -469,7 +471,7 @@ def run_supy(
                 df_forcing_yr = grp_forcing_yr.get_group(grp)
                 # run supy: actual execution done in the `else` clause below
                 df_output_yr, df_state_final_yr = run_supy(
-                    df_forcing_yr, df_state_init_yr)
+                    df_forcing_yr, df_state_init_yr, n_yr=n_yr)
                 df_state_init_yr = df_state_final_yr.copy()
                 # collect results
                 list_df_output.append(df_output_yr)
@@ -494,12 +496,21 @@ def run_supy(
                 for grid in list_grid
             ]
 
-            # on windows `processes` has issues when importing
-            # so set `threads` here
-            method_parallel = 'threads' if os.name == 'nt' else 'processes'
-            list_res = db.from_sequence(list_input)\
-                .map(suews_cal_tstep_multi, df_forcing)\
-                .compute(scheduler=method_parallel)
+            if len(list_input) > 1:
+                # if multiple grids to simulate
+                # run simulations in parallel
+
+                # on windows `processes` has issues when importing
+                # so set `threads` here
+                method_parallel = 'threads' if os.name == 'nt' else 'processes'
+                list_res = db.from_sequence(list_input)\
+                    .map(suews_cal_tstep_multi, df_forcing)\
+                    .compute(scheduler=method_parallel)
+            else:
+                #
+                list_res = [
+                    suews_cal_tstep_multi(input_grid, df_forcing)
+                    for input_grid in list_input]
             try:
                 list_state_end, list_output_array = zip(*list_res)
             except:
@@ -525,7 +536,11 @@ def run_supy(
 
     # drop ESTM for now as it is not supported yet
     # select only those supported output groups
-    df_output = df_output.loc[:, ['SUEWS', 'snow', 'DailyState']]
+    list_group_use = [
+        group for group in df_output.columns.levels[0]
+        if group not in ['ESTM']
+    ]
+    df_output = df_output.loc[:, list_group_use]
     # trim multi-index based columns
     df_output.columns = df_output.columns.remove_unused_levels()
 

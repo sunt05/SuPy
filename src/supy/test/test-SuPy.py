@@ -47,11 +47,10 @@ class TestSuPy(TestCase):
 
         # only print to screen on macOS due incompatibility on Windows
         if platform.system() == 'Darwin':
-            t_usage_str = 'Running time: '+str(t_end-t_start)
             capturedOutput = io.StringIO()  # Create StringIO object
             sys.stdout = capturedOutput  # and redirect stdout.
             # Call function.
-            print('Running time: {:.2f} s'.format(t_end-t_start))
+            print(f'Running time: {t_end-t_start:.2f} s')
             sys.stdout = sys.__stdout__                     # Reset redirect.
             # Now works as before.
             print('Captured:\n', capturedOutput.getvalue())

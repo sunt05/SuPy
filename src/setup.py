@@ -35,7 +35,7 @@ setup(name='supy',
       ext_modules=[],
       install_requires=[
           'numpy>=1.15.2',
-          'pandas>=0.25.0',
+          'pandas>=0.25.1',
           'scipy',
           'dask[complete]',  # needs all dask and its dependencies
           'f90nml',
@@ -47,7 +47,7 @@ setup(name='supy',
           'click', # cmd tool
           'lmfit', # optimiser
           'floweaver', # wrf reclassification Sankey chart
-          'supy_driver>=2018rc8, <2019a1',  # a separate f2py-based driver
+          'supy_driver>=2019a4',  # a separate f2py-based driver
       ],
       entry_points={
         #   command line tools

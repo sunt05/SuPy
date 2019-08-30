@@ -1,0 +1,34 @@
+.. _new_latest:
+.. _new_20190829:
+
+
+Version 20190829
+======================================================
+
+
+- **New**
+
+  1. added WRF-SUEWS related functions.
+  2. added `diagnostics of canyon profiles <https://suews-docs.readthedocs.io/en/test-dev/parameterisations-and-sub-models.html#wind-temperature-and-humidity-profiles-in-the-roughness-sublayer>`_.
+
+- **Improvement**
+
+  None.
+
+- **Changes**
+
+  1. synchronised with v2019a interface: minimum supy_driver v2019a2.
+
+
+- **Fix**
+
+  None.
+
+
+- **Known issue**
+
+  1. ESTM is not supported yet.
+  2. BLUEWS, a CBL modules in SUEWS, is not supported yet.
+
+
+
