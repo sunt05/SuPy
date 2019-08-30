@@ -26,7 +26,8 @@ Version dev
 
 - **Known issue**
 
-  ESTM is not supported yet.
+  1. ESTM is not supported yet.
+  2. BLUEWS, a CBL modules in SUEWS, is not supported yet.
 
 
 
