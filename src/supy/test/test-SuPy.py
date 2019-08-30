@@ -63,6 +63,35 @@ class TestSuPy(TestCase):
         )
         self.assertTrue(test_non_empty)
 
+    # test if multi-grid simulation can run in parallel
+    def test_is_supy_running_multi_grid_par(self):
+        df_state_init, df_forcing_tstep = sp.load_SampleData()
+        df_state_init = pd.concat([df_state_init for x in range(6)])
+        df_forcing_part = df_forcing_tstep.iloc[:]
+        t_start = time()
+        df_output, df_state = sp.run_supy(
+            df_forcing_part, df_state_init)
+        t_end = time()
+
+        # only print to screen on macOS due incompatibility on Windows
+        if platform.system() == 'Darwin':
+            capturedOutput = io.StringIO()  # Create StringIO object
+            sys.stdout = capturedOutput  # and redirect stdout.
+            # Call function.
+            n_grid = df_state_init.index.size
+            print(f'Running time: {t_end-t_start:.2f} s for {n_grid} grids')
+            sys.stdout = sys.__stdout__                     # Reset redirect.
+            # Now works as before.
+            print('Captured:\n', capturedOutput.getvalue())
+
+        test_non_empty = np.all(
+            [
+                not df_output.empty,
+                not df_state.empty,
+            ]
+        )
+        self.assertTrue(test_non_empty)
+
     # test if single-tstep and multi-tstep modes can produce the same SUEWS results
     def test_is_supy_euqal_mode(self):
         df_state_init, df_forcing_tstep = sp.load_SampleData()
@@ -92,7 +121,7 @@ class TestSuPy(TestCase):
                 'SUEWS',
                  'DailyState',
                  'snow',
-            ]]\
+                 ]]\
             .fillna(-999.)\
             .sort_index(axis=1)\
             .round(6)\

@@ -15,6 +15,8 @@
 ###########################################################################
 
 
+import logging
+import multiprocessing
 import time
 import dask.bag as db
 # from multiprocessing import Pool, cpu_count, freeze_support
@@ -41,12 +43,13 @@ from ._load import (load_InitialCond_grid_df,
                     resample_forcing_met,
                     resample_linear)
 from ._post import pack_df_output, pack_df_output_array, pack_df_state
-from ._run import (pack_df_state_final,
-                   pack_grid_dict,
-                   suews_cal_tstep,
-                   suews_cal_tstep_multi)
+from ._run import run_supy_ser, run_supy_par
 from ._save import get_save_info, save_df_output, save_df_state, save_initcond_nml
 
+
+# set up logging module
+logging.basicConfig()
+logging.getLogger().setLevel(logging.DEBUG)
 
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
@@ -89,7 +92,7 @@ def init_supy(path_init: str, force_reload=True) -> pd.DataFrame:
     try:
         path_init_x = Path(path_init).expanduser().resolve()
     except FileNotFoundError:
-        print('{path} does not exists!'.format(path=path_init_x))
+        logging.exception(f'{path_init_x} does not exists!')
     else:
         if path_init_x.suffix == '.nml':
             # SUEWS `RunControl.nml`:
@@ -99,8 +102,8 @@ def init_supy(path_init: str, force_reload=True) -> pd.DataFrame:
             # SuPy `df_state.csv`:
             df_state_init = load_df_state(path_init_x)
         else:
-            print('{path} is NOT a valid file to initialise SuPy!'.format(
-                path=path_init_x))
+            logging.critical(
+                f'{path_init_x} is NOT a valid file to initialise SuPy!')
             sys.exit()
         return df_state_init
 
@@ -140,7 +143,7 @@ def load_forcing_grid(path_runcontrol: str, grid: int) -> pd.DataFrame:
     try:
         path_runcontrol = Path(path_runcontrol).expanduser().resolve()
     except FileNotFoundError:
-        print('{path} does not exists!'.format(path=path_runcontrol))
+        logging.exception(f'{path_runcontrol} does not exists!')
     else:
         dict_mod_cfg = load_SUEWS_dict_ModConfig(path_runcontrol)
         df_state_init = init_supy(path_runcontrol)
@@ -272,8 +275,7 @@ def run_supy(
         df_forcing: pandas.DataFrame,
         df_state_init: pandas.DataFrame,
         save_state=False,
-        n_yr=10,
-) -> Tuple[pandas.DataFrame, pandas.DataFrame]:
+        n_yr=10,) -> Tuple[pandas.DataFrame, pandas.DataFrame]:
     '''Perform supy simulation.
 
     Parameters
@@ -309,248 +311,272 @@ def run_supy(
 
     # save df_init without changing its original data
     # df.copy() in pandas works as a standard python deepcopy
-    df_init = df_state_init.copy()
+    # df_init = df_state_init.copy()
 
     # print some diagnostic info
-    print(f'====================')
-    print(f'Simulation period:')
-    print(f'  Start: {df_forcing.index[0]}')
-    print(f'  End: {df_forcing.index[-1]}')
-    print('')
+    logging.info(f'====================')
+    logging.info(f'Simulation period:')
+    logging.info(f'  Start: {df_forcing.index[0]}')
+    logging.info(f'  End: {df_forcing.index[-1]}')
+    logging.info('')
+    n_grid = df_state_init.index.size
+    logging.info(f'No. of grids: {n_grid}')
 
-    # retrieve the last temporal record as `df_init`
-    # if a `datetime` level existing in the index
-    if df_init.index.nlevels > 1:
-        idx_dt = df_init.index.get_level_values('datetime').unique()
-        dt_last = idx_dt.max()
-        df_init = df_init.loc[dt_last]
-
-    # add placeholder variables for df_forcing
-    # `metforcingdata_grid` and `ts5mindata_ir` are used by AnOHM and ESTM, respectively
-    # they are now temporarily disabled in supy
-    df_forcing = df_forcing\
-        .assign(
-            metforcingdata_grid=0,
-            ts5mindata_ir=0,
-        )\
-        .rename(
-            # rename is a workaround to resolve naming inconsistency between
-            # suews fortran code interface and input forcing file headers
-            columns={
-                '%' + 'iy': 'iy',
-                'id': 'id',
-                'it': 'it',
-                'imin': 'imin',
-                'qn': 'qn1_obs',
-                'qh': 'qh_obs',
-                'qe': 'qe',
-                'qs': 'qs_obs',
-                'qf': 'qf_obs',
-                'U': 'avu1',
-                'RH': 'avrh',
-                'Tair': 'temp_c',
-                'pres': 'press_hpa',
-                'rain': 'precip',
-                'kdown': 'avkdn',
-                'snow': 'snowfrac_obs',
-                'ldown': 'ldown_obs',
-                'fcld': 'fcld_obs',
-                'Wuh': 'wu_m3',
-                'xsmd': 'xsmd',
-                'lai': 'lai_obs',
-                'kdiff': 'kdiff',
-                'kdir': 'kdir',
-                'wdir': 'wdir',
-            }
-        )
-    # reorder columns of df_forcing to comply with SUEWS kernel convention in receiving the input
-    # TODO: this re-ordering can be later put into the planned input checker
-    list_var_forcing = [
-        'iy',
-        'id',
-        'it',
-        'imin',
-        'qn1_obs',
-        'qh_obs',
-        'qe',
-        'qs_obs',
-        'qf_obs',
-        'avu1',
-        'avrh',
-        'temp_c',
-        'press_hpa',
-        'precip',
-        'avkdn',
-        'snowfrac_obs',
-        'ldown_obs',
-        'fcld_obs',
-        'wu_m3',
-        'xsmd',
-        'lai_obs',
-        'kdiff',
-        'kdir',
-        'wdir',
-        'isec',
-        'metforcingdata_grid',
-        'ts5mindata_ir',
-    ]
-    df_forcing = df_forcing.loc[:, list_var_forcing]
-
-    # grid list determined by initial states
-    list_grid = df_init.index
-    print(f'No. of grids: {list_grid.size}\n')
-
-    # initialise dicts for holding results and model states
-    dict_state = {}
-    dict_output = {}
-
-    # initial and final tsteps retrieved from forcing data
-    tstep_init = df_forcing.index[0]
-    tstep_final = df_forcing.index[-1]
-    # tstep size retrieved from forcing data
-    freq = df_forcing.index.freq
-
-    # dict_state is used to save model states for later use
-    dict_state = {
-        # (t_start, grid): series_state_init.to_dict()
-        (tstep_init, grid): pack_grid_dict(series_state_init)
-        for grid, series_state_init
-        in df_init.iterrows()
-    }
-
-    # remove 'problems.txt'
-    if Path('problems.txt').exists():
-        os.remove('problems.txt')
-
-    if save_state:
-        # use slower more functional single step wrapper
-
-        # convert df to dict with `itertuples` for better performance
-        dict_forcing = {row.Index: row._asdict()
-                        for row in df_forcing.itertuples()}
-
-        for tstep in df_forcing.index:
-            # temporal loop
-            # initialise output of tstep:
-            # load met_forcing if the same across all grids:
-            met_forcing_tstep = dict_forcing[tstep]
-            # print(met_forcing_tstep.keys())
-            # spatial loop
-            for grid in list_grid:
-                dict_state_start = dict_state[(tstep, grid)]
-                # calculation at one step:
-                # series_state_end, series_output_tstep = suews_cal_tstep_df(
-                #     series_state_start, met_forcing_tstep)
-                try:
-                    dict_state_end, dict_output_tstep = suews_cal_tstep(
-                        dict_state_start, met_forcing_tstep)
-                except:
-                    raise RuntimeError('SUEWS kernel error')
-
-                # update output & model state at tstep for the current grid
-                dict_output.update({(tstep, grid): dict_output_tstep})
-                dict_state.update({(tstep + 1*freq, grid): dict_state_end})
-
-        # pack results as easier DataFrames
-        df_output = pack_df_output(dict_output).swaplevel(0, 1)
-        # drop unnecessary 'datetime' as it is already included in the index
-        df_output = df_output.drop(columns=['datetime'], level=0)
-        df_state_final = pack_df_state(dict_state).swaplevel(0, 1)
-
+    if n_grid > 1 and os.name != 'nt':
+        logging.info(f'SuPy is running in parallel mode')
+        df_output, df_state_final = run_supy_par(
+            df_forcing, df_state_init, save_state, n_yr)
     else:
-        # for multi-year run, reduce the whole df_forcing into {n_yr}-year chunks for less memory consumption
-        yr_start = df_forcing.index.min().year
-        yr_all = df_forcing.index.year
-        grp_forcing_yr = df_forcing.groupby((yr_all-yr_start) // n_yr)
-        if len(grp_forcing_yr) > 1:
-            df_state_init_yr = df_state_init.copy()
-            list_df_output = []
-            list_df_state = []
-            for grp in grp_forcing_yr.groups:
-                # get forcing of a specific year
-                df_forcing_yr = grp_forcing_yr.get_group(grp)
-                # run supy: actual execution done in the `else` clause below
-                df_output_yr, df_state_final_yr = run_supy(
-                    df_forcing_yr, df_state_init_yr, n_yr=n_yr)
-                df_state_init_yr = df_state_final_yr.copy()
-                # collect results
-                list_df_output.append(df_output_yr)
-                list_df_state.append(df_state_final_yr)
-
-            # re-organise results of each year
-            df_output = pd.concat(list_df_output).sort_index()
-            df_state_final = pd.concat(
-                list_df_state).sort_index().drop_duplicates()
-            return df_output, df_state_final
-
-        else:
-            # for single-chunk run (1 chunk = {n_yr} years), directly put df_forcing into supy_driver for calculation
-            # use higher level wrapper that calculate at a `block` level
-            # for better performance
-
-            # # construct input list for `Pool.starmap`
-            # construct input list for `dask.bag`
-            list_input = [
-                # (dict_state[(tstep_init, grid)], df_forcing)
-                dict_state[(tstep_init, grid)]
-                for grid in list_grid
-            ]
-
-            if len(list_input) > 1:
-                # if multiple grids to simulate
-                # run simulations in parallel
-
-                # on windows `processes` has issues when importing
-                # so set `threads` here
-                method_parallel = 'threads' if os.name == 'nt' else 'processes'
-                list_res = db.from_sequence(list_input)\
-                    .map(suews_cal_tstep_multi, df_forcing)\
-                    .compute(scheduler=method_parallel)
-            else:
-                #
-                list_res = [
-                    suews_cal_tstep_multi(input_grid, df_forcing)
-                    for input_grid in list_input]
-            try:
-                list_state_end, list_output_array = zip(*list_res)
-            except:
-                raise RuntimeError('SUEWS kernel error')
-
-            # collect output arrays
-            dict_output = {
-                grid: dict_output_array
-                for grid, dict_output_array in zip(list_grid, list_output_array)
-            }
-
-            # collect final states
-            dict_state_final_tstep = {
-                (tstep_final + freq, grid): dict_state_end
-                for grid, dict_state_end in zip(list_grid, list_state_end)
-            }
-            dict_state.update(dict_state_final_tstep)
-
-            # save results as time-aware DataFrame
-            df_output0 = pack_df_output_array(dict_output, df_forcing)
-            df_output = df_output0.replace(-999., np.nan)
-            df_state_final = pack_df_state(dict_state).swaplevel(0, 1)
-
-    # drop ESTM for now as it is not supported yet
-    # select only those supported output groups
-    list_group_use = [
-        group for group in df_output.columns.levels[0]
-        if group not in ['ESTM']
-    ]
-    df_output = df_output.loc[:, list_group_use]
-    # trim multi-index based columns
-    df_output.columns = df_output.columns.remove_unused_levels()
-
-    # pack final model states into a proper dataframe
-    df_state_final = pack_df_state_final(df_state_final, df_init)
+        logging.info(f'SuPy is running in serial mode')
+        df_output, df_state_final = run_supy_ser(
+            df_forcing, df_state_init, save_state, n_yr)
 
     # show simulation time
     end = time.time()
-    print(f'Execution time: {(end - start):.1f} s')
-    print(f'====================\n')
+    logging.info(f'Execution time: {(end - start):.1f} s')
+    logging.info(f'====================\n')
+
+    # # retrieve the last temporal record as `df_init`
+    # # if a `datetime` level existing in the index
+    # if df_init.index.nlevels > 1:
+    #     idx_dt = df_init.index.get_level_values('datetime').unique()
+    #     dt_last = idx_dt.max()
+    #     df_init = df_init.loc[dt_last]
+
+    # # add placeholder variables for df_forcing
+    # # `metforcingdata_grid` and `ts5mindata_ir` are used by AnOHM and ESTM, respectively
+    # # they are now temporarily disabled in supy
+    # df_forcing = df_forcing\
+    #     .assign(
+    #         metforcingdata_grid=0,
+    #         ts5mindata_ir=0,
+    #     )\
+    #     .rename(
+    #         # rename is a workaround to resolve naming inconsistency between
+    #         # suews fortran code interface and input forcing file headers
+    #         columns={
+    #             '%' + 'iy': 'iy',
+    #             'id': 'id',
+    #             'it': 'it',
+    #             'imin': 'imin',
+    #             'qn': 'qn1_obs',
+    #             'qh': 'qh_obs',
+    #             'qe': 'qe',
+    #             'qs': 'qs_obs',
+    #             'qf': 'qf_obs',
+    #             'U': 'avu1',
+    #             'RH': 'avrh',
+    #             'Tair': 'temp_c',
+    #             'pres': 'press_hpa',
+    #             'rain': 'precip',
+    #             'kdown': 'avkdn',
+    #             'snow': 'snowfrac_obs',
+    #             'ldown': 'ldown_obs',
+    #             'fcld': 'fcld_obs',
+    #             'Wuh': 'wu_m3',
+    #             'xsmd': 'xsmd',
+    #             'lai': 'lai_obs',
+    #             'kdiff': 'kdiff',
+    #             'kdir': 'kdir',
+    #             'wdir': 'wdir',
+    #         }
+    #     )
+    # # reorder columns of df_forcing to comply with SUEWS kernel convention in receiving the input
+    # # TODO: this re-ordering can be later put into the planned input checker
+    # list_var_forcing = [
+    #     'iy',
+    #     'id',
+    #     'it',
+    #     'imin',
+    #     'qn1_obs',
+    #     'qh_obs',
+    #     'qe',
+    #     'qs_obs',
+    #     'qf_obs',
+    #     'avu1',
+    #     'avrh',
+    #     'temp_c',
+    #     'press_hpa',
+    #     'precip',
+    #     'avkdn',
+    #     'snowfrac_obs',
+    #     'ldown_obs',
+    #     'fcld_obs',
+    #     'wu_m3',
+    #     'xsmd',
+    #     'lai_obs',
+    #     'kdiff',
+    #     'kdir',
+    #     'wdir',
+    #     'isec',
+    #     'metforcingdata_grid',
+    #     'ts5mindata_ir',
+    # ]
+    # df_forcing = df_forcing.loc[:, list_var_forcing]
+
+    # # grid list determined by initial states
+    # list_grid = df_init.index
+    # print(f'No. of grids: {list_grid.size}\n')
+
+    # # initialise dicts for holding results and model states
+    # dict_state = {}
+    # dict_output = {}
+
+    # # initial and final tsteps retrieved from forcing data
+    # tstep_init = df_forcing.index[0]
+    # tstep_final = df_forcing.index[-1]
+    # # tstep size retrieved from forcing data
+    # freq = df_forcing.index.freq
+
+    # # dict_state is used to save model states for later use
+    # dict_state = {
+    #     # (t_start, grid): series_state_init.to_dict()
+    #     (tstep_init, grid): pack_grid_dict(series_state_init)
+    #     for grid, series_state_init
+    #     in df_init.iterrows()
+    # }
+
+    # # remove 'problems.txt'
+    # if Path('problems.txt').exists():
+    #     os.remove('problems.txt')
+
+    # if save_state:
+    #     # use slower more functional single step wrapper
+
+    #     # convert df to dict with `itertuples` for better performance
+    #     dict_forcing = {row.Index: row._asdict()
+    #                     for row in df_forcing.itertuples()}
+
+    #     for tstep in df_forcing.index:
+    #         # temporal loop
+    #         # initialise output of tstep:
+    #         # load met_forcing if the same across all grids:
+    #         met_forcing_tstep = dict_forcing[tstep]
+    #         # print(met_forcing_tstep.keys())
+    #         # spatial loop
+    #         for grid in list_grid:
+    #             dict_state_start = dict_state[(tstep, grid)]
+    #             # calculation at one step:
+    #             # series_state_end, series_output_tstep = suews_cal_tstep_df(
+    #             #     series_state_start, met_forcing_tstep)
+    #             try:
+    #                 dict_state_end, dict_output_tstep = suews_cal_tstep(
+    #                     dict_state_start, met_forcing_tstep)
+    #             except:
+    #                 raise RuntimeError('SUEWS kernel error')
+
+    #             # update output & model state at tstep for the current grid
+    #             dict_output.update({(tstep, grid): dict_output_tstep})
+    #             dict_state.update({(tstep + 1*freq, grid): dict_state_end})
+
+    #     # pack results as easier DataFrames
+    #     df_output = pack_df_output(dict_output).swaplevel(0, 1)
+    #     # drop unnecessary 'datetime' as it is already included in the index
+    #     df_output = df_output.drop(columns=['datetime'], level=0)
+    #     df_state_final = pack_df_state(dict_state).swaplevel(0, 1)
+
+    # else:
+    #     # for multi-year run, reduce the whole df_forcing into {n_yr}-year chunks for less memory consumption
+    #     yr_start = df_forcing.index.min().year
+    #     yr_all = df_forcing.index.year
+    #     grp_forcing_yr = df_forcing.groupby((yr_all-yr_start) // n_yr)
+    #     if len(grp_forcing_yr) > 1:
+    #         df_state_init_yr = df_state_init.copy()
+    #         list_df_output = []
+    #         list_df_state = []
+    #         for grp in grp_forcing_yr.groups:
+    #             # get forcing of a specific year
+    #             df_forcing_yr = grp_forcing_yr.get_group(grp)
+    #             # run supy: actual execution done in the `else` clause below
+    #             df_output_yr, df_state_final_yr = run_supy(
+    #                 df_forcing_yr, df_state_init_yr, n_yr=n_yr)
+    #             df_state_init_yr = df_state_final_yr.copy()
+    #             # collect results
+    #             list_df_output.append(df_output_yr)
+    #             list_df_state.append(df_state_final_yr)
+
+    #         # re-organise results of each year
+    #         df_output = pd.concat(list_df_output).sort_index()
+    #         df_state_final = pd.concat(
+    #             list_df_state).sort_index().drop_duplicates()
+    #         return df_output, df_state_final
+
+    #     else:
+    #         # for single-chunk run (1 chunk = {n_yr} years), directly put df_forcing into supy_driver for calculation
+    #         # use higher level wrapper that calculate at a `block` level
+    #         # for better performance
+
+    #         # # construct input list for `Pool.starmap`
+    #         # construct input list for `dask.bag`
+    #         list_input = [
+    #             # (dict_state[(tstep_init, grid)], df_forcing)
+    #             dict_state[(tstep_init, grid)]
+    #             for grid in list_grid
+    #         ]
+
+    #         # disable parallel mode due to remarkable performance degradations
+    #         # if len(list_input) > 1:
+    #         #     # if multiple grids to simulate
+    #         #     # run simulations in parallel
+
+    #         #     # on windows `processes` has issues when importing
+    #         #     # so set `threads` here
+    #         #     method_parallel = 'threads' if os.name == 'nt' else 'processes'
+    #         #     num_cores = multiprocessing.cpu_count()
+    #         #     list_res = db.from_sequence(list_input)\
+    #         #         .map(suews_cal_tstep_multi, df_forcing)\
+    #         #         .compute(
+    #         #             scheduler=method_parallel,
+    #         #             num_workers=int(num_cores/2-1),
+    #         #     )
+    #         # else:
+    #         #     #
+    #         #     list_res = [
+    #         #         suews_cal_tstep_multi(input_grid, df_forcing)
+    #         #         for input_grid in list_input]
+    #         try:
+    #             list_res = [
+    #                 suews_cal_tstep_multi(input_grid, df_forcing)
+    #                 for input_grid in list_input]
+    #             list_state_end, list_output_array = zip(*list_res)
+    #         except:
+    #             raise RuntimeError('SUEWS kernel error')
+
+    #         # collect output arrays
+    #         dict_output = {
+    #             grid: dict_output_array
+    #             for grid, dict_output_array in zip(list_grid, list_output_array)
+    #         }
+
+    #         # collect final states
+    #         dict_state_final_tstep = {
+    #             (tstep_final + freq, grid): dict_state_end
+    #             for grid, dict_state_end in zip(list_grid, list_state_end)
+    #         }
+    #         dict_state.update(dict_state_final_tstep)
+
+    #         # save results as time-aware DataFrame
+    #         df_output0 = pack_df_output_array(dict_output, df_forcing)
+    #         df_output = df_output0.replace(-999., np.nan)
+    #         df_state_final = pack_df_state(dict_state).swaplevel(0, 1)
+
+    # # drop ESTM for now as it is not supported yet
+    # # select only those supported output groups
+    # list_group_use = [
+    #     group for group in df_output.columns.levels[0]
+    #     if group not in ['ESTM']
+    # ]
+    # df_output = df_output.loc[:, list_group_use]
+    # # trim multi-index based columns
+    # df_output.columns = df_output.columns.remove_unused_levels()
+
+    # # pack final model states into a proper dataframe
+    # df_state_final = pack_df_state_final(df_state_final, df_init)
+
+    # # show simulation time
+    # end = time.time()
+    # print(f'Execution time: {(end - start):.1f} s')
+    # print(f'====================\n')
 
     return df_output, df_state_final
 

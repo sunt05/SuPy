@@ -1,3 +1,4 @@
+import logging
 import f90nml
 from typing import Tuple
 from ._post import resample_output
@@ -7,7 +8,7 @@ import pandas as pd
 from pathlib import Path
 
 
-def gen_df_save(df_grid_group: pd.DataFrame)->pd.DataFrame:
+def gen_df_save(df_grid_group: pd.DataFrame) -> pd.DataFrame:
     '''generate a dataframe for saving
 
     Parameters
@@ -88,8 +89,9 @@ def save_df_grid_group(df_grid_group, grid, group, site='test', dir_save='.'):
     path_dir = Path(dir_save)
 
     # pandas bug here: monotonic datetime index would lose `freq` once `pd.concat`ed
-    if df_grid_group.shape[0]>0:
-        df_grid_group.index.freq = df_grid_group.index[1]-df_grid_group.index[0]
+    if df_grid_group.shape[0] > 0:
+        df_grid_group.index.freq = df_grid_group.index[1] - \
+            df_grid_group.index[0]
     # output frequency in min
     freq_min = int(df_grid_group.index.freq.delta.total_seconds()/60)
     # staring year
@@ -131,7 +133,7 @@ def save_df_output(
         df_output: pd.DataFrame,
         freq_s: int = 3600,
         site: str = '',
-        path_dir_save: Path = Path('.'),)->list:
+        path_dir_save: Path = Path('.'),) -> list:
     '''save supy output dataframe to txt files
 
     Parameters
@@ -193,7 +195,7 @@ def save_df_output(
 def save_df_state(
         df_state: pd.DataFrame,
         site: str = '',
-        path_dir_save: Path = Path('.'),)->Path:
+        path_dir_save: Path = Path('.'),) -> Path:
     '''save `df_state` to a csv file
 
     Parameters
@@ -221,7 +223,7 @@ def save_df_state(
 
 
 # get information for saving results
-def get_save_info(path_runcontrol: str)->Tuple[int, Path, str]:
+def get_save_info(path_runcontrol: str) -> Tuple[int, Path, str]:
     '''get necessary information for saving supy results, which are (freq_s, dir_save, site)
 
     Parameters
@@ -241,7 +243,7 @@ def get_save_info(path_runcontrol: str)->Tuple[int, Path, str]:
     try:
         path_runcontrol = Path(path_runcontrol).expanduser().resolve()
     except FileNotFoundError:
-        print('{path} does not exists!'.format(path=path_runcontrol))
+        logging.exception(f'{path_runcontrol} does not exists!')
     else:
         dict_mod_cfg = load_SUEWS_dict_ModConfig(path_runcontrol)
         freq_s, dir_save, site = [
@@ -321,12 +323,15 @@ dict_init_nml = {
 def save_initcond_nml(
         df_state: pd.DataFrame,
         site: str = '',
-        path_dir_save: Path = Path('.'),)->Path:
+        path_dir_save: Path = Path('.'),) -> Path:
     # get last time step
     try:
         tstep_last = df_state.index.levels[0].max()
     except AttributeError:
-        print('incorrect structure detected; check if `df_state` is the final model state.')
+        logging.exception(
+            ('incorrect structure detected;' +
+             ' check if `df_state` is the final model state.')
+        )
         return
 
     # get year for filename formatting
@@ -352,6 +357,6 @@ def save_initcond_nml(
         }
         # save nml
         f90nml.write(nml, path_nml, force=True)
-            # f90nml.write(nml, nml_file,force=True)
+        # f90nml.write(nml, nml_file,force=True)
         list_path_nml.append(path_nml)
     return list_path_nml
