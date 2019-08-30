@@ -1,0 +1,25 @@
+# .readthedocs.yml
+
+build:
+  image: latest
+
+python:
+   version: 3.7
+   install:
+      - requirements: docs/requirements.txt
+      # - method: pip
+      #   path: src
+      #   extra_requirements:
+      #       - docs
+      - method: setuptools
+        path: src
+   system_packages: true
+
+formats:
+  - epub
+  - pdf
+
+sphinx:
+  builder: html
+  configuration: docs/conf.py
+  fail_on_warning: false
