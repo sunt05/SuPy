@@ -29,6 +29,8 @@ Version 20190829
 
   1. ESTM is not supported yet.
   2. BLUEWS, a CBL modules in SUEWS, is not supported yet.
+  3. Performance in parallel mode can be worse than
+     serial mode sometimes due to heavy (de)-serialisation loads.
 
 
 
