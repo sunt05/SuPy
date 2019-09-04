@@ -47,6 +47,7 @@ setup(name='supy',
           'pandas>=0.25.1',
           'tables',  # for dumping in hdf5
           'scipy',
+          'scikit-learn',
           'dask[complete]',  # needs all dask and its dependencies
           'f90nml',
           'matplotlib',
