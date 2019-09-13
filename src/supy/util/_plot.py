@@ -128,6 +128,5 @@ def plot_comp(df_var, fig=None, ax=None):
     ax.plot([lim_low, lim_high], [lim_low, lim_high],
             color='red', linewidth=1, zorder=0)
 
-    # fig = ax.figure
 
     return fig, ax
