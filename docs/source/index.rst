@@ -67,6 +67,8 @@ SuPy: SUEWS that speaks Python
 
     * Please see `api` for details.
 
+    * Please see `faq` if any issue.
+
 - **How to contribute to SuPy?**
 
     * Add your development via `Pull Request <https://help.github.com/articles/about-pull-requests/>`_

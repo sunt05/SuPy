@@ -17,14 +17,16 @@ setup(name='supy',
       long_description=readme(),
       long_description_content_type='text/markdown',
       url='https://github.com/sunt05/SuPy',
-      author='; '.join([
+      author=', '.join([
           'Dr Ting Sun',
           'Dr Hamidreza Omidvar',
+          'Prof Sue Grimmond',
       ]),
-      author_email='; '.join(
+      author_email=', '.join(
           [
               'ting.sun@reading.ac.uk',
               'h.omidvar@reading.ac.uk',
+              'c.s.grimmond@reading.ac.uk',
           ]),
       license='GPL-V3.0',
       packages=['supy'],
@@ -45,6 +47,7 @@ setup(name='supy',
           'pandas>=0.25.1',
           'tables',  # for dumping in hdf5
           'scipy',
+          'scikit-learn',
           'dask[complete]',  # needs all dask and its dependencies
           'f90nml',
           'matplotlib',
