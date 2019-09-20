@@ -1451,6 +1451,7 @@ def add_state_init_df(df_init):
         ('dt_since_start', 0, 0.),
         ('tstep_prev', 0, 'tstep'),
         ('tair24hr', int(24 * 3600 / df_init['tstep'].values[0, 0]), 273.15),
+        ('tair_av', 0, 273.15),
     ]
 
     # set values according to `list_var_dim`
@@ -1491,11 +1492,12 @@ def add_state_init_df(df_init):
         (ser_popdens_day_1-ser_popdens_night)*ser_frpddwe
     df_init[('popdensdaytime', '(1,)')] = ser_popdens_day_2
 
-    # `numcapita` calculation:
-    df_init[('numcapita', '(0,)')] = df_init[[
-        ('popdensdaytime', '(0,)'), ('popdensnighttime', '0')]].mean(axis=1)
-    df_init[('numcapita', '(1,)')] = df_init[[
-        ('popdensdaytime', '(1,)'), ('popdensnighttime', '0')]].mean(axis=1)
+    # # `numcapita` calculation:
+    # below is now done in suews kernel
+    # df_init[('numcapita', '(0,)')] = df_init[[
+    #     ('popdensdaytime', '(0,)'), ('popdensnighttime', '0')]].mean(axis=1)
+    # df_init[('numcapita', '(1,)')] = df_init[[
+    #     ('popdensdaytime', '(1,)'), ('popdensnighttime', '0')]].mean(axis=1)
     # `gridiv` addition:
     df_init[('gridiv', '0')] = df_init.index
 
