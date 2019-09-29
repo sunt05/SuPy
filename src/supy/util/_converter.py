@@ -363,7 +363,7 @@ def convert_table(fromDir, toDir, fromVer, toVer):
 
     # Indirect version conversion process
     while i > 1:
-        logging.info('working on: {chain_ver[i + 1]} --> {chain_ver[i]}')
+        logging.info(f'working on: {chain_ver[i + 1]} --> {chain_ver[i]}')
         if i % 2:
             tempDir_2 = 'temp2'
             SUEWS_Converter_single(
@@ -381,7 +381,7 @@ def convert_table(fromDir, toDir, fromVer, toVer):
             rmtree(tempDir_2, ignore_errors=True)
             # this loop always break in this part
         i -= 1
-    logging.info('working on: {chain_ver[i + 1]} --> {chain_ver[i]}')
+    logging.info(f'working on: {chain_ver[i + 1]} --> {chain_ver[i]}')
     SUEWS_Converter_single(tempDir_1, toDir, chain_ver[2], chain_ver[1])
     # Remove temporary folders
     rmtree(tempDir_1, ignore_errors=True)
