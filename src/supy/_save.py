@@ -6,6 +6,7 @@ from ._load import load_SUEWS_dict_ModConfig, dict_InitCond_out
 import os
 import pandas as pd
 from pathlib import Path
+from ._env import logger_supy
 
 
 def gen_df_save(df_grid_group: pd.DataFrame) -> pd.DataFrame:
@@ -243,7 +244,7 @@ def get_save_info(path_runcontrol: str) -> Tuple[int, Path, str]:
     try:
         path_runcontrol = Path(path_runcontrol).expanduser().resolve()
     except FileNotFoundError:
-        logging.exception(f'{path_runcontrol} does not exists!')
+        logger_supy.exception(f'{path_runcontrol} does not exists!')
     else:
         dict_mod_cfg = load_SUEWS_dict_ModConfig(path_runcontrol)
         freq_s, dir_save, site = [
@@ -328,7 +329,7 @@ def save_initcond_nml(
     try:
         tstep_last = df_state.index.levels[0].max()
     except AttributeError:
-        logging.exception(
+        logger_supy.exception(
             ('incorrect structure detected;' +
              ' check if `df_state` is the final model state.')
         )

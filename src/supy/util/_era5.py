@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 from numpy import cos, deg2rad, sin, sqrt
 from scipy.interpolate import interp1d
+from .._env import logger_supy
 
 ################################################
 # more ERA-5 related functions
@@ -339,6 +340,10 @@ def sel_list_pres(ds_sfc_x):
     select proper levels for model level data download
     '''
     p_min, p_max = ds_sfc_x.sp.min().values, ds_sfc_x.sp.max().values
+
+    # adjust p_max if level for p_max is already below that of 1000 hPa
+    p_max = p_max if p_max < 1000E2 else 1000E2-1
+
     list_pres_level = [
         '1', '2', '3',
         '5', '7', '10',
@@ -396,7 +401,7 @@ def gen_req_ml(fn_sfc, grid=[0.125, 0.125], scale=0):
 def download_era5(
         lat_x: float, lon_x: float,
         start: str, end: str,
-        grid=[0.125, 0.125], scale=0)->dict:
+        grid=[0.125, 0.125], scale=0) -> dict:
     """Generate ERA-5 cdsapi-based requests and download data for area of interests.
 
     Parameters
@@ -421,27 +426,27 @@ def download_era5(
     """
 
     c = cdsapi.Client()
-    dict_req_sfc = gen_req_sfc(lat_x, lon_x, start, end, grid=[
-                               0.125, 0.125], scale=0)
+    dict_req_sfc = gen_req_sfc(
+        lat_x, lon_x, start, end,
+        grid=[0.125, 0.125], scale=0,)
     for fn_sfc, dict_req in dict_req_sfc.items():
         if not Path(fn_sfc).exists():
-            print('To download:', fn_sfc)
+            logger_supy.info(f'To download: {fn_sfc}')
             c.retrieve(**dict_req)
             time.sleep(.0100)
 
     dict_req_ml = {}
     for fn_sfc in dict_req_sfc.keys():
         if Path(fn_sfc).exists():
-            print(f'{fn_sfc} exists!')
+            logger_supy.warning(f'{fn_sfc} exists!')
             dict_req = gen_req_ml(fn_sfc, grid, scale)
             dict_req_ml.update(dict_req)
 
     for fn_ml, dict_req in dict_req_ml.items():
         if Path(fn_ml).exists():
-            print(f'{fn_ml} exists!')
-            print('')
+            logger_supy.warning(f'{fn_ml} exists!')
         else:
-            print('To download:', fn_ml)
+            logger_supy.info(f'To download: {fn_ml}')
             c.retrieve(**dict_req)
             time.sleep(.0100)
 

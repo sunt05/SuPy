@@ -12,12 +12,12 @@ from dask import dataframe as dd
 from scipy.interpolate import interp1d
 from supy_driver import suews_driver as sd
 
-from ._env import path_supy_module
+from ._env import path_supy_module, logger_supy
 from ._misc import path_insensitive
 
 
 ########################################################################
-# get_args_suews can get the interface informaiton
+# get_args_suews can get the interface information
 # of the f2py-converted Fortran interface
 def get_args_suews(docstring=sd.suews_cal_main.__doc__):
     # split doc lines for processing
@@ -227,7 +227,7 @@ def load_SUEWS_nml(path_file):
         df_res = pd.DataFrame(f90nml.read(str_file))
         return df_res
     except FileNotFoundError:
-        logging.exception(f'{path_file} does not exists!')
+        logger_supy.exception(f'{path_file} does not exists!')
 
 # def load_SUEWS_RunControl(path_file):
 #     lib_RunControl = load_SUEWS_nml(path_file)
@@ -242,7 +242,7 @@ def load_SUEWS_table(path_file):
     try:
         path_file = path_file.resolve()
     except FileNotFoundError:
-        logging.exception(f'{path_file} does not exists!')
+        logger_supy.exception(f'{path_file} does not exists!')
     else:
         # fileX = path_insensitive(fileX)
         str_file = str(path_file)
@@ -751,7 +751,7 @@ def gather_code_set(code, dict_var2SiteSelect):
             elif isinstance(v, dict):
                 set_res.update(v.keys())
             else:
-                logging.info(f'{k},{v}')
+                logger_supy.info(f'{k},{v}')
 
         elif isinstance(v, dict):
             # print(res,v)
@@ -793,10 +793,10 @@ def build_code_df(code, path_input, df_base):
     try:
         df_code = df_code0.loc[list_code, list_keys]
     except Exception as e:
-        logging.exception(f'Entries missing from {lib_code}')
-        logging.exception(f'list_code:\n {list_code} \n {df_code0.index}')
-        logging.exception(f'list_keys:\n {list_keys} \n {df_code0.columns}')
-        logging.exception(f'Entries missing from {lib_code}')
+        logger_supy.exception(f'Entries missing from {lib_code}')
+        logger_supy.exception(f'list_code:\n {list_code} \n {df_code0.index}')
+        logger_supy.exception(f'list_keys:\n {list_keys} \n {df_code0.columns}')
+        logger_supy.exception(f'Entries missing from {lib_code}')
         raise e
 
     df_code.index = df_base.index
@@ -1514,7 +1514,7 @@ def load_InitialCond_grid_df(path_runcontrol, force_reload=True):
         lookup_KeySeq_lib.cache_clear()
         gen_all_code_df.cache_clear()
         build_code_exp_df.cache_clear()
-        logging.info('All cache cleared.')
+        logger_supy.info('All cache cleared.')
 
     # load base df of InitialCond
     df_init = load_SUEWS_InitialCond_df(path_runcontrol)

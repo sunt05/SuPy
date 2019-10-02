@@ -21,6 +21,8 @@ from ._load import (df_var_info, list_var_inout, list_var_inout_multitsteps,
                     list_var_output, list_var_output_multitsteps)
 from ._post import pack_df_output, pack_df_output_array, pack_df_state
 
+from ._env import logger_supy
+
 ##############################################################################
 # main calculation
 # 1. calculation code for one time step
@@ -52,14 +54,14 @@ def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep):
         res_suews_tstep = sd.suews_cal_main(**dict_input)
     except Exception as ex:
         # show trace info
-        logging.exception(traceback.format_exc())
+        logger_supy.exception(traceback.format_exc())
         # show SUEWS fatal error details produced by SUEWS kernel
         with open('problems.txt', 'r') as f:
-            logging.critical(f.read())
+            logger_supy.critical(f.read())
         # clean slate
         # os.remove('problems.txt')
         # sys.exit()
-        logging.critical('SUEWS kernel error')
+        logger_supy.critical('SUEWS kernel error')
     else:
         # update state variables
         # if save_state:  # deep copy states results
@@ -118,12 +120,12 @@ def suews_cal_tstep_multi(dict_state_start_grid, df_met_forcing_block):
         # print(traceback.format_exc())
         # show SUEWS fatal error details produced by SUEWS kernel
         with open('problems.txt', 'r') as f:
-            logging.critical(f.read())
+            logger_supy.critical(f.read())
         # clean slate
         # os.remove('problems.txt')
         # sys.exit()
         # raise RuntimeError("Something bad happened") from exs
-        logging.critical('SUEWS kernel error')
+        logger_supy.critical('SUEWS kernel error')
     else:
         # update state variables
         # dict_state_end = copy.copy(dict_input)
