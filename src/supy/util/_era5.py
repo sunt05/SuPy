@@ -341,8 +341,9 @@ def sel_list_pres(ds_sfc_x):
     '''
     p_min, p_max = ds_sfc_x.sp.min().values, ds_sfc_x.sp.max().values
 
-    # adjust p_max if level for p_max is already below that of 1000 hPa
+    # adjust p_max (p_min) if level for p_max (p_min) is already below (above) that of 1000 (975) hPa
     p_max = p_max if p_max < 1000E2 else 1000E2-1
+    p_min = p_min if p_min < 975E2 else 975E2+1
 
     list_pres_level = [
         '1', '2', '3',
@@ -411,18 +412,19 @@ def download_era5(
     lon_x : float
         Longitude of centre at the area of interest.
     start : str
-        [description]
+        Any datetime-like string that can be parsed by `pandas.daterange()`
     end : str
-        [description]
+        Any datetime-like string that can be parsed by `pandas.daterange()`
     grid : list, optional
-        [description], by default [0.125, 0.125]
+        grid size used in CDS request API, by default [0.125, 0.125]
     scale : int, optional
-        [description], by default 0
+        scaling factor that determines the area of interest (i.e., `area=grid[0]*scale`), by default 0
 
     Returns
     -------
     dict
-        [description]
+        key: name of downloaded file
+        value: CDS API request used for downloading the file named by the corresponding key
     """
 
     c = cdsapi.Client()

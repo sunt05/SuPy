@@ -4,7 +4,6 @@
 import sys
 import logging
 from typing import List, Tuple
-import xarray as xr
 import numpy as np
 import pandas as pd
 import json

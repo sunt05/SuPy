@@ -31,10 +31,10 @@ def get_file_handler():
    return file_handler
 
 
-def get_logger(logger_name):
+def get_logger(logger_name, level=logging.DEBUG):
    logger = logging.getLogger(logger_name)
    # better to have too much log than not enough
-   logger.setLevel(logging.DEBUG)
+   logger.setLevel(level)
    logger.addHandler(get_console_handler())
    logger.addHandler(get_file_handler())
    # with this pattern, it's rarely necessary to propagate the error up to parent
@@ -42,5 +42,5 @@ def get_logger(logger_name):
    return logger
 
 
-logger_supy = get_logger("SuPy")
+logger_supy = get_logger("SuPy",logging.INFO)
 logger_supy.debug("a debug message from SuPy")
