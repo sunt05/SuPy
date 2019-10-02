@@ -12,12 +12,12 @@ from dask import dataframe as dd
 from scipy.interpolate import interp1d
 from supy_driver import suews_driver as sd
 
-from ._env import path_supy_module
+from ._env import path_supy_module, logger_supy
 from ._misc import path_insensitive
 
 
 ########################################################################
-# get_args_suews can get the interface informaiton
+# get_args_suews can get the interface information
 # of the f2py-converted Fortran interface
 def get_args_suews(docstring=sd.suews_cal_main.__doc__):
     # split doc lines for processing
@@ -227,7 +227,7 @@ def load_SUEWS_nml(path_file):
         df_res = pd.DataFrame(f90nml.read(str_file))
         return df_res
     except FileNotFoundError:
-        logging.exception(f'{path_file} does not exists!')
+        logger_supy.exception(f'{path_file} does not exists!')
 
 # def load_SUEWS_RunControl(path_file):
 #     lib_RunControl = load_SUEWS_nml(path_file)
@@ -242,7 +242,7 @@ def load_SUEWS_table(path_file):
     try:
         path_file = path_file.resolve()
     except FileNotFoundError:
-        logging.exception(f'{path_file} does not exists!')
+        logger_supy.exception(f'{path_file} does not exists!')
     else:
         # fileX = path_insensitive(fileX)
         str_file = str(path_file)
@@ -751,7 +751,7 @@ def gather_code_set(code, dict_var2SiteSelect):
             elif isinstance(v, dict):
                 set_res.update(v.keys())
             else:
-                logging.info(f'{k},{v}')
+                logger_supy.info(f'{k},{v}')
 
         elif isinstance(v, dict):
             # print(res,v)
@@ -793,10 +793,10 @@ def build_code_df(code, path_input, df_base):
     try:
         df_code = df_code0.loc[list_code, list_keys]
     except Exception as e:
-        logging.exception(f'Entries missing from {lib_code}')
-        logging.exception(f'list_code:\n {list_code} \n {df_code0.index}')
-        logging.exception(f'list_keys:\n {list_keys} \n {df_code0.columns}')
-        logging.exception(f'Entries missing from {lib_code}')
+        logger_supy.exception(f'Entries missing from {lib_code}')
+        logger_supy.exception(f'list_code:\n {list_code} \n {df_code0.index}')
+        logger_supy.exception(f'list_keys:\n {list_keys} \n {df_code0.columns}')
+        logger_supy.exception(f'Entries missing from {lib_code}')
         raise e
 
     df_code.index = df_base.index
@@ -1451,6 +1451,7 @@ def add_state_init_df(df_init):
         ('dt_since_start', 0, 0.),
         ('tstep_prev', 0, 'tstep'),
         ('tair24hr', int(24 * 3600 / df_init['tstep'].values[0, 0]), 273.15),
+        ('tair_av', 0, 273.15),
     ]
 
     # set values according to `list_var_dim`
@@ -1491,11 +1492,12 @@ def add_state_init_df(df_init):
         (ser_popdens_day_1-ser_popdens_night)*ser_frpddwe
     df_init[('popdensdaytime', '(1,)')] = ser_popdens_day_2
 
-    # `numcapita` calculation:
-    df_init[('numcapita', '(0,)')] = df_init[[
-        ('popdensdaytime', '(0,)'), ('popdensnighttime', '0')]].mean(axis=1)
-    df_init[('numcapita', '(1,)')] = df_init[[
-        ('popdensdaytime', '(1,)'), ('popdensnighttime', '0')]].mean(axis=1)
+    # # `numcapita` calculation:
+    # below is now done in suews kernel
+    # df_init[('numcapita', '(0,)')] = df_init[[
+    #     ('popdensdaytime', '(0,)'), ('popdensnighttime', '0')]].mean(axis=1)
+    # df_init[('numcapita', '(1,)')] = df_init[[
+    #     ('popdensdaytime', '(1,)'), ('popdensnighttime', '0')]].mean(axis=1)
     # `gridiv` addition:
     df_init[('gridiv', '0')] = df_init.index
 
@@ -1512,7 +1514,7 @@ def load_InitialCond_grid_df(path_runcontrol, force_reload=True):
         lookup_KeySeq_lib.cache_clear()
         gen_all_code_df.cache_clear()
         build_code_exp_df.cache_clear()
-        logging.info('All cache cleared.')
+        logger_supy.info('All cache cleared.')
 
     # load base df of InitialCond
     df_init = load_SUEWS_InitialCond_df(path_runcontrol)

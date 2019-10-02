@@ -25,7 +25,7 @@ import f90nml
 import numpy as np
 import pandas as pd
 
-from .._env import path_supy_module
+from .._env import path_supy_module, logger_supy
 from .._load import load_SUEWS_nml
 from .._misc import path_insensitive
 
@@ -52,7 +52,7 @@ list_ver_to = rules['To'].unique().tolist()
 def rename_file(toFile, toVar, toCol, toVal):
     # toVar, toCol are ignored
     if not Path(toFile).exists():
-        logging.error(f'{toFile} not existing')
+        logger_supy.error(f'{toFile} not existing')
         sys.exit()
     else:
         dir = Path(toFile).resolve().parent
@@ -64,7 +64,7 @@ def rename_file(toFile, toVar, toCol, toVal):
 def rename_var(toFile, toVar, toCol, toVal):
     # if namelist:
     if toFile.endswith('.nml'):
-        logging.info(f'{toFile} {toVar} {toVal}')
+        logger_supy.info(f'{toFile} {toVar} {toVal}')
         rename_var_nml(toFile, toVar, toVal)
     else:
         dataX = np.genfromtxt(toFile, dtype=np.ndarray, skip_header=1,
@@ -93,7 +93,7 @@ def rename_var_nml(toFile, toVar, toVal):
     if (toVar.lower() in nml[title].keys()):
         nml[title][toVal] = nml[title].pop(toVar)
     else:
-        logging.warning(f'{toVar} does not exist!')
+        logger_supy.warning(f'{toVar} does not exist!')
     nml.write(toFile, force=True)
 
 
@@ -133,7 +133,7 @@ def delete_var_nml(toFile, toVar, toVal):
     if (toVarX in nml[title].keys()):
         nml[title].pop(toVarX)
     else:
-        logging.warning(f'{toVar} does not exist!')
+        logger_supy.warning(f'{toVar} does not exist!')
     nml.write(toFile, force=True)
 
 
@@ -189,7 +189,7 @@ def add_var_nml(toFile, toVar, toVal):
     if not(toVarX in nml[title].keys()):
         nml[title][toVarX] = toVal
     else:
-        logging.warning(f'{toVar} exists!')
+        logger_supy.warning(f'{toVar} exists!')
     nml.write(toFile, force=True)
 
 
@@ -221,10 +221,10 @@ def SUEWS_Converter_single(fromDir, toDir, fromVer, toVer):
     #       rules.loc[:, ['From', 'To']],
     #       np.array(rules.loc[:, ['From', 'To']].values),
     #       [fromVer, toVer])
-    logging.info(f'filesToConvert: {filesToConvert}')
+    logger_supy.info(f'filesToConvert: {filesToConvert}')
 
     for fileX in filesToConvert:
-        logging.info(f'working on file: {fileX}')
+        logger_supy.info(f'working on file: {fileX}')
         actionList = rules.values[posRules].compress(
             rules['File'].values[posRules] == fileX, axis=0)
         actionList = actionList[:, 2:]
@@ -274,7 +274,7 @@ def keep_file(toFile, var, col, val):
 
 
 def SUEWS_Converter_action(action, toFile, var, col, val):
-    logging.info(f'{action}, {toFile}, {var}, {col}, {val}')
+    logger_supy.info(f'{action}, {toFile}, {var}, {col}, {val}')
 
     actionFunc = {
         'Rename': rename_var,
@@ -285,7 +285,7 @@ def SUEWS_Converter_action(action, toFile, var, col, val):
     }
     actionFunc[action](toFile, var, col, val)
 
-    logging.info(f'{action} {var} for {toFile} done!')
+    logger_supy.info(f'{action} {var} for {toFile} done!')
     return
 
 
@@ -332,9 +332,9 @@ def version_list(fromVer, toVer):
 def convert_table(fromDir, toDir, fromVer, toVer):
     chain_ver = version_list(fromVer, toVer)
     len_chain = chain_ver[0]
-    logging.info(
+    logger_supy.info(
         f'working on chained conversion {len_chain} actions to take')
-    logging.info(
+    logger_supy.info(
         f'chained list: {chain_ver[1:]} \n')
     tempDir_1 = 'temp1'
     tempDir_2 = 'temp2'
@@ -363,7 +363,7 @@ def convert_table(fromDir, toDir, fromVer, toVer):
 
     # Indirect version conversion process
     while i > 1:
-        logging.info('working on: {chain_ver[i + 1]} --> {chain_ver[i]}')
+        logger_supy.info(f'working on: {chain_ver[i + 1]} --> {chain_ver[i]}')
         if i % 2:
             tempDir_2 = 'temp2'
             SUEWS_Converter_single(
@@ -381,7 +381,7 @@ def convert_table(fromDir, toDir, fromVer, toVer):
             rmtree(tempDir_2, ignore_errors=True)
             # this loop always break in this part
         i -= 1
-    logging.info('working on: {chain_ver[i + 1]} --> {chain_ver[i]}')
+    logger_supy.info(f'working on: {chain_ver[i + 1]} --> {chain_ver[i]}')
     SUEWS_Converter_single(tempDir_1, toDir, chain_ver[2], chain_ver[1])
     # Remove temporary folders
     rmtree(tempDir_1, ignore_errors=True)

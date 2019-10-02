@@ -45,10 +45,10 @@ from ._post import pack_df_output, pack_df_output_array, pack_df_state
 from ._run import run_supy_ser, run_supy_par
 from ._save import get_save_info, save_df_output, save_df_state, save_initcond_nml
 from ._check import check_forcing
+from ._env import logger_supy
 
 # set up logging module
-logging.basicConfig()
-logging.getLogger().setLevel(logging.INFO)
+logger_supy.setLevel(logging.INFO)
 
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
@@ -91,7 +91,7 @@ def init_supy(path_init: str, force_reload=True) -> pd.DataFrame:
     try:
         path_init_x = Path(path_init).expanduser().resolve()
     except FileNotFoundError:
-        logging.exception(f'{path_init_x} does not exists!')
+        logger_supy.exception(f'{path_init_x} does not exists!')
     else:
         if path_init_x.suffix == '.nml':
             # SUEWS `RunControl.nml`:
@@ -101,7 +101,7 @@ def init_supy(path_init: str, force_reload=True) -> pd.DataFrame:
             # SuPy `df_state.csv`:
             df_state_init = load_df_state(path_init_x)
         else:
-            logging.critical(
+            logger_supy.critical(
                 f'{path_init_x} is NOT a valid file to initialise SuPy!')
             sys.exit()
         return df_state_init
@@ -142,7 +142,7 @@ def load_forcing_grid(path_runcontrol: str, grid: int) -> pd.DataFrame:
     try:
         path_runcontrol = Path(path_runcontrol).expanduser().resolve()
     except FileNotFoundError:
-        logging.exception(f'{path_runcontrol} does not exists!')
+        logger_supy.exception(f'{path_runcontrol} does not exists!')
     else:
         dict_mod_cfg = load_SUEWS_dict_ModConfig(path_runcontrol)
         df_state_init = init_supy(path_runcontrol)
@@ -274,27 +274,27 @@ def run_supy(
     # df_init = df_state_init.copy()
 
     # print some diagnostic info
-    logging.info(f'====================')
-    logging.info(f'Simulation period:')
-    logging.info(f'  Start: {df_forcing.index[0]}')
-    logging.info(f'  End: {df_forcing.index[-1]}')
-    logging.info('')
+    logger_supy.info(f'====================')
+    logger_supy.info(f'Simulation period:')
+    logger_supy.info(f'  Start: {df_forcing.index[0]}')
+    logger_supy.info(f'  End: {df_forcing.index[-1]}')
+    logger_supy.info('')
     n_grid = df_state_init.index.size
-    logging.info(f'No. of grids: {n_grid}')
+    logger_supy.info(f'No. of grids: {n_grid}')
 
     if n_grid > 1 and os.name != 'nt':
-        logging.info(f'SuPy is running in parallel mode')
+        logger_supy.info(f'SuPy is running in parallel mode')
         df_output, df_state_final = run_supy_par(
             df_forcing, df_state_init, save_state, n_yr)
     else:
-        logging.info(f'SuPy is running in serial mode')
+        logger_supy.info(f'SuPy is running in serial mode')
         df_output, df_state_final = run_supy_ser(
             df_forcing, df_state_init, save_state, n_yr)
 
     # show simulation time
     end = time.time()
-    logging.info(f'Execution time: {(end - start):.1f} s')
-    logging.info(f'====================\n')
+    logger_supy.info(f'Execution time: {(end - start):.1f} s')
+    logger_supy.info(f'====================\n')
 
     return df_output, df_state_final
 

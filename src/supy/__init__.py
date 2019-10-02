@@ -9,6 +9,7 @@
 # 08 Mar 2018: pypi packaging
 # 01 Jan 2019: public release
 # 22 May 2019: restructure of module layout
+# 02 Oct 2019: logger restructured
 ###########################################################################
 
 # core functions

@@ -4,13 +4,12 @@
 import sys
 import logging
 from typing import List, Tuple
-import xarray as xr
 import numpy as np
 import pandas as pd
 import json
 import glob
 import os
-from ._env import path_supy_module
+from ._env import path_supy_module, logger_supy
 
 # %%
 # the check list file with ranges and logics
@@ -151,9 +150,9 @@ def check_forcing(df_forcing:pd.DataFrame):
                 flag_valid = False
 
     if not flag_valid:
-        logging.error('Issues found:')
+        logger_supy.error('Issues found:')
         str_issue = '\n'.join(list_issues)
-        logging.error(str_issue)
+        logger_supy.error(str_issue)
         return list_issues
     else:
-        logging.info('All checks passed!')
+        logger_supy.info('All checks passed!')
