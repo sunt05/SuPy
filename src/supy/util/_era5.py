@@ -219,7 +219,9 @@ def gen_fn(dict_x):
     yr_x = dict_x['year'][0]
     mon_x = dict_x['month'][0]
     type_x = 'sfc' if 'orography' in dict_x['variable'] else 'ml'
-    fn_x = f'{lat_x}N{lon_x}E-{yr_x}{mon_x}-{type_x}.nc'
+    lat_x = f'{lat_x}N' if lat_x > 0 else f'{-lat_x}S'
+    lon_x = f'{lon_x}E' if lon_x > 0 else f'{-lon_x}W'
+    fn_x = f'{lat_x}{lon_x}-{yr_x}{mon_x}-{type_x}.nc'
     return fn_x
 
 

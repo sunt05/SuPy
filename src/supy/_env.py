@@ -16,7 +16,7 @@ path_supy_module = Path(inspect.getsourcefile(lambda: 0)).resolve().parent
 # set up logger
 FORMATTER = logging.Formatter(
     "%(asctime)s — %(name)s — %(levelname)s — %(message)s")
-LOG_FILE = "my_app.log"
+LOG_FILE = "SuPy.log"
 
 
 def get_console_handler():
