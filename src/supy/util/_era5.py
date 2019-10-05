@@ -1,12 +1,8 @@
-try:
-    import cdsapi
-    # suppress pandas warnings
-    import warnings
-    warnings.simplefilter(action='ignore', category=FutureWarning)
-    import xarray as xr
-    import atmosp
-except:
-    pass
+# suppress pandas warnings
+import atmosp
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+import xarray as xr
 
 import time
 from pathlib import Path
@@ -16,6 +12,8 @@ import pandas as pd
 from numpy import cos, deg2rad, sin, sqrt
 from scipy.interpolate import interp1d
 from .._env import logger_supy
+from multiprocessing import Pool
+import cdsapi
 
 ################################################
 # more ERA-5 related functions
@@ -401,6 +399,15 @@ def gen_req_ml(fn_sfc, grid=[0.125, 0.125], scale=0):
     return dict_req_ml
 
 
+def download_sfc(fn_sfc, dict_req):
+    c = cdsapi.Client()
+    if not Path(fn_sfc).exists():
+        logger_supy.info(f'To download: {fn_sfc}')
+        c.retrieve(**dict_req)
+        time.sleep(.0100)
+
+
+
 def download_era5(
         lat_x: float, lon_x: float,
         start: str, end: str,
@@ -434,10 +441,11 @@ def download_era5(
         lat_x, lon_x, start, end,
         grid=[0.125, 0.125], scale=0,)
     for fn_sfc, dict_req in dict_req_sfc.items():
-        if not Path(fn_sfc).exists():
-            logger_supy.info(f'To download: {fn_sfc}')
-            c.retrieve(**dict_req)
-            time.sleep(.0100)
+        download_sfc(fn_sfc, dict_req)
+        # if not Path(fn_sfc).exists():
+        #     logger_supy.info(f'To download: {fn_sfc}')
+        #     c.retrieve(**dict_req)
+        #     time.sleep(.0100)
 
     dict_req_ml = {}
     for fn_sfc in dict_req_sfc.keys():
