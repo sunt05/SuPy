@@ -457,15 +457,15 @@ def download_era5(
         (fn_sfc, dict_req)
         for fn_sfc, dict_req in dict_req_sfc.items()
     ]
-    if os.name != 'nt':
-        pool.starmap(download_sfc, list_req_sfc)
-    else:
-        for fn_sfc, dict_req in dict_req_sfc.items():
-            download_sfc(fn_sfc, dict_req)
-        # if not Path(fn_sfc).exists():
-        #     logger_supy.info(f'To download: {fn_sfc}')
-        #     c.retrieve(**dict_req)
-        #     time.sleep(.0100)
+    # if os.name != 'nt':
+    #     pool.starmap(download_sfc, list_req_sfc)
+    # else:
+    #     for fn_sfc, dict_req in dict_req_sfc.items():
+    #         download_sfc(fn_sfc, dict_req)
+
+    for fn_sfc, dict_req in dict_req_sfc.items():
+        download_sfc(fn_sfc, dict_req)
+
 
     dict_req_ml = {}
     for fn_sfc in dict_req_sfc.keys():
@@ -478,11 +478,13 @@ def download_era5(
         (fn_ml, dict_req)
         for fn_ml, dict_req in dict_req_ml.items()
     ]
-    if os.name != 'nt':
-        pool.starmap(download_ml, list_req_ml)
-    else:
-        for fn_ml, dict_req in dict_req_ml.items():
-            download_ml(fn_ml, dict_req)
+    # if os.name != 'nt':
+    #     pool.starmap(download_ml, list_req_ml)
+    # else:
+    #     for fn_ml, dict_req in dict_req_ml.items():
+    #         download_ml(fn_ml, dict_req)
+    for fn_ml, dict_req in dict_req_ml.items():
+        download_ml(fn_ml, dict_req)
         # if Path(fn_ml).exists():
         #     logger_supy.warning(f'{fn_ml} exists!')
         # else:
