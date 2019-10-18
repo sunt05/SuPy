@@ -1444,7 +1444,11 @@ def add_state_init_df(df_init):
         ('decidcap_id', 0, 'decidcap0'),
 
         ('lai_id', 3, 0.),
-        ('gdd_id', 5, 0.),
+        ('gdd_id', 3, 0.),
+        ('sdd_id', 3, 0.),
+        ('tmin_id', 0, 90),
+        ('tmax_id', 0, -90),
+        ('lenday_id', 0, 0.),
         ('hdd_id', 12, 0.),
         ('wuday_id', 9, 0.),
 
@@ -1467,9 +1471,9 @@ def add_state_init_df(df_init):
     df_init[('lai_id', '(0,)')] = df_init['laiinitialevetr']
     df_init[('lai_id', '(1,)')] = df_init['laiinitialdectr']
     df_init[('lai_id', '(2,)')] = df_init['laiinitialgrass']
-    # `gdd_id` corrections:
-    df_init[('gdd_id', '(2,)')] = 90
-    df_init[('gdd_id', '(3,)')] = -90
+    # # `gdd_id` corrections:
+    # df_init[('gdd_id', '(2,)')] = 90
+    # df_init[('gdd_id', '(3,)')] = -90
 
     # `popdens` corrections:
     # daytime population density on weekdays
