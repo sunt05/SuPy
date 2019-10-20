@@ -1,21 +1,19 @@
-try:
-    import cdsapi
-    # suppress pandas warnings
-    import warnings
-    warnings.simplefilter(action='ignore', category=FutureWarning)
-    import xarray as xr
-    import atmosp
-except:
-    pass
-
-import time
-from pathlib import Path
-
-import numpy as np
-import pandas as pd
-from numpy import cos, deg2rad, sin, sqrt
-from scipy.interpolate import interp1d
+# suppress pandas warnings
+import cdsapi
+from multiprocessing import Pool
 from .._env import logger_supy
+from scipy.interpolate import interp1d
+from numpy import cos, deg2rad, sin, sqrt
+import pandas as pd
+import numpy as np
+from pathlib import Path
+import time
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+import xarray as xr
+import atmosp
+
+import os
 
 ################################################
 # more ERA-5 related functions
@@ -219,7 +217,9 @@ def gen_fn(dict_x):
     yr_x = dict_x['year'][0]
     mon_x = dict_x['month'][0]
     type_x = 'sfc' if 'orography' in dict_x['variable'] else 'ml'
-    fn_x = f'{lat_x}N{lon_x}E-{yr_x}{mon_x}-{type_x}.nc'
+    lat_x = f'{lat_x}N' if lat_x > 0 else f'{-lat_x}S'
+    lon_x = f'{lon_x}E' if lon_x > 0 else f'{-lon_x}W'
+    fn_x = f'{lat_x}{lon_x}-{yr_x}{mon_x}-{type_x}.nc'
     return fn_x
 
 
@@ -399,6 +399,26 @@ def gen_req_ml(fn_sfc, grid=[0.125, 0.125], scale=0):
     return dict_req_ml
 
 
+def download_sfc(fn_sfc, dict_req):
+    c = cdsapi.Client()
+    if Path(fn_sfc).exists():
+        logger_supy.warning(f'{fn_sfc} exists!')
+    else:
+        logger_supy.info(f'To download: {fn_sfc}')
+        c.retrieve(**dict_req)
+        time.sleep(.0100)
+
+
+def download_ml(fn_ml, dict_req):
+    c = cdsapi.Client()
+    if Path(fn_ml).exists():
+        logger_supy.warning(f'{fn_ml} exists!')
+    else:
+        logger_supy.info(f'To download: {fn_ml}')
+        c.retrieve(**dict_req)
+        time.sleep(.0100)
+
+
 def download_era5(
         lat_x: float, lon_x: float,
         start: str, end: str,
@@ -428,29 +448,49 @@ def download_era5(
     """
 
     c = cdsapi.Client()
+    pool = Pool()
     dict_req_sfc = gen_req_sfc(
         lat_x, lon_x, start, end,
         grid=[0.125, 0.125], scale=0,)
+
+    list_req_sfc = [
+        (fn_sfc, dict_req)
+        for fn_sfc, dict_req in dict_req_sfc.items()
+    ]
+    # if os.name != 'nt':
+    #     pool.starmap(download_sfc, list_req_sfc)
+    # else:
+    #     for fn_sfc, dict_req in dict_req_sfc.items():
+    #         download_sfc(fn_sfc, dict_req)
+
     for fn_sfc, dict_req in dict_req_sfc.items():
-        if not Path(fn_sfc).exists():
-            logger_supy.info(f'To download: {fn_sfc}')
-            c.retrieve(**dict_req)
-            time.sleep(.0100)
+        download_sfc(fn_sfc, dict_req)
+
 
     dict_req_ml = {}
     for fn_sfc in dict_req_sfc.keys():
         if Path(fn_sfc).exists():
-            logger_supy.warning(f'{fn_sfc} exists!')
+            # logger_supy.warning(f'{fn_sfc} exists!')
             dict_req = gen_req_ml(fn_sfc, grid, scale)
             dict_req_ml.update(dict_req)
 
+    list_req_ml = [
+        (fn_ml, dict_req)
+        for fn_ml, dict_req in dict_req_ml.items()
+    ]
+    # if os.name != 'nt':
+    #     pool.starmap(download_ml, list_req_ml)
+    # else:
+    #     for fn_ml, dict_req in dict_req_ml.items():
+    #         download_ml(fn_ml, dict_req)
     for fn_ml, dict_req in dict_req_ml.items():
-        if Path(fn_ml).exists():
-            logger_supy.warning(f'{fn_ml} exists!')
-        else:
-            logger_supy.info(f'To download: {fn_ml}')
-            c.retrieve(**dict_req)
-            time.sleep(.0100)
+        download_ml(fn_ml, dict_req)
+        # if Path(fn_ml).exists():
+        #     logger_supy.warning(f'{fn_ml} exists!')
+        # else:
+        #     logger_supy.info(f'To download: {fn_ml}')
+        #     c.retrieve(**dict_req)
+        #     time.sleep(.0100)
 
     dict_req_all = {**dict_req_sfc, **dict_req_ml}
     return dict_req_all

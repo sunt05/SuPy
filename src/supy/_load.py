@@ -1342,12 +1342,18 @@ def add_veg_init_df(df_init):
     # get veg surface fractions
     df_init[('fr_veg_sum', '0')] = df_init['sfr'].iloc[:, 2:5].sum(axis=1)
 
-    # get gdd_0
+    # get gdd_0 and sdd_0
     veg_sfr = df_init['sfr'].iloc[:, 2:5].T
     veg_sfr = veg_sfr.reset_index(drop=True).T
+    # gdd_0:
     x_gddfull = df_init['gddfull'].T.reset_index(drop=True).T
     df_init[('gdd_0', '0')] = (veg_sfr * x_gddfull).sum(axis=1)
     df_init[('gdd_0', '0')] /= veg_sfr.sum(axis=1)
+    # sdd_0:
+    x_sddfull = df_init['sddfull'].T.reset_index(drop=True).T
+    df_init[('sdd_0', '0')] = (veg_sfr * x_sddfull).sum(axis=1)
+    df_init[('sdd_0', '0')] /= veg_sfr.sum(axis=1)
+    # const
     df_init[('const', '0')] = 0
 
     # list of tuples for assignment of leave on/off parameters
@@ -1355,7 +1361,7 @@ def add_veg_init_df(df_init):
         # aligned for:
         # (var, leavesout==1, leavesout==0)
         (('gdd_1_0', '0'), ('gdd_0', '0'), ('const', '0')),
-        (('gdd_2_0', '0'), ('const', '0'), ('gdd_0', '0')),
+        (('gdd_2_0', '0'), ('const', '0'), ('sdd_0', '0')),
         (('laiinitialevetr', '0'), ('laimax', '(0,)'), ('laimin', '(0,)')),
         (('laiinitialdectr', '0'), ('laimax', '(1,)'), ('laimin', '(1,)')),
         (('laiinitialgrass', '0'), ('laimax', '(2,)'), ('laimin', '(2,)')),
@@ -1444,7 +1450,11 @@ def add_state_init_df(df_init):
         ('decidcap_id', 0, 'decidcap0'),
 
         ('lai_id', 3, 0.),
-        ('gdd_id', 5, 0.),
+        ('gdd_id', 3, 'gdd_1_0'),
+        ('sdd_id', 3, 'gdd_2_0'),
+        ('tmin_id', 0, 90),
+        ('tmax_id', 0, -90),
+        ('lenday_id', 0, 0.),
         ('hdd_id', 12, 0.),
         ('wuday_id', 9, 0.),
 
@@ -1467,9 +1477,9 @@ def add_state_init_df(df_init):
     df_init[('lai_id', '(0,)')] = df_init['laiinitialevetr']
     df_init[('lai_id', '(1,)')] = df_init['laiinitialdectr']
     df_init[('lai_id', '(2,)')] = df_init['laiinitialgrass']
-    # `gdd_id` corrections:
-    df_init[('gdd_id', '(2,)')] = 90
-    df_init[('gdd_id', '(3,)')] = -90
+    # # `gdd_id` corrections:
+    # df_init[('gdd_id', '(2,)')] = 90
+    # df_init[('gdd_id', '(3,)')] = -90
 
     # `popdens` corrections:
     # daytime population density on weekdays
