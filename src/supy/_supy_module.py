@@ -235,7 +235,8 @@ def run_supy(
         df_forcing: pandas.DataFrame,
         df_state_init: pandas.DataFrame,
         save_state=False,
-        n_yr=10,) -> Tuple[pandas.DataFrame, pandas.DataFrame]:
+        n_yr=10,
+        logging_level=logging.INFO,) -> Tuple[pandas.DataFrame, pandas.DataFrame]:
     '''Perform supy simulation.
 
     Parameters
@@ -251,6 +252,9 @@ def run_supy(
     n_yr : int, optional
         chunk size (`n_yr` years) to split simulation periods so memory usage can be reduced.
         (the default is 10, which implies 10-year forcing chunks used in simulations).
+    logging_level: logging level
+        one of these values [50 (CRITICAL), 40 (ERROR), 30 (WARNING), 20 (INFO), 10 (DEBUG)].
+        A lower value informs SuPy for more verbose logging info.
 
     Returns
     -------
@@ -268,6 +272,9 @@ def run_supy(
 
     # set up a timer for simulation time
     start = time.time()
+
+    # adjust logging level
+    logger_supy.setLevel(logging_level)
 
     # save df_init without changing its original data
     # df.copy() in pandas works as a standard python deepcopy
@@ -307,7 +314,8 @@ def save_supy(
         freq_s: int = 3600,
         site: str = '',
         path_dir_save: str = Path('.'),
-        path_runcontrol: str = None,) -> list:
+        path_runcontrol: str = None,
+        logging_level=50) -> list:
     '''Save SuPy run results to files
 
     Parameters
@@ -325,6 +333,9 @@ def save_supy(
     path_runcontrol : str, optional
         Path to SUEWS :ref:`RunControl.nml <suews:RunControl.nml>`, which, if set, will be preferably used to derive `freq_s`, `site` and `path_dir_save`.
         (the default is None, which is unset)
+    logging_level: logging level
+        one of these values [50 (CRITICAL), 40 (ERROR), 30 (WARNING), 20 (INFO), 10 (DEBUG)].
+        A lower value informs SuPy for more verbose logging info.
 
     Returns
     -------
@@ -347,6 +358,8 @@ def save_supy(
 
     >>> list_path_save = supy.save_supy(df_output, df_state_final, freq_s=1800, site='Test', path_dir_save='path/to/some/dir')
     '''
+    # adjust logging level
+    logger_supy.setLevel(logging_level)
 
     # get necessary information for saving procedure
     if path_runcontrol is not None:

@@ -1,4 +1,6 @@
 
+import tempfile
+from pathlib import Path
 import io
 import sys
 import warnings
@@ -133,3 +135,34 @@ class TestSuPy(TestCase):
         )
         # test_equal_mode = df_res_s.eq(df_res_m).all(None)
         # self.assertTrue(test_equal_mode)
+
+    # test saving output files working
+    def test_is_supy_save_working(self):
+        df_state_init, df_forcing_tstep = sp.load_SampleData()
+        # df_state_init = pd.concat([df_state_init for x in range(6)])
+        df_forcing_part = df_forcing_tstep.iloc[:288*2]
+        t_start = time()
+        df_output, df_state = sp.run_supy(
+            df_forcing_part, df_state_init)
+        t_end = time()
+        with tempfile.TemporaryDirectory() as dir_temp:
+            list_outfile = sp.save_supy(
+                df_output, df_state, path_dir_save=dir_temp)
+
+        # only print to screen on macOS due incompatibility on Windows
+        if platform.system() == 'Darwin':
+            capturedOutput = io.StringIO()  # Create StringIO object
+            sys.stdout = capturedOutput  # and redirect stdout.
+            # Call function.
+            n_grid = df_state_init.index.size
+            print(f'Running time: {t_end-t_start:.2f} s for {n_grid} grids')
+            sys.stdout = sys.__stdout__                     # Reset redirect.
+            # Now works as before.
+            print('Captured:\n', capturedOutput.getvalue())
+
+        test_non_empty = np.all(
+            [isinstance(fn, Path) for fn in list_outfile]
+        )
+        self.assertTrue(test_non_empty)
+
+
