@@ -42,7 +42,7 @@ clean:
 	$(MAKE) -C $(docs_dir) clean
 
 # make supy and run test cases
-supy:
+test:
 	$(MAKE) -C $(src_dir) test
 
 # make docs and open index
