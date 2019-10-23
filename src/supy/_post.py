@@ -67,7 +67,7 @@ def pack_df_grid(dict_output):
     # pack all grid and times into index/columns
     df_xx = pd.DataFrame.from_dict(dict_output, orient='index')
     # pack
-    df_xx0 = df_xx.applymap(lambda s: pd.Series(s))
+    df_xx0 = df_xx.applymap(pd.Series)
     df_xx1 = df_xx0.applymap(pd.DataFrame.from_dict)
     df_xx2 = pd.concat({grid: pd.concat(
         df_xx1[grid].to_dict()).unstack().dropna(axis=1)

@@ -90,9 +90,12 @@ def save_df_grid_group(df_grid_group, grid, group, site='test', dir_save='.'):
     path_dir = Path(dir_save)
 
     # pandas bug here: monotonic datetime index would lose `freq` once `pd.concat`ed
-    if df_grid_group.shape[0] > 0:
-        df_grid_group.index.freq = df_grid_group.index[1] - \
-            df_grid_group.index[0]
+    if df_grid_group.shape[0] > 0 and df_grid_group.index.size > 2:
+        ind = df_grid_group.index
+        freq_cal = ind[1]-ind[0]
+        df_grid_group=df_grid_group.asfreq(freq_cal)
+    else:
+        df_grid_group = df_grid_group.asfreq('5T')
     # output frequency in min
     freq_min = int(df_grid_group.index.freq.delta.total_seconds()/60)
     # staring year
@@ -109,7 +112,7 @@ def save_df_grid_group(df_grid_group, grid, group, site='test', dir_save='.'):
     # generate df_save with datetime info prepended to each row
     df_save = gen_df_save(df_grid_group)
     t_end = time.time()
-    # print(t_end-t_start)
+    logger_supy.debug(f'df_save generated in {t_end-t_start:.2f} s')
 
     t_start = time.time()
     # format df_save with right-justified view
@@ -125,7 +128,7 @@ def save_df_grid_group(df_grid_group, grid, group, site='test', dir_save='.'):
         sep='\t',
     )
     t_end = time.time()
-    # print(t_end-t_start)
+    logger_supy.debug(f'{path_out} saved in {t_end-t_start:.2f} s')
     return path_out
 
 
@@ -217,7 +220,7 @@ def save_df_state(
     file_state_save = 'df_state_{site}.csv'.format(site=site)
     # trim filename if site == ''
     file_state_save = file_state_save.replace('_.csv', '.csv')
-    path_state_save = path_dir_save/file_state_save
+    path_state_save = Path(path_dir_save)/file_state_save
     # print('writing out: {path_out}'.format(path_out=path_state_save))
     df_state.to_csv(path_state_save)
     return path_state_save
