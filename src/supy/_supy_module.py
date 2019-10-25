@@ -286,7 +286,8 @@ def run_supy(
     logger_supy.info(f'  Start: {df_forcing.index[0]}')
     logger_supy.info(f'  End: {df_forcing.index[-1]}')
     logger_supy.info('')
-    n_grid = df_state_init.index.size
+    list_grid = df_state_init.index.get_level_values('grid').unique()
+    n_grid = list_grid.size
     logger_supy.info(f'No. of grids: {n_grid}')
 
     if n_grid > 1 and os.name != 'nt':

@@ -42,7 +42,7 @@ jobs:
 
 - job:                  'Build_Test_Upload_macOS'
   pool:
-    vmImage:            'macOS-10.13'
+    vmImage:            'macOS-10.14'
   strategy:
     matrix:
       # Python35:

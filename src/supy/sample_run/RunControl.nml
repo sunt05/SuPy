@@ -1,7 +1,6 @@
 &RunControl
 CBLUse                = 0
 SnowUse               = 1
-SOLWEIGUse            = 0
 NetRadiationMethod    = 3
 EmissionsMethod       = 2
 StorageHeatMethod     = 1
@@ -30,7 +29,4 @@ DisaggMethodESTM      = 1      !NEW  (1 = default value, so don't actually need 
 SuppressWarnings      = 1      !NEW
 KdownZen              = 0
 diagnose              = 0
-ncmode                = 0
-nrow                  = 1
-ncol                  = 1
 /
