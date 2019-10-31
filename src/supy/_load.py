@@ -498,9 +498,9 @@ def resample_linear_pd(data_raw, tstep_in, tstep_mod):
 
     # downscale input data to desired time step
     data_raw_tstep = data_raw_shift\
-        .resample('{tstep}S'.format(tstep=tstep_mod))\
+        .asfreq(f'{tstep_mod/2}S')\
         .interpolate(method='linear')\
-        .rolling(window=2, center=False)\
+        .resample(f'{tstep_mod}S')\
         .mean()
 
     # assign a new start with nan
@@ -511,9 +511,10 @@ def resample_linear_pd(data_raw, tstep_in, tstep_mod):
 
     # re-align the index so after resampling we can have filled heading part
     data_raw_tstep = data_raw_tstep.sort_index()
-    data_raw_tstep = data_raw_tstep.asfreq('{tstep}S'.format(tstep=tstep_mod))
+    data_raw_tstep = data_raw_tstep.asfreq(f'{tstep_mod}S')
     # fill gaps with valid values
     data_tstep = data_raw_tstep.copy().bfill().ffill().dropna()
+    # data_tstep = data_raw_tstep.copy()
 
     # correct temporal information
     data_tstep['iy'] = data_tstep.index.year
@@ -574,8 +575,8 @@ def resample_forcing_met(
         data_met_raw, tstep_in, tstep_mod, lat, lon, alt, timezone, kdownzen):
     # overall resample by linear interpolation
     # data_met_raw.to_pickle('data_met_raw.pkl')
+    data_met_tstep = resample_linear_pd(data_met_raw, tstep_in, tstep_mod)
     # data_met_tstep = resample_linear(data_met_raw, tstep_in, tstep_mod)
-    data_met_tstep = resample_linear(data_met_raw, tstep_in, tstep_mod)
     # data_met_tstep.to_pickle('data_met_tstep.pkl')
 
     # adjust solar radiation by zenith correction and total amount distribution

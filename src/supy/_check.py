@@ -129,7 +129,7 @@ def check_forcing(df_forcing:pd.DataFrame):
     # 2.4 must have a valid `freq` attribute
     if hasattr(ind_df,'freq'):
         if ind_df.freq is None:
-            str_issue = f'Temporal index must have a valie `freq`'
+            str_issue = f'Temporal index must have a valid `freq`'
             list_issues.append(str_issue)
             flag_valid = False
     else:
