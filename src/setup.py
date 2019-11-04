@@ -58,7 +58,7 @@ setup(name='supy',
           'click',  # cmd tool
           'lmfit',  # optimiser
           'floweaver',  # wrf reclassification Sankey chart
-          'supy_driver==2019a15.2',  # a separate f2py-based driver
+          'supy_driver==2019a17',  # a separate f2py-based driver
       ],
       entry_points={
           #   command line tools
