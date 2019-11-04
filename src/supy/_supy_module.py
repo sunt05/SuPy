@@ -44,11 +44,12 @@ from ._load import (load_InitialCond_grid_df,
 from ._post import pack_df_output, pack_df_output_array, pack_df_state
 from ._run import run_supy_ser, run_supy_par
 from ._save import get_save_info, save_df_output, save_df_state, save_initcond_nml
-from ._check import check_forcing
+from ._check import check_forcing, check_state
 from ._env import logger_supy
 
 # set up logging module
 logger_supy.setLevel(logging.INFO)
+
 
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
