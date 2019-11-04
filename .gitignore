@@ -119,3 +119,6 @@ _build/
 
 pipfile.lock
 .vscode/spellright.dict
+
+# supy test logs
+SuPy.log.*
