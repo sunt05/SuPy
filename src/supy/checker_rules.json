@@ -78,13 +78,11 @@
     },
     "alpha_bioco2": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "alpha_enh_bioco2": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "alt": {
         "logic": "range",
@@ -116,13 +114,11 @@
     },
     "beta_bioco2": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "beta_enh_bioco2": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "bldgh": {
         "logic": "range",
@@ -140,18 +136,15 @@
     },
     "capmin_dec": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "chanohm": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "cpanohm": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "crwmax": {
         "logic": "range",
@@ -170,7 +163,10 @@
     "daywat": {
         "logic": "method",
         "param": {
-            "allowed": [0,1]
+            "allowed": [
+                0,
+                1
+            ]
         }
     },
     "daywatper": {
@@ -189,13 +185,11 @@
     },
     "drainrt": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "ef_umolco2perj": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "emis": {
         "logic": "range",
@@ -213,8 +207,7 @@
     },
     "enef_v_jkm": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "evetreeh": {
         "logic": "range",
@@ -225,18 +218,15 @@
     },
     "faibldg": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "faidectree": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "faievetree": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "faut": {
         "logic": "range",
@@ -247,13 +237,11 @@
     },
     "fcef_v_kgkm": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "flowchange": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "frfossilfuel_heat": {
         "logic": "range",
@@ -278,38 +266,35 @@
     },
     "g2": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "g3": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "g4": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "g5": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "g6": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "gddfull": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "gsmodel": {
         "logic": "method",
         "param": {
-            "allowed": [1,2]
+            "allowed": [
+                1,
+                2
+            ]
         }
     },
     "humactivity_24hr": {
@@ -321,8 +306,7 @@
     },
     "ie_a": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "ie_end": {
         "logic": "range",
@@ -333,8 +317,7 @@
     },
     "ie_m": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "ie_start": {
         "logic": "range",
@@ -345,28 +328,23 @@
     },
     "internalwateruse_h": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "irrfracconif": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "irrfracdecid": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "irrfracgrass": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "kkanohm": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "kmax": {
         "logic": "range",
@@ -391,13 +369,11 @@
     },
     "laipower": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "laitype": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "lat": {
         "logic": "range",
@@ -429,8 +405,7 @@
     },
     "min_res_bioco2": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "minqfmetab": {
         "logic": "range",
@@ -441,18 +416,15 @@
     },
     "narp_emis_snow": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "narp_trans_site": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "ohm_coef": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "ohm_threshsw": {
         "logic": "range",
@@ -549,18 +521,15 @@
     },
     "qf_a": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "qf_b": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "qf_c": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "qh": {
         "logic": "range",
@@ -612,7 +581,7 @@
     },
     "pres": {
         "logic": "range",
-        "unit":"hPa",
+        "unit": "hPa",
         "param": {
             "min": 800,
             "max": 1300
@@ -644,7 +613,7 @@
     },
     "ldown": {
         "logic": "range",
-        "unit":"W m-2",
+        "unit": "W m-2",
         "param": {
             "min": 800,
             "max": 1300
@@ -652,7 +621,7 @@
     },
     "fcld": {
         "logic": "range",
-        "unit":"",
+        "unit": "",
         "param": {
             "min": 0,
             "max": 1
@@ -660,7 +629,7 @@
     },
     "wuh": {
         "logic": "range",
-        "unit":"m3",
+        "unit": "m3",
         "param": {
             "min": 0,
             "max": 10
@@ -668,7 +637,7 @@
     },
     "xsmd": {
         "logic": "range",
-        "unit":"",
+        "unit": "",
         "param": {
             "min": 0,
             "max": 1
@@ -676,7 +645,7 @@
     },
     "lai": {
         "logic": "range",
-        "unit":"m2 m-2",
+        "unit": "m2 m-2",
         "param": {
             "min": 0,
             "max": 1
@@ -684,7 +653,7 @@
     },
     "kdiff": {
         "logic": "range",
-        "unit":"W m-2",
+        "unit": "W m-2",
         "param": {
             "min": 0,
             "max": 1
@@ -692,7 +661,7 @@
     },
     "kdir": {
         "logic": "range",
-        "unit":"W m-2",
+        "unit": "W m-2",
         "param": {
             "min": 0,
             "max": 1
@@ -700,7 +669,7 @@
     },
     "wdir": {
         "logic": "range",
-        "unit":"degree",
+        "unit": "degree",
         "param": {
             "min": 0,
             "max": 360
@@ -729,13 +698,11 @@
     },
     "resp_a": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "resp_b": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "runofftowater": {
         "logic": "range",
@@ -746,13 +713,11 @@
     },
     "s1": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "s2": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "sathydraulicconduct": {
         "logic": "range",
@@ -861,8 +826,7 @@
     },
     "storedrainprm": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "surfacearea": {
         "logic": "range",
@@ -894,13 +858,11 @@
     },
     "tau_f": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "tau_r": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "tempmeltfact": {
         "logic": "range",
@@ -918,8 +880,7 @@
     },
     "theta_bioco2": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "timezone": {
         "logic": "range",
@@ -944,8 +905,7 @@
     },
     "trafficunits": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "traffprof_24hr": {
         "logic": "range",
@@ -1005,91 +965,124 @@
     },
     "aerodynamicresistancemethod": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "evapmethod": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "laicalcyes": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "veg_type": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "diagnose": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "diagqn": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "diagqs": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "emissionsmethod": {
         "logic": "method",
         "param": {
-            "allowed": [0,1,2,3]
+            "allowed": [
+                0,
+                1,
+                2,
+                3
+            ]
         }
     },
     "netradiationmethod": {
         "logic": "method",
         "param": {
-            "allowed": [0,1,2,3,100,200,300]
+            "allowed": [
+                0,
+                1,
+                2,
+                3,
+                100,
+                200,
+                300
+            ]
         }
     },
     "ohmincqf": {
         "logic": "method",
         "param": {
-            "allowed": [0,1]
+            "allowed": [
+                0,
+                1
+            ]
         }
     },
     "roughlenheatmethod": {
         "logic": "method",
         "param": {
-            "allowed": [1,2,3,4]
+            "allowed": [
+                1,
+                2,
+                3,
+                4
+            ]
         }
     },
     "roughlenmommethod": {
         "logic": "method",
         "param": {
-            "allowed": [1,2,3]
+            "allowed": [
+                1,
+                2,
+                3
+            ]
         }
     },
     "smdmethod": {
         "logic": "method",
         "param": {
-            "allowed": [0,1,2]
+            "allowed": [
+                0,
+                1,
+                2
+            ]
         }
     },
     "snowuse": {
         "logic": "method",
         "param": {
-            "allowed": [0,1]
+            "allowed": [
+                0,
+                1
+            ]
         }
     },
     "stabilitymethod": {
         "logic": "method",
         "param": {
-            "allowed": [0,1,2,3,4]
+            "allowed": [
+                0,
+                1,
+                2,
+                3,
+                4
+            ]
         }
     },
     "storageheatmethod": {
         "logic": "method",
         "param": {
-            "allowed": [1,2,3,4]
+            "allowed": [
+                1
+            ]
         }
     },
     "tstep": {
@@ -1102,28 +1095,27 @@
     "waterusemethod": {
         "logic": "method",
         "param": {
-            "allowed": [0,1]
+            "allowed": [
+                0,
+                1
+            ]
         }
     },
     "qn1_av": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "qn1_s_av": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "dqndt": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "dqnsdt": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "snowdens": {
         "logic": "range",
@@ -1237,6 +1229,55 @@
             "max": "inf"
         }
     },
+    "sdd_id": {
+        "logic": "range",
+        "param": {
+            "min": "-inf",
+            "max": "inf"
+        }
+    },
+    "tmin_id": {
+        "logic": "range",
+        "param": {
+            "min": "-inf",
+            "max": "inf"
+        }
+    },
+    "tmax_id": {
+        "logic": "range",
+        "param": {
+            "min": "-inf",
+            "max": "inf"
+        }
+    },
+    "lenday_id": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "co2pointsource": {
+        "logic": "range",
+        "param": {
+            "min": 0,
+            "max": "inf"
+        }
+    },
+    "maxfcmetab": {
+        "logic": "range",
+        "param": {
+            "min": "-inf",
+            "max": "inf"
+        }
+    },
+    "minfcmetab": {
+        "logic": "range",
+        "param": {
+            "min": "-inf",
+            "max": "inf"
+        }
+    },
     "hdd_id": {
         "logic": "range",
         "param": {
@@ -1246,31 +1287,21 @@
     },
     "wuday_id": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "dt_since_start": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
     "tstep_prev": {
         "logic": "NA",
-        "param": {
-        }
+        "param": {}
     },
-    "tair24hr": {
+    "tair_av": {
         "logic": "range",
         "param": {
-            "min": "-inf",
-            "max": "inf"
-        }
-    },
-    "numcapita": {
-        "logic": "range",
-        "param": {
-            "min": 0,
-            "max": "inf"
+            "min": 213.15,
+            "max": 363.15
         }
     },
     "gridiv": {

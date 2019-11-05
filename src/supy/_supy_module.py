@@ -44,11 +44,12 @@ from ._load import (load_InitialCond_grid_df,
 from ._post import pack_df_output, pack_df_output_array, pack_df_state
 from ._run import run_supy_ser, run_supy_par
 from ._save import get_save_info, save_df_output, save_df_state, save_initcond_nml
-from ._check import check_forcing
+from ._check import check_forcing, check_state
 from ._env import logger_supy
 
 # set up logging module
 logger_supy.setLevel(logging.INFO)
+
 
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
@@ -104,7 +105,16 @@ def init_supy(path_init: str, force_reload=True) -> pd.DataFrame:
             logger_supy.critical(
                 f'{path_init_x} is NOT a valid file to initialise SuPy!')
             sys.exit()
-        return df_state_init
+
+        try:
+            list_issues = check_state(df_state_init)
+            if isinstance(list_issues, list):
+                logger_supy.critical(
+                    f'`df_state_init` loaded from {path_init_x} is NOT valid to initialise SuPy!')
+        except:
+            sys.exit()
+        else:
+            return df_state_init
 
 
 # # TODO:
@@ -192,7 +202,15 @@ def load_forcing_grid(path_runcontrol: str, grid: int) -> pd.DataFrame:
         df_forcing[['iy', 'id', 'it', 'imin']] = df_forcing[[
             'iy', 'id', 'it', 'imin']].astype(np.int64)
 
-    return df_forcing
+    try:
+        list_issues = check_forcing(df_forcing)
+        if isinstance(list_issues, list):
+            logger_supy.critical(
+                f'`df_forcing` loaded from {path_init_x} is NOT valid to drive SuPy!')
+    except:
+        sys.exit()
+    else:
+        return df_forcing
 
 
 # load sample data for quickly starting a demo run
@@ -236,7 +254,9 @@ def run_supy(
         df_state_init: pandas.DataFrame,
         save_state=False,
         n_yr=10,
-        logging_level=logging.INFO,) -> Tuple[pandas.DataFrame, pandas.DataFrame]:
+        logging_level=logging.INFO,
+        check_input=False,
+) -> Tuple[pandas.DataFrame, pandas.DataFrame]:
     '''Perform supy simulation.
 
     Parameters
@@ -255,6 +275,13 @@ def run_supy(
     logging_level: logging level
         one of these values [50 (CRITICAL), 40 (ERROR), 30 (WARNING), 20 (INFO), 10 (DEBUG)].
         A lower value informs SuPy for more verbose logging info.
+    check_input : bool, optional
+        flag for checking validity of input: `df_forcing` and `df_state_init`.
+        If set to `True`, any detected invalid input will stop SuPy simulation;
+        a `False` flag will bypass such validation and may incur kernel error if any invalid input.
+        *Note: such checking procedure may take some time if the input is large.*
+        (the default is `False`, which bypass the validation).
+
 
     Returns
     -------
@@ -269,6 +296,19 @@ def run_supy(
 
 
     '''
+    # validate input dataframes
+    if check_input:
+        # forcing:
+        list_issues_forcing = check_forcing(df_forcing)
+        if isinstance(list_issues_forcing, list):
+            logger_supy.critical(f'`df_forcing` is NOT valid to drive SuPy!')
+            sys.exit('SuPy stopped entering simulation due to invalid forcing!')
+        # initial model states:
+        list_issues_state = check_state(df_state_init)
+        if isinstance(list_issues_state, list):
+            logger_supy.critical(
+                f'`df_state_init` is NOT valid to initialise SuPy!')
+            sys.exit('SuPy stopped entering simulation due to invalid initial states!')
 
     # set up a timer for simulation time
     start = time.time()
