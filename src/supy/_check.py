@@ -31,6 +31,9 @@ def load_rules(path_rules) -> Dict:
     return dict_rules_lower
 
 
+# store rules as a dict
+dict_rules = load_rules(path_rules)
+
 # checking the range of each parameter
 def check_range(ser_to_check: pd.Series, rule_var: dict) -> Tuple:
 
@@ -50,7 +53,7 @@ def check_range(ser_to_check: pd.Series, rule_var: dict) -> Tuple:
             # default `na` value as such option is unnecessary in SUEWS
             is_accepted_flag = True
         else:
-            description = f'`{var}` should be between [{min_v}, {max_v}] but is set to `{value}`'
+            description = f'`{var}` should be between [{min_v}, {max_v}] but `{value}` is found'
 
     if(not is_accepted_flag):
         is_accepted = is_accepted_flag
@@ -115,6 +118,7 @@ list_col_forcing = [
 
 
 def check_forcing(df_forcing: pd.DataFrame):
+    logger_supy.info('SuPy is validating `df_forcing`...')
     # collect issues
     list_issues = []
     flag_valid = True
@@ -166,7 +170,6 @@ def check_forcing(df_forcing: pd.DataFrame):
         flag_valid = False
 
     # 3. valid physical ranges
-    dict_rules = load_rules(path_rules)
     for var in col_df:
         if var not in ['iy', 'id', 'it', 'imin', 'isec']:
             ser_var = df_forcing[var]
@@ -184,11 +187,11 @@ def check_forcing(df_forcing: pd.DataFrame):
         logger_supy.info('All checks for `df_forcing` passed!')
 
 
-def check_state(df_state: pd.DataFrame):
+def check_state(df_state: pd.DataFrame)-> List:
+    logger_supy.info('SuPy is validating `df_state`...')
     # collect issues
     list_issues = []
     flag_valid = True
-    dict_rules = load_rules(path_rules)
     list_col_state = set(dict_rules.keys()).difference(
         [x.lower() for x in list_col_forcing])
 
@@ -210,7 +213,6 @@ def check_state(df_state: pd.DataFrame):
 
     # 2. check based on logic types
     list_to_check = set(col_df).intersection(list_col_state)
-    dict_rules = load_rules(path_rules)
     for var in list_to_check:
         # pack
         val = dict_rules[var]
@@ -223,7 +225,7 @@ def check_state(df_state: pd.DataFrame):
                 ser_var = df_var.loc[ind].rename(var)
                 res_check = check_range(ser_var, dict_rules)
                 if not res_check[1]:
-                    str_issue = res_check[2]+f' at {ind}'
+                    str_issue = res_check[2]+f' at index `{ind}`'
                     list_issues.append(str_issue)
                     flag_valid = False
         if val['logic'] == 'method':
@@ -231,7 +233,7 @@ def check_state(df_state: pd.DataFrame):
                 ser_var = df_var.loc[ind].rename(var)
                 res_check = check_method(ser_var, dict_rules)
                 if not res_check[1]:
-                    str_issue = res_check[2]+f' at {ind}'
+                    str_issue = res_check[2]+f' at index `{ind}`'
                     list_issues.append(str_issue)
                     flag_valid = False
 
