@@ -122,3 +122,4 @@ pipfile.lock
 
 # supy test logs
 SuPy.log.*
+SuPy.log
