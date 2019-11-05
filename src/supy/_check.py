@@ -46,8 +46,11 @@ def check_range(ser_to_check: pd.Series, rule_var: dict) -> Tuple:
     for value in np.nditer(ser_to_check.values):
         if min_v <= value <= max_v:
             is_accepted_flag = True
+        elif value==-999.:
+            # default `na` value as such option is unnecessary in SUEWS
+            is_accepted_flag = True
         else:
-            description = f'{var} should be between [{min_v}, {max_v}] but is set to {value}'
+            description = f'`{var}` should be between [{min_v}, {max_v}] but is set to `{value}`'
 
     if(not is_accepted_flag):
         is_accepted = is_accepted_flag
@@ -76,7 +79,7 @@ def check_method(ser_to_check: pd.Series, rule_var: dict) -> Tuple:
         if value in list_val:
             is_accepted_flag = True
         else:
-            description = f'{var} should be one of {list_val} but is set as {value}'
+            description = f'`{var}` should be one of {list_val} but is set as `{value}`'
 
     if(not is_accepted_flag):
         is_accepted = is_accepted_flag
@@ -174,12 +177,11 @@ def check_forcing(df_forcing: pd.DataFrame):
                 flag_valid = False
 
     if not flag_valid:
-        logger_supy.error('Issues found:')
-        str_issue = '\n'.join(list_issues)
+        str_issue = '\n'.join(['Issues found in `df_forcing`:']+list_issues)
         logger_supy.error(str_issue)
         return list_issues
     else:
-        logger_supy.info('All checks passed!')
+        logger_supy.info('All checks for `df_forcing` passed!')
 
 
 def check_state(df_state: pd.DataFrame):
@@ -234,11 +236,10 @@ def check_state(df_state: pd.DataFrame):
                     flag_valid = False
 
     if not flag_valid:
-        logger_supy.error('Issues found:')
-        str_issue = '\n'.join(list_issues)
+        str_issue = '\n'.join(['Issues found in `df_state`:']+list_issues)
         logger_supy.error(str_issue)
         return list_issues
     else:
-        logger_supy.info('All checks passed!')
+        logger_supy.info('All checks for `df_state` passed!')
 
 

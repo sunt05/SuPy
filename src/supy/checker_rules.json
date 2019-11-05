@@ -1256,14 +1256,14 @@
     "lenday_id": {
         "logic": "range",
         "param": {
-            "min": "-inf",
+            "min": 0,
             "max": "inf"
         }
     },
     "co2pointsource": {
         "logic": "range",
         "param": {
-            "min": "-inf",
+            "min": 0,
             "max": "inf"
         }
     },
@@ -1303,8 +1303,8 @@
     "tair_av": {
         "logic": "range",
         "param": {
-            "min": -60,
-            "max": 90
+            "min": 213.15,
+            "max": 363.15
         }
     },
     "gridiv": {
