@@ -72,6 +72,14 @@
         SUEWS
 
 
+.. option:: DLHrs
+
+    :Description:
+        Day length [h]
+    :Group:
+        DailyState
+
+
 .. option:: DaysSR
 
     :Description:
@@ -91,6 +99,22 @@
 .. option:: DensSnow_BSoil
 
     :Description:
+        Snow density – bare soil surface [kg |m^-3|]
+    :Group:
+        snow
+
+
+.. option:: DensSnow_BSoil
+
+    :Description:
+        Snow density - bare soil surface [kg |m^-3|]
+    :Group:
+        snow
+
+
+.. option:: DensSnow_BSoil
+
+    :Description:
         Snow density - bare soil surface [kg |m^-3|]
     :Group:
         DailyState
@@ -101,23 +125,7 @@
     :Description:
         Snow density – bare soil surface [kg |m^-3|]
     :Group:
-        snow
-
-
-.. option:: DensSnow_BSoil
-
-    :Description:
-        Snow density – bare soil surface [kg |m^-3|]
-    :Group:
         DailyState
-
-
-.. option:: DensSnow_BSoil
-
-    :Description:
-        Snow density - bare soil surface [kg |m^-3|]
-    :Group:
-        snow
 
 
 .. option:: DensSnow_Bldgs
@@ -139,7 +147,7 @@
 .. option:: DensSnow_Bldgs
 
     :Description:
-        Snow density – building surface [kg |m^-3|]
+        Snow density - building surface [kg |m^-3|]
     :Group:
         snow
 
@@ -147,7 +155,7 @@
 .. option:: DensSnow_Bldgs
 
     :Description:
-        Snow density - building surface [kg |m^-3|]
+        Snow density – building surface [kg |m^-3|]
     :Group:
         snow
 
@@ -165,7 +173,7 @@
     :Description:
         Snow density – deciduous surface [kg |m^-3|]
     :Group:
-        snow
+        DailyState
 
 
 .. option:: DensSnow_DecTr
@@ -180,14 +188,6 @@
 
     :Description:
         Snow density – deciduous surface [kg |m^-3|]
-    :Group:
-        DailyState
-
-
-.. option:: DensSnow_EveTr
-
-    :Description:
-        Snow density – evergreen surface [kg |m^-3|]
     :Group:
         snow
 
@@ -216,12 +216,20 @@
         snow
 
 
+.. option:: DensSnow_EveTr
+
+    :Description:
+        Snow density – evergreen surface [kg |m^-3|]
+    :Group:
+        snow
+
+
 .. option:: DensSnow_Grass
 
     :Description:
-        Snow density - grass surface [kg |m^-3|]
+        Snow density – grass surface [kg |m^-3|]
     :Group:
-        snow
+        DailyState
 
 
 .. option:: DensSnow_Grass
@@ -235,7 +243,7 @@
 .. option:: DensSnow_Grass
 
     :Description:
-        Snow density – grass surface [kg |m^-3|]
+        Snow density - grass surface [kg |m^-3|]
     :Group:
         snow
 
@@ -245,7 +253,7 @@
     :Description:
         Snow density – grass surface [kg |m^-3|]
     :Group:
-        DailyState
+        snow
 
 
 .. option:: DensSnow_Paved
@@ -261,7 +269,7 @@
     :Description:
         Snow density - paved surface [kg |m^-3|]
     :Group:
-        snow
+        DailyState
 
 
 .. option:: DensSnow_Paved
@@ -277,7 +285,7 @@
     :Description:
         Snow density - paved surface [kg |m^-3|]
     :Group:
-        DailyState
+        snow
 
 
 .. option:: DensSnow_Water
@@ -400,42 +408,26 @@
         SUEWS
 
 
-.. option:: GDD1_g
+.. option:: GDD_DecTr
 
     :Description:
-        Growing degree days for leaf growth [°C]
+        Growing degree days for deciduous tree [°C d]
     :Group:
         DailyState
 
 
-.. option:: GDD2_s
+.. option:: GDD_EveTr
 
     :Description:
-        Growing degree days for senescence [°C]
+        Growing degree days for evergreen eree [°C d]
     :Group:
         DailyState
 
 
-.. option:: GDD3_Tmin
+.. option:: GDD_Grass
 
     :Description:
-        Daily minimum temperature [°C]
-    :Group:
-        DailyState
-
-
-.. option:: GDD4_Tmax
-
-    :Description:
-        Daily maximum temperature [°C]
-    :Group:
-        DailyState
-
-
-.. option:: GDD5_DLHrs
-
-    :Description:
-        Day length [h]
+        Growing degree days for grass [°C d]
     :Group:
         DailyState
 
@@ -443,7 +435,7 @@
 .. option:: HDD1_h
 
     :Description:
-        Heating degree days [°C]
+        Heating degree days [°C d]
     :Group:
         DailyState
 
@@ -451,7 +443,7 @@
 .. option:: HDD2_c
 
     :Description:
-        Cooling degree days [°C]
+        Cooling degree days [°C d]
     :Group:
         DailyState
 
@@ -1128,6 +1120,30 @@
         snow
 
 
+.. option:: SDD_DecTr
+
+    :Description:
+        Senescence degree days for deciduous tree [°C d]
+    :Group:
+        DailyState
+
+
+.. option:: SDD_EveTr
+
+    :Description:
+        Senescence degree days for evergreen eree  [°C d]
+    :Group:
+        DailyState
+
+
+.. option:: SDD_Grass
+
+    :Description:
+        Senescence degree days for grass [°C d]
+    :Group:
+        DailyState
+
+
 .. option:: SMD
 
     :Description:
@@ -1646,6 +1662,22 @@
         Air temperature at level 9 [°C]
     :Group:
         RSL
+
+
+.. option:: Tmax
+
+    :Description:
+        Daily maximum temperature [°C]
+    :Group:
+        DailyState
+
+
+.. option:: Tmin
+
+    :Description:
+        Daily minimum temperature [°C]
+    :Group:
+        DailyState
 
 
 .. option:: TotCh

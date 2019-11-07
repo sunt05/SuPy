@@ -212,6 +212,7 @@ def gen_dict_dt_sub(dt_index):
     return dict_sub
 
 
+# generate filename
 def gen_fn(dict_x):
     lat_x, lon_x = dict_x['area'][:2]
     yr_x = dict_x['year'][0]
@@ -249,7 +250,14 @@ list_var_sfc = [
     'surface_pressure',
     'surface_solar_radiation_downwards',
     'surface_thermal_radiation_downwards',
+    'surface_sensible_heat_flux',
+    'surface_latent_heat_flux',
+    'surface_net_solar_radiation',
+    'surface_net_thermal_radiation',
     'total_precipitation',
+    'forecast_albedo',
+    'forecast_surface_roughness',
+    'friction_velocity',
 ]
 
 list_var_ml = [
@@ -343,7 +351,7 @@ def sel_list_pres(ds_sfc_x):
 
     # adjust p_max (p_min) if level for p_max (p_min) is already below (above) that of 1000 (975) hPa
     p_max = p_max if p_max < 1000E2 else 1000E2-1
-    p_min = p_min if p_min < 975E2 else 975E2+1
+    p_min = p_min if p_min < 900E2 else 900E2+1
 
     list_pres_level = [
         '1', '2', '3',
@@ -399,30 +407,30 @@ def gen_req_ml(fn_sfc, grid=[0.125, 0.125], scale=0):
     return dict_req_ml
 
 
-def download_sfc(fn_sfc, dict_req):
+def download_cds(fn, dict_req):
     c = cdsapi.Client()
-    if Path(fn_sfc).exists():
-        logger_supy.warning(f'{fn_sfc} exists!')
+    if Path(fn).exists():
+        logger_supy.warning(f'{fn} exists!')
     else:
-        logger_supy.info(f'To download: {fn_sfc}')
+        logger_supy.info(f'To download: {fn}')
         c.retrieve(**dict_req)
         time.sleep(.0100)
 
 
-def download_ml(fn_ml, dict_req):
-    c = cdsapi.Client()
-    if Path(fn_ml).exists():
-        logger_supy.warning(f'{fn_ml} exists!')
-    else:
-        logger_supy.info(f'To download: {fn_ml}')
-        c.retrieve(**dict_req)
-        time.sleep(.0100)
+# def download_ml(fn_ml, dict_req):
+#     c = cdsapi.Client()
+#     if Path(fn_ml).exists():
+#         logger_supy.warning(f'{fn_ml} exists!')
+#     else:
+#         logger_supy.info(f'To download: {fn_ml}')
+#         c.retrieve(**dict_req)
+#         time.sleep(.0100)
 
 
 def download_era5(
         lat_x: float, lon_x: float,
         start: str, end: str,
-        grid=[0.125, 0.125], scale=0) -> dict:
+        grid=[0.125, 0.125], scale=0, dir_save=Path('.')) -> dict:
     """Generate ERA-5 cdsapi-based requests and download data for area of interests.
 
     Parameters
@@ -453,10 +461,12 @@ def download_era5(
         lat_x, lon_x, start, end,
         grid=[0.125, 0.125], scale=0,)
 
-    list_req_sfc = [
-        (fn_sfc, dict_req)
-        for fn_sfc, dict_req in dict_req_sfc.items()
-    ]
+    path_dir_save = Path(dir_save).resolve()
+
+    # list_req_sfc = [
+    #     (fn_sfc, dict_req)
+    #     for fn_sfc, dict_req in dict_req_sfc.items()
+    # ]
     # if os.name != 'nt':
     #     pool.starmap(download_sfc, list_req_sfc)
     # else:
@@ -464,27 +474,24 @@ def download_era5(
     #         download_sfc(fn_sfc, dict_req)
 
     for fn_sfc, dict_req in dict_req_sfc.items():
-        download_sfc(fn_sfc, dict_req)
-
+        download_cds(path_dir_save/fn_sfc, dict_req)
 
     dict_req_ml = {}
     for fn_sfc in dict_req_sfc.keys():
-        if Path(fn_sfc).exists():
-            # logger_supy.warning(f'{fn_sfc} exists!')
             dict_req = gen_req_ml(fn_sfc, grid, scale)
             dict_req_ml.update(dict_req)
 
-    list_req_ml = [
-        (fn_ml, dict_req)
-        for fn_ml, dict_req in dict_req_ml.items()
-    ]
+    # list_req_ml = [
+    #     (fn_ml, dict_req)
+    #     for fn_ml, dict_req in dict_req_ml.items()
+    # ]
     # if os.name != 'nt':
     #     pool.starmap(download_ml, list_req_ml)
     # else:
     #     for fn_ml, dict_req in dict_req_ml.items():
     #         download_ml(fn_ml, dict_req)
     for fn_ml, dict_req in dict_req_ml.items():
-        download_ml(fn_ml, dict_req)
+        download_cds(path_dir_save/fn_ml, dict_req)
         # if Path(fn_ml).exists():
         #     logger_supy.warning(f'{fn_ml} exists!')
         # else:
@@ -493,4 +500,65 @@ def download_era5(
         #     time.sleep(.0100)
 
     dict_req_all = {**dict_req_sfc, **dict_req_ml}
+    dict_req_all = {
+        str(path_dir_save/fn): dict_req
+        for fn, dict_req in dict_req_all.items()}
     return dict_req_all
+
+
+# generate supy forcing using ERA-5 data
+def gen_forcing_era5(
+        lat_x: float, lon_x: float,
+        start: str, end: str,
+        grid=[0.125, 0.125],
+        scale=0,
+        dir_save=Path('.')):
+    """Generate SUEWS forcing files using ERA-5 data.
+
+    Parameters
+    ----------
+    lat_x : float
+        Latitude of centre at the area of interest.
+    lon_x : float
+        Longitude of centre at the area of interest.
+    start : str
+        Any datetime-like string that can be parsed by `pandas.daterange()`
+    end : str
+        Any datetime-like string that can be parsed by `pandas.daterange()`
+    grid : list, optional
+        grid size used in CDS request API, by default [0.125, 0.125]
+    scale : int, optional
+        scaling factor that determines the area of interest (i.e., `area=grid[0]*scale`), by default 0
+
+    Returns
+    -------
+    dict
+        key: grid coordinates.
+        value: path to generated SUEWS forcing file
+    """
+    # attempt to download ERA-5 data as netCDF files
+    dict_req_all = download_era5(
+        lat_x, lon_x, start, end, grid, scale, dir_save)
+    # return dict_req_all
+
+    # downloaded files
+    list_fn_sfc = [fn for fn in dict_req_all.keys() if fn.endswith('sfc.nc')]
+    list_fn_ml = [fn for fn in dict_req_all.keys() if fn.endswith('ml.nc')]
+
+    return list_fn_sfc, list_fn_ml
+
+    # # get altitude from `sfc` files
+    # da_gph_sfc = xr.open_dataset(list_fn_sfc[0]).z[0, 0, 0]
+    # da_lat_sfc = da_gph_sfc.latitude
+    # da_alt_sfc = geopotential2geometric(da_gph_sfc, da_lat_sfc)
+
+    # # determine a common level from `ml` files
+    # da_gph_ml = xr.open_mfdataset(list_fn_ml,concat_dim='time').z
+    # da_lat_ml = da_gph_ml.latitude
+    # da_alt_ml = geopotential2geometric(da_gph_ml, da_lat_ml)
+
+    # # retrieve data
+
+    # # populate data into SUEWS forcing format
+
+    # return da_alt_sfc

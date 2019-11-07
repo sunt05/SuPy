@@ -7,7 +7,11 @@ Version dev
 
 - **New**
 
-  None.
+  1. A checker to validate input dataframes.
+     See option `check_input` in `run_supy`.
+
+  2. Utilities to generate forcing data using ERA-5 data.
+     See `download_era5` and `gen_forcing_era5`.
 
 - **Improvement**
 
@@ -27,7 +31,7 @@ Version dev
 
   1. ESTM is not supported yet.
   2. BLUEWS, a CBL modules in SUEWS, is not supported yet.
-  3. Performance in parallel mode is NOT supported on Windows
+  3. Simulation in parallel mode is NOT supported on Windows
      due to system limitation.
 
 
