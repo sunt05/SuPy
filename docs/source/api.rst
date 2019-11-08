@@ -25,7 +25,7 @@ Utility Functions
 -------------------
 .. currentmodule:: supy.util
 
-EAR-5 Data Downloader
+ERA-5 Data Downloader
 ~~~~~~~~~~~~~~~~~~~~~
 .. autosummary::
     :toctree: api/supy.util
