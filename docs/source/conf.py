@@ -89,6 +89,7 @@ extensions = [
 extlinks = {
     'issue': ('https://github.com/sunt05/SuPy/issues/%s', 'GH'),
     'pull': ('https://github.com/sunt05/SuPy/pull/%s', 'PR'),
+    'doi': ('http://dx.doi.org/%s', 'DOI: '),
 }
 
 autosummary_generate = True
