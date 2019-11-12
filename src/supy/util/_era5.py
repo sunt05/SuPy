@@ -1,4 +1,11 @@
 # suppress pandas warnings
+from ._atm import cal_lat_vap, cal_cp, cal_psi_mom, cal_psi_heat
+from atmosp import calculate as ac
+from supy_driver import meteo
+from supy_driver import atmmoiststab_module as stab
+import os
+import atmosp
+import xarray as xr
 import cdsapi
 from multiprocessing import Pool
 from .._env import logger_supy
@@ -10,10 +17,7 @@ from pathlib import Path
 import time
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
-import xarray as xr
-import atmosp
 
-import os
 
 ################################################
 # more ERA-5 related functions
@@ -478,8 +482,8 @@ def download_era5(
 
     dict_req_ml = {}
     for fn_sfc in dict_req_sfc.keys():
-            dict_req = gen_req_ml(fn_sfc, grid, scale)
-            dict_req_ml.update(dict_req)
+        dict_req = gen_req_ml(fn_sfc, grid, scale)
+        dict_req_ml.update(dict_req)
 
     # list_req_ml = [
     #     (fn_ml, dict_req)
@@ -504,6 +508,25 @@ def download_era5(
         str(path_dir_save/fn): dict_req
         for fn, dict_req in dict_req_all.items()}
     return dict_req_all
+
+
+# load downloaded files
+def load_download_era5(
+        lat_x: float, lon_x: float,
+        start: str, end: str,
+        grid=[0.125, 0.125],
+        scale=0,
+        dir_save=Path('.')):
+    # attempt to download ERA-5 data as netCDF files
+    dict_req_all = download_era5(
+        lat_x, lon_x, start, end, grid, scale, dir_save)
+    # return dict_req_all
+
+    # downloaded files
+    list_fn_sfc = [fn for fn in dict_req_all.keys() if fn.endswith('sfc.nc')]
+    list_fn_ml = [fn for fn in dict_req_all.keys() if fn.endswith('ml.nc')]
+
+    return list_fn_sfc, list_fn_ml
 
 
 # generate supy forcing using ERA-5 data
@@ -536,29 +559,131 @@ def gen_forcing_era5(
         key: grid coordinates.
         value: path to generated SUEWS forcing file
     """
-    # attempt to download ERA-5 data as netCDF files
-    dict_req_all = download_era5(
+
+    list_fn_sfc, list_fn_ml = load_download_era5(
         lat_x, lon_x, start, end, grid, scale, dir_save)
-    # return dict_req_all
 
-    # downloaded files
-    list_fn_sfc = [fn for fn in dict_req_all.keys() if fn.endswith('sfc.nc')]
-    list_fn_ml = [fn for fn in dict_req_all.keys() if fn.endswith('ml.nc')]
+    # load data from from `sfc` files
+    ds_sfc = xr.open_mfdataset(list_fn_sfc, concat_dim='time')
+    # get altitude from `sfc` files
+    da_gph_sfc = ds_sfc.z
+    da_lat_sfc = da_gph_sfc.latitude
+    da_alt_sfc = geopotential2geometric(da_gph_sfc, da_lat_sfc)
 
-    return list_fn_sfc, list_fn_ml
+    # load data from from `ml` files
+    ds_ml = xr.open_mfdataset(list_fn_ml, concat_dim='time')
+    # get altitude from `ml` files
+    da_gph_ml = ds_ml.z
+    da_lat_ml = da_gph_ml.latitude
+    da_alt_ml = geopotential2geometric(da_gph_ml, da_lat_ml)
+    # determine a lowest level higher than surface at all times
+    ind_alt = da_alt_sfc < da_alt_ml
+    level_sel = ind_alt.all(dim='time').compute().sum()-1
 
-    # # get altitude from `sfc` files
-    # da_gph_sfc = xr.open_dataset(list_fn_sfc[0]).z[0, 0, 0]
-    # da_lat_sfc = da_gph_sfc.latitude
-    # da_alt_sfc = geopotential2geometric(da_gph_sfc, da_lat_sfc)
+    # retrieve variables from the identified lowest level
+    ds_ll = ds_ml.isel(level=level_sel)
 
-    # # determine a common level from `ml` files
-    # da_gph_ml = xr.open_mfdataset(list_fn_ml,concat_dim='time').z
-    # da_lat_ml = da_gph_ml.latitude
-    # da_alt_ml = geopotential2geometric(da_gph_ml, da_lat_ml)
+    # altitude
+    za = da_alt_ml.isel(level=level_sel)
 
-    # # retrieve data
+    # atmospheric pressure [Pa]
+    pres_za = da_alt_ml.level[level_sel]*100
 
-    # # populate data into SUEWS forcing format
+    # u-wind [m s-1]
+    u_za = ds_ll.u
+    # u-wind [m s-1]
+    v_za = ds_ll.v
+    # wind speed [m s-1]
+    uv_za = np.sqrt(u_za**2+v_za**2)
 
-    # return da_alt_sfc
+    # potential temperature [K]
+    theta_za = ds_ll.t
+
+    # specific humidity [kg kg-1]
+    q_za = ds_ll.q
+
+    # retrieve surface data
+
+    # sensible/latent heat flux [W m-2]
+    # conversion from cumulative value to hourly average
+    qh = (-ds_sfc.sshf/3600)
+    qe = (-ds_sfc.slhf/3600)
+
+    # surface roughness [m]
+    z0m = np.where(ds_sfc.fsr < 0.03, ds_sfc.fsr,0.03)
+
+    # friction velocity [m s-1]
+    ustar = ds_sfc.zust
+
+    # diagnose wind, temperature and humidity at 100 m agl
+    # conform dimensionality using an existing variable
+    z = za*0+100
+
+    # get dataset of diagnostics
+    ds_diag = diag_era5(
+        za, uv_za, theta_za, q_za, pres_za,
+        qh, qe, z0m, ustar, z)
+
+    return ds_diag
+
+
+# diagnose ISL variable using MOST
+def diag_era5(
+        za, uv_za, theta_za, q_za, pres_za,
+        qh, qe, z0m, ustar, z):
+
+    # reference:
+    # Section 3.10.2 and 3.10.3 in
+    # IFS Documentation CY41R2: Part IV: Physical Processes
+    # https://www.ecmwf.int/en/elibrary/16648-part-iv-physical-processes
+
+    # von Karman constant
+    kappa = 0.4
+
+    # gravity acceleration
+    g = 9.8
+
+    # note the roughness correction: see EC technical report
+    z0m = np.where(z0m < 0.03, z0m, 0.03)
+
+    # air density
+    avdens = ac('rho', qv=q_za, p=pres_za*100, theta=theta_za)
+
+    # vapour pressure
+    lv_j_kg = cal_lat_vap(q_za, theta_za, pres_za)
+
+    # heat capacity
+    avcp = cal_cp(q_za, theta_za, pres_za)
+
+    # temperature/humidity scales
+    tstar = -qh/(avcp*avdens)/ustar
+    qstar = -qe/(lv_j_kg*avdens)/ustar
+
+    l_mod = ustar**2/(g/theta_za*kappa*tstar)
+    l_mod = np.where(np.abs(l_mod) < 5, l_mod, np.sign(l_mod)*5)
+
+    # `stab_psi_mom`, `stab_psi_heat`
+    # stability correction for momentum
+    psim_z = cal_psi_mom(z/l_mod)
+    psim_z0 = cal_psi_mom(z0m/l_mod)
+
+    # wind speed
+    uv_z = ustar/kappa*(np.log(z/z0m)-psim_z+psim_z0)
+
+    # stability correction for heat
+    psih_z = cal_psi_heat(z/l_mod)
+    psih_za = cal_psi_heat(za/l_mod)
+
+    # potential temperature
+    theta_z = theta_za+tstar/kappa*(np.log(z/za)-psih_z+psih_za)
+
+    # specific humidity
+    q_z = q_za+qstar/kappa*(np.log(z/za)-psih_z+psih_za)
+
+    #
+    ds_diag = xr.merge([
+        uv_z.rename('uv_z'),
+        theta_z.rename('theta_z'),
+        q_z.rename('q_z'),
+    ])
+    return ds_diag
