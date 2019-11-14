@@ -458,6 +458,8 @@ def cal_psi_mom(zoL):
     # limit for neutral condition
     lim_ntrl = 1e-5
 
+    zoL = np.where(np.abs(zoL) > 5, 5 * np.sign(zoL), zoL)
+
     # stable, zoL>0
     zoL_stab = np.where(zoL > lim_ntrl, zoL, 0)
     psim_stab = (-6)*np.log(1 + zoL_stab)
@@ -477,6 +479,8 @@ def cal_psi_mom(zoL):
 def cal_psi_heat(zoL):
     # limit for neutral condition
     lim_ntrl = 1e-5
+
+    zoL = np.where(np.abs(zoL) > 5, 5 * np.sign(zoL), zoL)
 
     # stable, zoL>0
     zoL_stab = np.where(zoL > lim_ntrl, zoL, 0)
