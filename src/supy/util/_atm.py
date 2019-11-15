@@ -4,9 +4,8 @@ import numpy as np
 import pandas as pd
 from atmosp import calculate as ac
 
+
 # atmospheric related utilities
-
-
 def cal_des_dta(ta, pa, dta=1.0):
     """Calculate slope of es(Ta), i.e., saturation evaporation pressure `es` as function of air temperature `ta [K]`
 
@@ -398,3 +397,101 @@ def calib_g(df_fc_suews, g_max=33.1, lai_max=5.9, s1=5.56, method='cobyla', prms
     res = res_fit if debug else res_fit.best_values
 
     return res
+
+
+# calculate specific humidity using relative humidity
+def cal_qa(rh_pct, theta_K, pres_hPa):
+    qa = ac('qv', RH=rh_pct, p=pres_hPa*100, theta=theta_K)
+    return qa
+
+
+# calculate relative humidity using specific humidity
+def cal_rh(qa_kgkg, theta_K, pres_hPa):
+    RH = ac('RH', av=qa_kgkg, p=pres_hPa*100, theta=theta_K)
+    return RH
+
+
+# calculate latent heat of vaporisation
+def cal_lat_vap(qa_kgkg, theta_K, pres_hPa):
+    # wel-bulb temperature
+    tw = ac('Tw', qv=qa_kgkg, p=pres_hPa, theta=theta_K,
+            remove_assumptions=('constant Lv'))
+    # latent heat [J kg-1]
+    Lv = 2.501E6 - 2370.*(tw - 273.15)
+    return Lv
+
+
+# calculate heat capacity of air
+def cal_cp(qa_kgkg, theta_K, pres_hPa):
+
+    temp_C = ac('T', theta=theta_K, p=pres_hPa*100)-273.15
+
+    rh_pct = ac('RH', qv=qa_kgkg, theta=theta_K, p=pres_hPa*100)
+
+    # Garratt equation a20(1992)
+    cpd = 1005.0 + ((temp_C + 23.16)**2)/3364.0
+
+    # Beer(1990) for water vapour
+    cpm = 1859 + 0.13*rh_pct + (19.3 + 0.569*rh_pct) * \
+        (temp_C/100.) + (10.+0.5*rh_pct)*(temp_C/100.)**2
+
+    # air density
+    rho = ac('rho', qv=qa_kgkg, theta=theta_K, p=pres_hPa*100)
+
+    # water vapour mixing ratio
+    rv = ac('rv', qv=qa_kgkg, theta=theta_K, p=pres_hPa*100)
+
+    # dry air density
+    rho_d = rv/(1+rv)*rho
+
+    # water vapour density
+    rho_v = rho-rho_d
+
+    # heat capacity of air
+    cp = cpd*(rho_d/(rho_d + rho_v)) + cpm*(rho_v/(rho_d + rho_v))
+
+    return cp
+
+
+# stability correction for momentum
+def cal_psi_mom(zoL):
+    # limit for neutral condition
+    lim_ntrl = 1e-5
+
+    zoL = np.where(np.abs(zoL) > 5, 5 * np.sign(zoL), zoL)
+
+    # stable, zoL>0
+    zoL_stab = np.where(zoL > lim_ntrl, zoL, 0)
+    psim_stab = (-6)*np.log(1 + zoL_stab)
+
+    # unstable, zoL<0
+    zoL_unstab = np.where(zoL < -lim_ntrl, zoL, 0)
+    psim_unstab = 0.6*(2)*np.log((1 + (1 - 16*zoL_unstab)**0.5)/2)
+
+    # populate values with respect to stability
+    psim = np.where(zoL > lim_ntrl, psim_stab, psim_unstab)
+    psim = np.where(np.abs(zoL) <= lim_ntrl, 0, psim)
+
+    return psim
+
+
+# stability correction for heat
+def cal_psi_heat(zoL):
+    # limit for neutral condition
+    lim_ntrl = 1e-5
+
+    zoL = np.where(np.abs(zoL) > 5, 5 * np.sign(zoL), zoL)
+
+    # stable, zoL>0
+    zoL_stab = np.where(zoL > lim_ntrl, zoL, 0)
+    psih_stab = -4.5*zoL_stab
+
+    # unstable, zoL<0
+    zoL_unstab = np.where(zoL < -lim_ntrl, zoL, 0)
+    psih_unstab = (2)*np.log((1 + (1 - 16*zoL_unstab)**0.5)/2)
+
+    # populate values with respect to stability
+    psih = np.where(zoL > lim_ntrl, psih_stab, psih_unstab)
+    psih = np.where(np.abs(zoL) <= lim_ntrl, 0, psih)
+
+    return psih

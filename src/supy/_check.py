@@ -11,7 +11,7 @@ import glob
 import os
 from ._env import path_supy_module, logger_supy
 
-# %%
+
 # the check list file with ranges and logics
 path_rules = path_supy_module/'checker_rules.json'
 
@@ -53,7 +53,9 @@ def check_range(ser_to_check: pd.Series, rule_var: dict) -> Tuple:
             # default `na` value as such option is unnecessary in SUEWS
             is_accepted_flag = True
         else:
+            is_accepted_flag = False
             description = f'`{var}` should be between [{min_v}, {max_v}] but `{value}` is found'
+            break
 
     if(not is_accepted_flag):
         is_accepted = is_accepted_flag
@@ -243,5 +245,3 @@ def check_state(df_state: pd.DataFrame)-> List:
         return list_issues
     else:
         logger_supy.info('All checks for `df_state` passed!')
-
-
