@@ -11,7 +11,7 @@ import glob
 import os
 from ._env import path_supy_module, logger_supy
 
-# %%
+
 # the check list file with ranges and logics
 path_rules = path_supy_module/'checker_rules.json'
 

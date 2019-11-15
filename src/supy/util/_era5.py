@@ -661,14 +661,13 @@ def format_df_forcing(df_forcing_raw):
         qv=df_forcing_grid.q_z,
         theta=df_forcing_grid.theta_z,
         p=df_forcing_grid.p_z,
-    )-273.15)
+    ) - 273.15)
     df_forcing_grid = df_forcing_grid.assign(RH=ac(
         'RH',
         qv=df_forcing_grid.q_z,
         theta=df_forcing_grid.theta_z,
         p=df_forcing_grid.p_z,
     ))
-
 
     # convert atmospheric pressure: [Pa] to [hPa]
     df_forcing_grid.loc[:, 'p_z'] /= 100
@@ -701,7 +700,7 @@ def format_df_forcing(df_forcing_raw):
 
     # corrections
     df_forcing_grid.loc[:, 'RH'] = df_forcing_grid.loc[:, 'RH'].where(
-        df_forcing_grid.loc[:, 'RH'].between(.001,105), 105)
+        df_forcing_grid.loc[:, 'RH'].between(.001, 105), 105)
     df_forcing_grid.loc[:, 'kdown'] = df_forcing_grid.loc[:, 'kdown'].where(
         df_forcing_grid.loc[:, 'kdown'] > 0, 0)
 
@@ -759,6 +758,7 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml):
     # specific humidity [kg kg-1]
     q_za = ds_ll.q
 
+    #------------------------
     # retrieve surface data
 
     # sensible/latent heat flux [W m-2]
@@ -772,18 +772,28 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml):
     # friction velocity [m s-1]
     ustar = ds_sfc.zust
 
+    # air temperature
+    t2 = ds_sfc.t2m
+
+    # dew point
+    d2 = ds_sfc.d2m
+
+    # specific humidity
+    q2 = ac('qv', Td=d2, T=t2, p=pres_z0)
+
     # diagnose wind, temperature and humidity at 100 m agl or `hgt_agl_max` (see below)
     # maximum allowed height agl
     hgt_agl_max = (da_alt_ml[:, level_sel] - da_alt_sfc).min()
     hgt_agl_max = np.floor(hgt_agl_max / 10) * 10
     # conform dimensionality using an existing variable
-    z = za * 0 + np.min([100, hgt_agl_max])
+    hgt_agl_diag = 50
+    z = za * 0 + np.min([hgt_agl_diag, hgt_agl_max])
     da_alt_z = (da_alt_sfc + z).rename('alt_z')
     ds_alt_z = da_alt_z.to_dataset()
 
     # get dataset of diagnostics
     ds_diag = diag_era5(za, uv_za, theta_za, q_za, pres_za, qh, qe, z0m, ustar,
-                        pres_z0, z)
+                        pres_z0, t2, q2, z)
 
     # merge altitude
     ds_diag = ds_diag.merge(ds_alt_z).drop('level')
@@ -793,7 +803,7 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml):
 
 # diagnose ISL variable using MOST
 def diag_era5(za, uv_za, theta_za, q_za, pres_za, qh, qe, z0m, ustar, pres_z0,
-              z):
+              t2, q2, z):
 
     # reference:
     # Section 3.10.2 and 3.10.3 in
@@ -820,40 +830,56 @@ def diag_era5(za, uv_za, theta_za, q_za, pres_za, qh, qe, z0m, ustar, pres_z0,
 
     # temperature/humidity scales
     tstar = -qh / (avcp * avdens) / ustar
-    qstar = -qe / (lv_j_kg * avdens) / ustar
+    # qstar = -qe / (lv_j_kg * avdens) / ustar
 
     l_mod = ustar**2 / (g / theta_za * kappa * tstar)
-    # l_mod = np.where(np.abs(l_mod) < 5, l_mod, np.sign(l_mod) * 5)
+    zoL = np.where(
+        np.abs(z / l_mod) < 5,
+        z / l_mod,
+        np.sign(z / l_mod) * 5,
+    )
+    # l_mod = np.where(np.abs(l_mod) < 5, l_mod, np.sign(l_mod)*5)
 
     # `stab_psi_mom`, `stab_psi_heat`
     # stability correction for momentum
-    psim_z = cal_psi_mom(z / l_mod)
+    psim_z = cal_psi_mom(zoL)
     psim_z0 = cal_psi_mom(z0m / l_mod)
+    psim_za = cal_psi_mom(za / l_mod)
 
     # wind speed
-    uv_z = ustar / kappa * (np.log(z / z0m) - psim_z + psim_z0)
+    uv_z = uv_za * ((np.log(z / z0m) - psim_z + psim_z0) /
+                    (np.log(za / z0m) - psim_za + psim_z0))
+    # uv_z = ustar / kappa * (np.log(z / z0m) - psim_z + psim_z0)
 
     # stability correction for heat
-    psih_z = cal_psi_heat(z / l_mod)
+    psih_z = cal_psi_heat(zoL)
+    psih_z0 = cal_psi_heat(z0m / l_mod)
     psih_za = cal_psi_heat(za / l_mod)
 
     # potential temperature
-    theta_z = theta_za + tstar / kappa * (np.log(z / za) - psih_z + psih_za)
+    # theta_z = theta_za + tstar / kappa * (np.log(z / za) - psih_z + psih_za)
+    theta_z = t2 + (theta_za - t2) * ((np.log(z / z0m) - psih_z + psih_z0) /
+                                      (np.log(za / z0m) - psih_za + psih_z0))
 
     # specific humidity
-    q_z = q_za + qstar / kappa * (np.log(z / za) - psih_z + psih_za)
+    # q_z = q_za + qstar / kappa * (np.log(z / za) - psih_z + psih_za)
+    q_z = q2 + (q_za - q2) * ((np.log(z / z0m) - psih_z + psih_z0) /
+                              (np.log(za / z0m) - psih_za + psih_z0))
 
     # atmospheric pressure: assuming same air density at `za`
-    p_z = pres_za + (pres_z0 - pres_za) * z / za
+    # using iteration to get `p_z`
+    p_z = pres_z0 + (pres_za - pres_z0) * z / za
 
-    # pack `p_z` into DataArray
-    p_z = q_z * 0 + p_z
+    # relative humidity
+    RH_z = ac('RH', qv=q_z, p=p_z, theta=theta_z) + 0 * q_z
+    RH_z = RH_z.where(RH_z < 105, 105)
 
     # generate dataset
     ds_diag = xr.merge([
         uv_z.rename('uv_z'),
         theta_z.rename('theta_z'),
         q_z.rename('q_z'),
+        RH_z.rename('RH_z'),
         p_z.rename('p_z'),
     ])
     return ds_diag
