@@ -7,7 +7,7 @@ Version dev
 
 - **New**
 
-  1. A checker to validate input dataframes.
+  1. A checker to validate input `DataFrame`s.
      See option `check_input` in `run_supy`.
 
   2. Utilities to generate forcing data using ERA-5 data.
