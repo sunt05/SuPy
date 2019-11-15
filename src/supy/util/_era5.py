@@ -22,9 +22,8 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 # more ERA-5 related functions
 ################################################
 
+
 # utility functions
-
-
 def roundPartial(value, resolution):
     return round(value / resolution) * resolution
 
@@ -602,8 +601,8 @@ def format_df_forcing(df_forcing_raw):
         p=df_forcing_grid.p_z,
     ))
 
-    # convert atmospheric pressure: [Pa] to [hPa]
-    df_forcing_grid.loc[:, 'p_z'] /= 100
+    # convert atmospheric pressure: [Pa] to [kPa]
+    df_forcing_grid.loc[:, 'p_z'] /= 1000
 
     # renaming for consistency with SUEWS
     df_forcing_grid = df_forcing_grid.rename(
@@ -846,7 +845,7 @@ def save_forcing_era5(df_forcing_era5, dir_save):
     gpb = df_forcing_era5.groupby(['latitude', 'longitude'])
     list_grid = list(gpb.groups.keys())
     list_fn = []
-    path_dir_save=Path(dir_save)
+    path_dir_save = Path(dir_save)
     for lat, lon in list_grid:
         df_grid = df_forcing_era5.loc[lat, lon]
         s_lat = f'{lat}N' if lat >= 0 else f'{lat}S'
@@ -855,7 +854,7 @@ def save_forcing_era5(df_forcing_era5, dir_save):
         s_year = idx_grid[0].year
         s_freq = idx_grid.freq / pd.Timedelta('1T')
         s_fn = f'{s_lat}{s_lon}_{s_year}_data_{s_freq:.0f}.txt'
-        df_grid.to_csv(path_dir_save/s_fn, sep=' ', index=False)
+        df_grid.to_csv(path_dir_save / s_fn, sep=' ', index=False)
         list_fn.append(s_fn)
 
     return list_fn
