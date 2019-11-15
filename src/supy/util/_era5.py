@@ -267,43 +267,10 @@ list_var_ml = [
 ]
 
 list_pres_level = [
-    '1',
-    '2',
-    '3',
-    '5',
-    '7',
-    '10',
-    '20',
-    '30',
-    '50',
-    '70',
-    '100',
-    '125',
-    '150',
-    '175',
-    '200',
-    '225',
-    '250',
-    '300',
-    '350',
-    '400',
-    '450',
-    '500',
-    '550',
-    '600',
-    '650',
-    '700',
-    '750',
-    '775',
-    '800',
-    '825',
-    '850',
-    '875',
-    '900',
-    '925',
-    '950',
-    '975',
-    '1000',
+    '1', '2', '3', '5', '7', '10', '20', '30', '50', '70', '100', '125', '150',
+    '175', '200', '225', '250', '300', '350', '400', '450', '500', '550',
+    '600', '650', '700', '750', '775', '800', '825', '850', '875', '900',
+    '925', '950', '975', '1000'
 ]
 
 # generate a dict of reqs kwargs for (lat_x,lon_x) spanning [start, end]
@@ -374,43 +341,10 @@ def sel_list_pres(ds_sfc_x):
     p_min = p_min if p_min < 900E2 else 900E2 + 1
 
     list_pres_level = [
-        '1',
-        '2',
-        '3',
-        '5',
-        '7',
-        '10',
-        '20',
-        '30',
-        '50',
-        '70',
-        '100',
-        '125',
-        '150',
-        '175',
-        '200',
-        '225',
-        '250',
-        '300',
-        '350',
-        '400',
-        '450',
-        '500',
-        '550',
-        '600',
-        '650',
-        '700',
-        '750',
-        '775',
-        '800',
-        '825',
-        '850',
-        '875',
-        '900',
-        '925',
-        '950',
-        '975',
-        '1000',
+        '1', '2', '3', '5', '7', '10', '20', '30', '50', '70', '100', '125',
+        '150', '175', '200', '225', '250', '300', '350', '400', '450', '500',
+        '550', '600', '650', '700', '750', '775', '800', '825', '850', '875',
+        '900', '925', '950', '975', '1000'
     ]
     ser_pres_level = pd.Series(list_pres_level).map(int) * 100
     pos_lev_max, pos_lev_min = (
@@ -419,9 +353,6 @@ def sel_list_pres(ds_sfc_x):
     list_pres_sel = ser_pres_level.loc[pos_lev_min:pos_lev_max] / 100
     list_pres_sel = list_pres_sel.map(int).map(str).to_list()
     return list_pres_sel
-
-
-# sel_list_pres(ds_sfc_x)
 
 
 # for each sfc data file, determine the necessary vertical levels to model level data download
@@ -639,7 +570,9 @@ def gen_forcing_era5(lat_x: float,
     df_forcing = grp_grid.apply(lambda df: format_df_forcing(
         df.reset_index(['latitude', 'longitude'], drop=True)))
 
-    return df_forcing
+    list_fn = save_forcing_era5(df_forcing, dir_save)
+
+    return list_fn
 
 
 # format dataframe to SUEWS convention
@@ -688,7 +621,7 @@ def format_df_forcing(df_forcing_raw):
     col_suews = [
         'iy', 'id', 'it', 'imin', 'qn', 'qh', 'qe', 'qs', 'qf', 'U', 'RH',
         'Tair', 'pres', 'rain', 'kdown', 'snow', 'ldown', 'fcld', 'Wuh',
-        'xsmd', 'lai', 'kdiff', 'kdir', 'wdir', 'isec'
+        'xsmd', 'lai', 'kdiff', 'kdir', 'wdir'
     ]
 
     df_forcing_grid = df_forcing_grid.loc[:, col_suews]
@@ -696,7 +629,6 @@ def format_df_forcing(df_forcing_raw):
     df_forcing_grid.loc[:, 'id'] = df_forcing_grid.index.dayofyear
     df_forcing_grid.loc[:, 'it'] = df_forcing_grid.index.hour
     df_forcing_grid.loc[:, 'imin'] = df_forcing_grid.index.minute
-    df_forcing_grid.loc[:, 'isec'] = df_forcing_grid.index.second
 
     # corrections
     df_forcing_grid.loc[:, 'RH'] = df_forcing_grid.loc[:, 'RH'].where(
@@ -856,21 +788,45 @@ def diag_era5(za, uv_za, theta_za, q_za, pres_za, qh, qe, z0m, ustar, pres_z0,
     psih_z0 = cal_psi_heat(z0m / l_mod)
     psih_za = cal_psi_heat(za / l_mod)
 
-    # potential temperature
-    # theta_z = theta_za + tstar / kappa * (np.log(z / za) - psih_z + psih_za)
-    theta_z = t2 + (theta_za - t2) * ((np.log(z / z0m) - psih_z + psih_z0) /
-                                      (np.log(za / z0m) - psih_za + psih_z0))
+    # atmospheric pressure: assuming same air density at `za`
+    # using iteration to get `p_z`
+    p_z = pres_z0 + (pres_za - pres_z0) * z / za
 
     # specific humidity
     # q_z = q_za + qstar / kappa * (np.log(z / za) - psih_z + psih_za)
     q_z = q2 + (q_za - q2) * ((np.log(z / z0m) - psih_z + psih_z0) /
                               (np.log(za / z0m) - psih_za + psih_z0))
 
-    # atmospheric pressure: assuming same air density at `za`
-    # using iteration to get `p_z`
-    p_z = pres_z0 + (pres_za - pres_z0) * z / za
+    # potential temperature
+    # theta_z = theta_za + tstar / kappa * (np.log(z / za) - psih_z + psih_za)
+    # theta_z = t2 + (theta_za - t2) * ((np.log(z / z0m) - psih_z + psih_z0) /
+    #                                   (np.log(za / z0m) - psih_za + psih_z0))
 
-    # relative humidity
+    # dry static energy: eq 3.5 in EC tech report;
+    # also AMS ref: http://glossary.ametsoc.org/wiki/Dry_static_energy
+    # 2 m agl:
+    cp2 = cal_cp(q2, t2, pres_z0 / 100)
+    cp_za = cal_cp(q_za, theta_za, pres_za / 100)
+    s2 = g * 2 + cp2 * t2
+    # za:
+    t_za = ac('T', qv=q_za, p=pres_za, theta=theta_za)
+    s_za = g * za + cp_za * t_za
+
+    s_z = s2 + (s_za - s2) * ((np.log(z / z0m) - psih_z + psih_z0) /
+                              (np.log(za / z0m) - psih_za + psih_z0))
+
+    # calculate potential temperature at z
+    theta_z_x = theta_za
+    dif = 10
+    while dif > 0.1:
+        cp_z = cal_cp(q_z, theta_z_x, p_z / 100)
+        t_z = (s_z - g * z) / cp_z
+        theta_z = ac('theta', T=t_z, qv=q_z, p=p_z)
+        dif = np.mean(np.abs(theta_z_x - theta_z))
+        theta_z_x = theta_z
+
+    theta_z = theta_z + theta_za * 0
+
     RH_z = ac('RH', qv=q_z, p=p_z, theta=theta_z) + 0 * q_z
     RH_z = RH_z.where(RH_z < 105, 105)
 
@@ -883,3 +839,23 @@ def diag_era5(za, uv_za, theta_za, q_za, pres_za, qh, qe, z0m, ustar, pres_z0,
         p_z.rename('p_z'),
     ])
     return ds_diag
+
+
+# save ERA5 forcing dataframe to SUEWS-simulation ready txt files
+def save_forcing_era5(df_forcing_era5, dir_save):
+    gpb = df_forcing_era5.groupby(['latitude', 'longitude'])
+    list_grid = list(gpb.groups.keys())
+    list_fn = []
+    path_dir_save=Path(dir_save)
+    for lat, lon in list_grid:
+        df_grid = df_forcing_era5.loc[lat, lon]
+        s_lat = f'{lat}N' if lat >= 0 else f'{lat}S'
+        s_lon = f'{lon}E' if lon >= 0 else f'{lon}W'
+        idx_grid = df_grid.index
+        s_year = idx_grid[0].year
+        s_freq = idx_grid.freq / pd.Timedelta('1T')
+        s_fn = f'{s_lat}{s_lon}_{s_year}_data_{s_freq:.0f}.txt'
+        df_grid.to_csv(path_dir_save/s_fn, sep=' ', index=False)
+        list_fn.append(s_fn)
+
+    return list_fn
