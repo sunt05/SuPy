@@ -532,7 +532,7 @@ def gen_req_era5(lat_x: float,
 
     dict_req_ml = {}
     for fn_sfc in dict_req_sfc.keys():
-        dict_req = gen_req_ml(fn_sfc, grid, scale)
+        dict_req = gen_req_ml(path_dir_save/fn_sfc, grid, scale)
         dict_req_ml.update(dict_req)
 
     dict_req_all = {**dict_req_sfc, **dict_req_ml}
@@ -573,7 +573,7 @@ def gen_forcing_era5(lat_x: float,
                      end: str,
                      grid=[0.125, 0.125],
                      scale=0,
-                     dir_save=Path('.')):
+                     dir_save=Path('.'))->list:
     """Generate SUEWS forcing files using ERA-5 data.
 
     Parameters
@@ -593,8 +593,8 @@ def gen_forcing_era5(lat_x: float,
 
     Returns
     -------
-    df_forcing
-        DataFrame acceptable by SuPy as forcing input.
+    List
+        A list of files in SUEWS forcing input format.
     """
 
     # download data
@@ -712,29 +712,25 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml):
     # surface level atmospheric pressure
     pres_z0 = ds_sfc.sp
 
-    # get altitude from `sfc` files
-    da_gph_sfc = ds_sfc.z
-    da_lat_sfc = da_gph_sfc.latitude
-    da_alt_sfc = geopotential2geometric(da_gph_sfc, da_lat_sfc)
-
     # load data from from `ml` files
     ds_ml = xr.open_mfdataset(list_fn_ml, concat_dim='time')
-    # get altitude from `ml` files
-    da_gph_ml = ds_ml.z
-    da_lat_ml = da_gph_ml.latitude
-    da_alt_ml = geopotential2geometric(da_gph_ml, da_lat_ml)
+
+    # height where to diagnose variables
+    hgt_agl_diag=100
+
     # determine a lowest level higher than surface at all times
-    ind_alt = da_alt_sfc < da_alt_ml
-    level_sel = ind_alt.all(dim='time').compute().sum() - 1
+    level_sel = get_level_diag(ds_sfc, ds_ml, hgt_agl_diag)
 
     # retrieve variables from the identified lowest level
-    ds_ll = ds_ml.isel(level=level_sel)
+    ds_ll = ds_ml.sel(time=ds_ml.time,
+                      level=xr.DataArray(level_sel.values, dims='time'))
 
     # altitude
-    za = da_alt_ml.isel(level=level_sel)
+    alt_z0 = geopotential2geometric(ds_sfc.z, ds_sfc.latitude)
+    alt_za = geopotential2geometric(ds_ll.z, ds_ll.latitude)
 
     # atmospheric pressure [Pa]
-    pres_za = da_alt_ml.level[level_sel] * 100
+    pres_za = pres_z0 * 0 + ds_ll.level * 100
 
     # u-wind [m s-1]
     u_za = ds_ll.u
@@ -773,13 +769,10 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml):
     q2 = ac('qv', Td=d2, T=t2, p=pres_z0)
 
     # diagnose wind, temperature and humidity at 100 m agl or `hgt_agl_max` (see below)
-    # maximum allowed height agl
-    hgt_agl_max = (da_alt_ml[:, level_sel] - da_alt_sfc).min()
-    hgt_agl_max = np.floor(hgt_agl_max / 10) * 10
     # conform dimensionality using an existing variable
-    hgt_agl_diag = 50
-    z = za * 0 + np.min([hgt_agl_diag, hgt_agl_max])
-    da_alt_z = (da_alt_sfc + z).rename('alt_z')
+    za = alt_za - alt_z0
+    z = za * 0 + hgt_agl_diag
+    da_alt_z = (alt_z0 + z).rename('alt_z')
     ds_alt_z = da_alt_z.to_dataset()
 
     # get dataset of diagnostics
@@ -914,7 +907,29 @@ def save_forcing_era5(df_forcing_era5, dir_save):
         s_year = idx_grid[0].year
         s_freq = idx_grid.freq / pd.Timedelta('1T')
         s_fn = f'{s_lat}{s_lon}_{s_year}_data_{s_freq:.0f}.txt'
-        df_grid.to_csv(path_dir_save / s_fn, sep=' ', index=False)
-        list_fn.append(s_fn)
+        path_fn=path_dir_save / s_fn
+        df_grid.to_csv(path_fn, sep=' ', index=False)
+        list_fn.append(path_fn)
 
     return list_fn
+
+
+
+def get_level_diag(ds_sfc,ds_ml,hgt_agl_diag):
+    # get altitude from `sfc` files
+    da_gph_sfc = ds_sfc.z
+    da_lat_sfc = da_gph_sfc.latitude
+    da_alt_sfc = geopotential2geometric(da_gph_sfc, da_lat_sfc)
+
+    # get altitude from `ml` files
+    da_gph_ml = ds_ml.z
+    da_lat_ml = da_gph_ml.latitude
+    da_alt_ml = geopotential2geometric(da_gph_ml, da_lat_ml)
+
+    # determine a lowest level higher than surface at all times
+    #     hgt_agl_diag = 100
+    ind_alt = ((da_alt_sfc+hgt_agl_diag) < da_alt_ml).compute()
+    level_sel = (ind_alt.sum(dim='level')-1).values.flatten()
+    level_sel = da_alt_ml.level[level_sel]
+
+    return level_sel
