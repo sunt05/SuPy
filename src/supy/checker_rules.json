@@ -640,7 +640,7 @@
         "unit": "",
         "param": {
             "min": 0,
-            "max": 1
+            "max": "inf"
         }
     },
     "lai": {
@@ -648,7 +648,7 @@
         "unit": "m2 m-2",
         "param": {
             "min": 0,
-            "max": 1
+            "max": 10
         }
     },
     "kdiff": {

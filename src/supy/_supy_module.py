@@ -54,7 +54,7 @@ logger_supy.setLevel(logging.INFO)
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
 # @functools.lru_cache(maxsize=16)
-def init_supy(path_init: str, force_reload=True) -> pd.DataFrame:
+def init_supy(path_init: str, force_reload=True,check_input=False) -> pd.DataFrame:
     '''Initialise supy by loading initial model states.
 
     Parameters
@@ -105,14 +105,14 @@ def init_supy(path_init: str, force_reload=True) -> pd.DataFrame:
             logger_supy.critical(
                 f'{path_init_x} is NOT a valid file to initialise SuPy!')
             sys.exit()
-
-        try:
-            list_issues = check_state(df_state_init)
-            if isinstance(list_issues, list):
-                logger_supy.critical(
-                    f'`df_state_init` loaded from {path_init_x} is NOT valid to initialise SuPy!')
-        except:
-            sys.exit()
+        if check_input:
+            try:
+                list_issues = check_state(df_state_init)
+                if isinstance(list_issues, list):
+                    logger_supy.critical(
+                        f'`df_state_init` loaded from {path_init_x} is NOT valid to initialise SuPy!')
+            except:
+                sys.exit()
         else:
             return df_state_init
 
@@ -124,7 +124,7 @@ def init_supy(path_init: str, force_reload=True) -> pd.DataFrame:
 
 # TODO:
 # to be superseded by a more generic wrapper: load_forcing
-def load_forcing_grid(path_runcontrol: str, grid: int) -> pd.DataFrame:
+def load_forcing_grid(path_runcontrol: str, grid: int, check_input=False) -> pd.DataFrame:
     '''Load forcing data for a specific grid included in the index of `df_state_init </data-structure/supy-io.ipynb#df_state_init:-model-initial-states>`.
 
     Parameters
@@ -202,13 +202,14 @@ def load_forcing_grid(path_runcontrol: str, grid: int) -> pd.DataFrame:
         df_forcing[['iy', 'id', 'it', 'imin']] = df_forcing[[
             'iy', 'id', 'it', 'imin']].astype(np.int64)
 
-    try:
-        list_issues = check_forcing(df_forcing)
-        if isinstance(list_issues, list):
-            logger_supy.critical(
-                f'`df_forcing` loaded from {path_init_x} is NOT valid to drive SuPy!')
-    except:
-        sys.exit()
+    if check_input:
+        try:
+            list_issues = check_forcing(df_forcing)
+            if isinstance(list_issues, list):
+                logger_supy.critical(
+                    f'`df_forcing` loaded from {path_init_x} is NOT valid to drive SuPy!')
+        except:
+            sys.exit()
     else:
         return df_forcing
 

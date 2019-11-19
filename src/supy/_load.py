@@ -513,7 +513,7 @@ def resample_linear_pd(data_raw, tstep_in, tstep_mod):
     data_raw_tstep = data_raw_tstep.sort_index()
     data_raw_tstep = data_raw_tstep.asfreq(f'{tstep_mod}S')
     # fill gaps with valid values
-    data_tstep = data_raw_tstep.copy().bfill().ffill().dropna()
+    data_tstep = data_raw_tstep.copy().bfill().ffill().dropna(how='all')
     # data_tstep = data_raw_tstep.copy()
 
     # correct temporal information
@@ -546,21 +546,21 @@ def resample_linear(data_raw, tstep_in, tstep_mod):
         columns=data_raw_shift.columns,
         index=xt_new[1:]
     )
-#     data_raw_tstep = dd.from_pandas(data_raw_tstep, npartitions=cpu_count())
-#     data_raw_tstep = data_raw_tstep.rolling(window=2, center=False).mean()
+    #     data_raw_tstep = dd.from_pandas(data_raw_tstep, npartitions=cpu_count())
+    #     data_raw_tstep = data_raw_tstep.rolling(window=2, center=False).mean()
     # val_new.shape
     # assign a new start with nan
     t_start = data_raw.index.shift(-tstep_in + tstep_mod, freq='S')[0]
     t_end = data_raw.index[-1]
     ind_t = pd.date_range(t_start, t_end, freq=f'{tstep_mod}S')
     # re-align the index so after resampling we can have filled heading part
-#     data_raw_tstep = data_raw_tstep.compute()
+    #     data_raw_tstep = data_raw_tstep.compute()
     data_tstep = data_raw_tstep.reindex(ind_t)
-#     data_tstep = dd.from_pandas(data_raw_tstep, npartitions=cpu_count())
+    #     data_tstep = dd.from_pandas(data_raw_tstep, npartitions=cpu_count())
     data_tstep = data_tstep.bfill()
     data_tstep = data_tstep.ffill()
-#     data_tstep = data_tstep.dropna()
-#     data_tstep = data_tstep.compute()
+    #     data_tstep = data_tstep.dropna()
+    #     data_tstep = data_tstep.compute()
     # correct temporal information
     ser_t = ind_t.to_series()
     data_tstep['iy'] = ser_t.dt.year
@@ -572,7 +572,8 @@ def resample_linear(data_raw, tstep_in, tstep_mod):
 
 # resample input met foring to tstep required by model
 def resample_forcing_met(
-        data_met_raw, tstep_in, tstep_mod, lat, lon, alt, timezone, kdownzen):
+        data_met_raw, tstep_in, tstep_mod,
+        lat=51, lon=1, alt=100, timezone=0, kdownzen=0):
     # overall resample by linear interpolation
     # data_met_raw.to_pickle('data_met_raw.pkl')
     data_met_tstep = resample_linear_pd(data_met_raw, tstep_in, tstep_mod)

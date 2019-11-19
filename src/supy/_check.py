@@ -46,7 +46,7 @@ def check_range(ser_to_check: pd.Series, rule_var: dict) -> Tuple:
     description=''
     is_accepted_flag = False
 
-    for value in np.nditer(ser_to_check.values):
+    for ind, value in ser_to_check.items():
         if min_v <= value <= max_v:
             is_accepted_flag = True
         elif value==-999.:
@@ -54,7 +54,7 @@ def check_range(ser_to_check: pd.Series, rule_var: dict) -> Tuple:
             is_accepted_flag = True
         else:
             is_accepted_flag = False
-            description = f'`{var}` should be between [{min_v}, {max_v}] but `{value}` is found'
+            description = f'`{var}` should be between [{min_v}, {max_v}] but `{value}` is found at {ind}'
             break
 
     if(not is_accepted_flag):

@@ -388,16 +388,6 @@ def download_cds(fn, dict_req):
         time.sleep(.0100)
 
 
-# def download_ml(fn_ml, dict_req):
-#     c = cdsapi.Client()
-#     if Path(fn_ml).exists():
-#         logger_supy.warning(f'{fn_ml} exists!')
-#     else:
-#         logger_supy.info(f'To download: {fn_ml}')
-#         c.retrieve(**dict_req)
-#         time.sleep(.0100)
-
-
 def download_era5(lat_x: float,
                   lon_x: float,
                   start: str,
@@ -429,8 +419,8 @@ def download_era5(lat_x: float,
         value: CDS API request used for downloading the file named by the corresponding key
     """
 
-    c = cdsapi.Client()
-    pool = Pool()
+    # # c = cdsapi.Client()
+    # # pool = Pool()
     dict_req_sfc = gen_req_sfc(
         lat_x,
         lon_x,
@@ -442,15 +432,15 @@ def download_era5(lat_x: float,
 
     path_dir_save = Path(dir_save).resolve()
 
-    # list_req_sfc = [
-    #     (fn_sfc, dict_req)
-    #     for fn_sfc, dict_req in dict_req_sfc.items()
-    # ]
-    # if os.name != 'nt':
-    #     pool.starmap(download_sfc, list_req_sfc)
-    # else:
-    #     for fn_sfc, dict_req in dict_req_sfc.items():
-    #         download_sfc(fn_sfc, dict_req)
+    # # list_req_sfc = [
+    # #     (fn_sfc, dict_req)
+    # #     for fn_sfc, dict_req in dict_req_sfc.items()
+    # # ]
+    # # if os.name != 'nt':
+    # #     pool.starmap(download_sfc, list_req_sfc)
+    # # else:
+    # #     for fn_sfc, dict_req in dict_req_sfc.items():
+    # #         download_sfc(fn_sfc, dict_req)
 
     for fn_sfc, dict_req in dict_req_sfc.items():
         download_cds(path_dir_save / fn_sfc, dict_req)
@@ -460,29 +450,97 @@ def download_era5(lat_x: float,
         dict_req = gen_req_ml(fn_sfc, grid, scale)
         dict_req_ml.update(dict_req)
 
-    # list_req_ml = [
-    #     (fn_ml, dict_req)
-    #     for fn_ml, dict_req in dict_req_ml.items()
-    # ]
-    # if os.name != 'nt':
-    #     pool.starmap(download_ml, list_req_ml)
-    # else:
-    #     for fn_ml, dict_req in dict_req_ml.items():
-    #         download_ml(fn_ml, dict_req)
+    # # list_req_ml = [
+    # #     (fn_ml, dict_req)
+    # #     for fn_ml, dict_req in dict_req_ml.items()
+    # # ]
+    # # if os.name != 'nt':
+    # #     pool.starmap(download_ml, list_req_ml)
+    # # else:
+    # #     for fn_ml, dict_req in dict_req_ml.items():
+    # #         download_ml(fn_ml, dict_req)
     for fn_ml, dict_req in dict_req_ml.items():
         download_cds(path_dir_save / fn_ml, dict_req)
-        # if Path(fn_ml).exists():
-        #     logger_supy.warning(f'{fn_ml} exists!')
-        # else:
-        #     logger_supy.info(f'To download: {fn_ml}')
-        #     c.retrieve(**dict_req)
-        #     time.sleep(.0100)
+    #     # if Path(fn_ml).exists():
+    #     #     logger_supy.warning(f'{fn_ml} exists!')
+    #     # else:
+    #     #     logger_supy.info(f'To download: {fn_ml}')
+    #     #     c.retrieve(**dict_req)
+    #     #     time.sleep(.0100)
 
     dict_req_all = {**dict_req_sfc, **dict_req_ml}
     dict_req_all = {
         str(path_dir_save / fn): dict_req
         for fn, dict_req in dict_req_all.items()
     }
+
+    # dict_req_all =gen_req_era5(lat_x,
+    #              lon_x,
+    #              start,
+    #              end,
+    #              grid,
+    #              scale,
+    #              dir_save)
+    # for fn, dict_req in dict_req_all.items():
+    #     download_cds(fn, dict_req)
+
+    return dict_req_all
+
+
+# generate requests
+def gen_req_era5(lat_x: float,
+                 lon_x: float,
+                 start: str,
+                 end: str,
+                 grid=[0.125, 0.125],
+                 scale=0,
+                 dir_save=Path('.')) -> dict:
+    """Generate ERA-5 cdsapi-based requests and download data for area of interests.
+
+    Parameters
+    ----------
+    lat_x : float
+        Latitude of centre at the area of interest.
+    lon_x : float
+        Longitude of centre at the area of interest.
+    start : str
+        Any datetime-like string that can be parsed by `pandas.daterange()`
+    end : str
+        Any datetime-like string that can be parsed by `pandas.daterange()`
+    grid : list, optional
+        grid size used in CDS request API, by default [0.125, 0.125]
+    scale : int, optional
+        scaling factor that determines the area of interest (i.e., `area=grid[0]*scale`), by default 0
+
+    Returns
+    -------
+    dict
+        key: name of downloaded file
+        value: CDS API request used for downloading the file named by the corresponding key
+    """
+
+    path_dir_save = Path(dir_save).resolve()
+
+    dict_req_sfc = gen_req_sfc(
+        lat_x,
+        lon_x,
+        start,
+        end,
+        grid=[0.125, 0.125],
+        scale=0,
+    )
+
+    dict_req_ml = {}
+    for fn_sfc in dict_req_sfc.keys():
+        dict_req = gen_req_ml(fn_sfc, grid, scale)
+        dict_req_ml.update(dict_req)
+
+    dict_req_all = {**dict_req_sfc, **dict_req_ml}
+    dict_req_all = {
+        str(path_dir_save / fn): dict_req
+        for fn, dict_req in dict_req_all.items()
+    }
+
     return dict_req_all
 
 
@@ -495,9 +553,11 @@ def load_filelist_era5(lat_x: float,
                        scale=0,
                        dir_save=Path('.')):
     # attempt to download ERA-5 data as netCDF files
-    dict_req_all = download_era5(lat_x, lon_x, start, end, grid, scale,
-                                 dir_save)
-    # return dict_req_all
+    # dict_req_all = download_era5(lat_x, lon_x, start, end, grid, scale,
+    #                              dir_save)
+
+    dict_req_all = gen_req_era5(lat_x, lon_x, start, end, grid, scale,
+                                dir_save)
 
     # downloaded files
     list_fn_sfc = [fn for fn in dict_req_all.keys() if fn.endswith('sfc.nc')]
