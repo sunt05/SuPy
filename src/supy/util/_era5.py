@@ -589,12 +589,19 @@ def gen_forcing_era5(lat_x: float,
     grid : list, optional
         grid size used in CDS request API, by default [0.125, 0.125].
     scale : int, optional
-        scaling factor that determines the area of interest (i.e., `area=grid[0]*scale`), by default 0
+        scaling factor that determines the area of interest (i.e., `area=grid[0]*scale`),
+        by default 0
 
     Returns
     -------
     List
         A list of files in SUEWS forcing input format.
+
+    Note
+    ----
+        The generated forcing files can be imported using `supy.util.read_forcing`
+        to get simulation-ready `DataFrame`s.
+
     """
 
     # download data
@@ -620,6 +627,7 @@ def gen_forcing_era5(lat_x: float,
         'theta_z',
         'q_z',
         'p_z',
+        'alt_z',
     ]].to_dataframe()
 
     # split based on grid coordinates
@@ -680,7 +688,7 @@ def format_df_forcing(df_forcing_raw):
     col_suews = [
         'iy', 'id', 'it', 'imin', 'qn', 'qh', 'qe', 'qs', 'qf', 'U', 'RH',
         'Tair', 'pres', 'rain', 'kdown', 'snow', 'ldown', 'fcld', 'Wuh',
-        'xsmd', 'lai', 'kdiff', 'kdir', 'wdir'
+        'xsmd', 'lai', 'kdiff', 'kdir', 'wdir','alt_z'
     ]
 
     df_forcing_grid = df_forcing_grid.loc[:, col_suews]
@@ -903,10 +911,13 @@ def save_forcing_era5(df_forcing_era5, dir_save):
         df_grid = df_forcing_era5.loc[lat, lon]
         s_lat = f'{lat}N' if lat >= 0 else f'{lat}S'
         s_lon = f'{lon}E' if lon >= 0 else f'{lon}W'
+        alt_z = df_grid.alt_z[0]
+        df_grid = df_grid.drop('alt_z', axis=1)
+        s_alt = f'{alt_z:.1f}A'
         idx_grid = df_grid.index
         s_year = idx_grid[0].year
         s_freq = idx_grid.freq / pd.Timedelta('1T')
-        s_fn = f'{s_lat}{s_lon}_{s_year}_data_{s_freq:.0f}.txt'
+        s_fn = f'UTC{s_lat}{s_lon}{s_alt}_{s_year}_data_{s_freq:.0f}.txt'
         path_fn=path_dir_save / s_fn
         df_grid.to_csv(path_fn, sep=' ', index=False)
         list_fn.append(path_fn)
