@@ -191,12 +191,6 @@ def gen_dict_dt(dt_index):
         k: dt_index.dt.strftime(fmt).unique().tolist()
         for k, fmt in zip(list_key, list_fmt)
     }
-    # dict_dt = {
-    #     'year': dt_index.dt.strftime('%Y').unique().tolist(),
-    #     'month': dt_index.dt.strftime('%m').unique().tolist(),
-    #     'day': dt_index.dt.strftime('%d').unique().tolist(),
-    #     'time': dt_index.dt.strftime('%H:%M').unique().tolist(),
-    # }
     return dict_dt
 
 
@@ -419,8 +413,7 @@ def download_era5(lat_x: float,
         value: CDS API request used for downloading the file named by the corresponding key
     """
 
-    # # c = cdsapi.Client()
-    # # pool = Pool()
+    # generate requests for surface level data
     dict_req_sfc = gen_req_sfc(
         lat_x,
         lon_x,
@@ -430,17 +423,8 @@ def download_era5(lat_x: float,
         scale=0,
     )
 
-    path_dir_save = Path(dir_save).resolve()
 
-    # # list_req_sfc = [
-    # #     (fn_sfc, dict_req)
-    # #     for fn_sfc, dict_req in dict_req_sfc.items()
-    # # ]
-    # # if os.name != 'nt':
-    # #     pool.starmap(download_sfc, list_req_sfc)
-    # # else:
-    # #     for fn_sfc, dict_req in dict_req_sfc.items():
-    # #         download_sfc(fn_sfc, dict_req)
+    path_dir_save = Path(dir_save).resolve()
 
     for fn_sfc, dict_req in dict_req_sfc.items():
         download_cds(path_dir_save / fn_sfc, dict_req)
@@ -450,39 +434,14 @@ def download_era5(lat_x: float,
         dict_req = gen_req_ml(fn_sfc, grid, scale)
         dict_req_ml.update(dict_req)
 
-    # # list_req_ml = [
-    # #     (fn_ml, dict_req)
-    # #     for fn_ml, dict_req in dict_req_ml.items()
-    # # ]
-    # # if os.name != 'nt':
-    # #     pool.starmap(download_ml, list_req_ml)
-    # # else:
-    # #     for fn_ml, dict_req in dict_req_ml.items():
-    # #         download_ml(fn_ml, dict_req)
     for fn_ml, dict_req in dict_req_ml.items():
         download_cds(path_dir_save / fn_ml, dict_req)
-    #     # if Path(fn_ml).exists():
-    #     #     logger_supy.warning(f'{fn_ml} exists!')
-    #     # else:
-    #     #     logger_supy.info(f'To download: {fn_ml}')
-    #     #     c.retrieve(**dict_req)
-    #     #     time.sleep(.0100)
 
     dict_req_all = {**dict_req_sfc, **dict_req_ml}
     dict_req_all = {
         str(path_dir_save / fn): dict_req
         for fn, dict_req in dict_req_all.items()
     }
-
-    # dict_req_all =gen_req_era5(lat_x,
-    #              lon_x,
-    #              start,
-    #              end,
-    #              grid,
-    #              scale,
-    #              dir_save)
-    # for fn, dict_req in dict_req_all.items():
-    #     download_cds(fn, dict_req)
 
     return dict_req_all
 
@@ -519,8 +478,10 @@ def gen_req_era5(lat_x: float,
         value: CDS API request used for downloading the file named by the corresponding key
     """
 
+    # path to directory for saving results
     path_dir_save = Path(dir_save).resolve()
 
+    # generate requests for surface level data
     dict_req_sfc = gen_req_sfc(
         lat_x,
         lon_x,
@@ -530,11 +491,13 @@ def gen_req_era5(lat_x: float,
         scale=0,
     )
 
+    # generate requests for atmospheric level data
     dict_req_ml = {}
     for fn_sfc in dict_req_sfc.keys():
         dict_req = gen_req_ml(path_dir_save/fn_sfc, grid, scale)
         dict_req_ml.update(dict_req)
 
+    # collect all requests
     dict_req_all = {**dict_req_sfc, **dict_req_ml}
     dict_req_all = {
         str(path_dir_save / fn): dict_req
@@ -552,10 +515,8 @@ def load_filelist_era5(lat_x: float,
                        grid=[0.125, 0.125],
                        scale=0,
                        dir_save=Path('.')):
-    # attempt to download ERA-5 data as netCDF files
-    # dict_req_all = download_era5(lat_x, lon_x, start, end, grid, scale,
-    #                              dir_save)
 
+    # attempt to generate requests
     dict_req_all = gen_req_era5(lat_x, lon_x, start, end, grid, scale,
                                 dir_save)
 
@@ -637,6 +598,7 @@ def gen_forcing_era5(lat_x: float,
     df_forcing = grp_grid.apply(lambda df: format_df_forcing(
         df.reset_index(['latitude', 'longitude'], drop=True)))
 
+    # save results as SUEWS met input files
     list_fn = save_forcing_era5(df_forcing, dir_save)
 
     return list_fn
@@ -702,6 +664,9 @@ def format_df_forcing(df_forcing_raw):
         df_forcing_grid.loc[:, 'RH'].between(.001, 105), 105)
     df_forcing_grid.loc[:, 'kdown'] = df_forcing_grid.loc[:, 'kdown'].where(
         df_forcing_grid.loc[:, 'kdown'] > 0, 0)
+
+    # trim decimals
+    df_forcing_grid = df_forcing_grid.round(2)
 
     df_forcing_grid = df_forcing_grid.replace(np.nan, -999).asfreq('1h')
 
@@ -907,6 +872,8 @@ def save_forcing_era5(df_forcing_era5, dir_save):
     list_grid = list(gpb.groups.keys())
     list_fn = []
     path_dir_save = Path(dir_save)
+
+    # split into grids
     for lat, lon in list_grid:
         df_grid = df_forcing_era5.loc[lat, lon]
         s_lat = f'{lat}N' if lat >= 0 else f'{lat}S'
@@ -915,12 +882,20 @@ def save_forcing_era5(df_forcing_era5, dir_save):
         df_grid = df_grid.drop('alt_z', axis=1)
         s_alt = f'{alt_z:.1f}A'
         idx_grid = df_grid.index
-        s_year = idx_grid[0].year
-        s_freq = idx_grid.freq / pd.Timedelta('1T')
-        s_fn = f'UTC{s_lat}{s_lon}{s_alt}_{s_year}_data_{s_freq:.0f}.txt'
-        path_fn=path_dir_save / s_fn
-        df_grid.to_csv(path_fn, sep=' ', index=False)
-        list_fn.append(path_fn)
+
+        # split into years
+        grp_year = df_grid.groupby(idx_grid.year)
+        for year in grp_year.groups:
+            df_year = grp_year.get_group(year)
+            idx_year = df_year.index
+            s_year = idx_year[0].year
+            s_freq = idx_year.freq / pd.Timedelta('1T')
+            s_fn = f'UTC{s_lat}{s_lon}{s_alt}_{s_year}_data_{s_freq:.0f}.txt'
+            path_fn=path_dir_save / s_fn
+            df_year.to_csv(path_fn, sep=' ', index=False)
+
+            # collect file names
+            list_fn.append(path_fn)
 
     return list_fn
 
