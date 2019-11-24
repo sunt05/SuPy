@@ -14,7 +14,6 @@
 # 28 Apr 2019: added support for parallel run
 ###########################################################################
 
-
 import logging
 import multiprocessing
 import time
@@ -29,18 +28,18 @@ from typing import Tuple
 import pandas
 import pathlib
 
-
 import numpy as np
 import pandas as pd
 
 from ._env import path_supy_module
-from ._load import (load_InitialCond_grid_df,
-                    load_SUEWS_dict_ModConfig,
-                    # load_SUEWS_Forcing_ESTM_df_raw,
-                    load_SUEWS_Forcing_met_df_raw,
-                    load_df_state,
-                    resample_forcing_met,
-                    resample_linear)
+from ._load import (
+    load_InitialCond_grid_df,
+    load_SUEWS_dict_ModConfig,
+    # load_SUEWS_Forcing_ESTM_df_raw,
+    load_SUEWS_Forcing_met_df_raw,
+    load_df_state,
+    resample_forcing_met,
+    resample_linear)
 from ._post import pack_df_output, pack_df_output_array, pack_df_state
 from ._run import run_supy_ser, run_supy_par
 from ._save import get_save_info, save_df_output, save_df_state, save_initcond_nml
@@ -54,7 +53,11 @@ logger_supy.setLevel(logging.INFO)
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
 # @functools.lru_cache(maxsize=16)
-def init_supy(path_init: str, force_reload=True,check_input=False) -> pd.DataFrame:
+def init_supy(
+        path_init: str,
+        force_reload=True,
+        check_input=False,
+) -> pd.DataFrame:
     '''Initialise supy by loading initial model states.
 
     Parameters
@@ -96,8 +99,8 @@ def init_supy(path_init: str, force_reload=True,check_input=False) -> pd.DataFra
     else:
         if path_init_x.suffix == '.nml':
             # SUEWS `RunControl.nml`:
-            df_state_init = load_InitialCond_grid_df(
-                path_init_x, force_reload=force_reload)
+            df_state_init = load_InitialCond_grid_df(path_init_x,
+                                                     force_reload=force_reload)
         elif path_init_x.suffix == '.csv':
             # SuPy `df_state.csv`:
             df_state_init = load_df_state(path_init_x)
@@ -110,7 +113,8 @@ def init_supy(path_init: str, force_reload=True,check_input=False) -> pd.DataFra
                 list_issues = check_state(df_state_init)
                 if isinstance(list_issues, list):
                     logger_supy.critical(
-                        f'`df_state_init` loaded from {path_init_x} is NOT valid to initialise SuPy!')
+                        f'`df_state_init` loaded from {path_init_x} is NOT valid to initialise SuPy!'
+                    )
             except:
                 sys.exit()
         else:
@@ -124,7 +128,11 @@ def init_supy(path_init: str, force_reload=True,check_input=False) -> pd.DataFra
 
 # TODO:
 # to be superseded by a more generic wrapper: load_forcing
-def load_forcing_grid(path_runcontrol: str, grid: int, check_input=False) -> pd.DataFrame:
+def load_forcing_grid(
+        path_runcontrol: str,
+        grid: int,
+        check_input=False,
+) -> pd.DataFrame:
     '''Load forcing data for a specific grid included in the index of `df_state_init </data-structure/supy-io.ipynb#df_state_init:-model-initial-states>`.
 
     Parameters
@@ -158,56 +166,46 @@ def load_forcing_grid(path_runcontrol: str, grid: int, check_input=False) -> pd.
         df_state_init = init_supy(path_runcontrol)
 
         # load setting variables from dict_mod_cfg
-        (
-            filecode,
-            kdownzen,
-            tstep_met_in,
-            tstep_ESTM_in,
-            multiplemetfiles,
-            multipleestmfiles,
-            dir_input_cfg
-        ) = (dict_mod_cfg[x] for x in
-             [
-            'filecode',
-            'kdownzen',
-            'resolutionfilesin',
-            'resolutionfilesinestm',
-            'multiplemetfiles',
-            'multipleestmfiles',
-            'fileinputpath'
-        ]
-        )
-        tstep_mod, lat, lon, alt, timezone = df_state_init.loc[
-            grid,
-            [(x, '0') for x in ['tstep', 'lat', 'lng', 'alt', 'timezone']]
-        ].values
+        (filecode, kdownzen, tstep_met_in, tstep_ESTM_in, multiplemetfiles,
+         multipleestmfiles, dir_input_cfg) = (dict_mod_cfg[x] for x in [
+             'filecode', 'kdownzen', 'resolutionfilesin',
+             'resolutionfilesinestm', 'multiplemetfiles', 'multipleestmfiles',
+             'fileinputpath'
+         ])
+        tstep_mod, lat, lon, alt, timezone = df_state_init.loc[grid, [(
+            x,
+            '0') for x in ['tstep', 'lat', 'lng', 'alt', 'timezone']]].values
 
         path_site = path_runcontrol.parent
         path_input = path_site / dict_mod_cfg['fileinputpath']
 
         # load raw data
         # met forcing
-        df_forcing_met = load_SUEWS_Forcing_met_df_raw(
-            path_input, filecode, grid, tstep_met_in, multiplemetfiles)
+        df_forcing_met = load_SUEWS_Forcing_met_df_raw(path_input, filecode,
+                                                       grid, tstep_met_in,
+                                                       multiplemetfiles)
 
         # resample raw data from tstep_in to tstep_mod
-        df_forcing_met_tstep = resample_forcing_met(
-            df_forcing_met, tstep_met_in, tstep_mod,
-            lat, lon, alt, timezone, kdownzen)
+        df_forcing_met_tstep = resample_forcing_met(df_forcing_met,
+                                                    tstep_met_in, tstep_mod,
+                                                    lat, lon, alt, timezone,
+                                                    kdownzen)
 
         # coerced precision here to prevent numerical errors inside Fortran
         df_forcing = df_forcing_met_tstep.round(10)
 
         # new columns for later use in main calculation
-        df_forcing[['iy', 'id', 'it', 'imin']] = df_forcing[[
-            'iy', 'id', 'it', 'imin']].astype(np.int64)
+        df_forcing[['iy', 'id', 'it',
+                    'imin']] = df_forcing[['iy', 'id', 'it',
+                                           'imin']].astype(np.int64)
 
     if check_input:
         try:
             list_issues = check_forcing(df_forcing)
             if isinstance(list_issues, list):
                 logger_supy.critical(
-                    f'`df_forcing` loaded from {path_init_x} is NOT valid to drive SuPy!')
+                    f'`df_forcing` loaded from {path_init_x} is NOT valid to drive SuPy!'
+                )
         except:
             sys.exit()
     else:
@@ -236,11 +234,9 @@ def load_SampleData() -> Tuple[pandas.DataFrame, pandas.DataFrame]:
     path_runcontrol = path_SampleData / 'RunControl.nml'
     df_state_init = init_supy(path_runcontrol, force_reload=False)
     # path_input = path_runcontrol.parent / ser_mod_cfg['fileinputpath']
-    df_forcing = load_forcing_grid(
-        path_runcontrol,
-        df_state_init.index[0]
-    )
+    df_forcing = load_forcing_grid(path_runcontrol, df_state_init.index[0])
     return df_state_init, df_forcing
+
 
 # input processing code end here
 ##############################################################################
@@ -303,13 +299,16 @@ def run_supy(
         list_issues_forcing = check_forcing(df_forcing)
         if isinstance(list_issues_forcing, list):
             logger_supy.critical(f'`df_forcing` is NOT valid to drive SuPy!')
-            sys.exit('SuPy stopped entering simulation due to invalid forcing!')
+            sys.exit(
+                'SuPy stopped entering simulation due to invalid forcing!')
         # initial model states:
         list_issues_state = check_state(df_state_init)
         if isinstance(list_issues_state, list):
             logger_supy.critical(
                 f'`df_state_init` is NOT valid to initialise SuPy!')
-            sys.exit('SuPy stopped entering simulation due to invalid initial states!')
+            sys.exit(
+                'SuPy stopped entering simulation due to invalid initial states!'
+            )
 
     # set up a timer for simulation time
     start = time.time()
@@ -333,12 +332,12 @@ def run_supy(
 
     if n_grid > 1 and os.name != 'nt':
         logger_supy.info(f'SuPy is running in parallel mode')
-        df_output, df_state_final = run_supy_par(
-            df_forcing, df_state_init, save_state, n_yr)
+        df_output, df_state_final = run_supy_par(df_forcing, df_state_init,
+                                                 save_state, n_yr)
     else:
         logger_supy.info(f'SuPy is running in serial mode')
-        df_output, df_state_final = run_supy_ser(
-            df_forcing, df_state_init, save_state, n_yr)
+        df_output, df_state_final = run_supy_ser(df_forcing, df_state_init,
+                                                 save_state, n_yr)
 
     # show simulation time
     end = time.time()
@@ -350,14 +349,13 @@ def run_supy(
 
 ##############################################################################
 # 3. save results of a supy run
-def save_supy(
-        df_output: pandas.DataFrame,
-        df_state_final: pandas.DataFrame,
-        freq_s: int = 3600,
-        site: str = '',
-        path_dir_save: str = Path('.'),
-        path_runcontrol: str = None,
-        logging_level=50) -> list:
+def save_supy(df_output: pandas.DataFrame,
+              df_state_final: pandas.DataFrame,
+              freq_s: int = 3600,
+              site: str = '',
+              path_dir_save: str = Path('.'),
+              path_runcontrol: str = None,
+              logging_level=50) -> list:
     '''Save SuPy run results to files
 
     Parameters
@@ -414,7 +412,7 @@ def save_supy(
     if path_runcontrol is not None:
         # save as nml as SUEWS binary
         list_path_nml = save_initcond_nml(df_state_final, site, path_dir_save)
-        list_path_save = list_path_save+list_path_nml
+        list_path_save = list_path_save + list_path_nml
     else:
         # save as supy csv for later use
         path_state_save = save_df_state(df_state_final, site, path_dir_save)

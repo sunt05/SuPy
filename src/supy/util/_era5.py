@@ -895,7 +895,7 @@ def save_forcing_era5(df_forcing_era5, dir_save):
             df_year.to_csv(path_fn, sep=' ', index=False)
 
             # collect file names
-            list_fn.append(path_fn)
+            list_fn.append(str(path_fn))
 
     return list_fn
 
