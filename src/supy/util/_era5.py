@@ -60,7 +60,7 @@ def _geoid_radius(latitude: float) -> float:
 
 
 def geometric2geopotential(z: float, latitude: float) -> float:
-    """Converts geometric height to geopoential height
+    """Converts geometric height to geopotential height
 
     Parameters
     ----------
@@ -81,7 +81,7 @@ def geometric2geopotential(z: float, latitude: float) -> float:
 
 
 def geopotential2geometric(h: float, latitude: float) -> float:
-    """Converts geopoential height to geometric height
+    """Converts geopotential height to geometric height
 
     Parameters
     ----------
@@ -117,7 +117,7 @@ def get_ser_val_alt(lat: float, lon: float, da_alt_x: xr.DataArray,
     da_alt : xr.DataArray
         altitude associated with `da_val`: variable array to interpolate
     da_val : xr.DataArray
-        atmospheric varialble to interpolate
+        atmospheric variable to interpolate
 
     Returns
     -------
