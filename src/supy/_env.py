@@ -30,7 +30,7 @@ def get_file_handler():
     try:
         path_logfile = Path(LOG_FILE)
         path_logfile.touch()
-    except:
+    except Exception:
         tempdir = tempfile.gettempdir()
         path_logfile = Path(tempdir) / LOG_FILE
 

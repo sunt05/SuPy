@@ -10,7 +10,7 @@ Ting Sun
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
-from datetime import *
+# from datetime import *
 import matplotlib as plt
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
@@ -136,8 +136,8 @@ def sim_ohm(ser_qn: pd.Series, a1: float, a2: float, a3: float) -> pd.Series:
     try:
         dt_hr = ser_qn.index.freq/pd.Timedelta('1h')
     except AttributeError as ex:
-        print('frequency info is missing from input `ser_qn`')
-        sys.exit(1)
+        raise RuntimeError('frequency info is missing from input `ser_qn`') from ex
+
 
     # Calculate rate of change of Net All-wave radiation
     ser_qn_dt = ser_qn.diff() / dt_hr
