@@ -12,9 +12,11 @@ import tempfile
 # define local path for loading resources in this package
 path_supy_module = Path(inspect.getsourcefile(lambda: 0)).resolve().parent
 
-# set up logger
+# set up logger format, note `u` to guarantee UTF-8 encoding
 FORMATTER = logging.Formatter(
     u"%(asctime)s — %(name)s — %(levelname)s — %(message)s")
+
+# log file name
 LOG_FILE = "SuPy.log"
 
 
