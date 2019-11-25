@@ -34,8 +34,8 @@ def gen_df_save(df_grid_group: pd.DataFrame) -> pd.DataFrame:
         ser_hour,
         ser_min,
     ], axis=1)
-    df_datetime['Dectime'] = ser_DOY-1+idx_dt.to_perioddelta(
-        'd').total_seconds()/(24*60*60)
+    df_datetime['Dectime'] = ser_DOY - 1 + idx_dt.to_perioddelta(
+        'd').total_seconds() / (24 * 60 * 60)
     df_save = pd.concat([df_datetime, df_grid_group], axis=1)
     return df_save
 
@@ -46,21 +46,9 @@ def format_df_save(df_save):
         width_var_name = max([3, len(var)])
         df_save[var] = df_save[var].map(
             lambda s: '{s:{c}>{n}}'.format(s=s, n=width_var_name, c=' '))
-    # df_save.Year = df_save.Year.map(
-    #     lambda s: '{s:{c}>{n}}'.format(s=s, n=4, c=' ')
-    # )
-    # df_save.DOY = df_save.DOY.map(
-    #     lambda s: '{s:{c}>{n}}'.format(s=s, n=3, c=' ')
-    # )
-    # df_save.Hour = df_save.DOY.map(
-    #     lambda s: '{s:{c}>{n}}'.format(s=s, n=4, c=' ')
-    # )
-    # df_save.Min = df_save.Min.map(
-    #     lambda s: '{s:{c}>{n}}'.format(s=s, n=6, c=' ')
-    # )
+
     df_save.Dectime = df_save.Dectime.map(
-        lambda s: '{s:{c}>{n}.4f}'.format(s=s, n=8, c=' ')
-    )
+        lambda s: '{s:{c}>{n}.4f}'.format(s=s, n=8, c=' '))
     # fill nan values
     df_save = df_save.fillna(-999.)
     # format value columns
@@ -73,16 +61,10 @@ def format_df_save(df_save):
     # format column names
     col_fmt = df_save.columns.to_series()
     col_fmt[4:] = col_fmt[4:].map(
-        lambda s: '{s:{c}>{n}}'.format(s=s, n=max([8, len(s)]), c=' ')
-    )
+        lambda s: '{s:{c}>{n}}'.format(s=s, n=max([8, len(s)]), c=' '))
     df_save.columns = col_fmt
 
     return df_save
-
-
-# df_save = format_df_save(df_save)
-# df_save.iloc[0]
-# df_save.iloc[0].str.len()
 
 
 def save_df_grid_group(df_grid_group, grid, group, site='test', dir_save='.'):
@@ -92,12 +74,12 @@ def save_df_grid_group(df_grid_group, grid, group, site='test', dir_save='.'):
     # pandas bug here: monotonic datetime index would lose `freq` once `pd.concat`ed
     if df_grid_group.shape[0] > 0 and df_grid_group.index.size > 2:
         ind = df_grid_group.index
-        freq_cal = ind[1]-ind[0]
-        df_grid_group=df_grid_group.asfreq(freq_cal)
+        freq_cal = ind[1] - ind[0]
+        df_grid_group = df_grid_group.asfreq(freq_cal)
     else:
         df_grid_group = df_grid_group.asfreq('5T')
     # output frequency in min
-    freq_min = int(df_grid_group.index.freq.delta.total_seconds()/60)
+    freq_min = int(df_grid_group.index.freq.delta.total_seconds() / 60)
     # staring year
     year = df_grid_group.index[0].year
     # sample file name: 'Kc98_2012_SUEWS_60.txt'
@@ -105,7 +87,7 @@ def save_df_grid_group(df_grid_group, grid, group, site='test', dir_save='.'):
         site=site, grid=grid, year=year, group=group, freq_min=freq_min)
     # 'DailyState_1440' will be trimmed
     file_out = file_out.replace('DailyState_1440', 'DailyState')
-    path_out = path_dir/file_out
+    path_out = path_dir / file_out
     # print('writing out: {path_out}'.format(path_out=path_out))
     import time
     t_start = time.time()
@@ -137,7 +119,9 @@ def save_df_output(
         df_output: pd.DataFrame,
         freq_s: int = 3600,
         site: str = '',
-        path_dir_save: Path = Path('.'),) -> list:
+        path_dir_save: Path = Path('.'),
+        save_tstep=False,
+) -> list:
     '''save supy output dataframe to txt files
 
     Parameters
@@ -150,8 +134,8 @@ def save_df_output(
         directory to save txt files (the default is '.', which the current working directory)
     site : str, optional
         site code used for filename (the default is '', which indicates no site name prepended to the filename)
-    path_runcontrol : str or anything that can be parsed as `Path`, optional
-        path to SUEWS 'RunControl.nml' file (the default is None, which indicates necessary saving options should be specified via other parameters)
+    save_tstep : bool, optional
+        whether to save results in temporal resolution as in simulation (which may result very large files and slow progress), by default False.
 
     Returns
     -------
@@ -160,19 +144,21 @@ def save_df_output(
     '''
 
     list_path_save = []
-    list_group = df_output.columns.get_level_values('group').unique()
-    list_grid = df_output.index.get_level_values('grid').unique()
-    for grid in list_grid:
-        for group in list_group:
-            df_output_grid_group = df_output\
-                .loc[grid, group]\
-                .dropna(how='all', axis=0)
-            # save output at the runtime frequency (usually 5 min)
-            # 'DailyState' group will be save a daily frequency
-            path_save = save_df_grid_group(
-                df_output_grid_group, grid, group,
-                site=site, dir_save=path_dir_save)
-            list_path_save.append(path_save)
+    # list_group = df_output.columns.get_level_values('group').unique()
+    # list_grid = df_output.index.get_level_values('grid').unique()
+    # for grid in list_grid:
+    #     for group in list_group:
+    #         df_output_grid_group = df_output\
+    #             .loc[grid, group]\
+    #             .dropna(how='all', axis=0)
+    #         # save output at the runtime frequency (usually 5 min)
+    #         # 'DailyState' group will be save a daily frequency
+    #         path_save = save_df_grid_group(df_output_grid_group,
+    #                                        grid,
+    #                                        group,
+    #                                        site=site,
+    #                                        dir_save=path_dir_save)
+    #         list_path_save.append(path_save)
 
     # resample output if freq_s is different from runtime freq (usually 5 min)
     freq_save = pd.Timedelta(freq_s, 's')
@@ -181,16 +167,32 @@ def save_df_output(
     # 'DailyState' group will be dropped in `resample_output` as resampling is not needed
     df_rsmp = df_rsmp.drop(columns='DailyState')
 
-    list_group = df_rsmp.columns.get_level_values('group').unique()
-    list_grid = df_rsmp.index.get_level_values('grid').unique()
+    list_df_save = [df_output, df_rsmp] if save_tstep else [df_rsmp, df_output.loc[:,['DailyState']]]
     # save output at the resampling frequency
-    for grid in list_grid:
-        for group in list_group:
-            df_output_grid_group = df_rsmp.loc[grid, group]
-            path_save = save_df_grid_group(
-                df_output_grid_group, grid, group,
-                site=site, dir_save=path_dir_save)
-            list_path_save.append(path_save)
+    for df_save in list_df_save:
+        list_grid = df_save.index.get_level_values('grid').unique()
+        for grid in list_grid:
+            list_group = df_save.columns.get_level_values('group').unique()
+            for group in list_group:
+                df_output_grid_group = df_save\
+                    .loc[grid, group]\
+                    .dropna(how='all', axis=0)
+                path_save = save_df_grid_group(
+                    df_output_grid_group,
+                    grid,
+                    group,
+                    site=site,
+                    dir_save=path_dir_save,
+                )
+
+                # remove freq info from `DailyState` file
+                if 'DailyState' in path_save.name:
+                    str_fn_dd = str(path_save).replace('DailyState_5',
+                                                       'DailyState')
+                    path_save.rename(Path(str_fn_dd))
+                    path_save = Path(str_fn_dd)
+
+                list_path_save.append(path_save)
 
     return list_path_save
 
@@ -199,7 +201,8 @@ def save_df_output(
 def save_df_state(
         df_state: pd.DataFrame,
         site: str = '',
-        path_dir_save: Path = Path('.'),) -> Path:
+        path_dir_save: Path = Path('.'),
+) -> Path:
     '''save `df_state` to a csv file
 
     Parameters
@@ -220,7 +223,7 @@ def save_df_state(
     file_state_save = 'df_state_{site}.csv'.format(site=site)
     # trim filename if site == ''
     file_state_save = file_state_save.replace('_.csv', '.csv')
-    path_state_save = Path(path_dir_save)/file_state_save
+    path_state_save = Path(path_dir_save) / file_state_save
     # print('writing out: {path_out}'.format(path_out=path_state_save))
     df_state.to_csv(path_state_save)
     return path_state_save
@@ -250,18 +253,18 @@ def get_save_info(path_runcontrol: str) -> Tuple[int, Path, str]:
         logger_supy.exception(f'{path_runcontrol} does not exists!')
     else:
         dict_mod_cfg = load_SUEWS_dict_ModConfig(path_runcontrol)
-        freq_s, dir_save, site = [
-            dict_mod_cfg[x] for x in
-            [
+        freq_s, dir_save, site, save_tstep = [
+            dict_mod_cfg[x] for x in [
                 'resolutionfilesout',
                 'fileoutputpath',
                 'filecode',
+                'keeptstepfilesout',
             ]
         ]
-        dir_save = path_runcontrol.parent/dir_save
+        dir_save = path_runcontrol.parent / dir_save
         if not dir_save.exists():
             dir_save.mkdir()
-        return freq_s, dir_save, site
+        return freq_s, dir_save, site, save_tstep
 
 
 # dict for {nml_save:(df_state_var,index)}
@@ -327,15 +330,15 @@ dict_init_nml = {
 def save_initcond_nml(
         df_state: pd.DataFrame,
         site: str = '',
-        path_dir_save: Path = Path('.'),) -> Path:
+        path_dir_save: Path = Path('.'),
+) -> Path:
     # get last time step
     try:
         tstep_last = df_state.index.levels[0].max()
     except AttributeError:
         logger_supy.exception(
             ('incorrect structure detected;' +
-             ' check if `df_state` is the final model state.')
-        )
+             ' check if `df_state` is the final model state.'))
         return
 
     # get year for filename formatting
@@ -351,7 +354,7 @@ def save_initcond_nml(
         # generate nml filename
         filename_out_grid = f'InitialConditions{site}{grid}_{year_last}_EndofRun.nml'
         # derive a save path
-        path_nml = path_dir_save/filename_out_grid
+        path_nml = path_dir_save / filename_out_grid
         # retrieve initcond values from `df_state_last_tstep`
         nml = {
             'InitialConditions': {
