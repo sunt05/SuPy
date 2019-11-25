@@ -45,15 +45,19 @@ def fill_gap_one(ser_test, freq='1D', pattern='010'):
         drop=True)
     ser_fill.index = ser_gap.index
 
-    # calculate rescaling factor
-    scale_fill = (ser_fill / ser_gap).median()
-    # correct scale_fill for edge cases
-    scale_fill = (1 if abs(scale_fill) > 10 else scale_fill)
-    scale_fill = (1 if abs(scale_fill) < 0.1 else scale_fill)
-    scale_fill = (1 if np.isnan(scale_fill) else scale_fill)
+    # calculate rescaling factor with enough values to robustly rescale
+    if (pattern == '010') and (ser_gap.count() > len(ser_gap)/2):
+        scale_fill = (ser_fill / ser_gap).median()
+        # correct scale_fill for edge cases
+        scale_fill = (1 if abs(scale_fill) > 10 else scale_fill)
+        scale_fill = (1 if abs(scale_fill) < 0.1 else scale_fill)
+        scale_fill = (1 if np.isnan(scale_fill) else scale_fill)
+    else:
+        scale_fill = 1
+    # rescale fill based on median ratio of fill:orig at available timesteps
     ser_fill_gap = ser_fill / scale_fill
 
-    # fill in gaps with rescaled values of the
+    # fill in gaps with rescaled values of the filling data
     ser_gap.loc[ser_gap.isna()] = ser_fill_gap.loc[ser_gap.isna()]
     ser_filled = pd.concat([ser_prev, ser_gap, ser_post])
 
@@ -65,7 +69,7 @@ def fill_gap_one(ser_test, freq='1D', pattern='010'):
 
 # fill gaps iteratively
 def fill_gap_all(ser_to_fill:pd.Series, freq='1D')->pd.Series:
-    """Fill all gaps in a time series.
+    """Fill all gaps in a time series using data from neighbouring divisions of 'freq'
 
     Parameters
     ----------
@@ -78,6 +82,12 @@ def fill_gap_all(ser_to_fill:pd.Series, freq='1D')->pd.Series:
     -------
     ser_test_filled: pd.Series
         Gap-filled time series.
+
+    Patterns
+    --------
+    010: missing data in division between others with no missing data
+    01:  missing data in division after one with no missing data
+    10:  division with missing data before one with no missing data
     """
 
     ser_test_filled = ser_to_fill.copy()
