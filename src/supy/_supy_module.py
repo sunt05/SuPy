@@ -299,14 +299,14 @@ def run_supy(
         list_issues_forcing = check_forcing(df_forcing)
         if isinstance(list_issues_forcing, list):
             logger_supy.critical(f'`df_forcing` is NOT valid to drive SuPy!')
-            sys.exit(
+            raise RuntimeError(
                 'SuPy stopped entering simulation due to invalid forcing!')
         # initial model states:
         list_issues_state = check_state(df_state_init)
         if isinstance(list_issues_state, list):
             logger_supy.critical(
                 f'`df_state_init` is NOT valid to initialise SuPy!')
-            sys.exit(
+            raise RuntimeError(
                 'SuPy stopped entering simulation due to invalid initial states!'
             )
 
@@ -349,13 +349,16 @@ def run_supy(
 
 ##############################################################################
 # 3. save results of a supy run
-def save_supy(df_output: pandas.DataFrame,
-              df_state_final: pandas.DataFrame,
-              freq_s: int = 3600,
-              site: str = '',
-              path_dir_save: str = Path('.'),
-              path_runcontrol: str = None,
-              logging_level=50) -> list:
+def save_supy(
+        df_output: pandas.DataFrame,
+        df_state_final: pandas.DataFrame,
+        freq_s: int = 3600,
+        site: str = '',
+        path_dir_save: str = Path('.'),
+        path_runcontrol: str = None,
+        save_tstep=False,
+        logging_level=50,
+) -> list:
     '''Save SuPy run results to files
 
     Parameters
@@ -373,6 +376,8 @@ def save_supy(df_output: pandas.DataFrame,
     path_runcontrol : str, optional
         Path to SUEWS :ref:`RunControl.nml <suews:RunControl.nml>`, which, if set, will be preferably used to derive `freq_s`, `site` and `path_dir_save`.
         (the default is None, which is unset)
+    save_tstep : bool, optional
+        whether to save results in temporal resolution as in simulation (which may result very large files and slow progress), by default False.
     logging_level: logging level
         one of these values [50 (CRITICAL), 40 (ERROR), 30 (WARNING), 20 (INFO), 10 (DEBUG)].
         A lower value informs SuPy for more verbose logging info.
@@ -403,10 +408,17 @@ def save_supy(df_output: pandas.DataFrame,
 
     # get necessary information for saving procedure
     if path_runcontrol is not None:
-        freq_s, path_dir_save, site = get_save_info(path_runcontrol)
+        freq_s, path_dir_save, site, save_tstep = get_save_info(
+            path_runcontrol)
 
     # save df_output to several files
-    list_path_save = save_df_output(df_output, freq_s, site, path_dir_save)
+    list_path_save = save_df_output(
+        df_output,
+        freq_s,
+        site,
+        path_dir_save,
+        save_tstep,
+    )
 
     # save df_state
     if path_runcontrol is not None:
