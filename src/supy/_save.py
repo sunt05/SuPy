@@ -143,31 +143,19 @@ def save_df_output(
         a list of `Path` objects for saved txt files
     '''
 
+    # path list of files to save
     list_path_save = []
-    # list_group = df_output.columns.get_level_values('group').unique()
-    # list_grid = df_output.index.get_level_values('grid').unique()
-    # for grid in list_grid:
-    #     for group in list_group:
-    #         df_output_grid_group = df_output\
-    #             .loc[grid, group]\
-    #             .dropna(how='all', axis=0)
-    #         # save output at the runtime frequency (usually 5 min)
-    #         # 'DailyState' group will be save a daily frequency
-    #         path_save = save_df_grid_group(df_output_grid_group,
-    #                                        grid,
-    #                                        group,
-    #                                        site=site,
-    #                                        dir_save=path_dir_save)
-    #         list_path_save.append(path_save)
 
-    # resample output if freq_s is different from runtime freq (usually 5 min)
+    # resample output if `freq_s` is different from runtime `freq` (usually 5 min)
     freq_save = pd.Timedelta(freq_s, 's')
     # resample `df_output` at `freq_save`
     df_rsmp = resample_output(df_output, freq_save)
     # 'DailyState' group will be dropped in `resample_output` as resampling is not needed
     df_rsmp = df_rsmp.drop(columns='DailyState')
 
-    list_df_save = [df_output, df_rsmp] if save_tstep else [df_rsmp, df_output.loc[:,['DailyState']]]
+    # dataframes to save
+    list_df_save = ([df_output, df_rsmp] if save_tstep else
+                    [df_rsmp, df_output.loc[:, ['DailyState']]])
     # save output at the resampling frequency
     for df_save in list_df_save:
         list_grid = df_save.index.get_level_values('grid').unique()
@@ -266,13 +254,13 @@ def get_save_info(path_runcontrol: str) -> Tuple[int, Path, str]:
             dir_save.mkdir()
         return freq_s, dir_save, site, save_tstep
 
-
+# TODO: fix gdd/sdd initialisation
 # dict for {nml_save:(df_state_var,index)}
 dict_init_nml = {
     'dayssincerain': ('hdd_id', '(11,)'),
     'temp_c0': ('hdd_id', '(8,)'),
     'gdd_1_0': ('gdd_id', '(0,)'),
-    'gdd_2_0': ('gdd_id', '(1,)'),
+    'gdd_2_0': ('sdd_id', '(0,)'),
     'laiinitialevetr': ('lai_id', '(0,)'),
     'laiinitialdectr': ('lai_id', '(1,)'),
     'laiinitialgrass': ('lai_id', '(2,)'),
