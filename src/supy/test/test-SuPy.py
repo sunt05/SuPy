@@ -165,4 +165,22 @@ class TestSuPy(TestCase):
         )
         self.assertTrue(test_non_empty)
 
+    # test saving output files working
+    def test_is_checking_complete(self):
+        df_state_init, df_forcing_tstep = sp.load_SampleData()
+        dict_rules = sp._check.dict_rules
+
+        # variables in loaded dataframe
+        set_var_df_init = set(df_state_init.columns.get_level_values('var'))
+
+        # variables in dict_rules
+        set_var_dict_rules = set(list(dict_rules.keys()))
+
+        # common variables
+        set_var_common=set_var_df_init.intersection(set_var_dict_rules)
+
+        # test if common variables are all those in `df_state_init`
+        test_common_all = set_var_df_init==set_var_common
+        self.assertTrue(test_common_all)
+
 

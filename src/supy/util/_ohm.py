@@ -10,7 +10,7 @@ Ting Sun
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
-from datetime import *
+# from datetime import *
 import matplotlib as plt
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
@@ -18,6 +18,7 @@ import matplotlib.patches as mpatches
 import seaborn as sns
 from matplotlib import cm
 from ._plot import plot_comp, plot_day_clm
+from .._env import logger_supy
 
 
 # Linear fitting of QS, QN, deltaQN/dt (entire timeseries)
@@ -76,30 +77,39 @@ def replace_ohm_coeffs(df_state_init, coefs, land_cover_type):
     Returns: df_state_init_copy: A copy of df_state_init with changed ohm params.
     """
 
-    land_cover_type_dict = {'Paved': '1', 'Buildings': '2', 'Evergreen Trees': '3',
-                            'Deciduous Trees': '4',
-                            'Grass': '5', 'Bare soil': '6', 'Water': '7'}
-    lc_index = int(land_cover_type_dict.get(land_cover_type))-1
-    # Instantiate 4x3 matrix of zeros to put old coeffs
-    coef_matrix = np.zeros((4, 3))
-    coef_matrix[:, 0] = coefs[0]
-    coef_matrix[:, 1] = coefs[1]
-    coef_matrix[:, 2] = coefs[2]
+    land_cover_type_dict = {
+        'Paved': '1', 'Bldgs': '2',
+        'EveTr': '3', 'DecTr': '4', 'Grass': '5',
+        'BSoil': '6', 'Water': '7',
+    }
 
-    # Copy ohm_coef part of df_state_init
-    df_ohm = df_state_init.loc[:, 'ohm_coef'].copy()
-    # Reshape values into matrix form
-    values_ohm = df_ohm.values.reshape((8, 4, 3))
-    # Get ohm values corresponding to user specified land cover and assign to matrix
-    values_ohm[lc_index] = coef_matrix
-    # Place new ohm values into df_ohm
-    df_ohm.loc[:, :] = values_ohm.flatten()
-    # Make copy of df_state_init
-    df_state_init_copy = df_state_init.copy()
-    # Replace  ohm_coef part of df_state_init with new values
-    df_state_init_copy.loc[:, 'ohm_coef'] = df_ohm.values
+    try:
+        lc_index = int(land_cover_type_dict.get(land_cover_type))-1
+    except:
+        list_lc = list(land_cover_type_dict.keys())
+        logger_supy.error(
+            f'land_cover_type must be one of {list_lc}, instead of {land_cover_type}')
+    else:
+        # Instantiate 4x3 matrix of zeros to put old coeffs
+        coef_matrix = np.zeros((4, 3))
+        coef_matrix[:, 0] = coefs[0]
+        coef_matrix[:, 1] = coefs[1]
+        coef_matrix[:, 2] = coefs[2]
 
-    return df_state_init_copy
+        # Copy ohm_coef part of df_state_init
+        df_ohm = df_state_init.loc[:, 'ohm_coef'].copy()
+        # Reshape values into matrix form
+        values_ohm = df_ohm.values.reshape((8, 4, 3))
+        # Get ohm values corresponding to user specified land cover and assign to matrix
+        values_ohm[lc_index] = coef_matrix
+        # Place new ohm values into df_ohm
+        df_ohm.loc[:, :] = values_ohm.flatten()
+        # Make copy of df_state_init
+        df_state_init_copy = df_state_init.copy()
+        # Replace  ohm_coef part of df_state_init with new values
+        df_state_init_copy.loc[:, 'ohm_coef'] = df_ohm.values
+
+        return df_state_init_copy
 
 
 def sim_ohm(ser_qn: pd.Series, a1: float, a2: float, a3: float) -> pd.Series:
@@ -126,8 +136,8 @@ def sim_ohm(ser_qn: pd.Series, a1: float, a2: float, a3: float) -> pd.Series:
     try:
         dt_hr = ser_qn.index.freq/pd.Timedelta('1h')
     except AttributeError as ex:
-        print('frequency info is missing from input `ser_qn`')
-        sys.exit(1)
+        raise RuntimeError('frequency info is missing from input `ser_qn`') from ex
+
 
     # Calculate rate of change of Net All-wave radiation
     ser_qn_dt = ser_qn.diff() / dt_hr

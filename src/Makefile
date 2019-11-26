@@ -44,6 +44,7 @@ clean:
 	rm -rf ${MODULE}/test/*.pyc ${MODULE}/test/__pycache__
 	rm -rf ${MODULE}/util/*.pyc ${MODULE}/util/__pycache__
 	rm -rf ${MODULE}/cmd/*.pyc ${MODULE}/cmd/__pycache__
+	rm -rf SuPy.log SuPy.log.*
 	rm -rf build dist
 
 # upload wheels to pypi using twine

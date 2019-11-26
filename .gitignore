@@ -113,9 +113,14 @@ dask-worker-space
 
 # dev space
 dev-test/
+dev-test
 .vscode/launch.json
 .vscode/settings.json
 _build/
 
 pipfile.lock
 .vscode/spellright.dict
+
+# supy test logs
+SuPy.log.*
+SuPy.log

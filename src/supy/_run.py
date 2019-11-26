@@ -187,19 +187,10 @@ def run_supy_ser(
 
     '''
 
-    # # set up a timer for simulation time
-    # start = time.time()
-
     # save df_init without changing its original data
     # df.copy() in pandas works as a standard python deepcopy
     df_init = df_state_init.copy()
 
-    # # print some diagnostic info
-    # print(f'====================')
-    # print(f'Simulation period:')
-    # print(f'  Start: {df_forcing.index[0]}')
-    # print(f'  End: {df_forcing.index[-1]}')
-    # print('')
 
     # retrieve the last temporal record as `df_init`
     # if a `datetime` level existing in the index

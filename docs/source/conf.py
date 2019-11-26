@@ -21,6 +21,7 @@ import supy
 sys.path.insert(0, os.path.abspath('.'))
 
 print(r'this build is made by:', '\n', sys.version)
+print(r'this build is for:', '\n', supy.show_version())
 
 
 def subprocess_cmd(command):
@@ -88,6 +89,7 @@ extensions = [
 extlinks = {
     'issue': ('https://github.com/sunt05/SuPy/issues/%s', 'GH'),
     'pull': ('https://github.com/sunt05/SuPy/pull/%s', 'PR'),
+    'doi': ('http://dx.doi.org/%s', 'DOI: '),
 }
 
 autosummary_generate = True
