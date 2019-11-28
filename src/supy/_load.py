@@ -21,9 +21,7 @@ from ._misc import path_insensitive
 # of the f2py-converted Fortran interface
 def get_args_suews(docstring=sd.suews_cal_main.__doc__):
     # split doc lines for processing
-    docLines = np.array(
-        docstring.splitlines(),
-        dtype=str)
+    docLines = np.array(docstring.splitlines(), dtype=str)
 
     # get the information of input variables for SUEWS_driver
     # posInput = np.where(
@@ -31,17 +29,19 @@ def get_args_suews(docstring=sd.suews_cal_main.__doc__):
     #         docLines == 'Parameters', docLines == 'Returns'))
     # varInputLines = docLines[posInput[0][0] + 2:posInput[0][1] - 1]
     ser_docs = pd.Series(docLines)
-    varInputLines = ser_docs[ser_docs.str.contains('input|in/output')].values
-    varInputInfo = np.array([[xx.rstrip() for xx in x.split(':')]
-                             for x in varInputLines])
+    varInputLines = ser_docs[ser_docs.str.contains("input|in/output")].values
+    varInputInfo = np.array(
+        [[xx.rstrip() for xx in x.split(":")] for x in varInputLines]
+    )
     dict_InputInfo = {xx[0]: xx[1] for xx in varInputInfo}
-    dict_InOutInfo = {xx[0]: xx[1] for xx in varInputInfo if 'in/out' in xx[1]}
+    dict_InOutInfo = {xx[0]: xx[1] for xx in varInputInfo if "in/out" in xx[1]}
 
     # get the information of output variables for SUEWS_driver
-    posOutput = np.where(docLines == 'Returns')
-    varOutputLines = docLines[posOutput[0][0] + 2:]
-    varOutputInfo = np.array([[xx.rstrip() for xx in x.split(':')]
-                              for x in varOutputLines])
+    posOutput = np.where(docLines == "Returns")
+    varOutputLines = docLines[posOutput[0][0] + 2 :]
+    varOutputInfo = np.array(
+        [[xx.rstrip() for xx in x.split(":")] for x in varOutputLines]
+    )
     dict_OutputInfo = {xx[0]: xx[1] for xx in varOutputInfo}
 
     # pack in/out results:
@@ -49,13 +49,14 @@ def get_args_suews(docstring=sd.suews_cal_main.__doc__):
         # 'input' and 'output' are dict's that store variable information:
         # 1. intent: e.g., input, in/output
         # 2. dimension: e.g., (366,7)
-        'input': dict_InputInfo,
-        'output': dict_OutputInfo,
+        "input": dict_InputInfo,
+        "output": dict_OutputInfo,
         # 'var_input' and 'var_output' are tuples,
         # that keep the order of arguments as in the Fortran subroutine
-        'var_input': tuple(varInputInfo[:, 0]),
-        'var_inout': tuple(dict_InOutInfo.keys()),
-        'var_output': tuple(varOutputInfo[:, 0])}
+        "var_input": tuple(varInputInfo[:, 0]),
+        "var_inout": tuple(dict_InOutInfo.keys()),
+        "var_output": tuple(varOutputInfo[:, 0]),
+    }
 
     return dict_inout_sd
 
@@ -63,26 +64,26 @@ def get_args_suews(docstring=sd.suews_cal_main.__doc__):
 # for `suews_cal_multitsteps`
 def get_args_suews_multitsteps():
     # split doc lines for processing
-    docLines = np.array(
-        sd.suews_cal_multitsteps.__doc__.splitlines(),
-        dtype=str)
+    docLines = np.array(sd.suews_cal_multitsteps.__doc__.splitlines(), dtype=str)
 
     # get the information of input variables for SUEWS_driver
     # posInput = np.where(
     #     np.logical_or(
     #         docLines == 'Parameters', docLines == 'Returns'))
     ser_docs = pd.Series(docLines)
-    varInputLines = ser_docs[ser_docs.str.contains('input|in/output')].values
-    varInputInfo = np.array([[xx.rstrip() for xx in x.split(':')]
-                             for x in varInputLines])
+    varInputLines = ser_docs[ser_docs.str.contains("input|in/output")].values
+    varInputInfo = np.array(
+        [[xx.rstrip() for xx in x.split(":")] for x in varInputLines]
+    )
     dict_InputInfo = {xx[0]: xx[1] for xx in varInputInfo}
-    dict_InOutInfo = {xx[0]: xx[1] for xx in varInputInfo if 'in/out' in xx[1]}
+    dict_InOutInfo = {xx[0]: xx[1] for xx in varInputInfo if "in/out" in xx[1]}
 
     # get the information of output variables for SUEWS_driver
-    posOutput = np.where(docLines == 'Returns')
-    varOutputLines = docLines[posOutput[0][0] + 2:]
-    varOutputInfo = np.array([[xx.rstrip() for xx in x.split(':')]
-                              for x in varOutputLines])
+    posOutput = np.where(docLines == "Returns")
+    varOutputLines = docLines[posOutput[0][0] + 2 :]
+    varOutputInfo = np.array(
+        [[xx.rstrip() for xx in x.split(":")] for x in varOutputLines]
+    )
     dict_OutputInfo = {xx[0]: xx[1] for xx in varOutputInfo}
 
     # pack in/out results:
@@ -90,28 +91,29 @@ def get_args_suews_multitsteps():
         # 'input' and 'output' are dict's that store variable information:
         # 1. intent: e.g., input, in/output
         # 2. dimension: e.g., (366,7)
-        'input': dict_InputInfo,
-        'output': dict_OutputInfo,
+        "input": dict_InputInfo,
+        "output": dict_OutputInfo,
         # 'var_input' and 'var_output' are tuples,
         # that keep the order of arguments as in the Fortran subroutine
-        'var_input': tuple(varInputInfo[:, 0]),
-        'var_inout': tuple(dict_InOutInfo.keys()),
-        'var_output': tuple(varOutputInfo[:, 0])}
+        "var_input": tuple(varInputInfo[:, 0]),
+        "var_inout": tuple(dict_InOutInfo.keys()),
+        "var_output": tuple(varOutputInfo[:, 0]),
+    }
 
     return dict_inout_sd
 
 
 # store these lists for later use
-list_var_input = list(get_args_suews()['var_input'])
-list_var_inout = list(get_args_suews()['var_inout'])
-list_var_output = list(get_args_suews()['var_output'])
+list_var_input = list(get_args_suews()["var_input"])
+list_var_inout = list(get_args_suews()["var_inout"])
+list_var_output = list(get_args_suews()["var_output"])
 set_var_input = set(list_var_input)
 set_var_inout = set(list_var_inout)
 set_var_ouput = set(list_var_output)
 
-list_var_input_multitsteps = list(get_args_suews_multitsteps()['var_input'])
-list_var_inout_multitsteps = list(get_args_suews_multitsteps()['var_inout'])
-list_var_output_multitsteps = list(get_args_suews_multitsteps()['var_output'])
+list_var_input_multitsteps = list(get_args_suews_multitsteps()["var_input"])
+list_var_inout_multitsteps = list(get_args_suews_multitsteps()["var_inout"])
+list_var_output_multitsteps = list(get_args_suews_multitsteps()["var_output"])
 set_var_input_multitsteps = set(list_var_input_multitsteps)
 set_var_inout_multitsteps = set(list_var_inout_multitsteps)
 set_var_ouput_multitsteps = set(list_var_output_multitsteps)
@@ -129,74 +131,77 @@ set_var_use = set_var_input.intersection(set_var_input_multitsteps)
 # descriptive list/dicts for variables
 # minimal required input files for configuration:
 list_file_input = [
-    'SUEWS_AnthropogenicEmission.txt',
-    'SUEWS_BiogenCO2.txt',
-    'SUEWS_Conductance.txt',
-    'SUEWS_ESTMCoefficients.txt',
-    'SUEWS_Irrigation.txt',
-    'SUEWS_NonVeg.txt',
-    'SUEWS_OHMCoefficients.txt',
-    'SUEWS_Profiles.txt',
-    'SUEWS_SiteSelect.txt',
-    'SUEWS_Snow.txt',
-    'SUEWS_Soil.txt',
-    'SUEWS_Veg.txt',
-    'SUEWS_Water.txt',
-    'SUEWS_WithinGridWaterDist.txt'
+    "SUEWS_AnthropogenicEmission.txt",
+    "SUEWS_BiogenCO2.txt",
+    "SUEWS_Conductance.txt",
+    "SUEWS_ESTMCoefficients.txt",
+    "SUEWS_Irrigation.txt",
+    "SUEWS_NonVeg.txt",
+    "SUEWS_OHMCoefficients.txt",
+    "SUEWS_Profiles.txt",
+    "SUEWS_SiteSelect.txt",
+    "SUEWS_Snow.txt",
+    "SUEWS_Soil.txt",
+    "SUEWS_Veg.txt",
+    "SUEWS_Water.txt",
+    "SUEWS_WithinGridWaterDist.txt",
 ]
 
 # library of all properties
-dict_libVar2File = {fileX.replace('.txt', '').replace(
-    'SUEWS', 'lib'): fileX for fileX in list_file_input
-    if fileX.endswith('.txt')}
+dict_libVar2File = {
+    fileX.replace(".txt", "").replace("SUEWS", "lib"): fileX
+    for fileX in list_file_input
+    if fileX.endswith(".txt")
+}
 
 # dictionaries:
 # links between code in SiteSelect to properties in according tables
 # this is described in SUEWS online manual:
 # https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/SUEWS_SiteInfo.html
-path_code2file = path_supy_module / 'code2file.json'
-dict_Code2File = pd.read_json(path_code2file, typ='series').to_dict()
+path_code2file = path_supy_module / "code2file.json"
+dict_Code2File = pd.read_json(path_code2file, typ="series").to_dict()
 # variable translation as done in Fortran-SUEWS
 # path_var2siteselect = os.path.join(path_supy_module, 'var2siteselect.json')
-path_var2siteselect = path_supy_module / 'var2siteselect.json'
-dict_var2SiteSelect = pd.read_json(path_var2siteselect, typ='series').to_dict()
+path_var2siteselect = path_supy_module / "var2siteselect.json"
+dict_var2SiteSelect = pd.read_json(path_var2siteselect, typ="series").to_dict()
 
 # expand dict_Code2File for retrieving surface characteristics
 dict_varSiteSelect2File = {
-    x: 'SUEWS_SiteSelect.txt' for x in dict_var2SiteSelect.keys()}
+    x: "SUEWS_SiteSelect.txt" for x in dict_var2SiteSelect.keys()
+}
 dict_Code2File.update(dict_varSiteSelect2File)
 
 
 # extract metainfo of var from dict_info
 def extract_var_info(var_name, dict_info):
-    dict_var_info = {'name': var_name}
+    dict_var_info = {"name": var_name}
     var_line = dict_info[var_name]
     list_var_line = var_line.split()
-    if 'array' in var_line:
-        dict_var_info.update({'intent': list_var_line[0]})
+    if "array" in var_line:
+        dict_var_info.update({"intent": list_var_line[0]})
         # print(list_var_line)
-        rank = int(list_var_line[1].split('-')[-1])
-        dict_var_info.update({'rank': rank})
+        rank = int(list_var_line[1].split("-")[-1])
+        dict_var_info.update({"rank": rank})
         dtype = list_var_line[2]
-        dict_var_info.update({'dtype': dtype})
+        dict_var_info.update({"dtype": dtype})
         if rank > 0:
             bounds = list_var_line[-1]
-            dict_var_info.update({'bounds': bounds})
+            dict_var_info.update({"bounds": bounds})
         else:
-            dict_var_info.update({'bounds': 0})
+            dict_var_info.update({"bounds": 0})
     else:
-        dict_var_info.update({'intent': list_var_line[0]})
+        dict_var_info.update({"intent": list_var_line[0]})
         rank = 0
-        dict_var_info.update({'rank': rank})
+        dict_var_info.update({"rank": rank})
         dtype = list_var_line[1]
-        dict_var_info.update({'dtype': dtype})
-        dict_var_info.update({'bounds': 0})
+        dict_var_info.update({"dtype": dtype})
+        dict_var_info.update({"bounds": 0})
     return dict_var_info
 
 
 # generate DataFrame of docstring for suews_wrappers generated by f2py
 def gen_suews_arg_info_df(docstring):
-    dict_info = get_args_suews(docstring)['input']
+    dict_info = get_args_suews(docstring)["input"]
     # dict_info.update(get_args_suews(docstring)['output'])
     dict_info = {var: extract_var_info(var, dict_info) for var in dict_info}
     df_info = pd.DataFrame(dict_info).T
@@ -204,11 +209,11 @@ def gen_suews_arg_info_df(docstring):
 
 
 df_info_suews_cal_main = gen_suews_arg_info_df(sd.suews_cal_main.__doc__)
-df_info_suews_cal_multitsteps = gen_suews_arg_info_df(
-    sd.suews_cal_multitsteps.__doc__)
+df_info_suews_cal_multitsteps = gen_suews_arg_info_df(sd.suews_cal_multitsteps.__doc__)
 
 df_var_info = df_info_suews_cal_multitsteps.merge(
-    df_info_suews_cal_main, how='outer').set_index('name')
+    df_info_suews_cal_main, how="outer"
+).set_index("name")
 
 # load model settings
 # load configurations: mod_config
@@ -227,7 +232,8 @@ def load_SUEWS_nml(path_file):
         df_res = pd.DataFrame(f90nml.read(str_file))
         return df_res
     except FileNotFoundError:
-        logger_supy.exception(f'{path_file} does not exists!')
+        logger_supy.exception(f"{path_file} does not exists!")
+
 
 # def load_SUEWS_RunControl(path_file):
 #     lib_RunControl = load_SUEWS_nml(path_file)
@@ -242,17 +248,17 @@ def load_SUEWS_table(path_file):
     try:
         path_file = path_file.resolve()
     except FileNotFoundError:
-        logger_supy.exception(f'{path_file} does not exists!')
+        logger_supy.exception(f"{path_file} does not exists!")
     else:
         # fileX = path_insensitive(fileX)
         str_file = str(path_file)
         rawdata = pd.read_csv(
             str_file,
             delim_whitespace=True,
-            comment='!',
+            comment="!",
             error_bad_lines=False,
             skiprows=1,
-            index_col=0
+            index_col=0,
         )
         rawdata = rawdata.dropna()
         # rawdata = rawdata.apply(pd.to_numeric)
@@ -276,12 +282,11 @@ def load_SUEWS_Libs(path_input):
 # look up properties according to code
 @functools.lru_cache(maxsize=None)
 def lookup_code_lib(libCode, codeKey, codeValue, path_input):
-    str_lib = dict_Code2File[libCode].replace(
-        '.txt', '').replace('SUEWS', 'lib')
+    str_lib = dict_Code2File[libCode].replace(".txt", "").replace("SUEWS", "lib")
     dict_libs = load_SUEWS_Libs(path_input)
     lib = dict_libs[str_lib]
     # print(str_lib,codeKey,codeValue)
-    if codeKey == ':':
+    if codeKey == ":":
         res = lib.loc[int(np.unique(codeValue)), :].tolist()
     else:
         res = lib.loc[int(np.unique(codeValue)), codeKey]
@@ -311,20 +316,18 @@ def lookup_KeySeq_lib(indexKey, subKey, indexCode, path_input):
         res = []
         for indexKeyX, subKeyX in subKey.items():
             # print(indexKeyX, subKeyX)
-            if indexKeyX == 'const':
+            if indexKeyX == "const":
                 resX = subKeyX
             else:
                 # indexKeyX, subKeyX = list(subKey.items())[0]
-                indexCodeX = lookup_code_lib(
-                    indexKey, indexKeyX, indexCode, path_input)
+                indexCodeX = lookup_code_lib(indexKey, indexKeyX, indexCode, path_input)
                 if isinstance(subKeyX, list):
                     resX = [
-                        lookup_KeySeq_lib(
-                            indexKeyX, x_subKeyX, indexCodeX, path_input)
-                        for x_subKeyX in subKeyX]
+                        lookup_KeySeq_lib(indexKeyX, x_subKeyX, indexCodeX, path_input)
+                        for x_subKeyX in subKeyX
+                    ]
                 else:
-                    resX = lookup_KeySeq_lib(
-                        indexKeyX, subKeyX, indexCodeX, path_input)
+                    resX = lookup_KeySeq_lib(indexKeyX, subKeyX, indexCodeX, path_input)
             res.append(resX)
         res = res[0] if len(res) == 1 else res
     elif isinstance(subKey, list):
@@ -343,14 +346,15 @@ def lookup_KeySeq_lib(indexKey, subKey, indexCode, path_input):
 def load_SUEWS_SurfaceChar(path_input):
     # load all libraries
     dict_libs = load_SUEWS_Libs(path_input)
-    list_grid = dict_libs['lib_SiteSelect'].index
+    list_grid = dict_libs["lib_SiteSelect"].index
     # construct a dictionary in the form: {grid:{var:value,...}}
     dict_gridSurfaceChar = {
         grid: {
             k: lookup_KeySeq_lib(k, v, grid, path_input)
             for k, v in dict_var2SiteSelect.items()
         }
-        for grid in list_grid}
+        for grid in list_grid
+    }
     # convert the above dict to DataFrame
     df_gridSurfaceChar = pd.DataFrame.from_dict(dict_gridSurfaceChar).T
     # empty dict to hold updated values
@@ -358,29 +362,33 @@ def load_SUEWS_SurfaceChar(path_input):
     # modify some variables to be compliant with SUEWS requirement
     for xgrid in df_gridSurfaceChar.index:
         # transpoe snowprof:
-        df_gridSurfaceChar.at[xgrid, 'snowprof_24hr'] = np.array(
-            df_gridSurfaceChar.at[xgrid, 'snowprof_24hr'], order='F').T
+        df_gridSurfaceChar.at[xgrid, "snowprof_24hr"] = np.array(
+            df_gridSurfaceChar.at[xgrid, "snowprof_24hr"], order="F"
+        ).T
 
         # transpoe laipower:
-        df_gridSurfaceChar.at[xgrid, 'laipower'] = np.array(
-            df_gridSurfaceChar.at[xgrid, 'laipower'], order='F').T
+        df_gridSurfaceChar.at[xgrid, "laipower"] = np.array(
+            df_gridSurfaceChar.at[xgrid, "laipower"], order="F"
+        ).T
 
         # select non-zero values for waterdist of water surface:
-        x = np.array(df_gridSurfaceChar.at[xgrid, 'waterdist'][-1])
-        df_gridSurfaceChar.at[xgrid, 'waterdist'][-1] = (
-            x[np.nonzero(x)])
+        x = np.array(df_gridSurfaceChar.at[xgrid, "waterdist"][-1])
+        df_gridSurfaceChar.at[xgrid, "waterdist"][-1] = x[np.nonzero(x)]
 
         # surf order as F:
-        df_gridSurfaceChar.at[xgrid, 'storedrainprm'] = np.array(
-            df_gridSurfaceChar.at[xgrid, 'storedrainprm'], order='F')
+        df_gridSurfaceChar.at[xgrid, "storedrainprm"] = np.array(
+            df_gridSurfaceChar.at[xgrid, "storedrainprm"], order="F"
+        )
 
         # convert to np.array
-        df_gridSurfaceChar.at[xgrid, 'alb'] = np.array(
-            df_gridSurfaceChar.at[xgrid, 'alb'])
+        df_gridSurfaceChar.at[xgrid, "alb"] = np.array(
+            df_gridSurfaceChar.at[xgrid, "alb"]
+        )
 
         # convert unit of `surfacearea` from ha to m^2
-        df_gridSurfaceChar.at[xgrid, 'surfacearea'] = np.array(
-            df_gridSurfaceChar.at[xgrid, 'surfacearea'] * 10000.)
+        df_gridSurfaceChar.at[xgrid, "surfacearea"] = np.array(
+            df_gridSurfaceChar.at[xgrid, "surfacearea"] * 10000.0
+        )
 
         # print type(df_gridSurfaceChar.loc[xgrid, 'alb'])
 
@@ -390,15 +398,16 @@ def load_SUEWS_SurfaceChar(path_input):
 
         # profiles:
         list_varTstep = [
-            'ahprof_24hr',
-            'popprof_24hr',
-            'traffprof_24hr',
-            'humactivity_24hr',
-            'wuprofm_24hr',
-            'wuprofa_24hr',
+            "ahprof_24hr",
+            "popprof_24hr",
+            "traffprof_24hr",
+            "humactivity_24hr",
+            "wuprofm_24hr",
+            "wuprofa_24hr",
         ]
-        df_gridSurfaceChar.loc[xgrid, list_varTstep] = \
-            df_gridSurfaceChar.loc[xgrid, list_varTstep].map(np.transpose)
+        df_gridSurfaceChar.loc[xgrid, list_varTstep] = df_gridSurfaceChar.loc[
+            xgrid, list_varTstep
+        ].map(np.transpose)
 
     # convert to DataFrame
     # df_x_grid = pd.DataFrame.from_dict(dict_x_grid).T
@@ -407,60 +416,60 @@ def load_SUEWS_SurfaceChar(path_input):
 
 
 def func_parse_date(year, doy, hour, minute):
-    dt = pd.to_datetime(' '.join(
-        [str(k) for k in [year, doy, hour, minute]]),
-        format='%Y %j %H %M')
+    dt = pd.to_datetime(
+        " ".join([str(k) for k in [year, doy, hour, minute]]), format="%Y %j %H %M"
+    )
     return dt
 
 
 def func_parse_date_row(row):
-    [year, doy, hour, tmin] = row.loc[['iy', 'id', 'it', 'imin']]
+    [year, doy, hour, tmin] = row.loc[["iy", "id", "it", "imin"]]
     # dt = datetime.datetime.strptime(
     #     ' '.join([year, doy, hour, min]), '%Y %j %H %M')
-    dt = pd.to_datetime(' '.join(
-        [str(k) for k in [year, doy, hour, tmin]]),
-        format='%Y %j %H %M')
+    dt = pd.to_datetime(
+        " ".join([str(k) for k in [year, doy, hour, tmin]]), format="%Y %j %H %M"
+    )
     return dt
 
 
 # calculate decimal time
 def dectime(timestamp):
     t = timestamp
-    dectime = (t.dayofyear - 1) + (
-        t.hour + (t.minute + t.second / 60.) / 60.
-    ) / 24
+    dectime = (t.dayofyear - 1) + (t.hour + (t.minute + t.second / 60.0) / 60.0) / 24
     return dectime
 
 
 # resample solar radiation by zenith correction and total amount distribution
 def resample_kdn(data_raw_kdn, tstep_mod, timezone, lat, lon, alt):
     # adjust solar radiation
-    datetime_mid_local = data_raw_kdn.index - timedelta(
-        seconds=tstep_mod / 2)
-    sol_elev = np.array([sd.suews_cal_sunposition(
-        t.year, dectime(t), timezone, lat, lon, alt)[-1]
-        for t in datetime_mid_local])
+    datetime_mid_local = data_raw_kdn.index - timedelta(seconds=tstep_mod / 2)
+    sol_elev = np.array(
+        [
+            sd.suews_cal_sunposition(t.year, dectime(t), timezone, lat, lon, alt)[-1]
+            for t in datetime_mid_local
+        ]
+    )
     sol_elev_reset = np.zeros_like(sol_elev)
-    sol_elev_reset[sol_elev <= 90] = 1.
+    sol_elev_reset[sol_elev <= 90] = 1.0
     data_tstep_kdn_adj = sol_elev_reset * data_raw_kdn.copy()
 
     # calculate daily mean values for later rescaling
-    avg_raw = data_raw_kdn.resample('D').mean()
-    avg_tstep = data_tstep_kdn_adj.resample('D').mean()
+    avg_raw = data_raw_kdn.resample("D").mean()
+    avg_tstep = data_tstep_kdn_adj.resample("D").mean()
     # calculate rescaling ratio
-    ratio_SWdown = (avg_raw / avg_tstep)
+    ratio_SWdown = avg_raw / avg_tstep
     # replace nan with zero as `avg_tstep` might be zero if incomplete days included
     ratio_SWdown = ratio_SWdown.fillna(0)
     # conform to `avg_tstep` index for actual days used
     ratio_SWdown = ratio_SWdown.reindex(index=avg_tstep.index)
     # resample into `tstep_mod` steps
-    ratio_SWdown = ratio_SWdown.resample(f'{tstep_mod}S').mean()
+    ratio_SWdown = ratio_SWdown.resample(f"{tstep_mod}S").mean()
     # fill nan as the above resample will place valid values at the daily start
-    ratio_SWdown = ratio_SWdown.fillna(method='pad')
+    ratio_SWdown = ratio_SWdown.fillna(method="pad")
     # conform to `data_tstep_kdn_adj` index for actual period used
     ratio_SWdown = ratio_SWdown.reindex(index=data_tstep_kdn_adj.index)
     # fill nan as the above resample will place valid values at the daily start
-    ratio_SWdown = ratio_SWdown.fillna(method='pad')
+    ratio_SWdown = ratio_SWdown.fillna(method="pad")
     # rescale daily amounts
     data_tstep_kdn_adj = ratio_SWdown * data_tstep_kdn_adj
     # data_tstep_kdn_adj = data_tstep_kdn_adj.fillna(method='pad')
@@ -470,11 +479,12 @@ def resample_kdn(data_raw_kdn, tstep_mod, timezone, lat, lon, alt):
 
 # correct precipitation by even redistribution over resampled periods
 def resample_precip(data_raw_precip, tstep_mod, tstep_in):
-    ratio_precip = 1. * tstep_mod / tstep_in
+    ratio_precip = 1.0 * tstep_mod / tstep_in
     data_tstep_precip_adj = ratio_precip * data_raw_precip.copy().shift(
-        -tstep_in + tstep_mod, freq='S').resample(
-        '{tstep}S'.format(tstep=tstep_mod)).mean().interpolate(
-        method='polynomial', order=0)
+        -tstep_in + tstep_mod, freq="S"
+    ).resample("{tstep}S".format(tstep=tstep_mod)).mean().interpolate(
+        method="polynomial", order=0
+    )
     # assign a new start with nan
     # t_start = data_raw_precip.index.shift(-tstep_in + tstep_mod, freq='S')[0]
     t_end = data_raw_precip.index[-1]
@@ -482,8 +492,9 @@ def resample_precip(data_raw_precip, tstep_mod, tstep_in):
     data_tstep_precip_adj.loc[t_end] = np.nan
     data_tstep_precip_adj = data_tstep_precip_adj.sort_index()
     data_tstep_precip_adj = data_tstep_precip_adj.asfreq(
-        '{tstep}S'.format(tstep=tstep_mod))
-    data_tstep_precip_adj = data_tstep_precip_adj.fillna(value=0.)
+        "{tstep}S".format(tstep=tstep_mod)
+    )
+    data_tstep_precip_adj = data_tstep_precip_adj.fillna(value=0.0)
     return data_tstep_precip_adj
 
 
@@ -492,33 +503,34 @@ def resample_linear_pd(data_raw, tstep_in, tstep_mod):
     # reset index as timestamps
     # shift by half-tstep_in to generate a time series with instantaneous
     # values
-    data_raw_shift = data_raw.shift(-tstep_in / 2, freq='S')
+    data_raw_shift = data_raw.shift(-tstep_in / 2, freq="S")
 
     # downscale input data to desired time step
-    data_raw_tstep = data_raw_shift\
-        .asfreq(f'{tstep_mod/2}S')\
-        .interpolate(method='linear')\
-        .resample(f'{tstep_mod}S')\
+    data_raw_tstep = (
+        data_raw_shift.asfreq(f"{tstep_mod/2}S")
+        .interpolate(method="linear")
+        .resample(f"{tstep_mod}S")
         .mean()
+    )
 
     # assign a new start with nan
-    t_start = data_raw.index.shift(-tstep_in + tstep_mod, freq='S')[0]
+    t_start = data_raw.index.shift(-tstep_in + tstep_mod, freq="S")[0]
     t_end = data_raw.index[-1]
     data_raw_tstep.loc[t_start, :] = np.nan
     data_raw_tstep.loc[t_end, :] = np.nan
 
     # re-align the index so after resampling we can have filled heading part
     data_raw_tstep = data_raw_tstep.sort_index()
-    data_raw_tstep = data_raw_tstep.asfreq(f'{tstep_mod}S')
+    data_raw_tstep = data_raw_tstep.asfreq(f"{tstep_mod}S")
     # fill gaps with valid values
-    data_tstep = data_raw_tstep.copy().bfill().ffill().dropna(how='all')
+    data_tstep = data_raw_tstep.copy().bfill().ffill().dropna(how="all")
     # data_tstep = data_raw_tstep.copy()
 
     # correct temporal information
-    data_tstep['iy'] = data_tstep.index.year
-    data_tstep['id'] = data_tstep.index.dayofyear
-    data_tstep['it'] = data_tstep.index.hour
-    data_tstep['imin'] = data_tstep.index.minute
+    data_tstep["iy"] = data_tstep.index.year
+    data_tstep["id"] = data_tstep.index.dayofyear
+    data_tstep["it"] = data_tstep.index.hour
+    data_tstep["imin"] = data_tstep.index.minute
 
     return data_tstep
 
@@ -528,29 +540,27 @@ def resample_linear(data_raw, tstep_in, tstep_mod):
     # reset index as timestamps
     # shift by half-tstep_in to generate a time series with instantaneous
     # values
-    data_raw_shift = data_raw.shift(-tstep_in / 2, freq='S')
+    data_raw_shift = data_raw.shift(-tstep_in / 2, freq="S")
     xt = data_raw_shift.index
-    dt = (xt-xt.min()).total_seconds()
-    xt_new = pd.date_range(xt.min(), xt.max(), freq=f'{tstep_mod}S')
-    dt_new = (xt_new-xt_new.min()).total_seconds()
+    dt = (xt - xt.min()).total_seconds()
+    xt_new = pd.date_range(xt.min(), xt.max(), freq=f"{tstep_mod}S")
+    dt_new = (xt_new - xt_new.min()).total_seconds()
     # using `interp1d` for better performance
     f = interp1d(dt, data_raw_shift.values, axis=0)
     val_new = f(dt_new)
     # manual running mean for better performance
-    val_new_mvavg = 0.5*(val_new[:-1]+val_new[1:])
+    val_new_mvavg = 0.5 * (val_new[:-1] + val_new[1:])
     # construct a dataframe
     data_raw_tstep = pd.DataFrame(
-        val_new_mvavg,
-        columns=data_raw_shift.columns,
-        index=xt_new[1:]
+        val_new_mvavg, columns=data_raw_shift.columns, index=xt_new[1:]
     )
     #     data_raw_tstep = dd.from_pandas(data_raw_tstep, npartitions=cpu_count())
     #     data_raw_tstep = data_raw_tstep.rolling(window=2, center=False).mean()
     # val_new.shape
     # assign a new start with nan
-    t_start = data_raw.index.shift(-tstep_in + tstep_mod, freq='S')[0]
+    t_start = data_raw.index.shift(-tstep_in + tstep_mod, freq="S")[0]
     t_end = data_raw.index[-1]
-    ind_t = pd.date_range(t_start, t_end, freq=f'{tstep_mod}S')
+    ind_t = pd.date_range(t_start, t_end, freq=f"{tstep_mod}S")
     # re-align the index so after resampling we can have filled heading part
     #     data_raw_tstep = data_raw_tstep.compute()
     data_tstep = data_raw_tstep.reindex(ind_t)
@@ -561,17 +571,17 @@ def resample_linear(data_raw, tstep_in, tstep_mod):
     #     data_tstep = data_tstep.compute()
     # correct temporal information
     ser_t = ind_t.to_series()
-    data_tstep['iy'] = ser_t.dt.year
-    data_tstep['id'] = ser_t.dt.dayofyear
-    data_tstep['it'] = ser_t.dt.hour
-    data_tstep['imin'] = ser_t.dt.minute
+    data_tstep["iy"] = ser_t.dt.year
+    data_tstep["id"] = ser_t.dt.dayofyear
+    data_tstep["it"] = ser_t.dt.hour
+    data_tstep["imin"] = ser_t.dt.minute
     return data_tstep
 
 
 # resample input met foring to tstep required by model
 def resample_forcing_met(
-        data_met_raw, tstep_in, tstep_mod,
-        lat=51, lon=1, alt=100, timezone=0, kdownzen=0):
+    data_met_raw, tstep_in, tstep_mod, lat=51, lon=1, alt=100, timezone=0, kdownzen=0
+):
     # overall resample by linear interpolation
     # data_met_raw.to_pickle('data_met_raw.pkl')
     data_met_tstep = resample_linear_pd(data_met_raw, tstep_in, tstep_mod)
@@ -581,11 +591,11 @@ def resample_forcing_met(
     # adjust solar radiation by zenith correction and total amount distribution
     if kdownzen == 1:
         data_met_tstep["kdown"] = resample_kdn(
-            data_met_tstep["kdown"], tstep_mod, timezone, lat, lon, alt)
+            data_met_tstep["kdown"], tstep_mod, timezone, lat, lon, alt
+        )
 
     # correct rainfall
-    data_met_tstep['rain'] = resample_precip(
-        data_met_raw['rain'], tstep_mod, tstep_in)
+    data_met_tstep["rain"] = resample_precip(data_met_raw["rain"], tstep_mod, tstep_in)
 
     # # reset index with numbers
     # data_met_tstep_out = data_met_tstep.copy().reset_index(drop=True)
@@ -595,17 +605,19 @@ def resample_forcing_met(
 
 # load raw data: met forcing
 def load_SUEWS_Forcing_met_df_raw(
-        path_input, filecode, grid, tstep_met_in, multiplemetfiles):
+    path_input, filecode, grid, tstep_met_in, multiplemetfiles
+):
     # file name pattern for met files
-    forcingfile_met_pattern = '{site}{grid}_*_{tstep}.txt'.format(
+    forcingfile_met_pattern = "{site}{grid}_*_{tstep}.txt".format(
         site=filecode,
-        grid=(grid if multiplemetfiles == 1 else ''),
-        tstep=int(tstep_met_in / 60))
+        grid=(grid if multiplemetfiles == 1 else ""),
+        tstep=int(tstep_met_in / 60),
+    )
     # path_forcing_pattern = path_input / forcingfile_met_pattern
     df_forcing_met = load_SUEWS_Forcing_met_df_pattern(
-        path_input, forcingfile_met_pattern)
+        path_input, forcingfile_met_pattern
+    )
     return df_forcing_met
-
 
 
 # caching loaded met df for better performance in initialisation
@@ -628,9 +640,9 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
     # list of met forcing files
     path_input = path_input.resolve()
     # forcingfile_met_pattern = os.path.abspath(forcingfile_met_pattern)
-    list_file_MetForcing = sorted([
-        f for f in path_input.glob(forcingfile_met_pattern)
-        if 'ESTM' not in f.name])
+    list_file_MetForcing = sorted(
+        [f for f in path_input.glob(forcingfile_met_pattern) if "ESTM" not in f.name]
+    )
 
     # print(forcingfile_met_pattern)
     # print(list_file_MetForcing)
@@ -639,7 +651,7 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
     dd_forcing_met = dd.read_csv(
         list_file_MetForcing,
         delim_whitespace=True,
-        comment='!',
+        comment="!",
         error_bad_lines=True,
         assume_missing=True,
     )
@@ -648,37 +660,58 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
     # `drop_duplicates` in case some duplicates mixed
     df_forcing_met = df_forcing_met.drop_duplicates()
     col_suews_met_forcing = [
-        'iy', 'id', 'it', 'imin',
-        'qn', 'qh', 'qe', 'qs', 'qf',
-        'U', 'RH', 'Tair', 'pres', 'rain', 'kdown',
-        'snow', 'ldown', 'fcld',
-        'Wuh', 'xsmd', 'lai', 'kdiff', 'kdir', 'wdir'
+        "iy",
+        "id",
+        "it",
+        "imin",
+        "qn",
+        "qh",
+        "qe",
+        "qs",
+        "qf",
+        "U",
+        "RH",
+        "Tair",
+        "pres",
+        "rain",
+        "kdown",
+        "snow",
+        "ldown",
+        "fcld",
+        "Wuh",
+        "xsmd",
+        "lai",
+        "kdiff",
+        "kdir",
+        "wdir",
     ]
     # rename these columns to match variables via the driver interface
     df_forcing_met.columns = col_suews_met_forcing
 
     # convert unit from kPa to hPa
-    df_forcing_met['pres'] *= 10
+    df_forcing_met["pres"] *= 10
 
     # add `isec` for WRF-SUEWS interface
-    df_forcing_met['isec'] = 0
+    df_forcing_met["isec"] = 0
 
     # set correct data types
-    df_forcing_met[['iy', 'id', 'it', 'imin', 'isec']] = df_forcing_met[[
-        'iy', 'id', 'it', 'imin', 'isec']].astype(np.int64)
+    df_forcing_met[["iy", "id", "it", "imin", "isec"]] = df_forcing_met[
+        ["iy", "id", "it", "imin", "isec"]
+    ].astype(np.int64)
 
     # set timestamp as index
     idx_dt = pd.date_range(
-        *df_forcing_met.iloc[[0, -1], :4].astype(int).astype(str).apply(
-            lambda ser: ser.str.cat(sep=' '), axis=1).map(
-            lambda dt: pd.to_datetime(dt, format='%Y %j %H %M')),
-        periods=df_forcing_met.shape[0])
+        *df_forcing_met.iloc[[0, -1], :4]
+        .astype(int)
+        .astype(str)
+        .apply(lambda ser: ser.str.cat(sep=" "), axis=1)
+        .map(lambda dt: pd.to_datetime(dt, format="%Y %j %H %M")),
+        periods=df_forcing_met.shape[0],
+    )
 
     df_forcing_met = df_forcing_met.set_index(idx_dt)
 
     return df_forcing_met
-
-
 
 
 # TODO: add support for loading multi-grid forcing datasets
@@ -697,12 +730,13 @@ def exp_dict2tuple(rec):
         return rec
     elif isinstance(rec, float):
         # expand this for consistency in value indexing
-        return [(rec, 'base')]
+        return [(rec, "base")]
     elif isinstance(rec, dict):
         res = [
             # expand profile values to all hour indices
-            (k, [str(i) for i in range(24)])
-            if v == ':' else (k, exp_dict2tuple(v)) for k, v in rec.items()]
+            (k, [str(i) for i in range(24)]) if v == ":" else (k, exp_dict2tuple(v))
+            for k, v in rec.items()
+        ]
         # print(res)
         return res
     elif isinstance(rec, list):
@@ -728,9 +762,10 @@ def exp_list2tuple(rec):
     elif list_in_tuple_Q(rec):
         for i, v in enumerate(rec):
             if isinstance(v, list):
-                res = [(*rec[:i], x) if isinstance(x, (str, int))
-                       else (*rec[:i], *x)
-                       for x in v]
+                res = [
+                    (*rec[:i], x) if isinstance(x, (str, int)) else (*rec[:i], *x)
+                    for x in v
+                ]
                 res = [exp_list2tuple(x) for x in res]
                 return exp_list2tuple(res)
     else:
@@ -751,7 +786,7 @@ def gather_code_set(code, dict_var2SiteSelect):
             elif isinstance(v, dict):
                 set_res.update(v.keys())
             else:
-                logger_supy.info(f'{k},{v}')
+                logger_supy.info(f"{k},{v}")
 
         elif isinstance(v, dict):
             # print(res,v)
@@ -771,13 +806,13 @@ def build_code_df(code, path_input, df_base):
     dict_libs = load_SUEWS_Libs(path_input)
 
     keys_code = gather_code_set(code, dict_var2SiteSelect)
-    if keys_code == {':'}:
+    if keys_code == {":"}:
         # for profile values, extract all
         list_keys = code
     else:
         list_keys = [(code, k) for k in list(keys_code)]
     lib_code = dict_Code2File[code]
-    str_lib = lib_code.replace('.txt', '').replace('SUEWS', 'lib')
+    str_lib = lib_code.replace(".txt", "").replace("SUEWS", "lib")
     # lib = dict_libs[str_lib]
 
     df_code0 = pd.concat([dict_libs[str_lib]], axis=1, keys=[code])
@@ -793,33 +828,30 @@ def build_code_df(code, path_input, df_base):
     try:
         df_code = df_code0.loc[list_code, list_keys]
     except Exception as e:
-        logger_supy.exception(f'Entries missing from {lib_code}')
-        logger_supy.exception(f'list_code:\n {list_code} \n {df_code0.index}')
-        logger_supy.exception(f'list_keys:\n {list_keys} \n {df_code0.columns}')
-        logger_supy.exception(f'Entries missing from {lib_code}')
+        logger_supy.exception(f"Entries missing from {lib_code}")
+        logger_supy.exception(f"list_code:\n {list_code} \n {df_code0.index}")
+        logger_supy.exception(f"list_keys:\n {list_keys} \n {df_code0.columns}")
+        logger_supy.exception(f"Entries missing from {lib_code}")
         raise e
 
     df_code.index = df_base.index
     # recover outmost level code if profile values are extracted
-    if keys_code == {':'}:
+    if keys_code == {":"}:
         df_code = pd.concat([df_code], axis=1, keys=[code])
     return df_code
 
 
 # if to expand
 def to_exp_Q(code_str):
-    return ('Code' in code_str) or ('Prof' in code_str)
+    return ("Code" in code_str) or ("Prof" in code_str)
 
 
 # generate df with all code-references values
 @functools.lru_cache(maxsize=16)
 def gen_all_code_df(path_input):
     dict_libs = load_SUEWS_Libs(path_input)
-    df_siteselect = dict_libs['lib_SiteSelect']
-    list_code = [
-        code for code in df_siteselect.columns
-        if to_exp_Q(code)
-    ]
+    df_siteselect = dict_libs["lib_SiteSelect"]
+    list_code = [code for code in df_siteselect.columns if to_exp_Q(code)]
 
     # dict with code:{vars}
     dict_code_var = {
@@ -830,9 +862,9 @@ def gen_all_code_df(path_input):
 
     # stage one expansion
     df_all_code = pd.concat(
-        [build_code_df(code, path_input, df_siteselect)
-         for code in dict_code_var],
-        axis=1)
+        [build_code_df(code, path_input, df_siteselect) for code in dict_code_var],
+        axis=1,
+    )
 
     return df_all_code
 
@@ -841,23 +873,25 @@ def gen_all_code_df(path_input):
 # @functools.lru_cache(maxsize=16)
 def gen_all_const_df(path_input):
     dict_libs = load_SUEWS_Libs(path_input)
-    df_siteselect = dict_libs['lib_SiteSelect']
+    df_siteselect = dict_libs["lib_SiteSelect"]
 
     df_cst_all = df_siteselect.copy()
     dict_var_tuple = exp_dict_full(dict_var2SiteSelect)
 
     set_const_col = {
         v
-        for x in dict_var_tuple.values() if isinstance(x, list)
-        for v in x if 'const' in v
+        for x in dict_var_tuple.values()
+        if isinstance(x, list)
+        for v in x
+        if "const" in v
     }
 
     list_const_col = [x[1] for x in set_const_col]
     for cst in set_const_col:
         df_cst_all[cst[1]] = cst[1]
     df_cst_all = df_cst_all.loc[:, list_const_col]
-    df_cst_all = pd.concat([df_cst_all], axis=1, keys=['base'])
-    df_cst_all = pd.concat([df_cst_all], axis=1, keys=['const'])
+    df_cst_all = pd.concat([df_cst_all], axis=1, keys=["base"])
+    df_cst_all = pd.concat([df_cst_all], axis=1, keys=["const"])
     df_cst_all = df_cst_all.swaplevel(i=1, j=-1, axis=1)
 
     return df_cst_all
@@ -876,16 +910,16 @@ def build_code_exp_df(path_input, code_x):
     list_code_x = [code for code in df_base_x.columns if to_exp_Q(code)]
     # print(list_code_x)
     df_all_code_x = pd.concat(
-        [build_code_df(code, path_input, df_base_x)
-         for code in list_code_x],
-        axis=1)
+        [build_code_df(code, path_input, df_base_x) for code in list_code_x], axis=1
+    )
     df_all_code_x = pd.concat([df_all_code_x], axis=1, keys=[code_x])
 
     # add innermost lables to conform dimensionality
     df_base_x_named = pd.concat([df_base_x], axis=1, keys=[code_x])
-    df_base_x_named = pd.concat([df_base_x_named], axis=1, keys=['base'])
-    df_base_x_named = df_base_x_named.swaplevel(
-        i=0, j=1, axis=1).swaplevel(i=1, j=-1, axis=1)
+    df_base_x_named = pd.concat([df_base_x_named], axis=1, keys=["base"])
+    df_base_x_named = df_base_x_named.swaplevel(i=0, j=1, axis=1).swaplevel(
+        i=1, j=-1, axis=1
+    )
 
     # print(df_base_x_named.columns)
     # print(df_all_code_x.columns)
@@ -901,7 +935,7 @@ def gen_df_siteselect_exp(path_input):
 
     # retrieve all `Code`-relaed names
     dict_libs = load_SUEWS_Libs(path_input)
-    df_siteselect = dict_libs['lib_SiteSelect']
+    df_siteselect = dict_libs["lib_SiteSelect"]
     # list_code = [code for code in df_siteselect.columns if 'Code' in code]
 
     # dict with code:{vars}
@@ -914,7 +948,7 @@ def gen_df_siteselect_exp(path_input):
     dict_code_var_nest = {
         code: dict_code_var[code]
         for code in dict_code_var.keys()
-        if any(('Code' in v) or ('Prof' in v) for v in dict_code_var[code])
+        if any(("Code" in v) or ("Prof" in v) for v in dict_code_var[code])
     }
 
     # code with simple values
@@ -927,19 +961,24 @@ def gen_df_siteselect_exp(path_input):
     # stage 2: expand all code to actual values
     # nested code: code -> code -> value
     df_code_exp_nest = pd.concat(
-        [build_code_exp_df(path_input, code)
-         for code in list(dict_code_var_nest)],
-        axis=1
+        [build_code_exp_df(path_input, code) for code in list(dict_code_var_nest)],
+        axis=1,
     )
     # simple code: code -> value
     df_code_exp_simple = pd.concat(
-        [pd.concat(
-            [build_code_df(code, path_input, df_siteselect)
-             for code in list(dict_code_var_simple)],
-            axis=1
-        )], axis=1, keys=['base'])
-    df_code_exp_simple = df_code_exp_simple.swaplevel(
-        i=0, j=1, axis=1)
+        [
+            pd.concat(
+                [
+                    build_code_df(code, path_input, df_siteselect)
+                    for code in list(dict_code_var_simple)
+                ],
+                axis=1,
+            )
+        ],
+        axis=1,
+        keys=["base"],
+    )
+    df_code_exp_simple = df_code_exp_simple.swaplevel(i=0, j=1, axis=1)
     df_code_exp_simple = df_code_exp_simple.swaplevel(i=1, j=-1, axis=1)
 
     # combine both nested and simple df's
@@ -949,14 +988,12 @@ def gen_df_siteselect_exp(path_input):
     df_cst_all = gen_all_const_df(path_input)
 
     # df_siteselect_pad: pad levels for pd.concat
-    df_siteselect_pad = pd.concat([df_siteselect], axis=1, keys=['base'])
+    df_siteselect_pad = pd.concat([df_siteselect], axis=1, keys=["base"])
     df_siteselect_pad = df_siteselect_pad.swaplevel(i=0, j=1, axis=1)
-    df_siteselect_pad = pd.concat([df_siteselect_pad], axis=1, keys=['base'])
+    df_siteselect_pad = pd.concat([df_siteselect_pad], axis=1, keys=["base"])
     df_siteselect_pad = df_siteselect_pad.swaplevel(i=0, j=1, axis=1)
 
-    df_siteselect_exp = pd.concat(
-        [df_siteselect_pad, df_code_exp, df_cst_all],
-        axis=1)
+    df_siteselect_exp = pd.concat([df_siteselect_pad, df_code_exp, df_cst_all], axis=1)
 
     return df_siteselect_exp
 
@@ -977,7 +1014,7 @@ def flatten_list(l):
 
 # pad a single record to three-element tuple for easier indexing
 def pad_rec_single(rec):
-    base_pad = ['base' for i in range(3)]
+    base_pad = ["base" for i in range(3)]
     if isinstance(rec, tuple) and len(rec) < 3:
         # print(rec)
         if all(isinstance(v, (str, float, int)) for v in rec):
@@ -1003,11 +1040,9 @@ def pad_rec(rec):
 # expand a dict to fully referenced tuples
 def exp_dict_full(dict_var2SiteSelect):
     # expand dict to list of tuples
-    dict_list_tuple = {k: exp_dict2tuple(v)
-                       for k, v in dict_var2SiteSelect.items()}
+    dict_list_tuple = {k: exp_dict2tuple(v) for k, v in dict_var2SiteSelect.items()}
     # expand list of nested tuples to simple chained tuples
-    dict_var_tuple = {k: exp_list2tuple(v)
-                      for k, v in dict_list_tuple.items()}
+    dict_var_tuple = {k: exp_list2tuple(v) for k, v in dict_list_tuple.items()}
 
     # pad records to three-element tuples
     dict_var_tuple = {k: pad_rec(v) for k, v in dict_var_tuple.items()}
@@ -1029,7 +1064,8 @@ def gen_df_gridSurfaceChar_exp(path_input):
             k: df_siteselect_exp.loc[:, flatten_list(dict_var_tuple[k])]
             for k in dict_var_tuple
         },
-        axis=1)
+        axis=1,
+    )
     return df_gridSurfaceChar_exp
 
 
@@ -1039,17 +1075,17 @@ def gen_df_gridSurfaceChar_exp(path_input):
 def load_SUEWS_SurfaceChar_df(path_input):
     df_gridSurfaceChar_exp = gen_df_gridSurfaceChar_exp(path_input)
     dict_var_ndim = {
-        'ahprof_24hr': (24, 2),
-        'humactivity_24hr': (24, 2),
-        'laipower': (4, 3),
-        'ohm_coef': (8, 4, 3),
-        'popprof_24hr': (24, 2),
-        'snowprof_24hr': (24, 2),
-        'storedrainprm': (6, 7),
-        'traffprof_24hr': (24, 2),
-        'waterdist': (8, 6),
-        'wuprofa_24hr': (24, 2),
-        'wuprofm_24hr': (24, 2)
+        "ahprof_24hr": (24, 2),
+        "humactivity_24hr": (24, 2),
+        "laipower": (4, 3),
+        "ohm_coef": (8, 4, 3),
+        "popprof_24hr": (24, 2),
+        "snowprof_24hr": (24, 2),
+        "storedrainprm": (6, 7),
+        "traffprof_24hr": (24, 2),
+        "waterdist": (8, 6),
+        "wuprofa_24hr": (24, 2),
+        "wuprofm_24hr": (24, 2),
     }
     # df_gridSurfaceChar_x=df_gridSurfaceChar_exp.copy()
 
@@ -1067,51 +1103,49 @@ def load_SUEWS_SurfaceChar_df(path_input):
     # to avoid subset difficulty in subseting duplicate entries in multiindex
     df_x = df_gridSurfaceChar_exp.T
     # `pos` has unique values for each entry in columns
-    df_x['pos'] = np.arange(len(df_gridSurfaceChar_exp.columns))
+    df_x["pos"] = np.arange(len(df_gridSurfaceChar_exp.columns))
     # trasnpose back to have an extra column level `pos`
-    df_gridSurfaceChar_exp = df_x.set_index('pos', append=True).T
+    df_gridSurfaceChar_exp = df_x.set_index("pos", append=True).T
 
     # extract column values and construct corresponding variables
     dict_gridSurfaceChar = {
-        var: np.squeeze(df_gridSurfaceChar_exp[var].values)
-        for var in list_var
+        var: np.squeeze(df_gridSurfaceChar_exp[var].values) for var in list_var
     }
 
     # correct the unit for 'surfacearea'
-    dict_gridSurfaceChar['surfacearea'] *= 1E4
+    dict_gridSurfaceChar["surfacearea"] *= 1e4
 
     for var, dim in dict_var_ndim.items():
         # print(var)
         val = df_gridSurfaceChar_exp.loc[:, var].values
-        if '_24hr' in var:
+        if "_24hr" in var:
             dim_x = dim[-1::-1]
             # val = df_gridSurfaceChar_exp.loc[:, var].values
             val_x = val.reshape((len_grid, *dim_x)).transpose((0, 2, 1))
             dict_gridSurfaceChar.update({var: val_x})
-        elif var == 'laipower':
+        elif var == "laipower":
             dim_x = dim[-1::-1]
             # val = df_gridSurfaceChar_exp.loc[:, var].values
             val_x = val.reshape((len_grid, *dim_x)).transpose((0, 2, 1))
             dict_gridSurfaceChar.update({var: val_x})
-        elif var == 'storedrainprm':
+        elif var == "storedrainprm":
             dim_x = dim
             # val = df_gridSurfaceChar_exp.loc[:, var].values
             val_x = val.reshape((len_grid, *dim_x))
             dict_gridSurfaceChar.update({var: val_x})
-        elif var == 'ohm_coef':
+        elif var == "ohm_coef":
             dim_x = dim
             # val = df_gridSurfaceChar_exp.loc[:, var].values
             val_x = val.reshape((len_grid, *dim_x))
             dict_gridSurfaceChar.update({var: val_x})
-        elif var == 'waterdist':
+        elif var == "waterdist":
             dim_x = dict_var_ndim[var]  # [-1::-1]
             # val = df_gridSurfaceChar_exp.loc[:, var].values
             val_x0 = val.reshape((len_grid, 9, 6))
             # directly load the values for commen land covers
             val_x1 = val_x0[:, :7]
             # process the ToSoilStore and ToRunoff entries
-            val_x2 = val_x0[:, 7:].reshape(
-                len_grid, 6, 2).sum(axis=2).reshape(-1, 1, 6)
+            val_x2 = val_x0[:, 7:].reshape(len_grid, 6, 2).sum(axis=2).reshape(-1, 1, 6)
             # combine valuees of common land convers and special cases
             val_x = np.hstack((val_x1, val_x2))
             dict_gridSurfaceChar.update({var: val_x})
@@ -1125,7 +1159,8 @@ def load_SUEWS_SurfaceChar_df(path_input):
         df_var = pd.DataFrame(
             val.reshape((val.shape[0], -1)),
             index=list_grid,
-            columns=ind_list if len(ind_list) > 1 else ['0'])
+            columns=ind_list if len(ind_list) > 1 else ["0"],
+        )
         dict_var.update({var: df_var})
 
     df_sfc_char = pd.concat(dict_var, axis=1)
@@ -1136,7 +1171,7 @@ def load_SUEWS_SurfaceChar_df(path_input):
     df_sfc_char = pd.DataFrame(df_sfc_char)
 
     # set level names for columns
-    df_sfc_char.columns.set_names(['var', 'ind_dim'], inplace=True)
+    df_sfc_char.columns.set_names(["var", "ind_dim"], inplace=True)
 
     return df_sfc_char
 
@@ -1144,7 +1179,7 @@ def load_SUEWS_SurfaceChar_df(path_input):
 # filter out unnecessary entries by re-arranging the columns
 def trim_df_state(df_state: pd.DataFrame, set_var_use=set_var_use) -> pd.DataFrame:
     # get indices of variables that are included in `set_var_use`: those used by SuPy simulation
-    ind_incl = df_state.columns.get_level_values('var').isin(set_var_use)
+    ind_incl = df_state.columns.get_level_values("var").isin(set_var_use)
     # retrieve only necessary columns
     df_state_slim = df_state.loc[:, ind_incl]
     # remove redundant `MultiIndex` levels
@@ -1155,27 +1190,27 @@ def trim_df_state(df_state: pd.DataFrame, set_var_use=set_var_use) -> pd.DataFra
 
 # mod_config: static properties
 dict_RunControl_default = {
-    'aerodynamicresistancemethod': 2,
-    'evapmethod': 2,
-    'laicalcyes': 1,
-    'veg_type': 1,
-    'diagnose': 0,
-    'diagnosedisagg': 0,
-    'diagnosedisaggestm': 0,
-    'diagqn': 0,
-    'diagqs': 0,
-    'keeptstepfilesin': 0,
-    'keeptstepfilesout': 0,
-    'writeoutoption': 0,
-    'disaggmethod': 1,
-    'disaggmethodestm': 1,
-    'raindisaggmethod': 100,
-    'rainamongn': -999,
-    'multrainamongn': -999,
-    'multrainamongnupperi': -999,
-    'kdownzen': 1,
-    'suppresswarnings': 0,
-    'resolutionfilesin': 0,
+    "aerodynamicresistancemethod": 2,
+    "evapmethod": 2,
+    "laicalcyes": 1,
+    "veg_type": 1,
+    "diagnose": 0,
+    "diagnosedisagg": 0,
+    "diagnosedisaggestm": 0,
+    "diagqn": 0,
+    "diagqs": 0,
+    "keeptstepfilesin": 0,
+    "keeptstepfilesout": 0,
+    "writeoutoption": 0,
+    "disaggmethod": 1,
+    "disaggmethodestm": 1,
+    "raindisaggmethod": 100,
+    "rainamongn": -999,
+    "multrainamongn": -999,
+    "multrainamongnupperi": -999,
+    "kdownzen": 1,
+    "suppresswarnings": 0,
+    "resolutionfilesin": 0,
 }
 
 
@@ -1183,80 +1218,79 @@ dict_RunControl_default = {
 # @functools.lru_cache(maxsize=16)
 def load_SUEWS_dict_ModConfig(path_runcontrol, dict_default=dict_RunControl_default):
     dict_RunControl = dict_default.copy()
-    dict_RunControl_x = load_SUEWS_nml(
-        path_runcontrol).loc[:, 'runcontrol'].to_dict()
+    dict_RunControl_x = load_SUEWS_nml(path_runcontrol).loc[:, "runcontrol"].to_dict()
     dict_RunControl.update(dict_RunControl_x)
     return dict_RunControl
 
 
 # initialise InitialCond_df with default values
-nan = -999.
+nan = -999.0
 # default initcond list when output as SUEWS binary
 dict_InitCond_out = {
-    'dayssincerain':  0,
-    'temp_c0':  10,
-    'gdd_1_0':  nan,
-    'gdd_2_0':  nan,
-    'laiinitialevetr':  nan,
-    'laiinitialdectr':  nan,
-    'laiinitialgrass':  nan,
-    'albevetr0':  nan,
-    'albdectr0':  nan,
-    'albgrass0':  nan,
-    'decidcap0':  nan,
-    'porosity0':  nan,
-    'soilstorepavedstate':  nan,
-    'soilstorebldgsstate':  nan,
-    'soilstoreevetrstate':  nan,
-    'soilstoredectrstate':  nan,
-    'soilstoregrassstate':  nan,
-    'soilstorebsoilstate':  nan,
-    'soilstorewaterstate': 0,
-    'pavedstate':  0,
-    'bldgsstate':  0,
-    'evetrstate':  0,
-    'dectrstate':  0,
-    'grassstate':  0,
-    'bsoilstate':  0,
-    'waterstate':  10,
-    'snowinitially':  int(nan),
-    'snowwaterpavedstate':  nan,
-    'snowwaterbldgsstate':  nan,
-    'snowwaterevetrstate':  nan,
-    'snowwaterdectrstate':  nan,
-    'snowwatergrassstate':  nan,
-    'snowwaterbsoilstate':  nan,
-    'snowwaterwaterstate':  nan,
-    'snowpackpaved':  nan,
-    'snowpackbldgs':  nan,
-    'snowpackevetr':  nan,
-    'snowpackdectr':  nan,
-    'snowpackgrass':  nan,
-    'snowpackbsoil':  nan,
-    'snowpackwater':  nan,
-    'snowfracpaved':  nan,
-    'snowfracbldgs':  nan,
-    'snowfracevetr':  nan,
-    'snowfracdectr':  nan,
-    'snowfracgrass':  nan,
-    'snowfracbsoil':  nan,
-    'snowfracwater':  nan,
-    'snowdenspaved':  nan,
-    'snowdensbldgs':  nan,
-    'snowdensevetr':  nan,
-    'snowdensdectr':  nan,
-    'snowdensgrass':  nan,
-    'snowdensbsoil':  nan,
-    'snowdenswater':  nan,
-    'snowalb0':  nan,
+    "dayssincerain": 0,
+    "temp_c0": 10,
+    "gdd_1_0": nan,
+    "gdd_2_0": nan,
+    "laiinitialevetr": nan,
+    "laiinitialdectr": nan,
+    "laiinitialgrass": nan,
+    "albevetr0": nan,
+    "albdectr0": nan,
+    "albgrass0": nan,
+    "decidcap0": nan,
+    "porosity0": nan,
+    "soilstorepavedstate": nan,
+    "soilstorebldgsstate": nan,
+    "soilstoreevetrstate": nan,
+    "soilstoredectrstate": nan,
+    "soilstoregrassstate": nan,
+    "soilstorebsoilstate": nan,
+    "soilstorewaterstate": 0,
+    "pavedstate": 0,
+    "bldgsstate": 0,
+    "evetrstate": 0,
+    "dectrstate": 0,
+    "grassstate": 0,
+    "bsoilstate": 0,
+    "waterstate": 10,
+    "snowinitially": int(nan),
+    "snowwaterpavedstate": nan,
+    "snowwaterbldgsstate": nan,
+    "snowwaterevetrstate": nan,
+    "snowwaterdectrstate": nan,
+    "snowwatergrassstate": nan,
+    "snowwaterbsoilstate": nan,
+    "snowwaterwaterstate": nan,
+    "snowpackpaved": nan,
+    "snowpackbldgs": nan,
+    "snowpackevetr": nan,
+    "snowpackdectr": nan,
+    "snowpackgrass": nan,
+    "snowpackbsoil": nan,
+    "snowpackwater": nan,
+    "snowfracpaved": nan,
+    "snowfracbldgs": nan,
+    "snowfracevetr": nan,
+    "snowfracdectr": nan,
+    "snowfracgrass": nan,
+    "snowfracbsoil": nan,
+    "snowfracwater": nan,
+    "snowdenspaved": nan,
+    "snowdensbldgs": nan,
+    "snowdensevetr": nan,
+    "snowdensdectr": nan,
+    "snowdensgrass": nan,
+    "snowdensbsoil": nan,
+    "snowdenswater": nan,
+    "snowalb0": nan,
 }
 # extra items used in supy
 dict_InitCond_extra = {
-    'leavesoutinitially':  int(nan),
-    'qn1_av': 0,
-    'qn1_s_av': 0,
-    'dqndt': 0,
-    'dqnsdt': 0,
+    "leavesoutinitially": int(nan),
+    "qn1_av": 0,
+    "qn1_s_av": 0,
+    "dqndt": 0,
+    "dqnsdt": 0,
 }
 # default items for supy initialisation
 dict_InitCond_default = dict_InitCond_extra.copy()
@@ -1270,22 +1304,23 @@ def load_SUEWS_InitialCond_df(path_runcontrol):
     # load basic model settings
     dict_ModConfig = load_SUEWS_dict_ModConfig(path_runcontrol)
     # path for SUEWS input tables:
-    path_input = path_runcontrol.parent / dict_ModConfig['fileinputpath']
+    path_input = path_runcontrol.parent / dict_ModConfig["fileinputpath"]
     df_gridSurfaceChar = load_SUEWS_SurfaceChar_df(path_input)
     # only use the first year of each grid as base for initial conditions
-    df_init = df_gridSurfaceChar.groupby('Grid').aggregate(np.min)
+    df_init = df_gridSurfaceChar.groupby("Grid").aggregate(np.min)
     # rename 'Grid' to 'grid' for consistency
-    df_init.index.set_names('grid')
+    df_init.index.set_names("grid")
 
     # incorporate numeric entries from dict_ModConfig
     list_var_dim_from_dict_ModConfig = [
-        (var, 0, val) for var, val in dict_ModConfig.items()
+        (var, 0, val)
+        for var, val in dict_ModConfig.items()
         if isinstance(val, (float, int))
     ]
     # set values according to `list_var_dim_from_dict_ModConfig`
     # and generate the secondary dimensions
     for var, dim, val in list_var_dim_from_dict_ModConfig:
-        ind_dim = [str(i) for i in np.ndindex(int(dim))] if dim > 0 else ['0']
+        ind_dim = [str(i) for i in np.ndindex(int(dim))] if dim > 0 else ["0"]
         val_x = df_init[val] if isinstance(val, str) else val
         for ind in ind_dim:
             df_init[(var, str(ind))] = val_x
@@ -1293,7 +1328,7 @@ def load_SUEWS_InitialCond_df(path_runcontrol):
     # initialise df_InitialCond_grid with default values
     for k in dict_InitCond_default:
         # df_InitialCond_grid[k] = dict_InitCond_default[k]
-        df_init[(k, '0')] = dict_InitCond_default[k]
+        df_init[(k, "0")] = dict_InitCond_default[k]
 
     # update `temp_c0` with met_forcing
     # # TODO: add temp_c0 from met_forcing
@@ -1301,19 +1336,20 @@ def load_SUEWS_InitialCond_df(path_runcontrol):
     # update `waterstate` with df_gridSurfaceChar
     # drop_duplicates in case multi-year run is set
     # df_InitialCond_grid['waterstate'] = df_gridSurfaceChar_init['waterdepth']
-    df_init[('waterstate', '0')] = df_init['waterdepth']
+    df_init[("waterstate", "0")] = df_init["waterdepth"]
 
     # generate proper Initial Condition file names
-    base_str = 'initialconditions' + dict_ModConfig['filecode']
-    grid_str = (df_init.index.astype(str)
-                if dict_ModConfig['multipleinitfiles'] == 1
-                else '')
-    year_str = df_init[('year', '0')].astype(int).astype(str)
+    base_str = "initialconditions" + dict_ModConfig["filecode"]
+    grid_str = (
+        df_init.index.astype(str) if dict_ModConfig["multipleinitfiles"] == 1 else ""
+    )
+    year_str = df_init[("year", "0")].astype(int).astype(str)
     # ser_path_init =base_str + grid_str + '_' + year_str + '.nml'
-    df_init[('file_init', '0')] = base_str + grid_str + '_' + year_str + '.nml'
+    df_init[("file_init", "0")] = base_str + grid_str + "_" + year_str + ".nml"
     # ser_path_init = ser_path_init.map(lambda fn: path_input / fn)
-    df_init[('file_init', '0')] = df_init[('file_init', '0')]\
-        .map(lambda fn: path_input / fn)
+    df_init[("file_init", "0")] = df_init[("file_init", "0")].map(
+        lambda fn: path_input / fn
+    )
 
     return df_init
 
@@ -1322,66 +1358,67 @@ def load_SUEWS_InitialCond_df(path_runcontrol):
 def add_file_init_df(df_init):
     # load all nml info from file names:('file_init', '0')
     df_init_file = pd.concat(
-        df_init[('file_init', '0')].map(
-            lambda fn: load_SUEWS_nml(fn))
-        .to_dict()).unstack()['initialconditions']
-    df_init_file = pd.concat([df_init_file], axis=1, keys=['0'])
+        df_init[("file_init", "0")].map(lambda fn: load_SUEWS_nml(fn)).to_dict()
+    ).unstack()["initialconditions"]
+    df_init_file = pd.concat([df_init_file], axis=1, keys=["0"])
     df_init_file = df_init_file.swaplevel(0, 1, axis=1)
-    df_init_file.index.set_names(['Grid'], inplace=True)
+    df_init_file.index.set_names(["Grid"], inplace=True)
 
     # merge only those appeard in base df
     df_init.update(df_init_file)
 
     # drop ('file_init', '0') as this may cause non-numeic errors later on
-    df_init = df_init.drop(columns=[('file_init', '0')])
+    df_init = df_init.drop(columns=[("file_init", "0")])
     return df_init
 
 
 # add veg info into `df_init`
 def add_veg_init_df(df_init):
     # get veg surface fractions
-    df_init[('fr_veg_sum', '0')] = df_init['sfr'].iloc[:, 2:5].sum(axis=1)
+    df_init[("fr_veg_sum", "0")] = df_init["sfr"].iloc[:, 2:5].sum(axis=1)
 
     # get gdd_0 and sdd_0
-    veg_sfr = df_init['sfr'].iloc[:, 2:5].T
+    veg_sfr = df_init["sfr"].iloc[:, 2:5].T
     veg_sfr = veg_sfr.reset_index(drop=True).T
     # gdd_0:
-    x_gddfull = df_init['gddfull'].T.reset_index(drop=True).T
-    df_init[('gdd_0', '0')] = (veg_sfr * x_gddfull).sum(axis=1)
-    df_init[('gdd_0', '0')] /= veg_sfr.sum(axis=1)
+    x_gddfull = df_init["gddfull"].T.reset_index(drop=True).T
+    df_init[("gdd_0", "0")] = (veg_sfr * x_gddfull).sum(axis=1)
+    df_init[("gdd_0", "0")] /= veg_sfr.sum(axis=1)
     # sdd_0:
-    x_sddfull = df_init['sddfull'].T.reset_index(drop=True).T
-    df_init[('sdd_0', '0')] = (veg_sfr * x_sddfull).sum(axis=1)
-    df_init[('sdd_0', '0')] /= veg_sfr.sum(axis=1)
+    x_sddfull = df_init["sddfull"].T.reset_index(drop=True).T
+    df_init[("sdd_0", "0")] = (veg_sfr * x_sddfull).sum(axis=1)
+    df_init[("sdd_0", "0")] /= veg_sfr.sum(axis=1)
     # const
-    df_init[('const', '0')] = 0
+    df_init[("const", "0")] = 0
 
     # list of tuples for assignment of leave on/off parameters
     list_var_veg = [
         # aligned for:
         # (var, leavesout==1, leavesout==0)
-        (('gdd_1_0', '0'), ('gdd_0', '0'), ('const', '0')),
-        (('gdd_2_0', '0'), ('const', '0'), ('sdd_0', '0')),
-        (('laiinitialevetr', '0'), ('laimax', '(0,)'), ('laimin', '(0,)')),
-        (('laiinitialdectr', '0'), ('laimax', '(1,)'), ('laimin', '(1,)')),
-        (('laiinitialgrass', '0'), ('laimax', '(2,)'), ('laimin', '(2,)')),
-        (('albevetr0', '0'), ('albmax_evetr', '0'), ('albmin_evetr', '0')),
-        (('albdectr0', '0'), ('albmax_dectr', '0'), ('albmin_dectr', '0')),
-        (('albgrass0', '0'), ('albmax_grass', '0'), ('albmin_grass', '0')),
-        (('decidcap0', '0'), ('capmax_dec', '0'), ('capmin_dec', '0')),
-        (('porosity0', '0'), ('pormin_dec', '0'), ('pormax_dec', '0')),
+        (("gdd_1_0", "0"), ("gdd_0", "0"), ("const", "0")),
+        (("gdd_2_0", "0"), ("const", "0"), ("sdd_0", "0")),
+        (("laiinitialevetr", "0"), ("laimax", "(0,)"), ("laimin", "(0,)")),
+        (("laiinitialdectr", "0"), ("laimax", "(1,)"), ("laimin", "(1,)")),
+        (("laiinitialgrass", "0"), ("laimax", "(2,)"), ("laimin", "(2,)")),
+        (("albevetr0", "0"), ("albmax_evetr", "0"), ("albmin_evetr", "0")),
+        (("albdectr0", "0"), ("albmax_dectr", "0"), ("albmin_dectr", "0")),
+        (("albgrass0", "0"), ("albmax_grass", "0"), ("albmin_grass", "0")),
+        (("decidcap0", "0"), ("capmax_dec", "0"), ("capmin_dec", "0")),
+        (("porosity0", "0"), ("pormin_dec", "0"), ("pormax_dec", "0")),
     ]
 
     # determine veg related parameters based on `leavesoutinitially`
     ser_leaves_on_flag = pd.Series(
-        (df_init['leavesoutinitially'] == 1).values.flatten())
+        (df_init["leavesoutinitially"] == 1).values.flatten()
+    )
 
     # set veg related parameters
     for var_veg, var_leaves_on, var_leaves_off in list_var_veg:
         # print(var_veg, var_leaves_on, var_leaves_off)
         # get default values based on ser_leaves_on_flag
-        val_dft = df_init[var_leaves_on]\
-            .where(ser_leaves_on_flag, df_init[var_leaves_off])
+        val_dft = df_init[var_leaves_on].where(
+            ser_leaves_on_flag, df_init[var_leaves_off]
+        )
         # if 'lai' in var_veg[0]:
         #     print('ser_leaves_on_flag', ser_leaves_on_flag)
         #     print('var_leaves_on', df_init[var_leaves_on].values)
@@ -1405,22 +1442,24 @@ def add_veg_init_df(df_init):
 # add surface specific info into `df_init`
 def add_sfc_init_df(df_init):
     # create snow flag
-    ser_snow_init = df_init['snowinitially']
+    ser_snow_init = df_init["snowinitially"]
     ser_snow_flag = ser_snow_init.where(ser_snow_init == 0, 1)
-    ser_snow_flag = (df_init['snowuse'] * ser_snow_flag)['0']
+    ser_snow_flag = (df_init["snowuse"] * ser_snow_flag)["0"]
 
     # land cover based assignment
-    list_sfc = ['paved', 'bldgs', 'evetr', 'dectr', 'grass', 'bsoil', 'water']
+    list_sfc = ["paved", "bldgs", "evetr", "dectr", "grass", "bsoil", "water"]
     # dict {major variable: [minor variables]}
     dict_var_sfc = {
-        var: ['{var}{sfc}'.format(var=var, sfc=sfc) for sfc in list_sfc]
-        for var in ['snowdens', 'snowfrac', 'snowpack']
+        var: ["{var}{sfc}".format(var=var, sfc=sfc) for sfc in list_sfc]
+        for var in ["snowdens", "snowfrac", "snowpack"]
     }
-    dict_var_sfc.update({
-        'snowwater': ['snowwater{}state'.format(sfc) for sfc in list_sfc],
-        'soilstore_id': ['soilstore{}state'.format(sfc) for sfc in list_sfc],
-        'state_id': ['{}state'.format(sfc) for sfc in list_sfc],
-    })
+    dict_var_sfc.update(
+        {
+            "snowwater": ["snowwater{}state".format(sfc) for sfc in list_sfc],
+            "soilstore_id": ["soilstore{}state".format(sfc) for sfc in list_sfc],
+            "state_id": ["{}state".format(sfc) for sfc in list_sfc],
+        }
+    )
 
     # set values according to `dict_var_sfc`
     # and generate the secondary dimensions
@@ -1428,7 +1467,7 @@ def add_sfc_init_df(df_init):
         for ind, var_sfc in zip(np.ndindex(len(list_sfc)), dict_var_sfc[var]):
             ind_str = str(ind)
             df_init[(var, ind_str)] = df_init[var_sfc]
-            if var_sfc.startswith('snow'):
+            if var_sfc.startswith("snow"):
                 df_init[(var, ind_str)] *= ser_snow_flag.values.flatten()
 
     return df_init
@@ -1439,68 +1478,68 @@ def add_state_init_df(df_init):
     # dimensional assignment
     # (var, dim, `default value` or `reference name`)
     list_var_dim = [
-        ('icefrac', 7, 0.2),
-        ('snowfallcum', 0, 0.),
-        ('snowalb', 0, 'snowalb0'),
-
-        ('porosity_id', 0, 'porosity0'),
-        ('albdectr_id', 0, 'albdectr0'),
-        ('albevetr_id', 0, 'albevetr0'),
-        ('albgrass_id', 0, 'albgrass0'),
-        ('decidcap_id', 0, 'decidcap0'),
-
-        ('lai_id', 3, 0.),
-        ('gdd_id', 3, 'gdd_1_0'),
-        ('sdd_id', 3, 'gdd_2_0'),
-        ('tmin_id', 0, 90),
-        ('tmax_id', 0, -90),
-        ('lenday_id', 0, 0.),
-        ('hdd_id', 12, 0.),
-        ('wuday_id', 9, 0.),
-
-        ('dt_since_start', 0, 0.),
-        ('tstep_prev', 0, 'tstep'),
-        ('tair24hr', int(24 * 3600 / df_init['tstep'].values[0, 0]), 273.15),
-        ('tair_av', 0, 273.15),
+        ("icefrac", 7, 0.2),
+        ("snowfallcum", 0, 0.0),
+        ("snowalb", 0, "snowalb0"),
+        ("porosity_id", 0, "porosity0"),
+        ("albdectr_id", 0, "albdectr0"),
+        ("albevetr_id", 0, "albevetr0"),
+        ("albgrass_id", 0, "albgrass0"),
+        ("decidcap_id", 0, "decidcap0"),
+        ("lai_id", 3, 0.0),
+        ("gdd_id", 3, "gdd_1_0"),
+        ("sdd_id", 3, "gdd_2_0"),
+        ("tmin_id", 0, 90),
+        ("tmax_id", 0, -90),
+        ("lenday_id", 0, 0.0),
+        ("hdd_id", 12, 0.0),
+        ("wuday_id", 9, 0.0),
+        ("dt_since_start", 0, 0.0),
+        ("tstep_prev", 0, "tstep"),
+        ("tair24hr", int(24 * 3600 / df_init["tstep"].values[0, 0]), 273.15),
+        ("tair_av", 0, 273.15),
     ]
 
     # set values according to `list_var_dim`
     # and generate the secondary dimensions
     for var, dim, val in list_var_dim:
-        ind_dim = [str(i) for i in np.ndindex(int(dim))] if dim > 0 else ['0']
+        ind_dim = [str(i) for i in np.ndindex(int(dim))] if dim > 0 else ["0"]
         val_x = df_init[val] if isinstance(val, str) else val
         for ind in ind_dim:
             df_init[(var, str(ind))] = val_x
 
     # modifications for special cases
     # `lai_id` corrections:
-    df_init[('lai_id', '(0,)')] = df_init['laiinitialevetr']
-    df_init[('lai_id', '(1,)')] = df_init['laiinitialdectr']
-    df_init[('lai_id', '(2,)')] = df_init['laiinitialgrass']
+    df_init[("lai_id", "(0,)")] = df_init["laiinitialevetr"]
+    df_init[("lai_id", "(1,)")] = df_init["laiinitialdectr"]
+    df_init[("lai_id", "(2,)")] = df_init["laiinitialgrass"]
     # # `gdd_id` corrections:
     # df_init[('gdd_id', '(2,)')] = 90
     # df_init[('gdd_id', '(3,)')] = -90
 
     # `popdens` corrections:
     # daytime population density on weekdays
-    ser_popdens_day_1 = df_init[('popdensdaytime', '(0,)')]
+    ser_popdens_day_1 = df_init[("popdensdaytime", "(0,)")]
     # nighttime population density on weekdays
-    ser_popdens_night = df_init[('popdensnighttime', '0')]
+    ser_popdens_night = df_init[("popdensnighttime", "0")]
 
     # if daytime popdens missing and nighttime one existing:
     flag_replace_day = (ser_popdens_day_1 < 0) & (ser_popdens_night >= 0)
-    df_init.loc[flag_replace_day, ('popdensdaytime', '(0,)')] = \
-        ser_popdens_night[flag_replace_day]
+    df_init.loc[flag_replace_day, ("popdensdaytime", "(0,)")] = ser_popdens_night[
+        flag_replace_day
+    ]
     # if nighttime popdens missing and daytime one existing:
     flag_replace_night = (ser_popdens_night < 0) & (ser_popdens_day_1 >= 0)
-    df_init.loc[flag_replace_night, ('popdensnighttime', '0')] = \
-        ser_popdens_day_1[flag_replace_night]
+    df_init.loc[flag_replace_night, ("popdensnighttime", "0")] = ser_popdens_day_1[
+        flag_replace_night
+    ]
 
     # Fraction of weekend population to weekday population
-    ser_frpddwe = df_init[('frpddwe', '0')]
-    ser_popdens_day_2 = ser_popdens_night + \
-        (ser_popdens_day_1-ser_popdens_night)*ser_frpddwe
-    df_init[('popdensdaytime', '(1,)')] = ser_popdens_day_2
+    ser_frpddwe = df_init[("frpddwe", "0")]
+    ser_popdens_day_2 = (
+        ser_popdens_night + (ser_popdens_day_1 - ser_popdens_night) * ser_frpddwe
+    )
+    df_init[("popdensdaytime", "(1,)")] = ser_popdens_day_2
 
     # # `numcapita` calculation:
     # below is now done in suews kernel
@@ -1509,7 +1548,7 @@ def add_state_init_df(df_init):
     # df_init[('numcapita', '(1,)')] = df_init[[
     #     ('popdensdaytime', '(1,)'), ('popdensnighttime', '0')]].mean(axis=1)
     # `gridiv` addition:
-    df_init[('gridiv', '0')] = df_init.index
+    df_init[("gridiv", "0")] = df_init.index
 
     return df_init
 
@@ -1517,14 +1556,14 @@ def add_state_init_df(df_init):
 # add additional parameters to `df` produced by `load_SUEWS_InitialCond_df`
 # @functools.lru_cache(maxsize=16)
 def load_InitialCond_grid_df(path_runcontrol, force_reload=True):
-    if force_reload: # clean all cached states
+    if force_reload:  # clean all cached states
         gen_df_siteselect_exp.cache_clear()
         load_SUEWS_table.cache_clear()
         lookup_code_lib.cache_clear()
         lookup_KeySeq_lib.cache_clear()
         gen_all_code_df.cache_clear()
         build_code_exp_df.cache_clear()
-        logger_supy.info('All cache cleared.')
+        logger_supy.info("All cache cleared.")
 
     # load base df of InitialCond
     df_init = load_SUEWS_InitialCond_df(path_runcontrol)
@@ -1543,7 +1582,7 @@ def load_InitialCond_grid_df(path_runcontrol, force_reload=True):
 
     # # sort column names for consistency
     # df_init = df_init.sort_index(axis=1)
-    df_init.index.set_names('grid', inplace=True)
+    df_init.index.set_names("grid", inplace=True)
 
     # df_init.to_pickle('df_init.pkl')
     # print('df_init.pkl done!')
@@ -1561,7 +1600,7 @@ def load_InitialCond_grid_df(path_runcontrol, force_reload=True):
 
 # load df_state from csv
 def load_df_state(path_csv: Path) -> pd.DataFrame:
-    '''load `df_state` from `path_csv`
+    """load `df_state` from `path_csv`
 
     Parameters
     ----------
@@ -1572,7 +1611,7 @@ def load_df_state(path_csv: Path) -> pd.DataFrame:
     -------
     pd.DataFrame
         `df_state` produced by a supy run
-    '''
+    """
 
     df_state = pd.read_csv(
         path_csv,

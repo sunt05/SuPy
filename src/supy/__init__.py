@@ -12,10 +12,20 @@
 # 02 Oct 2019: logger restructured
 ###########################################################################
 
+import lazy_import
+lazy_import.lazy_module("numpy")
+lazy_import.lazy_module("scipy.stats")
+
 # core functions
-from ._supy_module import (init_supy, load_SampleData,
-                           load_forcing_grid, run_supy, save_supy,
-                           check_forcing, check_state)
+from ._supy_module import (
+    init_supy,
+    load_SampleData,
+    load_forcing_grid,
+    run_supy,
+    save_supy,
+    check_forcing,
+    check_state,
+)
 
 
 # utilities

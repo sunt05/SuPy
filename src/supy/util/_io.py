@@ -20,10 +20,13 @@ def parse_suews_datetime(df_raw: pd.DataFrame) -> pd.DataFrame:
 
     # set timestamp as index
     idx_dt = pd.date_range(
-        *df_raw.iloc[[0, -1], :4].astype(int).astype(str).apply(
-            lambda ser: ser.str.cat(sep=' '),
-            axis=1).map(lambda dt: pd.to_datetime(dt, format='%Y %j %H %M')),
-        periods=df_raw.shape[0])
+        *df_raw.iloc[[0, -1], :4]
+        .astype(int)
+        .astype(str)
+        .apply(lambda ser: ser.str.cat(sep=" "), axis=1)
+        .map(lambda dt: pd.to_datetime(dt, format="%Y %j %H %M")),
+        periods=df_raw.shape[0],
+    )
 
     df_datetime = df_raw.set_index(idx_dt)
 
@@ -45,10 +48,9 @@ def read_suews(path_suews_file: str) -> pd.DataFrame:
     """
 
     path_suews_file = Path(path_suews_file).resolve()
-    df_raw = pd.read_csv(path_suews_file,
-                         delim_whitespace=True,
-                         comment='!',
-                         error_bad_lines=True)
+    df_raw = pd.read_csv(
+        path_suews_file, delim_whitespace=True, comment="!", error_bad_lines=True
+    )
     df_suews = parse_suews_datetime(df_raw)
     return df_suews
 
@@ -76,9 +78,8 @@ def read_forcing(filename_pattern: str, tstep_mod=300) -> pd.DataFrame:
     str_pattern = path_suews_file.name
 
     df_forcing_raw = load_SUEWS_Forcing_met_df_pattern(path_input, str_pattern)
-    tstep_met_in = df_forcing_raw.index.to_series().diff()[-1] / pd.Timedelta(
-        '1s')
-    df_forcing_raw = df_forcing_raw.asfreq(f'{tstep_met_in:.0f}s')
+    tstep_met_in = df_forcing_raw.index.to_series().diff()[-1] / pd.Timedelta("1s")
+    df_forcing_raw = df_forcing_raw.asfreq(f"{tstep_met_in:.0f}s")
 
     # resampling
     if tstep_mod is not None:
