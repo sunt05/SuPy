@@ -12,9 +12,6 @@
 # 02 Oct 2019: logger restructured
 ###########################################################################
 
-import lazy_import
-lazy_import.lazy_module("numpy")
-lazy_import.lazy_module("scipy.stats")
 
 # core functions
 from ._supy_module import (
