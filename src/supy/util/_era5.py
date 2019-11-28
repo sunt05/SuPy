@@ -666,7 +666,7 @@ def format_df_forcing(df_forcing_raw):
         df_forcing_grid.loc[:, 'kdown'] > 0, 0)
 
     # trim decimals
-    df_forcing_grid = df_forcing_grid.round(2)
+    df_forcing_grid.iloc[:, 4:] = df_forcing_grid.iloc[:, 4:].round(2)
 
     df_forcing_grid = df_forcing_grid.replace(np.nan, -999).asfreq('1h')
 

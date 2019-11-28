@@ -406,11 +406,9 @@ def load_SUEWS_SurfaceChar(path_input):
     return df_x_grid
 
 
-def func_parse_date(year, doy, hour, min):
-    # dt = datetime.datetime.strptime(
-    #     ' '.join([year, doy, hour, min]), '%Y %j %H %M')
+def func_parse_date(year, doy, hour, minute):
     dt = pd.to_datetime(' '.join(
-        [str(k) for k in [year, doy, hour, min]]),
+        [str(k) for k in [year, doy, hour, minute]]),
         format='%Y %j %H %M')
     return dt
 
