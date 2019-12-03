@@ -34,7 +34,7 @@ setup(
     # distclass=BinaryDistribution,
     ext_modules=[],
     install_requires=[
-        "numpy>=1.15.2",
+        "numpy>=1.17.2",
         "pandas>=0.25.1",
         "tables",  # for dumping in hdf5
         "scipy",
