@@ -1,18 +1,17 @@
 # supy utilities
-import lazy_import
 
-# lazy_import.lazy_module("._tmy")
+
 from ._tmy import gen_epw, read_epw
 
-# lazy_import.lazy_module("._era5")
+
 from ._era5 import download_era5, gen_forcing_era5
 
 from ._gap_filler import fill_gap_all
 
-# lazy_import.lazy_module("._plot")
+
 from ._plot import plot_comp, plot_day_clm
 
-# lazy_import.lazy_module("._ohm")
+
 from ._ohm import derive_ohm_coef, sim_ohm, replace_ohm_coeffs
 
 from ._atm import (
@@ -29,5 +28,4 @@ from ._atm import (
 )
 from ._io import read_suews, parse_suews_datetime, read_forcing
 
-# lazy_import.lazy_module("._wrf")
 from ._wrf import extract_reclassification, plot_reclassification
