@@ -7,6 +7,7 @@ import os
 import pandas as pd
 from pathlib import Path
 from ._env import logger_supy
+from ._post import var_df as df_var_out
 
 
 def gen_df_save(df_grid_group: pd.DataFrame) -> pd.DataFrame:
@@ -114,6 +115,19 @@ def save_df_grid_group(df_grid_group, grid, group, site="test", dir_save="."):
     return path_out
 
 
+# a pd.Series of variables of different output levels
+ser_level_var = df_var_out.loc["SUEWS", "outlevel"].astype(int)
+
+# a dict of variables of different output level
+dict_level_var = {
+    # all but snow-related variables
+    0: ser_level_var.loc[ser_level_var <= 1].index,
+    # all output variables
+    1: ser_level_var.loc[ser_level_var <= 2].index,
+    # minimal set of variables
+    2: ser_level_var.loc[ser_level_var == 0].index,
+}
+
 # save output files
 def save_df_output(
     df_output: pd.DataFrame,
@@ -149,6 +163,8 @@ def save_df_output(
     list
         a list of `Path` objects for saved txt files
     """
+    # save a local copy
+    df_save = df_output.copy()
 
     # path list of files to save
     list_path_save = []
@@ -158,10 +174,10 @@ def save_df_output(
 
     # drop snow related group from output groups
     if not save_snow:
-        df_output = df_output.drop("snow", axis=1)
+        df_save = df_save.drop("snow", axis=1)
 
     # resample `df_output` at `freq_save`
-    df_rsmp = resample_output(df_output, freq_save)
+    df_rsmp = resample_output(df_save, freq_save)
 
     # 'DailyState' group will be dropped in `resample_output` as resampling is not needed
     df_rsmp = df_rsmp.drop(columns="DailyState")
@@ -169,10 +185,10 @@ def save_df_output(
     # dataframes to save
     list_df_save = (
         # both original and resampled output dataframes
-        [df_output, df_rsmp]
+        [df_save, df_rsmp]
         if save_tstep
         # only those resampled ones
-        else [df_rsmp, df_output.loc[:, ["DailyState"]]]
+        else [df_rsmp, df_save.loc[:, ["DailyState"]]]
     )
     # save output at the resampling frequency
     for df_save in list_df_save:
@@ -183,6 +199,12 @@ def save_df_output(
                 df_output_grid_group = df_save.loc[grid, group].dropna(
                     how="all", axis=0
                 )
+                # select output variables in `SUEWS` based on output level
+                if group == "SUEWS":
+                    df_output_grid_group = df_output_grid_group[
+                        dict_level_var[output_level]
+                    ]
+
                 path_save = save_df_grid_group(
                     df_output_grid_group,
                     grid,
