@@ -108,7 +108,7 @@ def init_supy(path_init: str, force_reload=True, check_input=False,) -> pd.DataF
             logger_supy.critical(
                 f"{path_init_x} is NOT a valid file to initialise SuPy!"
             )
-            sys.exit()
+            raise RuntimeError("{path_init_x} is NOT a valid file to initialise SuPy!")
         if check_input:
             try:
                 list_issues = check_state(df_state_init)
@@ -117,7 +117,7 @@ def init_supy(path_init: str, force_reload=True, check_input=False,) -> pd.DataF
                         f"`df_state_init` loaded from {path_init_x} is NOT valid to initialise SuPy!"
                     )
             except:
-                sys.exit()
+                raise RuntimeError("{path_init_x} is NOT a valid file to initialise SuPy!")
         else:
             return df_state_init
 
