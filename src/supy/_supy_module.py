@@ -372,6 +372,8 @@ def save_supy(
     path_runcontrol: str = None,
     save_tstep=False,
     logging_level=50,
+    output_level=1,
+    save_snow=True,
 ) -> list:
     """Save SuPy run results to files
 
@@ -395,6 +397,12 @@ def save_supy(
     logging_level: logging level
         one of these values [50 (CRITICAL), 40 (ERROR), 30 (WARNING), 20 (INFO), 10 (DEBUG)].
         A lower value informs SuPy for more verbose logging info.
+    output_level : integer, optional
+        option to determine selection of output variables, by default 1.
+        Notes: 0 for all but snow-related; 1 for all; 2 for a minimal set without land cover specific information.
+    save_snow : bool, optional
+        whether to save snow-related output variables in a separate file, by default True.
+
 
     Returns
     -------
@@ -422,10 +430,18 @@ def save_supy(
 
     # get necessary information for saving procedure
     if path_runcontrol is not None:
-        freq_s, path_dir_save, site, save_tstep = get_save_info(path_runcontrol)
+        freq_s, path_dir_save, site, save_tstep, output_level = get_save_info(
+            path_runcontrol
+        )
+
+    # determine `save_snow` option
+    snowuse = df_state_final.iloc[-1].loc["snowuse"].values.item()
+    save_snow = True if snowuse == 1 else False
 
     # save df_output to several files
-    list_path_save = save_df_output(df_output, freq_s, site, path_dir_save, save_tstep,)
+    list_path_save = save_df_output(
+        df_output, freq_s, site, path_dir_save, save_tstep, output_level, save_snow
+    )
 
     # save df_state
     if path_runcontrol is not None:

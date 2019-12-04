@@ -121,6 +121,8 @@ def save_df_output(
     site: str = "",
     path_dir_save: Path = Path("."),
     save_tstep=False,
+    output_level=1,
+    save_snow=True,
 ) -> list:
     """save supy output dataframe to txt files
 
@@ -136,6 +138,11 @@ def save_df_output(
         site code used for filename (the default is '', which indicates no site name prepended to the filename)
     save_tstep : bool, optional
         whether to save results in temporal resolution as in simulation (which may result very large files and slow progress), by default False.
+    output_level : integer, optional
+        option to determine selection of output variables, by default 1.
+        Notes: 0 for all but snow-related; 1 for all; 2 for a minimal set without land cover specific information.
+    save_snow : bool, optional
+        whether to save snow-related output variables in a separate file, by default True.
 
     Returns
     -------
@@ -148,15 +155,23 @@ def save_df_output(
 
     # resample output if `freq_s` is different from runtime `freq` (usually 5 min)
     freq_save = pd.Timedelta(freq_s, "s")
+
+    # drop snow related group from output groups
+    if not save_snow:
+        df_output = df_output.drop("snow", axis=1)
+
     # resample `df_output` at `freq_save`
     df_rsmp = resample_output(df_output, freq_save)
+
     # 'DailyState' group will be dropped in `resample_output` as resampling is not needed
     df_rsmp = df_rsmp.drop(columns="DailyState")
 
     # dataframes to save
     list_df_save = (
+        # both original and resampled output dataframes
         [df_output, df_rsmp]
         if save_tstep
+        # only those resampled ones
         else [df_rsmp, df_output.loc[:, ["DailyState"]]]
     )
     # save output at the resampling frequency
@@ -229,10 +244,11 @@ def get_save_info(path_runcontrol: str) -> Tuple[int, Path, str]:
     Returns
     -------
     tuple
-        A tuple including (freq_s, dir_save, site):
+        A tuple including (freq_s, dir_save, site, writeoutoption):
         freq_s: output frequency in seconds
         dir_save: directory name to save results
         site: site identifier
+        writeoutoption: option for selection of output variables
     """
 
     try:
@@ -241,19 +257,20 @@ def get_save_info(path_runcontrol: str) -> Tuple[int, Path, str]:
         logger_supy.exception(f"{path_runcontrol} does not exists!")
     else:
         dict_mod_cfg = load_SUEWS_dict_ModConfig(path_runcontrol)
-        freq_s, dir_save, site, save_tstep = [
+        freq_s, dir_save, site, save_tstep, writeoutoption = [
             dict_mod_cfg[x]
             for x in [
                 "resolutionfilesout",
                 "fileoutputpath",
                 "filecode",
                 "keeptstepfilesout",
+                "writeoutoption",
             ]
         ]
         dir_save = path_runcontrol.parent / dir_save
         if not dir_save.exists():
             dir_save.mkdir()
-        return freq_s, dir_save, site, save_tstep
+        return freq_s, dir_save, site, save_tstep, writeoutoption
 
 
 # TODO: fix gdd/sdd initialisation
