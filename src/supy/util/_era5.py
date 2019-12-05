@@ -782,7 +782,7 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml):
 
     # retrieve variables from the identified lowest level
     ds_ll = ds_ml.sel(
-        time=ds_ml.time, level=xarray.DataArray(level_sel.values, dims="time")
+        time=ds_ml.time, level=xr.DataArray(level_sel.values, dims="time")
     )
 
     # altitude
@@ -857,6 +857,7 @@ def diag_era5(
     # https://www.ecmwf.int/en/elibrary/16648-part-iv-physical-processes
 
     from atmosp import calculate as ac
+    import xarray as xr
     from ._atm import cal_lat_vap, cal_cp, cal_psi_mom, cal_psi_heat
 
     # von Karman constant
