@@ -24,10 +24,6 @@ def get_args_suews(docstring=sd.suews_cal_main.__doc__):
     docLines = np.array(docstring.splitlines(), dtype=str)
 
     # get the information of input variables for SUEWS_driver
-    # posInput = np.where(
-    #     np.logical_or(
-    #         docLines == 'Parameters', docLines == 'Returns'))
-    # varInputLines = docLines[posInput[0][0] + 2:posInput[0][1] - 1]
     ser_docs = pd.Series(docLines)
     varInputLines = ser_docs[ser_docs.str.contains("input|in/output")].values
     varInputInfo = np.array(
@@ -67,9 +63,6 @@ def get_args_suews_multitsteps():
     docLines = np.array(sd.suews_cal_multitsteps.__doc__.splitlines(), dtype=str)
 
     # get the information of input variables for SUEWS_driver
-    # posInput = np.where(
-    #     np.logical_or(
-    #         docLines == 'Parameters', docLines == 'Returns'))
     ser_docs = pd.Series(docLines)
     varInputLines = ser_docs[ser_docs.str.contains("input|in/output")].values
     varInputInfo = np.array(
@@ -157,7 +150,7 @@ dict_libVar2File = {
 # dictionaries:
 # links between code in SiteSelect to properties in according tables
 # this is described in SUEWS online manual:
-# https://suews-docs.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/SUEWS_SiteInfo.html
+# https://suews.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/SUEWS_SiteInfo.html
 path_code2file = path_supy_module / "code2file.json"
 dict_Code2File = pd.read_json(path_code2file, typ="series").to_dict()
 # variable translation as done in Fortran-SUEWS
@@ -215,13 +208,11 @@ df_var_info = df_info_suews_cal_multitsteps.merge(
     df_info_suews_cal_main, how="outer"
 ).set_index("name")
 
+
 # load model settings
 # load configurations: mod_config
 # process RunControl.nml
 # this function can handle all SUEWS nml files
-
-
-# @functools.lru_cache(maxsize=128)
 def load_SUEWS_nml(path_file):
     # remove case issues
     # xfile = path_insensitive(xfile)
@@ -233,12 +224,6 @@ def load_SUEWS_nml(path_file):
         return df_res
     except FileNotFoundError:
         logger_supy.exception(f"{path_file} does not exists!")
-
-
-# def load_SUEWS_RunControl(path_file):
-#     lib_RunControl = load_SUEWS_nml(path_file)
-#     # return DataFrame containing settings
-#     return lib_RunControl
 
 
 # load all tables (xgrid.e., txt files)
@@ -267,7 +252,6 @@ def load_SUEWS_table(path_file):
 
 
 # load all tables into variables staring with 'lib_' and filename
-# @functools.lru_cache(maxsize=16)
 def load_SUEWS_Libs(path_input):
     dict_libs = {}
     for lib, lib_file in dict_libVar2File.items():
@@ -299,12 +283,8 @@ def lookup_code_lib(libCode, codeKey, codeValue, path_input):
 
 
 # a recursive function to retrieve value based on key sequences
-# @hash_dict
 @functools.lru_cache(maxsize=None)
 def lookup_KeySeq_lib(indexKey, subKey, indexCode, path_input):
-    # print('\ntest lookup_KeySeq_lib')
-    # print(indexKey, subKey, indexCode, type(subKey))
-    # print('test end\n')
     if isinstance(subKey, float):
         res = subKey
     # elif indexKey == 'const':
@@ -621,7 +601,6 @@ def load_SUEWS_Forcing_met_df_raw(
 
 
 # caching loaded met df for better performance in initialisation
-# @functools.lru_cache(maxsize=None)
 def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
     """Short summary.
 
@@ -870,7 +849,6 @@ def gen_all_code_df(path_input):
 
 
 # generate df for all const based columns
-# @functools.lru_cache(maxsize=16)
 def gen_all_const_df(path_input):
     dict_libs = load_SUEWS_Libs(path_input)
     df_siteselect = dict_libs["lib_SiteSelect"]
@@ -1215,7 +1193,6 @@ dict_RunControl_default = {
 
 
 # load RunControl variables
-# @functools.lru_cache(maxsize=16)
 def load_SUEWS_dict_ModConfig(path_runcontrol, dict_default=dict_RunControl_default):
     dict_RunControl = dict_default.copy()
     dict_RunControl_x = load_SUEWS_nml(path_runcontrol).loc[:, "runcontrol"].to_dict()
@@ -1296,10 +1273,8 @@ dict_InitCond_extra = {
 dict_InitCond_default = dict_InitCond_extra.copy()
 dict_InitCond_default.update(dict_InitCond_out)
 
+
 # load initial conditions of all grids as a DataFrame
-
-
-# @functools.lru_cache(maxsize=16)
 def load_SUEWS_InitialCond_df(path_runcontrol):
     # load basic model settings
     dict_ModConfig = load_SUEWS_dict_ModConfig(path_runcontrol)
@@ -1414,27 +1389,16 @@ def add_veg_init_df(df_init):
 
     # set veg related parameters
     for var_veg, var_leaves_on, var_leaves_off in list_var_veg:
-        # print(var_veg, var_leaves_on, var_leaves_off)
+
         # get default values based on ser_leaves_on_flag
         val_dft = df_init[var_leaves_on].where(
             ser_leaves_on_flag, df_init[var_leaves_off]
         )
-        # if 'lai' in var_veg[0]:
-        #     print('ser_leaves_on_flag', ser_leaves_on_flag)
-        #     print('var_leaves_on', df_init[var_leaves_on].values)
-        #     print('var_leaves_off', df_init[var_leaves_off].values)
-        #     print('val_dft', val_dft.values)
-        #     print('')
+
         # replace with val_dft if set as -999 (i.e., nan)
         ser_valid_flag = ~(df_init[var_veg] == -999)
-        # ser_nan_flag = (df_init[var_veg] == -999)
 
         df_init[var_veg] = df_init[var_veg].where(ser_valid_flag, val_dft)
-        # if 'lai' in var_veg[0]:
-        #     print(var_veg, df_init[var_veg].values)
-        #     print('ser_nan_flag', ser_valid_flag.values)
-        #     print('val_dft', val_dft.values)
-        #     print('\n')
 
     return df_init
 
@@ -1541,12 +1505,6 @@ def add_state_init_df(df_init):
     )
     df_init[("popdensdaytime", "(1,)")] = ser_popdens_day_2
 
-    # # `numcapita` calculation:
-    # below is now done in suews kernel
-    # df_init[('numcapita', '(0,)')] = df_init[[
-    #     ('popdensdaytime', '(0,)'), ('popdensnighttime', '0')]].mean(axis=1)
-    # df_init[('numcapita', '(1,)')] = df_init[[
-    #     ('popdensdaytime', '(1,)'), ('popdensnighttime', '0')]].mean(axis=1)
     # `gridiv` addition:
     df_init[("gridiv", "0")] = df_init.index
 
@@ -1554,15 +1512,19 @@ def add_state_init_df(df_init):
 
 
 # add additional parameters to `df` produced by `load_SUEWS_InitialCond_df`
-# @functools.lru_cache(maxsize=16)
 def load_InitialCond_grid_df(path_runcontrol, force_reload=True):
-    if force_reload:  # clean all cached states
-        gen_df_siteselect_exp.cache_clear()
-        load_SUEWS_table.cache_clear()
-        lookup_code_lib.cache_clear()
-        lookup_KeySeq_lib.cache_clear()
-        gen_all_code_df.cache_clear()
-        build_code_exp_df.cache_clear()
+
+    # clean all cached states
+    if force_reload:
+        import gc
+
+        gc.collect()
+        wrappers = [
+            a for a in gc.get_objects() if isinstance(a, functools._lru_cache_wrapper)
+        ]
+        for wrapper in wrappers:
+            # print(wrapper.__name__)
+            wrapper.cache_clear()
         logger_supy.info("All cache cleared.")
 
     # load base df of InitialCond
@@ -1581,11 +1543,7 @@ def load_InitialCond_grid_df(path_runcontrol, force_reload=True):
     df_init = add_state_init_df(df_init)
 
     # # sort column names for consistency
-    # df_init = df_init.sort_index(axis=1)
     df_init.index.set_names("grid", inplace=True)
-
-    # df_init.to_pickle('df_init.pkl')
-    # print('df_init.pkl done!')
 
     # filter out unnecessary entries by re-arranging the columns
     df_init = trim_df_state(df_init)
