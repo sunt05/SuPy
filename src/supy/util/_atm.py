@@ -1,9 +1,9 @@
-from lmfit import Model, Parameters, Parameter
+
 
 # from scipy.optimize import least_squares
 import numpy as np
 import pandas as pd
-from atmosp import calculate as ac
+
 
 
 # atmospheric related utilities
@@ -19,7 +19,7 @@ def cal_des_dta(ta, pa, dta=1.0):
     dta : float, optional
         change in ta for calculating that in es, by default 1.0 K
     """
-
+    from atmosp import calculate as ac
     des = ac("es", p=pa, T=ta + dta / 2) - ac("es", p=pa, T=ta - dta / 2)
     des_dta = des / dta
     try:
@@ -52,7 +52,7 @@ def cal_rs_obs(qh, qe, ta, rh, pa):
     numeric
         Surface resistance based on observations [s m-1]
     """
-
+    from atmosp import calculate as ac
     # surface resistance at water surface [s m-1]
     rav = 50
 
@@ -270,7 +270,7 @@ def cal_gs_mod(kd, ta_k, rh, pa, smd, lai, g_cst, g_max=30.0, lai_max=6.0, s1=5.
     numeric
         Modelled surface conductance [mm s-1]
     """
-
+    from atmosp import calculate as ac
     # broadcast g1 – g6
     # print('g_cst', g_cst)
     g1, g2, g3, g4, g5, g6 = g_cst
@@ -348,6 +348,7 @@ def calib_g(
     To do so, please place `np.nan` as missing values for QH and QE.
 
     """
+    from lmfit import Model, Parameters, Parameter
     list_var_sel = ["qh", "qe", "Tair", "RH", "pres", "kdown", "xsmd", "lai"]
     df_obs = df_fc_suews[list_var_sel].copy().dropna()
     df_obs.pres *= 100
@@ -413,18 +414,21 @@ def calib_g(
 
 # calculate specific humidity using relative humidity
 def cal_qa(rh_pct, theta_K, pres_hPa):
+    from atmosp import calculate as ac
     qa = ac("qv", RH=rh_pct, p=pres_hPa * 100, theta=theta_K)
     return qa
 
 
 # calculate relative humidity using specific humidity
 def cal_rh(qa_kgkg, theta_K, pres_hPa):
+    from atmosp import calculate as ac
     RH = ac("RH", av=qa_kgkg, p=pres_hPa * 100, theta=theta_K)
     return RH
 
 
 # calculate latent heat of vaporisation
 def cal_lat_vap(qa_kgkg, theta_K, pres_hPa):
+    from atmosp import calculate as ac
     # wel-bulb temperature
     tw = ac(
         "Tw", qv=qa_kgkg, p=pres_hPa, theta=theta_K, remove_assumptions=("constant Lv")
@@ -436,6 +440,7 @@ def cal_lat_vap(qa_kgkg, theta_K, pres_hPa):
 
 # calculate heat capacity of air
 def cal_cp(qa_kgkg, theta_K, pres_hPa):
+    from atmosp import calculate as ac
 
     temp_C = ac("T", theta=theta_K, p=pres_hPa * 100) - 273.15
 

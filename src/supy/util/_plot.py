@@ -3,8 +3,8 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
-from scipy import stats
+
+
 
 
 def plot_day_clm(df_var, fig=None, ax=None):
@@ -70,8 +70,6 @@ def plot_day_clm(df_var, fig=None, ax=None):
 
 
 # comparison plot with 1:1 line added:
-
-
 def plot_comp(df_var, fig=None, ax=None):
     """Produce a scatter plot with linear regression line to compare simulation results and observations.
 
@@ -87,6 +85,10 @@ def plot_comp(df_var, fig=None, ax=None):
         figure showing 1:1 line plot
 
     """
+    # import when used for better performance in loading supy
+    import seaborn as sns
+    from scipy import stats
+
     if fig is None and ax is None:
         fig, ax = plt.subplots()
     elif fig is None:

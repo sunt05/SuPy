@@ -9,15 +9,7 @@ Ting Sun
 
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LinearRegression
 
-# from datetime import *
-import matplotlib as plt
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-import matplotlib.patches as mpatches
-import seaborn as sns
-from matplotlib import cm
 from ._plot import plot_comp, plot_day_clm
 from .._env import logger_supy
 
@@ -30,6 +22,7 @@ def derive_ohm_coef(ser_QS, ser_QN):
                   dt: The time interval with which the rate of change of QN is calculated. Float (hours).
     Returns: a1, a2 coefficients and a3 (intercept)
     """
+    from sklearn.linear_model import LinearRegression
     # derive dt in hours
     dt_hr = ser_QN.index.freq / pd.Timedelta("1H")
 

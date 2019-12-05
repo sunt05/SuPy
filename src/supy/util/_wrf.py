@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from .._load import load_SUEWS_nml
 from pathlib import Path
-from floweaver import *
+
 
 dict_modis_20 = {
     1: "Evergreen Needleleaf Forest",
@@ -159,6 +159,14 @@ def plot_reclassification(
     Sankey Diagram
         Sankey Diagram showing the reclassification.
     """
+    from floweaver import (
+        Dataset,
+        Partition,
+        ProcessGroup,
+        Waypoint,
+        SankeyDefinition,
+        weave,
+    )
 
     # derive DataFrames required by Sankey
     df_flow, df_process = gen_df_sankey(path_nml)

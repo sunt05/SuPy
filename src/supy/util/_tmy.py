@@ -1,7 +1,6 @@
 from typing import Tuple
 import pandas as pd
 import numpy as np
-import atmosp
 
 from pathlib import Path
 
@@ -350,6 +349,7 @@ def gen_epw(
         - path_epw: path to generated `epw` file
 
     """
+    import atmosp
     df_tmy = df_tmy.copy()
     # df_tmy = pd.concat([df_tmy.iloc[1:], df_tmy.iloc[[0]]])
     # adding necessary variables that can be derive from supy output

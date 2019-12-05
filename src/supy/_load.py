@@ -8,8 +8,8 @@ from pathlib import Path
 import f90nml
 import numpy as np
 import pandas as pd
-from dask import dataframe as dd
-from scipy.interpolate import interp1d
+
+
 from supy_driver import suews_driver as sd
 
 from ._env import path_supy_module, logger_supy
@@ -525,30 +525,30 @@ def resample_linear(data_raw, tstep_in, tstep_mod):
     dt = (xt - xt.min()).total_seconds()
     xt_new = pd.date_range(xt.min(), xt.max(), freq=f"{tstep_mod}S")
     dt_new = (xt_new - xt_new.min()).total_seconds()
+
     # using `interp1d` for better performance
+    from scipy.interpolate import interp1d
     f = interp1d(dt, data_raw_shift.values, axis=0)
     val_new = f(dt_new)
+
     # manual running mean for better performance
     val_new_mvavg = 0.5 * (val_new[:-1] + val_new[1:])
+
     # construct a dataframe
     data_raw_tstep = pd.DataFrame(
         val_new_mvavg, columns=data_raw_shift.columns, index=xt_new[1:]
     )
-    #     data_raw_tstep = dd.from_pandas(data_raw_tstep, npartitions=cpu_count())
-    #     data_raw_tstep = data_raw_tstep.rolling(window=2, center=False).mean()
-    # val_new.shape
+
     # assign a new start with nan
     t_start = data_raw.index.shift(-tstep_in + tstep_mod, freq="S")[0]
     t_end = data_raw.index[-1]
     ind_t = pd.date_range(t_start, t_end, freq=f"{tstep_mod}S")
+
     # re-align the index so after resampling we can have filled heading part
-    #     data_raw_tstep = data_raw_tstep.compute()
     data_tstep = data_raw_tstep.reindex(ind_t)
-    #     data_tstep = dd.from_pandas(data_raw_tstep, npartitions=cpu_count())
     data_tstep = data_tstep.bfill()
     data_tstep = data_tstep.ffill()
-    #     data_tstep = data_tstep.dropna()
-    #     data_tstep = data_tstep.compute()
+
     # correct temporal information
     ser_t = ind_t.to_series()
     data_tstep["iy"] = ser_t.dt.year
@@ -615,6 +615,7 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
         Description of returned object.
 
     """
+    from dask import dataframe as dd
 
     # list of met forcing files
     path_input = path_input.resolve()
@@ -1517,7 +1518,6 @@ def load_InitialCond_grid_df(path_runcontrol, force_reload=True):
     # clean all cached states
     if force_reload:
         import gc
-
         gc.collect()
         wrappers = [
             a for a in gc.get_objects() if isinstance(a, functools._lru_cache_wrapper)

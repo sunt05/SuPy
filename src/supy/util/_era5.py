@@ -1,15 +1,9 @@
 # suppress pandas warnings
-from ._atm import cal_lat_vap, cal_cp, cal_psi_mom, cal_psi_heat
-from atmosp import calculate as ac
+
 from supy_driver import meteo
 from supy_driver import atmmoiststab_module as stab
 import os
-import atmosp
-import xarray as xr
-import cdsapi
-from multiprocessing import Pool
 from .._env import logger_supy
-from scipy.interpolate import interp1d
 from numpy import cos, deg2rad, sin, sqrt
 import pandas as pd
 import numpy as np
@@ -102,13 +96,7 @@ def geopotential2geometric(h: float, latitude: float) -> float:
 
 
 # functions to interpolate the atmospheric variables to a specified height/altitude
-def get_ser_val_alt(
-    lat: float,
-    lon: float,
-    da_alt_x: xr.DataArray,
-    da_alt: xr.DataArray,
-    da_val: xr.DataArray,
-) -> pd.Series:
+def get_ser_val_alt(lat: float, lon: float, da_alt_x, da_alt, da_val,) -> pd.Series:
     """interpolate atmospheric variable to a specified altitude
 
     Parameters
@@ -117,11 +105,11 @@ def get_ser_val_alt(
         latitude of specified site
     lon : float
         longitude of specified site
-    da_alt_x : xr.DataArray
+    da_alt_x
         desired altitude to interpolate variable at
-    da_alt : xr.DataArray
+    da_alt
         altitude associated with `da_val`: variable array to interpolate
-    da_val : xr.DataArray
+    da_val
         atmospheric variable to interpolate
 
     Returns
@@ -129,6 +117,7 @@ def get_ser_val_alt(
     pd.Series
         interpolated values at the specified altitude of site positioned by [`lat`, `lon`]
     """
+    from scipy.interpolate import interp1d
 
     alt_t_1d = da_alt.sel(latitude=lat, longitude=lon, method="nearest")
     val_t_1d = da_val.sel(latitude=lat, longitude=lon, method="nearest")
@@ -140,9 +129,7 @@ def get_ser_val_alt(
     return ser_alt
 
 
-def get_df_val_alt(
-    lat: float, lon: float, da_alt_meas: xr.DataArray, ds_val: xr.Dataset
-):
+def get_df_val_alt(lat: float, lon: float, da_alt_meas, ds_val):
     """interpolate atmospheric variables to a specified altitude
 
     Parameters
@@ -151,11 +138,11 @@ def get_df_val_alt(
         latitude of specified site
     lon : float
         longitude of specified site
-    da_alt_x : xr.DataArray
+    da_alt_x
         desired altitude to interpolate variable at
-    da_alt : xr.DataArray
+    da_alt
         altitude associated with `da_val`: variable array to interpolate
-    da_val : xr.DataArray
+    da_val
         atmospheric varialble to interpolate
 
     Returns
@@ -163,6 +150,8 @@ def get_df_val_alt(
     pd.DataFrame
         interpolated values at the specified altitude of site positioned by [`lat`, `lon`]
     """
+    from scipy.interpolate import interp1d
+
     da_alt = geopotential2geometric(ds_val.z, ds_val.latitude)
     # generate pressure series for grid x
     da_alt_x = da_alt.sel(latitude=lat, longitude=lon, method="nearest")
@@ -412,6 +401,8 @@ def sel_list_pres(ds_sfc_x):
 
 # for each sfc data file, determine the necessary vertical levels to model level data download
 def gen_req_ml(fn_sfc, grid=[0.125, 0.125], scale=0):
+    import xarray as xr
+
     ds_sfc_x = xr.open_dataset(fn_sfc)
     list_pres_sel = sel_list_pres(ds_sfc_x)
     size = grid[0] * scale
@@ -435,6 +426,8 @@ def gen_req_ml(fn_sfc, grid=[0.125, 0.125], scale=0):
 
 
 def download_cds(fn, dict_req):
+    import cdsapi
+
     c = cdsapi.Client()
     if Path(fn).exists():
         logger_supy.warning(f"{fn} exists!")
@@ -616,6 +609,7 @@ def gen_forcing_era5(
         to get simulation-ready `DataFrame`s.
 
     """
+    import xarray as xr
 
     # download data
     list_fn_sfc, list_fn_ml = load_filelist_era5(
@@ -664,6 +658,8 @@ def gen_forcing_era5(
 
 # format dataframe to SUEWS convention
 def format_df_forcing(df_forcing_raw):
+    from atmosp import calculate as ac
+
     df_forcing_grid = df_forcing_raw.copy().round(3)
 
     # convert energy fluxes: [J m-2] to [W m-2]
@@ -763,6 +759,8 @@ def format_df_forcing(df_forcing_raw):
 
 # generate supy forcing using ERA-5 data
 def gen_ds_diag_era5(list_fn_sfc, list_fn_ml):
+    import xarray as xr
+    from atmosp import calculate as ac
 
     # list_fn_sfc, list_fn_ml = load_download_era5(
     #     lat_x, lon_x, start, end, grid, scale, dir_save)
@@ -784,7 +782,7 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml):
 
     # retrieve variables from the identified lowest level
     ds_ll = ds_ml.sel(
-        time=ds_ml.time, level=xr.DataArray(level_sel.values, dims="time")
+        time=ds_ml.time, level=xarray.DataArray(level_sel.values, dims="time")
     )
 
     # altitude
@@ -857,6 +855,9 @@ def diag_era5(
     # Section 3.10.2 and 3.10.3 in
     # IFS Documentation CY41R2: Part IV: Physical Processes
     # https://www.ecmwf.int/en/elibrary/16648-part-iv-physical-processes
+
+    from atmosp import calculate as ac
+    from ._atm import cal_lat_vap, cal_cp, cal_psi_mom, cal_psi_heat
 
     # von Karman constant
     kappa = 0.4
