@@ -1,4 +1,5 @@
 From,To,Action,File,Variable,Column,Value
+2019a,2019b,Keep,-999,-999,-999,-999
 2018c,2019a,Rename_File,SUEWS_AnthropogenicHeat.txt,-999,-999,SUEWS_AnthropogenicEmission.txt
 2018c,2019a,Add,SUEWS_AnthropogenicHeat.txt,CO2PointSource,38,0
 2018c,2019a,Add,SUEWS_AnthropogenicHeat.txt,FcEF_v_kgkmWE,37,0.285

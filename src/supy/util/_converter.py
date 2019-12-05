@@ -37,9 +37,6 @@ warnings.filterwarnings("ignore")
 rules = pd.read_csv(path_supy_module / "util" / "rules.csv")
 list_ver_from = rules["From"].unique().tolist()
 list_ver_to = rules["To"].unique().tolist()
-# str_rules = rules.stack().str.decode('utf-8').unstack()
-# for col in str_rules:
-#     rules[col] = str_rules[col]
 
 # %%
 ########################################################

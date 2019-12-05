@@ -1,5 +1,4 @@
 import functools
-import logging
 from ast import literal_eval
 from datetime import timedelta
 from multiprocessing import cpu_count
@@ -9,10 +8,9 @@ import f90nml
 import numpy as np
 import pandas as pd
 
-
 from supy_driver import suews_driver as sd
 
-from ._env import path_supy_module, logger_supy
+from ._env import logger_supy, path_supy_module
 from ._misc import path_insensitive
 
 
