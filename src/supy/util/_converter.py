@@ -9,10 +9,10 @@
 # TS, 21 May 2019: integrated into supy
 ########################################################
 # %%
+import logging
 import os
 import os.path
 import sys
-import logging
 
 # ignore warnings raised by numpy when reading-in -9 lines
 import warnings
@@ -21,12 +21,13 @@ from fnmatch import fnmatch
 from heapq import heappop, heappush
 from pathlib import Path
 from shutil import copyfile, copytree, move, rmtree
+from tempfile import TemporaryDirectory, TemporaryFile
 
 import f90nml
 import numpy as np
 import pandas as pd
 
-from .._env import path_supy_module, logger_supy
+from .._env import logger_supy, path_supy_module
 from .._load import load_SUEWS_nml
 from .._misc import path_insensitive
 
@@ -72,6 +73,7 @@ def rename_var(toFile, toVar, toCol, toVal):
             comments="!",
             names=True,
             invalid_raise=False,
+            encoding="UTF8",
         )
         # generate headers
         header = np.array(dataX.dtype.names)
@@ -111,7 +113,12 @@ def delete_var(toFile, toVar, toCol, toVal):
         delete_var_nml(toFile, toVar, toVal)
     else:
         dataX = np.genfromtxt(
-            toFile, dtype=np.ndarray, skip_header=1, comments="!", invalid_raise=False
+            toFile,
+            dtype=np.ndarray,
+            skip_header=1,
+            comments="!",
+            invalid_raise=False,
+            encoding="UTF8",
         )
 
         # convert to a more handy array
@@ -208,7 +215,9 @@ def SUEWS_Converter_single(fromDir, toDir, fromVer, toVer):
             fileList.append(fileX)
 
     for fileX in fileList:
-        copyfile(os.path.join(fromDir, fileX), os.path.join(toDir, fileX))
+        file_dst = os.path.join(toDir, fileX)
+        copyfile(os.path.join(fromDir, fileX), file_dst)
+        convert_utf8(file_dst)
 
     # list all files involved in the given conversion
     posRules = np.unique(
@@ -216,12 +225,12 @@ def SUEWS_Converter_single(fromDir, toDir, fromVer, toVer):
             np.array(rules.loc[:, ["From", "To"]].values.tolist()) == [fromVer, toVer]
         )[0]
     )
-    filesToConvert = np.unique(rules["File"][posRules])
+    filesToConvert = set(rules["File"][posRules])-{'-999'}
     # print('posRules', posRules,
     #       rules.loc[:, ['From', 'To']],
     #       np.array(rules.loc[:, ['From', 'To']].values),
     #       [fromVer, toVer])
-    logger_supy.info(f"filesToConvert: {filesToConvert}")
+    logger_supy.info(f"filesToConvert: {list(filesToConvert)}")
 
     for fileX in filesToConvert:
         logger_supy.info(f"working on file: {fileX}")
@@ -256,12 +265,15 @@ def SUEWS_Converter_file(fileX, actionList):
     todoList = np.array(
         [np.concatenate(([order[x[0]]], x)).tolist() for x in actionList]
     )
-    # print('todoList:\n', todoList, '\n')
+
     # sort by Column number, then by Action order in actionList; also expand
     # dtype size
     todoList = todoList[np.lexsort((todoList[:, 4].astype(int), todoList[:, 0]))][:, 1:]
+    if not Path(fileX).exists():
+        Path(fileX).write_text('Code\n800\n', encoding="UTF8")
 
-    # print todoList,fileX
+    if not fileX.endswith("-999"):
+        logger_supy.info(f"working on {fileX} in {get_encoding_type(fileX)}")
     # correct file names with proper path
     todoList[:, 1] = fileX
     # print todoList,fileX
@@ -335,54 +347,70 @@ def convert_table(fromDir, toDir, fromVer, toVer):
     len_chain = chain_ver[0]
     logger_supy.info(f"working on chained conversion {len_chain} actions to take")
     logger_supy.info(f"chained list: {chain_ver[1:]} \n")
-    tempDir_1 = "temp1"
-    tempDir_2 = "temp2"
-    i = chain_ver[0]
-    # Create temporary folders
-    if os.path.exists(tempDir_1) is False:
-        os.mkdir(tempDir_1)
-    if os.path.exists(tempDir_2) is False:
-        os.mkdir(tempDir_2)
+    import tempfile
 
-    # flatten all file structures in tempDir_1
-    # locate input folder
-    ser_nml = load_SUEWS_nml(str(Path(fromDir) / "RunControl.nml")).runcontrol
-    path_input = (Path(fromDir) / ser_nml["fileinputpath"]).resolve()
-    list_table_input = (
-        [x for x in path_input.glob("SUEWS*.txt")]
-        + [x for x in path_input.glob("*.nml")]
-        + [x for x in Path(fromDir).resolve().glob("*.nml")]
-    )
-    # copy flattened files into tempDir_1 for later processing
-    tempDir_1 = "temp1"
-    for fileX in list_table_input:
-        copyfile(fileX.resolve(), Path(tempDir_1) / (fileX.name))
-    # print(list_table_input)
-    # print(tempDir_1)
+    # xx=tempfile.gettempdir()
+    with TemporaryDirectory() as dir_temp:
+        # dir_temp=xx
+        tempDir_1 = Path(dir_temp) / "temp1"
+        tempDir_2 = Path(dir_temp) / "temp2"
+        i = chain_ver[0]
 
-    # Indirect version conversion process
-    while i > 1:
+        # Create temporary folders
+        if os.path.exists(tempDir_1) is False:
+            os.mkdir(tempDir_1)
+        if os.path.exists(tempDir_2) is False:
+            os.mkdir(tempDir_2)
+
+        # flatten all file structures in tempDir_1
+        # locate input folder
+        ser_nml = load_SUEWS_nml(str(Path(fromDir) / "RunControl.nml")).runcontrol
+        path_input = (Path(fromDir) / ser_nml["fileinputpath"]).resolve()
+        list_table_input = (
+            [x for x in path_input.glob("SUEWS*.txt")]
+            + [x for x in path_input.glob("*.nml")]
+            + [x for x in Path(fromDir).resolve().glob("*.nml")]
+        )
+        # copy flattened files into tempDir_1 for later processing
+        # also convert all files to UTF-8 encoding in case inconsistent encoding exists
+        for fileX in list_table_input:
+            print(fileX)
+            path_dst = Path(tempDir_1) / (fileX.name)
+            copyfile(fileX.resolve(), path_dst)
+
+        # Indirect version conversion process
+        while i > 1:
+            logger_supy.info("**************************************************")
+            logger_supy.info(f"working on: {chain_ver[i + 1]} --> {chain_ver[i]}")
+            if i % 2:
+                # tempDir_2 = "temp2"
+                SUEWS_Converter_single(
+                    tempDir_1, tempDir_2, chain_ver[i + 1], chain_ver[i]
+                )
+                # tempDir_1 = "temp1"
+                # Remove input temporary folders
+                rmtree(tempDir_1, ignore_errors=True)
+
+            else:
+                # tempDir_1 = "temp1"
+                SUEWS_Converter_single(
+                    tempDir_2, tempDir_1, chain_ver[i + 1], chain_ver[i]
+                )
+                # tempDir_2 = "temp2"
+                # Remove input temporary folders
+                rmtree(tempDir_2, ignore_errors=True)
+                # this loop always break in this part
+            logger_supy.info("**************************************************")
+            i -= 1
+
+        logger_supy.info("**************************************************")
         logger_supy.info(f"working on: {chain_ver[i + 1]} --> {chain_ver[i]}")
-        if i % 2:
-            tempDir_2 = "temp2"
-            SUEWS_Converter_single(tempDir_1, tempDir_2, chain_ver[i + 1], chain_ver[i])
-            tempDir_1 = "temp1"
-            # Remove input temporary folders
-            rmtree(tempDir_1, ignore_errors=True)
+        SUEWS_Converter_single(tempDir_1, toDir, chain_ver[2], chain_ver[1])
+        logger_supy.info("**************************************************")
 
-        else:
-            tempDir_1 = "temp1"
-            SUEWS_Converter_single(tempDir_2, tempDir_1, chain_ver[i + 1], chain_ver[i])
-            tempDir_2 = "temp2"
-            # Remove input temporary folders
-            rmtree(tempDir_2, ignore_errors=True)
-            # this loop always break in this part
-        i -= 1
-    logger_supy.info(f"working on: {chain_ver[i + 1]} --> {chain_ver[i]}")
-    SUEWS_Converter_single(tempDir_1, toDir, chain_ver[2], chain_ver[1])
-    # Remove temporary folders
-    rmtree(tempDir_1, ignore_errors=True)
-    rmtree(tempDir_2, ignore_errors=True)
+        # Remove temporary folders
+        rmtree(tempDir_1, ignore_errors=True)
+        rmtree(tempDir_2, ignore_errors=True)
 
     # cleaning and move input tables into the `input` folder
     ser_nml = load_SUEWS_nml(str(Path(toDir) / "RunControl.nml")).runcontrol
@@ -398,3 +426,41 @@ def convert_table(fromDir, toDir, fromVer, toVer):
 
     for fileX in list_table_input:
         move(fileX.resolve(), path_input / (fileX.name))
+
+
+import os
+from chardet import detect
+
+# get file encoding type
+def get_encoding_type(file):
+    with open(file, "rb") as f:
+        rawdata = f.read()
+    return detect(rawdata)["encoding"]
+
+
+def convert_utf8(file_src):
+    path_src = Path(file_src).resolve()
+    from_codec = get_encoding_type(path_src)
+    logger_supy.debug(f"encoding {from_codec} detected in {path_src.name}")
+
+    with TemporaryDirectory() as dir_temp:
+        path_dst = Path(dir_temp) / "out-UTF8.txt"
+        path_dst.touch()
+
+        # add try: except block for reliability
+        try:
+            with open(path_src, "r", encoding=from_codec) as f, open(
+                path_dst, "w", encoding="utf-8"
+            ) as e:
+                text = f.read()  # for small files, for big use chunks
+                e.write(text)
+
+            os.remove(path_src)  # remove old encoding file
+            path_dst.rename(path_src)
+
+            # os.rename(trgfile, srcfile) # rename new encoding
+        except UnicodeDecodeError:
+            logger_supy.error("Decode Error")
+        except UnicodeEncodeError:
+            logger_supy.error("Encode Error")
+

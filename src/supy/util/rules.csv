@@ -94,7 +94,6 @@ From,To,Action,File,Variable,Column,Value
 2016a,2017a,Add,SUEWS_Veg.txt,AnOHM_Cp,35,100000
 2016a,2017a,Add,SUEWS_Veg.txt,AnOHM_Kk,36,1.2
 2016a,2017a,Add,SUEWS_Veg.txt,AnOHM_Ch,37,4
-2016a,2017a,Add,SUEWS_ESTMCoefficients.txt,Code,1,800
 2016a,2017a,Add,SUEWS_ESTMCoefficients.txt,Surf_thick1,2,0.1
 2016a,2017a,Add,SUEWS_ESTMCoefficients.txt,Surf_k1,3,0.74
 2016a,2017a,Add,SUEWS_ESTMCoefficients.txt,Surf_rhoCp1,4,1500000
