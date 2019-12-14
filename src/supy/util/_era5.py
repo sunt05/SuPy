@@ -774,7 +774,7 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml):
     # load data from from `ml` files
     ds_ml = xr.open_mfdataset(list_fn_ml, concat_dim="time")
 
-    # height where to diagnose variables
+    # height where to calculate diagnostics
     hgt_agl_diag = 100
 
     # determine a lowest level higher than surface at all times
@@ -808,6 +808,11 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml):
     # ------------------------
     # retrieve surface data
 
+    # wind speed
+    u10 = ds_sfc.u10
+    v10 = ds_sfc.v10
+    uv10 = np.sqrt(u10 ** 2 + v10 ** 2)
+
     # sensible/latent heat flux [W m-2]
     # conversion from cumulative value to hourly average
     qh = -ds_sfc.sshf / 3600
@@ -836,9 +841,10 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml):
     ds_alt_z = da_alt_z.to_dataset()
 
     # get dataset of diagnostics
-    ds_diag = diag_era5(
-        za, uv_za, theta_za, q_za, pres_za, qh, qe, z0m, ustar, pres_z0, t2, q2, z
-    )
+    # ds_diag = diag_era5(
+    #     za, uv_za, theta_za, q_za, pres_za, qh, qe, z0m, ustar, pres_z0, uv10, t2, q2, z
+    # )
+    ds_diag = diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z)
 
     # merge altitude
     ds_diag = ds_diag.merge(ds_alt_z).drop("level")
@@ -846,9 +852,51 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml):
     return ds_diag
 
 
+# a simple way to diagnose variables at a higher level
+def diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z):
+    from atmosp import calculate as ac
+    import xarray as xr
+    from ._atm import cal_lat_vap, cal_cp, cal_psi_mom, cal_psi_heat
+
+    # constants
+    # environmental lapse rate [K m^-1]
+    env_lapse = 6.5 / 1000.0
+    # gravity [m s^-2]
+    grav = 9.80616
+    # Gas constant for dry air [J K^-1 kg^-1]
+    rd = 287.04
+
+    # correct temperature using lapse rate
+    t_z = t2 - (z - 2) * env_lapse
+
+    # barometric equation with varying temperature:
+    # (https://en.wikipedia.org/wiki/Barometric_formula)
+    p_z = pres_z0 * np.exp((grav * (0 - z)) / (rd * t2))
+
+    # correct humidity assuming invariable relative humidity
+    RH_z = ac("RH", qv=q2, p=pres_z0, theta=t2)+0*t_z
+    q_z = ac("qv", RH=RH_z, p=p_z, theta=t_z)+0*t_z
+
+    # correct wind speed using log law; assuming neutral condition (without stability correction)
+    uv_z = uv10 * (np.log((z + z0m) / z0m) / np.log((10 + z0m) / z0m))
+
+    # generate dataset
+    ds_diag = xr.merge(
+        [
+            uv_z.rename("uv_z"),
+            t_z.rename("theta_z"),
+            q_z.rename("q_z"),
+            RH_z.rename("RH_z"),
+            p_z.rename("p_z"),
+        ]
+    )
+
+    return ds_diag
+
+
 # diagnose ISL variable using MOST
 def diag_era5(
-    za, uv_za, theta_za, q_za, pres_za, qh, qe, z0m, ustar, pres_z0, t2, q2, z
+    za, uv_za, theta_za, q_za, pres_za, qh, qe, z0m, ustar, pres_z0, uv10, t2, q2, z
 ):
 
     # reference:
@@ -870,31 +918,39 @@ def diag_era5(
     z0m = np.where(z0m < 0.03, z0m, 0.03)
 
     # air density
-    avdens = ac("rho", qv=q_za, p=pres_za, theta=theta_za)
+    avdens = ac("rho", qv=q2, p=pres_z0, theta=t2)
 
     # vapour pressure
-    lv_j_kg = cal_lat_vap(q_za, theta_za, pres_za)
+    lv_j_kg = cal_lat_vap(q2, t2, pres_z0)
 
     # heat capacity
-    avcp = cal_cp(q_za, theta_za, pres_za)
+    avcp = cal_cp(q2, t2, pres_z0)
 
     # temperature/humidity scales
     tstar = -qh / (avcp * avdens) / ustar
     # qstar = -qe / (lv_j_kg * avdens) / ustar
 
-    l_mod = ustar ** 2 / (g / theta_za * kappa * tstar)
-    zoL = np.where(np.abs(z / l_mod) < 5, z / l_mod, np.sign(z / l_mod) * 5,)
+    l_mod = ustar ** 2 / (g / t2 * kappa * tstar)
+    zoL = np.where(
+        np.abs((z + z0m) / l_mod) < 5,
+        (z + z0m) / l_mod,
+        np.sign((z + z0m) / l_mod) * 5,
+    )
     # l_mod = np.where(np.abs(l_mod) < 5, l_mod, np.sign(l_mod)*5)
 
     # `stab_psi_mom`, `stab_psi_heat`
     # stability correction for momentum
     psim_z = cal_psi_mom(zoL)
     psim_z0 = cal_psi_mom(z0m / l_mod)
-    psim_za = cal_psi_mom(za / l_mod)
+    psim_10 = cal_psi_mom((10 + z0m) / l_mod)
 
     # wind speed
-    uv_z = uv_za * (
-        (np.log(z / z0m) - psim_z + psim_z0) / (np.log(za / z0m) - psim_za + psim_z0)
+    # uv_z = uv_za * (
+    #     (np.log(z / z0m) - psim_z + psim_z0) / (np.log(za / z0m) - psim_za + psim_z0)
+    # )
+    uv_z = uv10 * (
+        (np.log((z + z0m) / z0m) - psim_z + psim_z0)
+        / (np.log((10 + z0m) / z0m) - psim_10 + psim_z0)
     )
     # uv_z = ustar / kappa * (np.log(z / z0m) - psim_z + psim_z0)
 
