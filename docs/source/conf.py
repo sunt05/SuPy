@@ -21,7 +21,8 @@ import supy
 sys.path.insert(0, os.path.abspath('.'))
 
 print(r'this build is made by:', '\n', sys.version)
-print(r'this build is for:', '\n', supy.show_version())
+print(r'this build is for:', '\n')
+supy.show_version()
 
 
 def subprocess_cmd(command):

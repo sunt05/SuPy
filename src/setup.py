@@ -49,7 +49,7 @@ setup(
         "click",  # cmd tool
         "lmfit",  # optimiser
         "floweaver",  # wrf reclassification Sankey chart
-        "supy_driver==2019b3",  # a separate f2py-based driver
+        "supy_driver==2019b5",  # a separate f2py-based driver
     ],
     entry_points={
         #   command line tools

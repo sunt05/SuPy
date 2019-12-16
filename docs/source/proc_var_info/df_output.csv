@@ -311,6 +311,32 @@ q_27,RSL,Specific humidity at level 27 [g |kg^-1|]
 q_28,RSL,Specific humidity at level 28 [g |kg^-1|]
 q_29,RSL,Specific humidity at level 29 [g |kg^-1|]
 q_30,RSL,Specific humidity at level 30 [g |kg^-1|]
+azimuth,SOLWEIG,Azimuth angle of the Sun
+altitude,SOLWEIG,Altitude angle of the Sun
+GlobalRad,SOLWEIG,Input Kdn
+DiffuseRad,SOLWEIG,Diffuse shortwave radiation
+DirectRad,SOLWEIG,Direct shortwave radiation
+Kdown2d,SOLWEIG,Incoming shortwave radiation at POI
+Kup2d,SOLWEIG,Outgoing shortwave radiation at POI
+Ksouth,SOLWEIG,Shortwave radiation from south at POI
+Kwest,SOLWEIG,Shortwave radiation from west at POI
+Knorth,SOLWEIG,Shortwave radiation from north at POI
+Keast,SOLWEIG,Shortwave radiation from east at POI
+Ldown2d,SOLWEIG,Incoming longwave radiation at POI
+Lup2d,SOLWEIG,Outgoing longwave radiation at POI
+Lsouth,SOLWEIG,Longwave radiation from south at POI
+Lwest,SOLWEIG,Longwave radiation from west at POI
+Lnorth,SOLWEIG,Longwave radiation from north at POI
+Least,SOLWEIG,Longwave radiation from east at POI
+Tmrt,SOLWEIG,Mean Radiant Temperature
+I0,SOLWEIG,theoretical value of maximum incoming solar radiation
+CI,SOLWEIG,clearness index for Ldown (Lindberg et al. 2008)
+gvf,SOLWEIG,Ground view factor (Lindberg and Grimmond 2011)
+shadow,SOLWEIG,"Shadow value (0= shadow, 1 = sun)"
+svf,SOLWEIG,Sky View Factor from ground and buildings
+svfbuveg,SOLWEIG,"Sky View Factor from ground, buildings and vegetation"
+Ta,SOLWEIG,Air temperature
+Tg,SOLWEIG,Surface temperature
 HDD1_h,DailyState,Heating degree days [°C d]
 HDD2_c,DailyState,Cooling degree days [°C d]
 HDD3_Tmean,DailyState,Average daily air temperature [°C]

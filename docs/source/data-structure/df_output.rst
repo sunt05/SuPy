@@ -72,6 +72,14 @@
         SUEWS
 
 
+.. option:: CI
+
+    :Description:
+        clearness index for Ldown (Lindberg et al. 2008)
+    :Group:
+        SOLWEIG
+
+
 .. option:: DLHrs
 
     :Description:
@@ -101,7 +109,7 @@
     :Description:
         Snow density – bare soil surface [kg |m^-3|]
     :Group:
-        snow
+        DailyState
 
 
 .. option:: DensSnow_BSoil
@@ -125,15 +133,7 @@
     :Description:
         Snow density – bare soil surface [kg |m^-3|]
     :Group:
-        DailyState
-
-
-.. option:: DensSnow_Bldgs
-
-    :Description:
-        Snow density – building surface [kg |m^-3|]
-    :Group:
-        DailyState
+        snow
 
 
 .. option:: DensSnow_Bldgs
@@ -160,6 +160,38 @@
         snow
 
 
+.. option:: DensSnow_Bldgs
+
+    :Description:
+        Snow density – building surface [kg |m^-3|]
+    :Group:
+        DailyState
+
+
+.. option:: DensSnow_DecTr
+
+    :Description:
+        Snow density – deciduous surface [kg |m^-3|]
+    :Group:
+        DailyState
+
+
+.. option:: DensSnow_DecTr
+
+    :Description:
+        Snow density - deciduous surface [kg |m^-3|]
+    :Group:
+        DailyState
+
+
+.. option:: DensSnow_DecTr
+
+    :Description:
+        Snow density – deciduous surface [kg |m^-3|]
+    :Group:
+        snow
+
+
 .. option:: DensSnow_DecTr
 
     :Description:
@@ -168,26 +200,18 @@
         snow
 
 
-.. option:: DensSnow_DecTr
+.. option:: DensSnow_EveTr
 
     :Description:
-        Snow density – deciduous surface [kg |m^-3|]
+        Snow density - evergreen surface [kg |m^-3|]
     :Group:
-        DailyState
+        snow
 
 
-.. option:: DensSnow_DecTr
-
-    :Description:
-        Snow density - deciduous surface [kg |m^-3|]
-    :Group:
-        DailyState
-
-
-.. option:: DensSnow_DecTr
+.. option:: DensSnow_EveTr
 
     :Description:
-        Snow density – deciduous surface [kg |m^-3|]
+        Snow density – evergreen surface [kg |m^-3|]
     :Group:
         snow
 
@@ -208,18 +232,10 @@
         DailyState
 
 
-.. option:: DensSnow_EveTr
+.. option:: DensSnow_Grass
 
     :Description:
-        Snow density - evergreen surface [kg |m^-3|]
-    :Group:
-        snow
-
-
-.. option:: DensSnow_EveTr
-
-    :Description:
-        Snow density – evergreen surface [kg |m^-3|]
+        Snow density - grass surface [kg |m^-3|]
     :Group:
         snow
 
@@ -235,31 +251,15 @@
 .. option:: DensSnow_Grass
 
     :Description:
-        Snow density - grass surface [kg |m^-3|]
-    :Group:
-        DailyState
-
-
-.. option:: DensSnow_Grass
-
-    :Description:
-        Snow density - grass surface [kg |m^-3|]
-    :Group:
-        snow
-
-
-.. option:: DensSnow_Grass
-
-    :Description:
         Snow density – grass surface [kg |m^-3|]
     :Group:
         snow
 
 
-.. option:: DensSnow_Paved
+.. option:: DensSnow_Grass
 
     :Description:
-        Snow density – paved surface [kg |m^-3|]
+        Snow density - grass surface [kg |m^-3|]
     :Group:
         DailyState
 
@@ -269,7 +269,7 @@
     :Description:
         Snow density - paved surface [kg |m^-3|]
     :Group:
-        DailyState
+        snow
 
 
 .. option:: DensSnow_Paved
@@ -285,15 +285,15 @@
     :Description:
         Snow density - paved surface [kg |m^-3|]
     :Group:
-        snow
+        DailyState
 
 
-.. option:: DensSnow_Water
+.. option:: DensSnow_Paved
 
     :Description:
-        Snow density - water surface [kg |m^-3|]
+        Snow density – paved surface [kg |m^-3|]
     :Group:
-        snow
+        DailyState
 
 
 .. option:: DensSnow_Water
@@ -301,7 +301,7 @@
     :Description:
         Snow density – water surface [kg |m^-3|]
     :Group:
-        snow
+        DailyState
 
 
 .. option:: DensSnow_Water
@@ -317,7 +317,31 @@
     :Description:
         Snow density – water surface [kg |m^-3|]
     :Group:
-        DailyState
+        snow
+
+
+.. option:: DensSnow_Water
+
+    :Description:
+        Snow density - water surface [kg |m^-3|]
+    :Group:
+        snow
+
+
+.. option:: DiffuseRad
+
+    :Description:
+        Diffuse shortwave radiation
+    :Group:
+        SOLWEIG
+
+
+.. option:: DirectRad
+
+    :Description:
+        Direct shortwave radiation
+    :Group:
+        SOLWEIG
 
 
 .. option:: Drainage
@@ -432,6 +456,14 @@
         DailyState
 
 
+.. option:: GlobalRad
+
+    :Description:
+        Input Kdn
+    :Group:
+        SOLWEIG
+
+
 .. option:: HDD1_h
 
     :Description:
@@ -464,6 +496,14 @@
         DailyState
 
 
+.. option:: I0
+
+    :Description:
+        theoretical value of maximum incoming solar radiation
+    :Group:
+        SOLWEIG
+
+
 .. option:: Irr
 
     :Description:
@@ -480,12 +520,60 @@
         SUEWS
 
 
+.. option:: Kdown2d
+
+    :Description:
+        Incoming shortwave radiation at POI
+    :Group:
+        SOLWEIG
+
+
+.. option:: Keast
+
+    :Description:
+        Shortwave radiation from east at POI
+    :Group:
+        SOLWEIG
+
+
+.. option:: Knorth
+
+    :Description:
+        Shortwave radiation from north at POI
+    :Group:
+        SOLWEIG
+
+
+.. option:: Ksouth
+
+    :Description:
+        Shortwave radiation from south at POI
+    :Group:
+        SOLWEIG
+
+
 .. option:: Kup
 
     :Description:
         Outgoing shortwave radiation [W |m^-2|]
     :Group:
         SUEWS
+
+
+.. option:: Kup2d
+
+    :Description:
+        Outgoing shortwave radiation at POI
+    :Group:
+        SOLWEIG
+
+
+.. option:: Kwest
+
+    :Description:
+        Shortwave radiation from west at POI
+    :Group:
+        SOLWEIG
 
 
 .. option:: LAI
@@ -536,6 +624,30 @@
         SUEWS
 
 
+.. option:: Ldown2d
+
+    :Description:
+        Incoming longwave radiation at POI
+    :Group:
+        SOLWEIG
+
+
+.. option:: Least
+
+    :Description:
+        Longwave radiation from east at POI
+    :Group:
+        SOLWEIG
+
+
+.. option:: Lnorth
+
+    :Description:
+        Longwave radiation from north at POI
+    :Group:
+        SOLWEIG
+
+
 .. option:: Lob
 
     :Description:
@@ -544,12 +656,36 @@
         SUEWS
 
 
+.. option:: Lsouth
+
+    :Description:
+        Longwave radiation from south at POI
+    :Group:
+        SOLWEIG
+
+
 .. option:: Lup
 
     :Description:
         Outgoing longwave radiation [W |m^-2|]
     :Group:
         SUEWS
+
+
+.. option:: Lup2d
+
+    :Description:
+        Outgoing longwave radiation at POI
+    :Group:
+        SOLWEIG
+
+
+.. option:: Lwest
+
+    :Description:
+        Longwave radiation from west at POI
+    :Group:
+        SOLWEIG
 
 
 .. option:: MeltWStore
@@ -1664,6 +1800,22 @@
         RSL
 
 
+.. option:: Ta
+
+    :Description:
+        Air temperature
+    :Group:
+        SOLWEIG
+
+
+.. option:: Tg
+
+    :Description:
+        Surface temperature
+    :Group:
+        SOLWEIG
+
+
 .. option:: Tmax
 
     :Description:
@@ -1678,6 +1830,14 @@
         Daily minimum temperature [°C]
     :Group:
         DailyState
+
+
+.. option:: Tmrt
+
+    :Description:
+        Mean Radiant Temperature
+    :Group:
+        SOLWEIG
 
 
 .. option:: TotCh
@@ -2144,6 +2304,22 @@
         DailyState
 
 
+.. option:: altitude
+
+    :Description:
+        Altitude angle of the Sun
+    :Group:
+        SOLWEIG
+
+
+.. option:: azimuth
+
+    :Description:
+        Azimuth angle of the Sun
+    :Group:
+        SOLWEIG
+
+
 .. option:: deltaLAI
 
     :Description:
@@ -2246,6 +2422,14 @@
         Fraction of snow – paved surface [-]
     :Group:
         snow
+
+
+.. option:: gvf
+
+    :Description:
+        Ground view factor (Lindberg and Grimmond 2011)
+    :Group:
+        SOLWEIG
 
 
 .. option:: kup_BSoilSnow
@@ -2542,6 +2726,30 @@
         Specific humidity at level 9 [g |kg^-1|]
     :Group:
         RSL
+
+
+.. option:: shadow
+
+    :Description:
+        Shadow value (0= shadow, 1 = sun)
+    :Group:
+        SOLWEIG
+
+
+.. option:: svf
+
+    :Description:
+        Sky View Factor from ground and buildings
+    :Group:
+        SOLWEIG
+
+
+.. option:: svfbuveg
+
+    :Description:
+        Sky View Factor from ground, buildings and vegetation
+    :Group:
+        SOLWEIG
 
 
 .. option:: z0m
