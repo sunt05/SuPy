@@ -438,6 +438,12 @@ def save_supy(
     snowuse = df_state_final.iloc[-1].loc["snowuse"].values.item()
     save_snow = True if snowuse == 1 else False
 
+    # check if directory for saving results exists; if not, create one.
+    path_dir_save=Path(path_dir_save)
+    if not path_dir_save.exists():
+        path_dir_save.mkdir(parents=True)
+
+
     # save df_output to several files
     list_path_save = save_df_output(
         df_output, freq_s, site, path_dir_save, save_tstep, output_level, save_snow

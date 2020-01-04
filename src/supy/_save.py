@@ -84,9 +84,7 @@ def save_df_grid_group(df_grid_group, grid, group, site="test", dir_save="."):
     # staring year
     year = df_grid_group.index[0].year
     # sample file name: 'Kc98_2012_SUEWS_60.txt'
-    file_out = "{site}{grid}_{year}_{group}_{freq_min}.txt".format(
-        site=site, grid=grid, year=year, group=group, freq_min=freq_min
-    )
+    file_out = f"{site}{grid}_{year}_{group}_{freq_min}.txt"
     # 'DailyState_1440' will be trimmed
     file_out = file_out.replace("DailyState_1440", "DailyState")
     path_out = path_dir / file_out
@@ -204,22 +202,25 @@ def save_df_output(
                     df_output_grid_group = df_output_grid_group[
                         dict_level_var[output_level]
                     ]
+                list_year = df_output_grid_group.index.year.unique()
+                for year in list_year:
+                    df_year=df_output_grid_group.loc[f'{year}']
 
-                path_save = save_df_grid_group(
-                    df_output_grid_group,
-                    grid,
-                    group,
-                    site=site,
-                    dir_save=path_dir_save,
-                )
+                    path_save = save_df_grid_group(
+                        df_year,
+                        grid,
+                        group,
+                        site=site,
+                        dir_save=path_dir_save,
+                    )
 
-                # remove freq info from `DailyState` file
-                if "DailyState" in path_save.name:
-                    str_fn_dd = str(path_save).replace("DailyState_5", "DailyState")
-                    path_save.rename(Path(str_fn_dd))
-                    path_save = Path(str_fn_dd)
+                    # remove freq info from `DailyState` file
+                    if "DailyState" in path_save.name:
+                        str_fn_dd = str(path_save).replace("DailyState_5", "DailyState")
+                        path_save.rename(Path(str_fn_dd))
+                        path_save = Path(str_fn_dd)
 
-                list_path_save.append(path_save)
+                    list_path_save.append(path_save)
 
     return list_path_save
 
