@@ -207,22 +207,44 @@ def save_df_output(
         # only those resampled ones
         else [df_rsmp, df_save.loc[:, ["DailyState"]]]
     )
+    from itertools import product, repeat
+    from multiprocessing import Pool
+
+    p = Pool()
     # save output at the resampling frequency
     for df_save in list_df_save:
         list_grid = df_save.index.get_level_values("grid").unique()
-        for grid in list_grid:
-            list_group = df_save.columns.get_level_values("group").unique()
-            for group in list_group:
-                # the last index value is dropped as supy uses starting timestamp of each year
-                # for naming files
-                list_year = (
-                    df_save.index.get_level_values("datetime").year[:-1].unique()
-                )
-                for year in list_year:
-                    path_save = save_df_grid_group_year(
-                        df_save, grid, group, year, output_level, site, path_dir_save,
-                    )
-                    list_path_save.append(path_save)
+        list_group = df_save.columns.get_level_values("group").unique()
+        list_year = df_save.index.get_level_values("datetime").year[:-1].unique()
+        list_iter = product(
+            [df_save],list_grid, list_group, list_year, [output_level], [site], [path_dir_save]
+        )
+        list_path_save_df = p.starmap(save_df_grid_group_year, list_iter)
+        list_path_save += list_path_save_df
+        # for grid in list_grid:
+        #     for group in list_group:
+        #         # the last index value is dropped as supy uses starting timestamp of each year
+        #         # for naming files
+        #         for year in list_year:
+        #             path_save = save_df_grid_group_year(
+        #                 df_save, grid, group, year, output_level, site, path_dir_save,
+        #             )
+        #             list_path_save.append(path_save)
+    # for df_save in list_df_save:
+    #     list_grid = df_save.index.get_level_values("grid").unique()
+    #     for grid in list_grid:
+    #         list_group = df_save.columns.get_level_values("group").unique()
+    #         for group in list_group:
+    #             # the last index value is dropped as supy uses starting timestamp of each year
+    #             # for naming files
+    #             list_year = (
+    #                 df_save.index.get_level_values("datetime").year[:-1].unique()
+    #             )
+    #             for year in list_year:
+    #                 path_save = save_df_grid_group_year(
+    #                     df_save, grid, group, year, output_level, site, path_dir_save,
+    #                 )
+    #                 list_path_save.append(path_save)
 
     return list_path_save
 
