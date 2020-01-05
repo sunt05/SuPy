@@ -1,13 +1,12 @@
-import logging
-import f90nml
-from typing import Tuple
-from ._post import resample_output
-from ._load import load_SUEWS_dict_ModConfig, dict_InitCond_out
-import os
-import pandas as pd
 from pathlib import Path
+from typing import Tuple
+
+import f90nml
+import pandas as pd
+
 from ._env import logger_supy
-from ._post import var_df as df_var_out
+from ._load import load_SUEWS_dict_ModConfig
+from ._post import resample_output, var_df as df_var_out
 
 
 def gen_df_save(df_grid_group: pd.DataFrame) -> pd.DataFrame:
@@ -15,7 +14,7 @@ def gen_df_save(df_grid_group: pd.DataFrame) -> pd.DataFrame:
 
     Parameters
     ----------
-    df_output_grid_group : pd.DataFrame
+    df_grid_group : pd.DataFrame
         an output dataframe of a single group and grid
 
     Returns
@@ -68,21 +67,35 @@ def format_df_save(df_save):
     return df_save
 
 
-def save_df_grid_group(df_grid_group, grid, group, site="test", dir_save="."):
+def save_df_grid_group_year(
+    df_save, grid, group, year, output_level=1, site="test", dir_save="."
+):
+    # retrieve dataframe of grid for `group`
+    df_grid_group = df_save.loc[grid, group].copy()
+    # shift to align timestamp showing starting time
+    df_grid_group.index = df_grid_group.index.shift(-1)
+    # remove `nan`s
+    df_grid_group = df_grid_group.dropna(how="all", axis=0)
+    # select output variables in `SUEWS` based on output level
+    if group == "SUEWS":
+        df_grid_group = df_grid_group[dict_level_var[output_level]]
+    # select data from year of interest and shift back to align with SUEWS convention
+    df_year = df_grid_group.loc[f"{year}"]
+    df_year.index = df_year.index.shift(1)
     # processing path
     path_dir = Path(dir_save)
 
     # pandas bug here: monotonic datetime index would lose `freq` once `pd.concat`ed
-    if df_grid_group.shape[0] > 0 and df_grid_group.index.size > 2:
-        ind = df_grid_group.index
+    if df_year.shape[0] > 0 and df_year.index.size > 2:
+        ind = df_year.index
         freq_cal = ind[1] - ind[0]
-        df_grid_group = df_grid_group.asfreq(freq_cal)
+        df_year = df_year.asfreq(freq_cal)
     else:
-        df_grid_group = df_grid_group.asfreq("5T")
+        df_year = df_year.asfreq("5T")
     # output frequency in min
-    freq_min = int(df_grid_group.index.freq.delta.total_seconds() / 60)
+    freq_min = int(df_year.index.freq.delta.total_seconds() / 60)
     # staring year
-    year = df_grid_group.index[0].year
+    year = df_year.index[0].year
     # sample file name: 'Kc98_2012_SUEWS_60.txt'
     file_out = f"{site}{grid}_{year}_{group}_{freq_min}.txt"
     # 'DailyState_1440' will be trimmed
@@ -93,14 +106,14 @@ def save_df_grid_group(df_grid_group, grid, group, site="test", dir_save="."):
 
     t_start = time.time()
     # generate df_save with datetime info prepended to each row
-    df_save = gen_df_save(df_grid_group)
+    df_save = gen_df_save(df_year)
     t_end = time.time()
-    logger_supy.debug(f"df_save generated in {t_end-t_start:.2f} s")
+    logger_supy.debug(f"df_save generated in {t_end - t_start:.2f} s")
 
-    t_start = time.time()
+    # t_start = time.time()
     # format df_save with right-justified view
     df_save = format_df_save(df_save)
-    t_end = time.time()
+    # t_end = time.time()
     # print(t_end-t_start)
 
     t_start = time.time()
@@ -109,7 +122,12 @@ def save_df_grid_group(df_grid_group, grid, group, site="test", dir_save="."):
         path_out, index=False, sep="\t",
     )
     t_end = time.time()
-    logger_supy.debug(f"{path_out} saved in {t_end-t_start:.2f} s")
+    # remove freq info from `DailyState` file
+    if "DailyState" in path_out.name:
+        str_fn_dd = str(path_out).replace("DailyState_5", "DailyState")
+        path_out.rename(Path(str_fn_dd))
+        path_out = Path(str_fn_dd)
+    logger_supy.debug(f"{path_out} saved in {t_end - t_start:.2f} s")
     return path_out
 
 
@@ -125,6 +143,7 @@ dict_level_var = {
     # minimal set of variables
     2: ser_level_var.loc[ser_level_var == 0].index,
 }
+
 
 # save output files
 def save_df_output(
@@ -194,31 +213,29 @@ def save_df_output(
         for grid in list_grid:
             list_group = df_save.columns.get_level_values("group").unique()
             for group in list_group:
-                df_output_grid_group = df_save.loc[grid, group].dropna(
-                    how="all", axis=0
+                list_year = (
+                    df_save.index.get_level_values("datetime").year[:-1].unique()
                 )
-                # select output variables in `SUEWS` based on output level
-                if group == "SUEWS":
-                    df_output_grid_group = df_output_grid_group[
-                        dict_level_var[output_level]
-                    ]
-                list_year = df_output_grid_group.index.year.unique()
                 for year in list_year:
-                    df_year=df_output_grid_group.loc[f'{year}']
+                    # df_grid_group = df_save.loc[grid, group].dropna(
+                    #     how="all", axis=0
+                    # )
+                    # # select output variables in `SUEWS` based on output level
+                    # if group == "SUEWS":
+                    #     df_grid_group = df_grid_group[
+                    #         dict_level_var[output_level]
+                    #     ]
+                    # df_year = df_grid_group.loc[f"{year}"]
 
-                    path_save = save_df_grid_group(
-                        df_year,
-                        grid,
-                        group,
-                        site=site,
-                        dir_save=path_dir_save,
+                    path_save = save_df_grid_group_year(
+                        df_save, grid, group, year, output_level, site, path_dir_save,
                     )
 
-                    # remove freq info from `DailyState` file
-                    if "DailyState" in path_save.name:
-                        str_fn_dd = str(path_save).replace("DailyState_5", "DailyState")
-                        path_save.rename(Path(str_fn_dd))
-                        path_save = Path(str_fn_dd)
+                    # # remove freq info from `DailyState` file
+                    # if "DailyState" in path_save.name:
+                    #     str_fn_dd = str(path_save).replace("DailyState_5", "DailyState")
+                    #     path_save.rename(Path(str_fn_dd))
+                    #     path_save = Path(str_fn_dd)
 
                     list_path_save.append(path_save)
 
