@@ -124,3 +124,6 @@ pipfile.lock
 # supy test logs
 SuPy.log.*
 SuPy.log
+
+# pycharm configuration
+.idea/
