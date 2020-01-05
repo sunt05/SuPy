@@ -213,30 +213,15 @@ def save_df_output(
         for grid in list_grid:
             list_group = df_save.columns.get_level_values("group").unique()
             for group in list_group:
+                # the last index value is dropped as supy uses starting timestamp of each year
+                # for naming files
                 list_year = (
                     df_save.index.get_level_values("datetime").year[:-1].unique()
                 )
                 for year in list_year:
-                    # df_grid_group = df_save.loc[grid, group].dropna(
-                    #     how="all", axis=0
-                    # )
-                    # # select output variables in `SUEWS` based on output level
-                    # if group == "SUEWS":
-                    #     df_grid_group = df_grid_group[
-                    #         dict_level_var[output_level]
-                    #     ]
-                    # df_year = df_grid_group.loc[f"{year}"]
-
                     path_save = save_df_grid_group_year(
                         df_save, grid, group, year, output_level, site, path_dir_save,
                     )
-
-                    # # remove freq info from `DailyState` file
-                    # if "DailyState" in path_save.name:
-                    #     str_fn_dd = str(path_save).replace("DailyState_5", "DailyState")
-                    #     path_save.rename(Path(str_fn_dd))
-                    #     path_save = Path(str_fn_dd)
-
                     list_path_save.append(path_save)
 
     return list_path_save
