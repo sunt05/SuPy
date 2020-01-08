@@ -57,6 +57,7 @@ class TestSuPy(TestCase):
     def test_is_supy_running_multi_grid_par(self):
         df_state_init, df_forcing_tstep = sp.load_SampleData()
         df_state_init = pd.concat([df_state_init for x in range(6)])
+        df_state_init.index=pd.RangeIndex(6,name='grid')
         df_forcing_part = df_forcing_tstep.iloc[:]
         t_start = time()
         df_output, df_state = sp.run_supy(df_forcing_part, df_state_init)
