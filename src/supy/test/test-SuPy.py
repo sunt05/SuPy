@@ -55,9 +55,10 @@ class TestSuPy(TestCase):
 
     # test if multi-grid simulation can run in parallel
     def test_is_supy_running_multi_grid_par(self):
+        n_grid=4
         df_state_init, df_forcing_tstep = sp.load_SampleData()
-        df_state_init = pd.concat([df_state_init for x in range(6)])
-        df_state_init.index=pd.RangeIndex(6,name='grid')
+        df_state_init = pd.concat([df_state_init for x in range(n_grid)])
+        df_state_init.index=pd.RangeIndex(n_grid,name='grid')
         df_forcing_part = df_forcing_tstep.iloc[:]
         t_start = time()
         df_output, df_state = sp.run_supy(df_forcing_part, df_state_init)
