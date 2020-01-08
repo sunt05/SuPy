@@ -40,6 +40,7 @@ setup(
         "scipy",
         "scikit-learn",
         "dask[complete]",  # needs all dask and its dependencies
+        # "ray",  # parallel processing
         "f90nml",
         "matplotlib",
         "seaborn",

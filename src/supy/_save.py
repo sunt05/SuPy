@@ -3,6 +3,7 @@ from typing import Tuple
 
 import f90nml
 import pandas as pd
+# import ray
 
 from ._env import logger_supy
 from ._load import load_SUEWS_dict_ModConfig
@@ -28,9 +29,9 @@ def gen_df_save(df_grid_group: pd.DataFrame) -> pd.DataFrame:
     ser_DOY = pd.Series(idx_dt.dayofyear, index=idx_dt, name="DOY")
     ser_hour = pd.Series(idx_dt.hour, index=idx_dt, name="Hour")
     ser_min = pd.Series(idx_dt.minute, index=idx_dt, name="Min")
-    df_datetime = pd.concat([ser_year, ser_DOY, ser_hour, ser_min,], axis=1)
+    df_datetime = pd.concat([ser_year, ser_DOY, ser_hour, ser_min, ], axis=1)
     df_datetime["Dectime"] = (
-        ser_DOY - 1 + idx_dt.to_perioddelta("d").total_seconds() / (24 * 60 * 60)
+            ser_DOY - 1 + idx_dt.to_perioddelta("d").total_seconds() / (24 * 60 * 60)
     )
     df_save = pd.concat([df_datetime, df_grid_group], axis=1)
     return df_save
@@ -68,12 +69,21 @@ def format_df_save(df_save):
 
 
 def save_df_grid_group_year(
-    df_save, grid, group, year, output_level=1, site="test", dir_save="."
+        df_save, grid, group, year, output_level=1, site="test", dir_save=".",
 ):
+    df_year = gen_df_year(df_save, year, grid, group, output_level)
+
+    path_out = save_df_grid_group(df_year, grid, group, dir_save, site)
+    return path_out
+
+
+def gen_df_year(df_save, year, grid, group, output_level):
     # retrieve dataframe of grid for `group`
     df_grid_group = df_save.loc[grid, group].copy()
-    # shift to align timestamp showing starting time
-    df_grid_group.index = df_grid_group.index.shift(-1)
+    # get temporal index
+    idx_dt = df_grid_group.index
+    freq = idx_dt.to_series().diff()[-1]
+    df_grid_group = df_grid_group.asfreq(freq)
     # remove `nan`s
     df_grid_group = df_grid_group.dropna(how="all", axis=0)
     # select output variables in `SUEWS` based on output level
@@ -82,9 +92,12 @@ def save_df_grid_group_year(
     # select data from year of interest and shift back to align with SUEWS convention
     df_year = df_grid_group.loc[f"{year}"]
     df_year.index = df_year.index.shift(1)
+    return df_year
+
+
+def save_df_grid_group(df_year, grid, group, dir_save, site):
     # processing path
     path_dir = Path(dir_save)
-
     # pandas bug here: monotonic datetime index would lose `freq` once `pd.concat`ed
     if df_year.shape[0] > 0 and df_year.index.size > 2:
         ind = df_year.index
@@ -101,21 +114,15 @@ def save_df_grid_group_year(
     # 'DailyState_1440' will be trimmed
     file_out = file_out.replace("DailyState_1440", "DailyState")
     path_out = path_dir / file_out
-    # print('writing out: {path_out}'.format(path_out=path_out))
+    logger_supy.debug(f"writing out: {path_out}")
     import time
-
     t_start = time.time()
     # generate df_save with datetime info prepended to each row
     df_save = gen_df_save(df_year)
     t_end = time.time()
     logger_supy.debug(f"df_save generated in {t_end - t_start:.2f} s")
-
-    # t_start = time.time()
     # format df_save with right-justified view
     df_save = format_df_save(df_save)
-    # t_end = time.time()
-    # print(t_end-t_start)
-
     t_start = time.time()
     # save to txt file
     df_save.to_csv(
@@ -129,6 +136,13 @@ def save_df_grid_group_year(
         path_out = Path(str_fn_dd)
     logger_supy.debug(f"{path_out} saved in {t_end - t_start:.2f} s")
     return path_out
+
+
+# @ray.remote
+# def save_df_year(df_year, grid, group, year, output_level, site, dir_save):
+#     return save_df_grid_group_year(
+#         df_year, grid, group, year, output_level, site, dir_save
+#     )
 
 
 # a pd.Series of variables of different output levels
@@ -147,13 +161,14 @@ dict_level_var = {
 
 # save output files
 def save_df_output(
-    df_output: pd.DataFrame,
-    freq_s: int = 3600,
-    site: str = "",
-    path_dir_save: Path = Path("."),
-    save_tstep=False,
-    output_level=1,
-    save_snow=True,
+        df_output: pd.DataFrame,
+        freq_s: int = 3600,
+        site: str = "",
+        path_dir_save: Path = Path("."),
+        save_tstep=False,
+        output_level=1,
+        save_snow=True,
+        debug=False,
 ) -> list:
     """save supy output dataframe to txt files
 
@@ -174,6 +189,8 @@ def save_df_output(
         Notes: 0 for all but snow-related; 1 for all; 2 for a minimal set without land cover specific information.
     save_snow : bool, optional
         whether to save snow-related output variables in a separate file, by default True.
+    debug : bool, optional
+        whether to enable debug mode (e.g., writing out in serial mode, and other debug uses), by default False.
 
     Returns
     -------
@@ -207,51 +224,112 @@ def save_df_output(
         # only those resampled ones
         else [df_rsmp, df_save.loc[:, ["DailyState"]]]
     )
-    from itertools import product, repeat
-    from multiprocessing import Pool
 
-    p = Pool()
     # save output at the resampling frequency
-    for df_save in list_df_save:
-        list_grid = df_save.index.get_level_values("grid").unique()
-        list_group = df_save.columns.get_level_values("group").unique()
-        list_year = df_save.index.get_level_values("datetime").year[:-1].unique()
-        list_iter = product(
-            [df_save],list_grid, list_group, list_year, [output_level], [site], [path_dir_save]
+    for i, df_save in enumerate(list_df_save):
+        # shift temporal index to make timestampes indicating the start of periods
+        idx_dt = df_save.index.get_level_values("datetime").shift(-1)
+        df_save.index = df_save.index.set_levels(
+            idx_dt, level="datetime"
         )
-        list_path_save_df = p.starmap(save_df_grid_group_year, list_iter)
-        list_path_save += list_path_save_df
-        # for grid in list_grid:
-        #     for group in list_group:
-        #         # the last index value is dropped as supy uses starting timestamp of each year
-        #         # for naming files
-        #         for year in list_year:
-        #             path_save = save_df_grid_group_year(
-        #                 df_save, grid, group, year, output_level, site, path_dir_save,
-        #             )
-        #             list_path_save.append(path_save)
-    # for df_save in list_df_save:
-    #     list_grid = df_save.index.get_level_values("grid").unique()
-    #     for grid in list_grid:
-    #         list_group = df_save.columns.get_level_values("group").unique()
-    #         for group in list_group:
-    #             # the last index value is dropped as supy uses starting timestamp of each year
-    #             # for naming files
-    #             list_year = (
-    #                 df_save.index.get_level_values("datetime").year[:-1].unique()
-    #             )
-    #             for year in list_year:
-    #                 path_save = save_df_grid_group_year(
-    #                     df_save, grid, group, year, output_level, site, path_dir_save,
-    #                 )
-    #                 list_path_save.append(path_save)
+        # tidy up columns so only necessary groups are included in the output
+        df_save.columns = df_save.columns.remove_unused_levels()
+        # import os
+        # if os.name != "nt" and not debug:
+        #
+        #     try:
+        #         # PARALLEL mode:
+        #         # supported by ray: only used on Linux/macOS; Windows is not supported yet.
+        #         ray.shutdown()
+        #         ray.init(object_store_memory=4 * 1000 ** 3)
+        #         list_path_save_df = save_df_par(df_save, path_dir_save, site, output_level)
+        #         ray.shutdown()
+        #     except:
+        #         # fallback to SERIAL mode
+        #         logger_supy.warning('falling back to serial mode for writing out results.')
+        #         list_path_save_df = save_df_ser(df_save, path_dir_save, site, output_level)
+        #
+        # else:
+        # SERIAL mode: only on Windows
+        list_path_save_df = save_df_ser(df_save, path_dir_save, site, output_level)
 
+        # add up path list
+        list_path_save += list_path_save_df
     return list_path_save
+
+
+# def save_df_year_par(df_year, output_level, site, dir_save):
+#     ray.shutdown()
+#     info_ray = ray.init(object_store_memory=1 * 1000 ** 3)
+#     list_path = []
+#     id_df_year = ray.put(df_year)
+#     list_grid = df_year.index.levels[0]
+#     list_group = df_year.columns.levels[0]
+#     for grid in list_grid:
+#         for group in list_group:
+#             list_path.append(
+#                 save_df_year.remote(
+#                     id_df_year, grid, group, year, output_level, site, dir_save
+#                 )
+#             )
+#     list_path = ray.get(list_path)
+#     ray.shutdown()
+#     return list_path
+
+
+# save `df_save` in serial mode
+def save_df_par(df_save, path_dir_save, site, output_level):
+    # number of years for grouping
+    n_yr = 5
+    idx_yr = df_save.index.get_level_values("datetime").year
+    grp_year = df_save.groupby(
+        (idx_yr - idx_yr.min()) // n_yr,
+    )
+
+    list_path = []
+    for grp in grp_year.groups:
+        df_grp = grp_year.get_group(grp)
+        list_grid = df_grp.index.get_level_values("grid").unique()
+        list_group = df_grp.columns.get_level_values("group").unique()
+        list_year = df_grp.index.get_level_values("datetime").year[-1].unique()
+        # put large df as common data object for parallel mode
+        id_df_grp = ray.put(df_grp)
+
+        # the below runs in parallel by `ray.remote`
+        for year in list_year:
+            for grid in list_grid:
+                for group in list_group:
+                    list_path.append(
+                        save_df_year.remote(
+                            id_df_grp, grid, group, year, output_level, site, path_dir_save,
+                        )
+                    )
+
+    list_path = ray.get(list_path)
+
+    return list_path
+
+
+# save `df_save` in serial mode
+def save_df_ser(df_save, path_dir_save, site, output_level):
+    list_grid = df_save.index.get_level_values("grid").unique()
+    list_group = df_save.columns.get_level_values("group").unique()
+    list_year = df_save.index.get_level_values("datetime").year[:-1].unique()
+    list_path_save_df = []
+    for grid in list_grid:
+        for group in list_group:
+            # the last index value is dropped as supy uses starting timestamp of each year
+            # for naming files
+            for year in list_year:
+                df_year = gen_df_year(df_save, year, grid, group, output_level)
+                path_save = save_df_grid_group(df_year, grid, group, path_dir_save, site)
+                list_path_save_df.append(path_save)
+    return list_path_save_df
 
 
 # save model state for restart runs
 def save_df_state(
-    df_state: pd.DataFrame, site: str = "", path_dir_save: Path = Path("."),
+        df_state: pd.DataFrame, site: str = "", path_dir_save: Path = Path("."),
 ) -> Path:
     """save `df_state` to a csv file
 
@@ -274,7 +352,7 @@ def save_df_state(
     # trim filename if site == ''
     file_state_save = file_state_save.replace("_.csv", ".csv")
     path_state_save = Path(path_dir_save) / file_state_save
-    # print('writing out: {path_out}'.format(path_out=path_state_save))
+    logger_supy.debug(f'writing out: {path_state_save}')
     df_state.to_csv(path_state_save)
     return path_state_save
 
@@ -382,7 +460,7 @@ dict_init_nml = {
 
 # save initcond namelist as SUEWS binary
 def save_initcond_nml(
-    df_state: pd.DataFrame, site: str = "", path_dir_save: Path = Path("."),
+        df_state: pd.DataFrame, site: str = "", path_dir_save: Path = Path("."),
 ) -> Path:
     # get last time step
     try:
@@ -390,8 +468,8 @@ def save_initcond_nml(
     except AttributeError:
         logger_supy.exception(
             (
-                "incorrect structure detected;"
-                + " check if `df_state` is the final model state."
+                    "incorrect structure detected;"
+                    + " check if `df_state` is the final model state."
             )
         )
         return

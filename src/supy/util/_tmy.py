@@ -4,10 +4,11 @@ import numpy as np
 
 from pathlib import Path
 
+
 #################################################################
 # generate TMY dataframe from supy results
 # weight class to determine constants for TMY generation
-class _const:
+class Const:
     class ConstError(TypeError):
         pass
 
@@ -22,23 +23,7 @@ class _const:
         self.__dict__[name] = value
 
 
-const = _const()
 
-const.T_MEAN = 2 / 24
-const.T_MAX = 1 / 24
-const.T_MIN = 1 / 24
-const.T_RANGE = 0  # todo
-const.RH_MEAN = 2 / 24
-const.RH_MAX = 1 / 24
-const.RH_MIN = 1 / 24
-const.RH_RANGE = 0  # todo
-const.WIND_MEAN = 2 / 24
-const.WIND_MAX = 2 / 24
-const.WIND_MIN = 0
-const.WIND_RANGE = 0  # todo
-const.WIND_DIRECTION = 0  # todo
-const.SOLAR_RADIATION_GLOBAL = 12 / 24
-const.SOLAR_RADIATION_DIRECT = 0  # todo
 
 
 def gen_score_list(length):
@@ -73,13 +58,13 @@ def gen_FS_DF(df_output):
         df_output,
         values=["T2", "U10", "Kdown", "RH2"],
         index=["Year", "Month", "Day"],
-        aggfunc=[min, max, np.mean,],
+        aggfunc=[min, max, np.mean, ],
     )
     df_day_all_year = pd.pivot_table(
         df_output,
         values=["T2", "U10", "Kdown", "RH2"],
         index=["Month", "Day"],
-        aggfunc=[min, max, np.mean,],
+        aggfunc=[min, max, np.mean, ],
     )
 
     array_yr_mon = df_day.index.droplevel("Day").to_frame().drop_duplicates().values
@@ -87,11 +72,11 @@ def gen_FS_DF(df_output):
     df_fs = pd.DataFrame(
         {
             (yr, mon): (
-                df_day.loc[(yr, mon)].apply(gen_score_ser)
-                - df_day_all_year.loc[mon].apply(gen_score_ser)
+                    df_day.loc[(yr, mon)].apply(gen_score_ser)
+                    - df_day_all_year.loc[mon].apply(gen_score_ser)
             )
-            .abs()
-            .mean()
+                .abs()
+                .mean()
             for yr, mon in array_yr_mon
         }
     )
@@ -99,21 +84,25 @@ def gen_FS_DF(df_output):
     return df_fs
 
 
-def gen_WS_DF(df_WS_data):
+def gen_WS_DF(df_met):
     """generate DataFrame of weighted sums.
 
     Parameters
     ----------
-    df_WS_data : type
-        Description of parameter `df_WS_data`.
+    df_met : pd.DataFrame
+        A dataframe of meterological info that mush include these columns/variables:
+        - T2: near surface air temperature at 2 m agl
+        - RH2: near surface relative humidity at 2 m agl
+        - U10: near surface wind speed at 10 m agl
+        - Kdown: incomidng solar radiation
 
     Returns
     -------
-    type
-        Description of returned object.
+    pd.DataFrame
+        Converted dataframe with calculated metrics for TMY generation.
 
     """
-    df_fs = gen_FS_DF(df_WS_data)
+    df_fs = gen_FS_DF(df_met)
 
     list_index = [
         ("mean", "T2"),
@@ -127,6 +116,25 @@ def gen_WS_DF(df_WS_data):
         ("min", "RH2"),
         ("mean", "Kdown"),
     ]
+
+    # generate weights: Sandia method
+    const = Const()
+
+    const.T_MEAN = 2 / 24
+    const.T_MAX = 1 / 24
+    const.T_MIN = 1 / 24
+    const.T_RANGE = 0  # todo
+    const.RH_MEAN = 2 / 24
+    const.RH_MAX = 1 / 24
+    const.RH_MIN = 1 / 24
+    const.RH_RANGE = 0  # todo
+    const.WIND_MEAN = 2 / 24
+    const.WIND_MAX = 2 / 24
+    const.WIND_MIN = 0
+    const.WIND_RANGE = 0  # todo
+    const.WIND_DIRECTION = 0  # todo
+    const.SOLAR_RADIATION_GLOBAL = 12 / 24
+    const.SOLAR_RADIATION_DIRECT = 0  # todo
 
     list_const = [
         getattr(const, attr)
@@ -149,46 +157,13 @@ def gen_WS_DF(df_WS_data):
     return df_ws
 
 
-# def gen_WS_DF(df_WS_data):
-#     """generate DataFrame of weighted sums.
-
-#     Parameters
-#     ----------
-#     df_WS_data : type
-#         Description of parameter `df_WS_data`.
-
-#     Returns
-#     -------
-#     type
-#         Description of returned object.
-
-#     """
-#     df_fs = gen_FS_DF(df_WS_data)
-
-#     list_index = [('mean', 'T2'), ('max', 'T2'), ('min', 'T2'),
-#                   ('mean', 'U10'), ('max', 'U10'), ('min', 'U10'),
-#                   ('mean', 'RH2'), ('max', 'RH2'), ('min', 'RH2'),
-#                   ('mean', 'Kdown')]
-
-#     list_const = [getattr(const, attr)
-#                   for attr in ['T_MEAN', 'T_MAX', 'T_MIN',
-#                                'WIND_MEAN', 'WIND_MAX', 'WIND_MIN',
-#                                'RH_MEAN', 'RH_MAX', 'RH_MIN',
-#                                'SOLAR_RADIATION_GLOBAL']]
-#     list_ws = [df_fs.loc[idx] * cst for idx,
-#                cst in zip(list_index, list_const)]
-#     df_ws = pd.concat(list_ws, axis=1).sum(axis=1).unstack().dropna()
-
-#     return df_ws
-
-
 def pick_year(df_ws, df_output, n=5):
     df_day = pd.pivot_table(
-        df_output, values="Kdown", index=["Year", "Month", "Day"], aggfunc=[np.mean,]
+        df_output, values="Kdown", index=["Year", "Month", "Day"], aggfunc=[np.mean, ]
     )
 
     df_day_all_year = pd.pivot_table(
-        df_output, values="Kdown", index=["Month", "Day"], aggfunc=[np.mean,]
+        df_output, values="Kdown", index=["Month", "Day"], aggfunc=[np.mean, ]
     )
 
     array_yr_mon = df_day.index.droplevel("Day").to_frame().drop_duplicates().values
@@ -202,8 +177,8 @@ def pick_year(df_ws, df_output, n=5):
                 for yr, mon in array_yr_mon
             }
         )
-        .stack()
-        .T.dropna()
+            .stack()
+            .T.dropna()
     )
     df_rmsd.columns = df_rmsd.columns.droplevel([0, 1])
 
@@ -328,13 +303,13 @@ def read_epw(path_epw: Path) -> pd.DataFrame:
 
 # generate EPW file from `df_TMY`
 def gen_epw(
-    df_tmy: pd.DataFrame, path_epw=Path("./uTMY.epw"), ratio_dif_dir=0.15
+        df_output: pd.DataFrame, path_epw=Path("TMY.epw"), ratio_dif_dir=0.15
 ) -> Tuple[pd.DataFrame, str, Path]:
     """Generate an `epw` file of uTMY (urbanised Typical Meteorological Year) using SUEWS simulation results
 
     Parameters
     ----------
-    df_tmy : pd.DataFrame
+    df_output : pd.DataFrame
         SUEWS simulation results.
     path_epw : Path, optional
         Path to store generated epw file, by default Path('./uTMY.epw')
@@ -350,39 +325,45 @@ def gen_epw(
 
     """
     import atmosp
-    df_tmy = df_tmy.copy()
+    df_tmy = gen_TMY(df_output.copy().assign(
+        Year=lambda df:df.index.year,
+        Month=lambda df:df.index.month,
+        Day=lambda df:df.index.day,
+        Hour=lambda df:df.index.hour,
+        Minute=lambda df:df.index.minute,
+        ))
     # df_tmy = pd.concat([df_tmy.iloc[1:], df_tmy.iloc[[0]]])
     # adding necessary variables that can be derive from supy output
     df_tmy["Dew Point Temperature"] = (
-        atmosp.calculate(
-            "Td",
-            T=df_tmy["T2"].values + 273.15,
-            qv=(df_tmy["Q2"].values),
-            qv_unit="g/kg",
-            RH=df_tmy["RH2"].values,
-            rho=1.23,
-        )
-        - 273.15
+            atmosp.calculate(
+                "Td",
+                T=df_tmy["T2"].values + 273.15,
+                qv=(df_tmy["Q2"].values),
+                qv_unit="g/kg",
+                RH=df_tmy["RH2"].values,
+                rho=1.23,
+            )
+            - 273.15
     )
     df_tmy["Atmospheric Station Pressure"] = (
-        atmosp.calculate(
-            "p",
-            T=df_tmy["T2"].values + 273.15,
-            qv=(df_tmy["Q2"].values),
-            qv_unit="g/kg",
-            RH=df_tmy["RH2"].values,
-            rho=1.23,
-        )
-        - 273.15
+            atmosp.calculate(
+                "p",
+                T=df_tmy["T2"].values + 273.15,
+                qv=(df_tmy["Q2"].values),
+                qv_unit="g/kg",
+                RH=df_tmy["RH2"].values,
+                rho=1.23,
+            )
+            - 273.15
     )
     # index = df_TMY.index
     # df_TMY = df_TMY.iloc[1:].append(df_TMY.ix[0])
     # df_TMY.index = index
-    df_tmy["Year"] = df_tmy.index.year
-    df_tmy["Month"] = df_tmy.index.month
-    df_tmy["Day"] = df_tmy.index.day
-    df_tmy["Hour"] = df_tmy.index.hour
-    df_tmy["Minute"] = df_tmy.index.minute
+    # df_tmy["Year"] = df_tmy.index.year
+    # df_tmy["Month"] = df_tmy.index.month
+    # df_tmy["Day"] = df_tmy.index.day
+    # df_tmy["Hour"] = df_tmy.index.hour
+    # df_tmy["Minute"] = df_tmy.index.minute
 
     # convert air pressure to Pa
     # df_tmy['Atmospheric Station Pressure'] *= 1000
@@ -456,6 +437,10 @@ def gen_epw(
     df_epw = df_epw.sort_values(["Month", "Day", "Hour"], axis=0)
 
     # save pure data to a csv for formatting
+    path_epw=Path(path_epw)
+    if not path_epw.parent.exists():
+        path_epw.parent.mkdir(parents=True)
+    path_epw.touch(exist_ok=True)
     df_epw.to_csv(path_epw, index=None, header=None)
     text_data = path_epw.read_text().split("\n")
     # delete the csv file
@@ -467,8 +452,8 @@ DESIGN CONDITIONS,1,Climate Design Data 2009 ASHRAE Handbook,,Heating,1,3.2,4.2,
 TYPICAL/EXTREME PERIODS,6,Summer - Week Nearest Max Temperature For Period,Extreme,7/27,8/ 2,Summer - Week Nearest Average Temperature For Period,Typical,7/ 6,7/12,Winter - Week Nearest Min Temperature For Period,Extreme,12/22,1/ 5,Winter - Week Nearest Average Temperature For Period,Typical,1/13,1/19,Autumn - Week Nearest Average Temperature For Period,Typical,10/13,10/19,Spring - Week Nearest Average Temperature For Period,Typical,4/12,4/18
 GROUND TEMPERATURES,3,.5,,,,13.31,10.23,9.39,10.12,14.28,18.95,23.34,26.51,27.44,25.95,22.35,17.82,2,,,,16.09,13.20,11.82,11.77,13.97,17.16,20.59,23.54,25.06,24.77,22.74,19.63,4,,,,17.90,15.65,14.27,13.85,14.66,16.52,18.83,21.09,22.62,22.98,22.11,20.29
 HOLIDAYS/DAYLIGHT SAVINGS,No,0,0,0
-COMMENTS 1,  generated by SUEWS model
-COMMENTS 2, todo
+COMMENTS 1, generated by SuPy
+COMMENTS 2, none
 DATA PERIODS,1,1,Data,Sunday, 1/ 1,12/31
     """
     text_meta = text_meta.split("\n")[1:-1]
@@ -481,7 +466,8 @@ DATA PERIODS,1,1,Data,Sunday, 1/ 1,12/31
     #     s = ''.join(lines)
 
     # write out the actual EPW file
-    with open(path_epw, "w") as fp:
-        fp.write(text_epw)
+    path_epw.write_text(text_epw)
+    # with open(path_epw, "w") as fp:
+    #     fp.write(text_epw)
 
     return df_epw, text_meta, path_epw

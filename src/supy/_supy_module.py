@@ -56,7 +56,7 @@ logger_supy.setLevel(logging.INFO)
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
 # @functools.lru_cache(maxsize=16)
-def init_supy(path_init: str, force_reload=True, check_input=False,) -> pd.DataFrame:
+def init_supy(path_init: str, force_reload=True, check_input=False, ) -> pd.DataFrame:
     """Initialise supy by loading initial model states.
 
     Parameters
@@ -130,7 +130,7 @@ def init_supy(path_init: str, force_reload=True, check_input=False,) -> pd.DataF
 # TODO:
 # to be superseded by a more generic wrapper: load_forcing
 def load_forcing_grid(
-    path_runcontrol: str, grid: int, check_input=False,
+        path_runcontrol: str, grid: int, check_input=False,
 ) -> pd.DataFrame:
     """Load forcing data for a specific grid included in the index of `df_state_init </data-structure/supy-io.ipynb#df_state_init:-model-initial-states>`.
 
@@ -176,14 +176,14 @@ def load_forcing_grid(
         ) = (
             dict_mod_cfg[x]
             for x in [
-                "filecode",
-                "kdownzen",
-                "resolutionfilesin",
-                "resolutionfilesinestm",
-                "multiplemetfiles",
-                "multipleestmfiles",
-                "fileinputpath",
-            ]
+            "filecode",
+            "kdownzen",
+            "resolutionfilesin",
+            "resolutionfilesinestm",
+            "multiplemetfiles",
+            "multipleestmfiles",
+            "fileinputpath",
+        ]
         )
         tstep_mod, lat, lon, alt, timezone = df_state_init.loc[
             grid, [(x, "0") for x in ["tstep", "lat", "lng", "alt", "timezone"]]
@@ -259,12 +259,12 @@ def load_SampleData() -> Tuple[pandas.DataFrame, pandas.DataFrame]:
 # # main calculation
 # input as DataFrame
 def run_supy(
-    df_forcing: pandas.DataFrame,
-    df_state_init: pandas.DataFrame,
-    save_state=False,
-    n_yr=10,
-    logging_level=logging.INFO,
-    check_input=False,
+        df_forcing: pandas.DataFrame,
+        df_state_init: pandas.DataFrame,
+        save_state=False,
+        n_yr=10,
+        logging_level=logging.INFO,
+        check_input=False,
 ) -> Tuple[pandas.DataFrame, pandas.DataFrame]:
     """Perform supy simulation.
 
@@ -364,16 +364,16 @@ def run_supy(
 ##############################################################################
 # 3. save results of a supy run
 def save_supy(
-    df_output: pandas.DataFrame,
-    df_state_final: pandas.DataFrame,
-    freq_s: int = 3600,
-    site: str = "",
-    path_dir_save: str = Path("."),
-    path_runcontrol: str = None,
-    save_tstep=False,
-    logging_level=50,
-    output_level=1,
-    save_snow=True,
+        df_output: pandas.DataFrame,
+        df_state_final: pandas.DataFrame,
+        freq_s: int = 3600,
+        site: str = "",
+        path_dir_save: str = Path("."),
+        path_runcontrol: str = None,
+        save_tstep=False,
+        logging_level=50,
+        output_level=1,
+        debug=False,
 ) -> list:
     """Save SuPy run results to files
 
@@ -400,8 +400,8 @@ def save_supy(
     output_level : integer, optional
         option to determine selection of output variables, by default 1.
         Notes: 0 for all but snow-related; 1 for all; 2 for a minimal set without land cover specific information.
-    save_snow : bool, optional
-        whether to save snow-related output variables in a separate file, by default True.
+    debug : bool, optional
+        whether to enable debug mode (e.g., writing out in serial mode, and other debug uses), by default False.
 
 
     Returns
@@ -439,14 +439,13 @@ def save_supy(
     save_snow = True if snowuse == 1 else False
 
     # check if directory for saving results exists; if not, create one.
-    path_dir_save=Path(path_dir_save)
+    path_dir_save = Path(path_dir_save)
     if not path_dir_save.exists():
         path_dir_save.mkdir(parents=True)
 
-
     # save df_output to several files
     list_path_save = save_df_output(
-        df_output, freq_s, site, path_dir_save, save_tstep, output_level, save_snow
+        df_output, freq_s, site, path_dir_save, save_tstep, output_level, save_snow, debug
     )
 
     # save df_state

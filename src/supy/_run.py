@@ -441,7 +441,7 @@ def run_save_supy(
     df_state_final.to_hdf(path_state, f"state_{ind}", mode="w")
 
 
-# parallel mode:
+# parallel mode: only used on Linux/macOS; Windows is not supported yet.
 def run_supy_par(df_forcing_tstep, df_state_init_m, save_state, n_yr):
     n_grid = df_state_init_m.index.size
     list_forcing = [df_forcing_tstep for _ in range(n_grid)]
