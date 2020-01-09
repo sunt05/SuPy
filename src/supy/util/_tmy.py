@@ -23,9 +23,6 @@ class Const:
         self.__dict__[name] = value
 
 
-
-
-
 def gen_score_list(length):
     list_score = (np.arange(length) + 0.5) / length
     return list_score
@@ -58,13 +55,13 @@ def gen_FS_DF(df_output):
         df_output,
         values=["T2", "U10", "Kdown", "RH2"],
         index=["Year", "Month", "Day"],
-        aggfunc=[min, max, np.mean, ],
+        aggfunc=[min, max, np.mean,],
     )
     df_day_all_year = pd.pivot_table(
         df_output,
         values=["T2", "U10", "Kdown", "RH2"],
         index=["Month", "Day"],
-        aggfunc=[min, max, np.mean, ],
+        aggfunc=[min, max, np.mean,],
     )
 
     array_yr_mon = df_day.index.droplevel("Day").to_frame().drop_duplicates().values
@@ -72,11 +69,11 @@ def gen_FS_DF(df_output):
     df_fs = pd.DataFrame(
         {
             (yr, mon): (
-                    df_day.loc[(yr, mon)].apply(gen_score_ser)
-                    - df_day_all_year.loc[mon].apply(gen_score_ser)
+                df_day.loc[(yr, mon)].apply(gen_score_ser)
+                - df_day_all_year.loc[mon].apply(gen_score_ser)
             )
-                .abs()
-                .mean()
+            .abs()
+            .mean()
             for yr, mon in array_yr_mon
         }
     )
@@ -159,11 +156,11 @@ def gen_WS_DF(df_met):
 
 def pick_year(df_ws, df_output, n=5):
     df_day = pd.pivot_table(
-        df_output, values="Kdown", index=["Year", "Month", "Day"], aggfunc=[np.mean, ]
+        df_output, values="Kdown", index=["Year", "Month", "Day"], aggfunc=[np.mean,]
     )
 
     df_day_all_year = pd.pivot_table(
-        df_output, values="Kdown", index=["Month", "Day"], aggfunc=[np.mean, ]
+        df_output, values="Kdown", index=["Month", "Day"], aggfunc=[np.mean,]
     )
 
     array_yr_mon = df_day.index.droplevel("Day").to_frame().drop_duplicates().values
@@ -177,8 +174,8 @@ def pick_year(df_ws, df_output, n=5):
                 for yr, mon in array_yr_mon
             }
         )
-            .stack()
-            .T.dropna()
+        .stack()
+        .T.dropna()
     )
     df_rmsd.columns = df_rmsd.columns.droplevel([0, 1])
 
@@ -252,25 +249,39 @@ def gen_TMY(df_output):
     """
 
     # calculate weighted score
-    ws = gen_WS_DF(df_output)
+    df_output_x=df_output.assign(
+            Year=lambda df: df.index.year,
+            Month=lambda df: df.index.month,
+            Day=lambda df: df.index.day,
+            Hour=lambda df: df.index.hour,
+            Minute=lambda df: df.index.minute,
+        )
+    ws = gen_WS_DF(df_output_x)
 
     # select year
-    year_sel = pick_year(ws, df_output, n=5)
+    year_sel = pick_year(ws, df_output_x, n=5)
+
+    # convert `0h` to `24h` and take care of `day`: to follow EPW convention
+    df_output_x=conv_0to24(df_output_x)
 
     # generate TMY data
     df_TMY = pd.concat(
-        # shift(1) here is to conform the convention that
-        # timestamps refer to the preceding period
-        # [df_output.shift(1).groupby(['Month', 'Year']).get_group(grp)
-        # shift(1) is not necessary
         [
-            df_output.groupby(["Month", "Year"]).get_group(grp)
+            df_output_x.groupby(["Month", "Year"]).get_group(grp)
             for grp in year_sel.items()
         ]
     )
 
-    # df_TMY = df_TMY.rename(columns=dict_supy_epw)
+    return df_TMY
 
+def conv_0to24(df_TMY):
+    # convert `0h` to `24h` and take care of `day`
+    loc_24h = df_TMY.index == df_TMY.index.normalize()
+    ser_24h = df_TMY.loc[loc_24h].index - pd.Timedelta("1h")
+    df_TMY.loc[loc_24h, "Year"] = ser_24h.year
+    df_TMY.loc[loc_24h, "Month"] = ser_24h.month
+    df_TMY.loc[loc_24h, "Day"] = ser_24h.day
+    df_TMY.loc[loc_24h, "Hour"] = 24
     return df_TMY
 
 
@@ -303,7 +314,7 @@ def read_epw(path_epw: Path) -> pd.DataFrame:
 
 # generate EPW file from `df_TMY`
 def gen_epw(
-        df_output: pd.DataFrame, path_epw=Path("TMY.epw"), ratio_dif_dir=0.15
+    df_output: pd.DataFrame, path_epw=Path("TMY.epw"), ratio_dif_dir=0.15
 ) -> Tuple[pd.DataFrame, str, Path]:
     """Generate an `epw` file of uTMY (urbanised Typical Meteorological Year) using SUEWS simulation results
 
@@ -325,36 +336,28 @@ def gen_epw(
 
     """
     import atmosp
-    df_tmy = gen_TMY(df_output.copy().assign(
-        Year=lambda df:df.index.year,
-        Month=lambda df:df.index.month,
-        Day=lambda df:df.index.day,
-        Hour=lambda df:df.index.hour,
-        Minute=lambda df:df.index.minute,
-        ))
+
+    df_tmy = gen_TMY(df_output.copy())
     # df_tmy = pd.concat([df_tmy.iloc[1:], df_tmy.iloc[[0]]])
     # adding necessary variables that can be derive from supy output
     df_tmy["Dew Point Temperature"] = (
-            atmosp.calculate(
-                "Td",
-                T=df_tmy["T2"].values + 273.15,
-                qv=(df_tmy["Q2"].values),
-                qv_unit="g/kg",
-                RH=df_tmy["RH2"].values,
-                rho=1.23,
-            )
-            - 273.15
+        atmosp.calculate(
+            "Td",
+            T=df_tmy["T2"].values + 273.15,
+            qv=(df_tmy["Q2"].values),
+            qv_unit="g/kg",
+            RH=df_tmy["RH2"].values,
+            rho=1.23,
+        )
+        - 273.15
     )
-    df_tmy["Atmospheric Station Pressure"] = (
-            atmosp.calculate(
-                "p",
-                T=df_tmy["T2"].values + 273.15,
-                qv=(df_tmy["Q2"].values),
-                qv_unit="g/kg",
-                RH=df_tmy["RH2"].values,
-                rho=1.23,
-            )
-            - 273.15
+    df_tmy["Atmospheric Station Pressure"] = atmosp.calculate(
+        "p",
+        T=df_tmy["T2"].values + 273.15,
+        qv=(df_tmy["Q2"].values),
+        qv_unit="g/kg",
+        RH=df_tmy["RH2"].values,
+        rho=1.23,
     )
     # index = df_TMY.index
     # df_TMY = df_TMY.iloc[1:].append(df_TMY.ix[0])
@@ -426,18 +429,18 @@ def gen_epw(
     df_epw["Global Horizontal Radiation"] = np.ones(len(df_epw)) * 9999
     df_epw.index = df_TMY_x.index
 
-    # convert `0h` to `24h` and take care of `day`
-    loc_24h = df_epw.index == df_epw.index.normalize()
-    ser_24h = df_epw.loc[loc_24h].index - pd.Timedelta("1h")
-    df_epw.loc[loc_24h, "Year"] = ser_24h.year
-    df_epw.loc[loc_24h, "Month"] = ser_24h.month
-    df_epw.loc[loc_24h, "Day"] = ser_24h.day
-    df_epw.loc[loc_24h, "Hour"] = 24
+    # # convert `0h` to `24h` and take care of `day`
+    # loc_24h = df_epw.index == df_epw.index.normalize()
+    # ser_24h = df_epw.loc[loc_24h].index - pd.Timedelta("1h")
+    # df_epw.loc[loc_24h, "Year"] = ser_24h.year
+    # df_epw.loc[loc_24h, "Month"] = ser_24h.month
+    # df_epw.loc[loc_24h, "Day"] = ser_24h.day
+    # df_epw.loc[loc_24h, "Hour"] = 24
 
     df_epw = df_epw.sort_values(["Month", "Day", "Hour"], axis=0)
 
     # save pure data to a csv for formatting
-    path_epw=Path(path_epw)
+    path_epw = Path(path_epw)
     if not path_epw.parent.exists():
         path_epw.parent.mkdir(parents=True)
     path_epw.touch(exist_ok=True)
