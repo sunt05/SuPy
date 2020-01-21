@@ -1,6 +1,6 @@
 # IQR filling plot:
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
+
+
 import numpy as np
 import pandas as pd
 
@@ -21,6 +21,9 @@ def plot_day_clm(df_var, fig=None, ax=None):
         figure showing median lines and IQR in shadings
 
     """
+    import matplotlib.dates as mdates
+    import matplotlib.pyplot as plt
+
     if fig is None and ax is None:
         fig, ax = plt.subplots()
     elif fig is None:
@@ -86,6 +89,7 @@ def plot_comp(df_var, fig=None, ax=None):
 
     """
     # import when used for better performance in loading supy
+    import matplotlib.pyplot as plt
     import seaborn as sns
     from scipy import stats
 

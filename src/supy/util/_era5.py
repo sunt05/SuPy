@@ -442,9 +442,9 @@ def download_era5(
     lon_x: float,
     start: str,
     end: str,
+    dir_save=Path("."),
     grid=[0.125, 0.125],
     scale=0,
-    dir_save=Path("."),
 ) -> dict:
     """Generate ERA-5 cdsapi-based requests and download data for area of interests.
 
@@ -455,19 +455,21 @@ def download_era5(
     lon_x : float
         Longitude of centre at the area of interest.
     start : str
-        Any datetime-like string that can be parsed by `pandas.daterange()`
+        Any datetime-like string that can be parsed by `pandas.daterange()`.
     end : str
-        Any datetime-like string that can be parsed by `pandas.daterange()`
+        Any datetime-like string that can be parsed by `pandas.daterange()`.
     grid : list, optional
-        grid size used in CDS request API, by default [0.125, 0.125]
+        grid size used in CDS request API, by default [0.125, 0.125].
     scale : int, optional
-        scaling factor that determines the area of interest (i.e., `area=grid[0]*scale`), by default 0
+        scaling factor that determines the area of interest (i.e., `area=grid[0]*scale`), by default 0.
+    dir_save: Path or path-like string
+        path to directory for saving downloaded ERA5 netCDF files.
 
     Returns
     -------
     dict
-        key: name of downloaded file
-        value: CDS API request used for downloading the file named by the corresponding key
+        key: name of downloaded file.
+        value: CDS API request used for downloading the file named by the corresponding key.
     """
 
     # generate requests for surface level data
@@ -576,9 +578,11 @@ def gen_forcing_era5(
     lon_x: float,
     start: str,
     end: str,
-    grid=[0.125, 0.125],
-    scale=0,
     dir_save=Path("."),
+    grid=[0.125, 0.125],
+    hgt_agl_diag=100.0,
+    scale=0,
+    simple_mode=True,
 ) -> list:
     """Generate SUEWS forcing files using ERA-5 data.
 
@@ -592,11 +596,20 @@ def gen_forcing_era5(
         Any datetime-like string that can be parsed by `pandas.daterange()`.
     end : str
         Any datetime-like string that can be parsed by `pandas.daterange()`.
+    dir_save: Path or path-like string
+        path to directory for saving downloaded ERA5 netCDF files.
     grid : list, optional
         grid size used in CDS request API, by default [0.125, 0.125].
+    hgt_agl_diag: float
+        height above ground level to diagnose forcing variables, by default 0; the ground level is taken from ERA5 grid altitude.
     scale : int, optional
         scaling factor that determines the area of interest (i.e., `area=grid[0]*scale`),
         by default 0
+    simple_mode: boolean
+        if use the *simple* mode for diagnosing the forcing variables, by default `True`.
+        In the simple mode, temperature is diagnosed using environmental lapse rate 6.5 K/km and wind speed using MOST under neutral condition.
+        If `False`, MOST with consideration of stability conditions will be used to diagnose forcing variables.
+
 
     Returns
     -------
@@ -605,8 +618,12 @@ def gen_forcing_era5(
 
     Note
     ----
-        The generated forcing files can be imported using `supy.util.read_forcing`
-        to get simulation-ready `DataFrame`s.
+        1. The generated forcing files can be imported using `supy.util.read_forcing` to get simulation-ready `DataFrame`s.
+        2. See Section 3.10.2 and 3.10.3 in the reference for details of diagnostics calculation.
+
+    Reference
+    ---------
+        ECMWF, S. P. (2016). In IFS documentation CY41R2 Part IV: Physical Processes. ECMWF: Reading, UK, 111-113. https://www.ecmwf.int/en/elibrary/16648-part-iv-physical-processes
 
     """
     import xarray as xr
@@ -616,10 +633,14 @@ def gen_forcing_era5(
         lat_x, lon_x, start, end, grid, scale, dir_save
     )
 
+    # check if ERA5 data are downloaded;
+    # if not download them
+    # TODO:
+
     ds_sfc = xr.open_mfdataset(list_fn_sfc, concat_dim="time")
 
     # generate diagnostics at a higher level
-    ds_diag = gen_ds_diag_era5(list_fn_sfc, list_fn_ml)
+    ds_diag = gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag, simple_mode)
 
     # merge diagnostics above with surface variables
     ds_forcing_era5 = ds_sfc.merge(ds_diag)
@@ -758,7 +779,7 @@ def format_df_forcing(df_forcing_raw):
 
 
 # generate supy forcing using ERA-5 data
-def gen_ds_diag_era5(list_fn_sfc, list_fn_ml):
+def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True):
     import xarray as xr
     from atmosp import calculate as ac
 
@@ -774,8 +795,8 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml):
     # load data from from `ml` files
     ds_ml = xr.open_mfdataset(list_fn_ml, concat_dim="time")
 
-    # height where to calculate diagnostics
-    hgt_agl_diag = 100
+    # hgt_agl_diag: height where to calculate diagnostics
+    # hgt_agl_diag = 100
 
     # determine a lowest level higher than surface at all times
     level_sel = get_level_diag(ds_sfc, ds_ml, hgt_agl_diag)
@@ -841,10 +862,25 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml):
     ds_alt_z = da_alt_z.to_dataset()
 
     # get dataset of diagnostics
-    # ds_diag = diag_era5(
-    #     za, uv_za, theta_za, q_za, pres_za, qh, qe, z0m, ustar, pres_z0, uv10, t2, q2, z
-    # )
-    ds_diag = diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z)
+    if simple_mode:
+        ds_diag = diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z)
+    else:
+        ds_diag = diag_era5(
+            za,
+            uv_za,
+            theta_za,
+            q_za,
+            pres_za,
+            qh,
+            qe,
+            z0m,
+            ustar,
+            pres_z0,
+            uv10,
+            t2,
+            q2,
+            z,
+        )
 
     # merge altitude
     ds_diag = ds_diag.merge(ds_alt_z).drop("level")
@@ -874,8 +910,8 @@ def diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z):
     p_z = pres_z0 * np.exp((grav * (0 - z)) / (rd * t2))
 
     # correct humidity assuming invariable relative humidity
-    RH_z = ac("RH", qv=q2, p=pres_z0, theta=t2)+0*t_z
-    q_z = ac("qv", RH=RH_z, p=p_z, theta=t_z)+0*t_z
+    RH_z = ac("RH", qv=q2, p=pres_z0, theta=t2) + 0 * t_z
+    q_z = ac("qv", RH=RH_z, p=p_z, theta=t_z) + 0 * t_z
 
     # correct wind speed using log law; assuming neutral condition (without stability correction)
     uv_z = uv10 * (np.log((z + z0m) / z0m) / np.log((10 + z0m) / z0m))
@@ -956,6 +992,7 @@ def diag_era5(
 
     # stability correction for heat
     psih_z = cal_psi_heat(zoL)
+    psih_2 = cal_psi_heat(2 / l_mod)
     psih_z0 = cal_psi_heat(z0m / l_mod)
     psih_za = cal_psi_heat(za / l_mod)
 
@@ -984,8 +1021,11 @@ def diag_era5(
     t_za = ac("T", qv=q_za, p=pres_za, theta=theta_za)
     s_za = g * za + cp_za * t_za
 
+    # s_z = s2 + (s_za - s2) * (
+    #     (np.log(z / z0m) - psih_z + psih_z0) / (np.log(za / z0m) - psih_za + psih_z0)
+    # )
     s_z = s2 + (s_za - s2) * (
-        (np.log(z / z0m) - psih_z + psih_z0) / (np.log(za / z0m) - psih_za + psih_z0)
+        (np.log(z / 2) - psih_z + psih_2) / (np.log(za / 2) - psih_za + psih_2)
     )
 
     # calculate potential temperature at z

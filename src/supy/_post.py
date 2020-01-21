@@ -190,3 +190,27 @@ def resample_output(df_output, freq="60T", dict_aggm=dict_var_aggm):
     df_rsmp = df_rsmp.dropna(how="all", axis=0)
 
     return df_rsmp
+
+
+def proc_df_rsl(df_output):
+    try:
+        # if we work on the whole output with multi-index columns
+        df_rsl = df_output["RSL"].copy()
+    except:
+        # if we directly work on the RSL output
+        df_rsl = df_output.copy()
+
+    try:
+        # drop unnecessary columns if existing
+        df_rsl=df_rsl.drop(['Year','DOY','Hour','Min','Dectime'],axis=1)
+    except:
+        pass
+
+
+    df_rsl.columns = (
+        df_rsl.columns.str.split("_")
+        .map(lambda l: tuple([l[0], int(l[1])]))
+        .rename(["var", "level"])
+    )
+    df_rsl_proc=df_rsl.stack()
+    return df_rsl_proc
