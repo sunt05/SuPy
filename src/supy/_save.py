@@ -3,6 +3,7 @@ from typing import Tuple
 
 import f90nml
 import pandas as pd
+
 # import ray
 
 from ._env import logger_supy
@@ -29,9 +30,9 @@ def gen_df_save(df_grid_group: pd.DataFrame) -> pd.DataFrame:
     ser_DOY = pd.Series(idx_dt.dayofyear, index=idx_dt, name="DOY")
     ser_hour = pd.Series(idx_dt.hour, index=idx_dt, name="Hour")
     ser_min = pd.Series(idx_dt.minute, index=idx_dt, name="Min")
-    df_datetime = pd.concat([ser_year, ser_DOY, ser_hour, ser_min, ], axis=1)
+    df_datetime = pd.concat([ser_year, ser_DOY, ser_hour, ser_min,], axis=1)
     df_datetime["Dectime"] = (
-            ser_DOY - 1 + idx_dt.to_perioddelta("d").total_seconds() / (24 * 60 * 60)
+        ser_DOY - 1 + idx_dt.to_perioddelta("d").total_seconds() / (24 * 60 * 60)
     )
     df_save = pd.concat([df_datetime, df_grid_group], axis=1)
     return df_save
@@ -68,13 +69,13 @@ def format_df_save(df_save):
     return df_save
 
 
-def save_df_grid_group_year(
-        df_save, grid, group, year, output_level=1, site="test", dir_save=".",
-):
-    df_year = gen_df_year(df_save, year, grid, group, output_level)
+# def save_df_grid_group_year(
+#     df_save, grid, group, year, output_level=1, site="test", dir_save=".",
+# ):
+#     df_year = gen_df_year(df_save, year, grid, group, output_level)
 
-    path_out = save_df_grid_group(df_year, grid, group, dir_save, site)
-    return path_out
+#     path_out = save_df_grid_group(df_year, grid, group, dir_save, site)
+#     return path_out
 
 
 def gen_df_year(df_save, year, grid, group, output_level):
@@ -84,14 +85,14 @@ def gen_df_year(df_save, year, grid, group, output_level):
     idx_dt = df_grid_group.index
     freq = idx_dt.to_series().diff()[-1]
     df_grid_group = df_grid_group.asfreq(freq)
-    # remove `nan`s
-    df_grid_group = df_grid_group.dropna(how="all", axis=0)
     # select output variables in `SUEWS` based on output level
     if group == "SUEWS":
         df_grid_group = df_grid_group[dict_level_var[output_level]]
     # select data from year of interest and shift back to align with SUEWS convention
     df_year = df_grid_group.loc[f"{year}"]
     df_year.index = df_year.index.shift(1)
+    # remove `nan`s
+    df_year = df_year.dropna(how="all", axis=0)
     return df_year
 
 
@@ -116,11 +117,12 @@ def save_df_grid_group(df_year, grid, group, dir_save, site):
     path_out = path_dir / file_out
     logger_supy.debug(f"writing out: {path_out}")
     import time
+
     t_start = time.time()
     # generate df_save with datetime info prepended to each row
     df_save = gen_df_save(df_year)
     t_end = time.time()
-    logger_supy.debug(f"df_save generated in {t_end - t_start:.2f} s")
+    logger_supy.debug(f"df_save for {path_out.name} is generated in {t_end - t_start:.2f} s")
     # format df_save with right-justified view
     df_save = format_df_save(df_save)
     t_start = time.time()
@@ -161,14 +163,14 @@ dict_level_var = {
 
 # save output files
 def save_df_output(
-        df_output: pd.DataFrame,
-        freq_s: int = 3600,
-        site: str = "",
-        path_dir_save: Path = Path("."),
-        save_tstep=False,
-        output_level=1,
-        save_snow=True,
-        debug=False,
+    df_output: pd.DataFrame,
+    freq_s: int = 3600,
+    site: str = "",
+    path_dir_save: Path = Path("."),
+    save_tstep=False,
+    output_level=1,
+    save_snow=True,
+    debug=False,
 ) -> list:
     """save supy output dataframe to txt files
 
@@ -222,16 +224,22 @@ def save_df_output(
         [df_save, df_rsmp]
         if save_tstep
         # only those resampled ones
-        else [df_rsmp, df_save.loc[:, ["DailyState"]]]
+        else [df_save.loc[:, ["DailyState"]], df_rsmp]
     )
 
     # save output at the resampling frequency
     for i, df_save in enumerate(list_df_save):
         # shift temporal index to make timestampes indicating the start of periods
-        idx_dt = df_save.index.get_level_values("datetime").shift(-1)
-        df_save.index = df_save.index.set_levels(
-            idx_dt, level="datetime"
-        )
+        idx_dt = df_save.index.get_level_values("datetime").drop_duplicates()
+
+        # cast freq to index if not associated
+        if idx_dt.freq is None:
+            ser_idx = idx_dt.to_series()
+            freq = ser_idx.diff()[-1]
+            idx_dt = ser_idx.asfreq(freq).index
+
+        idx_dt = idx_dt.shift(-1)
+        df_save.index = df_save.index.set_levels(idx_dt, level="datetime")
         # tidy up columns so only necessary groups are included in the output
         df_save.columns = df_save.columns.remove_unused_levels()
         # import os
@@ -282,9 +290,7 @@ def save_df_par(df_save, path_dir_save, site, output_level):
     # number of years for grouping
     n_yr = 5
     idx_yr = df_save.index.get_level_values("datetime").year
-    grp_year = df_save.groupby(
-        (idx_yr - idx_yr.min()) // n_yr,
-    )
+    grp_year = df_save.groupby((idx_yr - idx_yr.min()) // n_yr,)
 
     list_path = []
     for grp in grp_year.groups:
@@ -301,7 +307,13 @@ def save_df_par(df_save, path_dir_save, site, output_level):
                 for group in list_group:
                     list_path.append(
                         save_df_year.remote(
-                            id_df_grp, grid, group, year, output_level, site, path_dir_save,
+                            id_df_grp,
+                            grid,
+                            group,
+                            year,
+                            output_level,
+                            site,
+                            path_dir_save,
                         )
                     )
 
@@ -322,14 +334,16 @@ def save_df_ser(df_save, path_dir_save, site, output_level):
             # for naming files
             for year in list_year:
                 df_year = gen_df_year(df_save, year, grid, group, output_level)
-                path_save = save_df_grid_group(df_year, grid, group, path_dir_save, site)
+                path_save = save_df_grid_group(
+                    df_year, grid, group, path_dir_save, site
+                )
                 list_path_save_df.append(path_save)
     return list_path_save_df
 
 
 # save model state for restart runs
 def save_df_state(
-        df_state: pd.DataFrame, site: str = "", path_dir_save: Path = Path("."),
+    df_state: pd.DataFrame, site: str = "", path_dir_save: Path = Path("."),
 ) -> Path:
     """save `df_state` to a csv file
 
@@ -352,7 +366,7 @@ def save_df_state(
     # trim filename if site == ''
     file_state_save = file_state_save.replace("_.csv", ".csv")
     path_state_save = Path(path_dir_save) / file_state_save
-    logger_supy.debug(f'writing out: {path_state_save}')
+    logger_supy.debug(f"writing out: {path_state_save}")
     df_state.to_csv(path_state_save)
     return path_state_save
 
@@ -460,7 +474,7 @@ dict_init_nml = {
 
 # save initcond namelist as SUEWS binary
 def save_initcond_nml(
-        df_state: pd.DataFrame, site: str = "", path_dir_save: Path = Path("."),
+    df_state: pd.DataFrame, site: str = "", path_dir_save: Path = Path("."),
 ) -> Path:
     # get last time step
     try:
@@ -468,8 +482,8 @@ def save_initcond_nml(
     except AttributeError:
         logger_supy.exception(
             (
-                    "incorrect structure detected;"
-                    + " check if `df_state` is the final model state."
+                "incorrect structure detected;"
+                + " check if `df_state` is the final model state."
             )
         )
         return
