@@ -429,11 +429,16 @@ def download_cds(fn, dict_req):
     import cdsapi
 
     c = cdsapi.Client()
-    if Path(fn).exists():
+    path_fn = Path(fn)
+    if path_fn.exists():
         logger_supy.warning(f"{fn} exists!")
     else:
         logger_supy.info(f"To download: {fn}")
+        # this will download the file to current working directory
         c.retrieve(**dict_req)
+        # move the downloaded file to desired location
+        Path(path_fn.name).replace(fn)
+        # hold on a bit for the next request
         time.sleep(0.0100)
 
 
@@ -475,14 +480,18 @@ def download_era5(
     # generate requests for surface level data
     dict_req_sfc = gen_req_sfc(lat_x, lon_x, start, end, grid=[0.125, 0.125], scale=0,)
 
-    path_dir_save = Path(dir_save).resolve()
+    # parse and create (if needed) the saving directory
+    path_dir_save = Path(dir_save).expanduser().resolve()
+
+    if not path_dir_save.exists():
+        path_dir_save.mkdir(parents=True)
 
     for fn_sfc, dict_req in dict_req_sfc.items():
         download_cds(path_dir_save / fn_sfc, dict_req)
 
     dict_req_ml = {}
     for fn_sfc in dict_req_sfc.keys():
-        dict_req = gen_req_ml(fn_sfc, grid, scale)
+        dict_req = gen_req_ml(path_dir_save / fn_sfc, grid, scale)
         dict_req_ml.update(dict_req)
 
     for fn_ml, dict_req in dict_req_ml.items():
@@ -531,7 +540,7 @@ def gen_req_era5(
     """
 
     # path to directory for saving results
-    path_dir_save = Path(dir_save).resolve()
+    path_dir_save = Path(dir_save).expanduser().resolve()
 
     # generate requests for surface level data
     dict_req_sfc = gen_req_sfc(lat_x, lon_x, start, end, grid=[0.125, 0.125], scale=0,)
@@ -561,6 +570,8 @@ def load_filelist_era5(
     scale=0,
     dir_save=Path("."),
 ):
+    # download data: existing files will be excluded from the downloading list
+    download_era5(lat_x, lon_x, start, end, dir_save, grid, scale)
 
     # attempt to generate requests
     dict_req_all = gen_req_era5(lat_x, lon_x, start, end, grid, scale, dir_save)
@@ -632,10 +643,6 @@ def gen_forcing_era5(
     list_fn_sfc, list_fn_ml = load_filelist_era5(
         lat_x, lon_x, start, end, grid, scale, dir_save
     )
-
-    # check if ERA5 data are downloaded;
-    # if not download them
-    # TODO:
 
     ds_sfc = xr.open_mfdataset(list_fn_sfc, concat_dim="time")
 
