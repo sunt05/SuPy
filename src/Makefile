@@ -35,7 +35,8 @@ main:
 
 # make fortran exe and run test cases
 test:
-	${PYTHON} setup.py test
+	# ${PYTHON} setup.py test
+	pytest -s ${MODULE}/test/test-SuPy.py
 
 
 # If wanted, clean all *.o files after build
