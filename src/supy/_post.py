@@ -8,13 +8,12 @@ from supy_driver import suews_driver as sd
 # get variable information from Fortran
 def get_output_info_df():
     size_var_list = sd.output_size()
-    var_list_x = [np.array(sd.output_name_n(i))
-                  for i in np.arange(size_var_list) + 1]
+    var_list_x = [np.array(sd.output_name_n(i)) for i in np.arange(size_var_list) + 1]
 
-    df_var_list = pd.DataFrame(var_list_x, columns=['var', 'group', 'aggm'])
+    df_var_list = pd.DataFrame(var_list_x, columns=["var", "group", "aggm",'outlevel'])
     df_var_list = df_var_list.applymap(lambda x: x.decode().strip())
-    df_var_list_x = df_var_list.replace(r'^\s*$', np.nan, regex=True).dropna()
-    var_dfm = df_var_list_x.set_index(['group', 'var'])
+    df_var_list_x = df_var_list.replace(r"^\s*$", np.nan, regex=True).dropna()
+    var_dfm = df_var_list_x.set_index(["group", "var"])
     return var_dfm
 
 
@@ -23,39 +22,39 @@ def get_output_info_df():
 var_df = get_output_info_df()
 
 # dict as var_df but keys in lowercase
-var_df_lower = {group.lower(): group
-                for group in var_df.index.levels[0].str.strip()}
+var_df_lower = {group.lower(): group for group in var_df.index.levels[0].str.strip()}
 
 #  generate dict of functions to apply for each variable
 dict_func_aggm = {
-    'T': 'last',
-    'A': 'mean',
-    'S': 'sum',
-    'L': 'last',
+    "T": "last",
+    "A": "mean",
+    "S": "sum",
+    "L": "last",
 }
-var_df['func'] = var_df.aggm.apply(lambda x: dict_func_aggm[x])
+var_df["func"] = var_df.aggm.apply(lambda x: dict_func_aggm[x])
 
 # dict of resampling ruls:
 #  {group: {var: agg_method}}
 dict_var_aggm = {
-    group: var_df.loc[group, 'func'].to_dict()
-    for group in var_df.index.levels[0]}
+    group: var_df.loc[group, "func"].to_dict() for group in var_df.index.levels[0]
+}
 
 
 # generate index for variables in different model groups
 def gen_group_cols(group_x):
     # get correct group name by cleaning and swapping case
-    group = group_x.replace('dataoutline', '').replace('line', '')
+    group = group_x.replace("dataoutline", "").replace("line", "")
     # print group
     group = var_df_lower[group]
     header_group = np.apply_along_axis(
-        list, 0, var_df.loc[['datetime', group]].index.values)[:, 1]
+        list, 0, var_df.loc[["datetime", group]].index.values
+    )[:, 1]
 
     # generate MultiIndex if not `datetimeline`
-    if not group_x == 'datetimeline':
-        index_group = pd.MultiIndex.from_product([[group], header_group],
-                                                 names=['group', 'var'],
-                                                 sortorder=None)
+    if not group_x == "datetimeline":
+        index_group = pd.MultiIndex.from_product(
+            [[group], header_group], names=["group", "var"], sortorder=None
+        )
     else:
         index_group = header_group
 
@@ -65,18 +64,21 @@ def gen_group_cols(group_x):
 # merge_grid: useful for both `dict_output` and `dict_state`
 def pack_df_grid(dict_output):
     # pack all grid and times into index/columns
-    df_xx = pd.DataFrame.from_dict(dict_output, orient='index')
+    df_xx = pd.DataFrame.from_dict(dict_output, orient="index")
     # pack
     df_xx0 = df_xx.applymap(pd.Series)
     df_xx1 = df_xx0.applymap(pd.DataFrame.from_dict)
-    df_xx2 = pd.concat({grid: pd.concat(
-        df_xx1[grid].to_dict()).unstack().dropna(axis=1)
-        for grid in df_xx1.columns})
+    df_xx2 = pd.concat(
+        {
+            grid: pd.concat(df_xx1[grid].to_dict()).unstack().dropna(axis=1)
+            for grid in df_xx1.columns
+        }
+    )
     # drop redundant levels
     df_xx2.columns = df_xx2.columns.droplevel(0)
     # regroup by `grid`
-    df_xx2.index.names = ['grid', 'time']
-    gb_xx2 = df_xx2.groupby(level='grid')
+    df_xx2.index.names = ["grid", "time"]
+    gb_xx2 = df_xx2.groupby(level="grid")
     # merge results of each grid
     xx3 = gb_xx2.agg(lambda x: tuple(x.values)).applymap(np.array)
 
@@ -85,10 +87,10 @@ def pack_df_grid(dict_output):
 
 # generate MultiIndex for variable groups
 def gen_index(varline_x):
-    var_x = varline_x.replace('dataoutline', '').replace('line', '')
+    var_x = varline_x.replace("dataoutline", "").replace("line", "")
     group = var_df_lower[var_x]
     var = var_df.loc[group].index.tolist()
-    mindex = pd.MultiIndex.from_product([[group], var], names=['group', 'var'])
+    mindex = pd.MultiIndex.from_product([[group], var], names=["group", "var"])
     return mindex
 
 
@@ -119,7 +121,7 @@ def pack_df_output(dict_output):
     df_output = pd.DataFrame(dict_output).T
     # df_output = pd.concat(dict_output).to_frame().unstack()
     # set index level names
-    index = df_output.index.set_names(['datetime', 'grid'])
+    index = df_output.index.set_names(["datetime", "grid"])
     # clean columns
     columns = gen_MultiIndex(df_output.iloc[0])
     values = np.apply_along_axis(np.hstack, 1, df_output.values)
@@ -131,7 +133,7 @@ def pack_df_state(dict_state):
     df_state = pd.DataFrame(dict_state).T
     # df_state = pd.concat(dict_state).to_frame().unstack()
     # set index level names
-    df_state.index = df_state.index.set_names(['datetime', 'grid'])
+    df_state.index = df_state.index.set_names(["datetime", "grid"])
 
     return df_state
 
@@ -142,10 +144,8 @@ def pack_df_output_array(dict_output_array, df_forcing):
     col_df = gen_MultiIndex(dict_output_array[grid_start])
     dict_df = {}
     for grid in grid_list:
-        array_grid = np.hstack(
-            [v[:, 5:] for v in dict_output_array[grid].values()])
-        df_grid = pd.DataFrame(
-            array_grid, columns=col_df, index=df_forcing.index)
+        array_grid = np.hstack([v[:, 5:] for v in dict_output_array[grid].values()])
+        df_grid = pd.DataFrame(array_grid, columns=col_df, index=df_forcing.index)
 
         dict_df.update({grid: df_grid})
 
@@ -153,40 +153,64 @@ def pack_df_output_array(dict_output_array, df_forcing):
     df_grid_res = pd.concat(dict_df, keys=dict_df.keys())
 
     # set index level names
-    df_grid_res.index.set_names(['grid', 'datetime'], inplace=True)
+    df_grid_res.index.set_names(["grid", "datetime"], inplace=True)
 
     return df_grid_res
 
 
 # resample supy output
-def resample_output(
-        df_output,
-        freq='60T',
-        dict_aggm=dict_var_aggm):
+def resample_output(df_output, freq="60T", dict_aggm=dict_var_aggm):
 
     # get grid and group names
-    list_grid = df_output.index.get_level_values('grid').unique()
-    list_group = df_output.columns.get_level_values('group').unique()
+    list_grid = df_output.index.get_level_values("grid").unique()
+    list_group = df_output.columns.get_level_values("group").unique()
 
     # resampling output according to different rules defined in dict_aggm
     # note the setting in .resample: (closed='right',label='right')
     # which is to conform to SUEWS convention
     # that timestamp refer to the ending of previous period
-    df_rsmp = pd.concat({
-        grid: pd.concat(
-            {group: df_output.loc[grid, group]
-             .resample(
-                 freq,
-                 closed='right',
-                 label='right',
+    df_rsmp = pd.concat(
+        {
+            grid: pd.concat(
+                {
+                    group: df_output.loc[grid, group]
+                    .resample(freq, closed="right", label="right",)
+                    .agg(dict_aggm[group])
+                    for group in list_group
+                },
+                axis=1,
+                names=["group", "var"],
             )
-                .agg(dict_aggm[group])
-                for group in list_group},
-            axis=1, names=['group', 'var'])
-        for grid in list_grid},
-        names=['grid'])
+            for grid in list_grid
+        },
+        names=["grid"],
+    )
 
     # clean results
-    df_rsmp = df_rsmp.dropna(how='all', axis=0)
+    df_rsmp = df_rsmp.dropna(how="all", axis=0)
 
     return df_rsmp
+
+
+def proc_df_rsl(df_output):
+    try:
+        # if we work on the whole output with multi-index columns
+        df_rsl = df_output["RSL"].copy()
+    except:
+        # if we directly work on the RSL output
+        df_rsl = df_output.copy()
+
+    try:
+        # drop unnecessary columns if existing
+        df_rsl=df_rsl.drop(['Year','DOY','Hour','Min','Dectime'],axis=1)
+    except:
+        pass
+
+
+    df_rsl.columns = (
+        df_rsl.columns.str.split("_")
+        .map(lambda l: tuple([l[0], int(l[1])]))
+        .rename(["var", "level"])
+    )
+    df_rsl_proc=df_rsl.stack()
+    return df_rsl_proc

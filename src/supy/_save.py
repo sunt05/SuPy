@@ -1,41 +1,39 @@
-import logging
-import f90nml
-from typing import Tuple
-from ._post import resample_output
-from ._load import load_SUEWS_dict_ModConfig, dict_InitCond_out
-import os
-import pandas as pd
 from pathlib import Path
+from typing import Tuple
+
+import f90nml
+import pandas as pd
+
+# import ray
+
 from ._env import logger_supy
+from ._load import load_SUEWS_dict_ModConfig
+from ._post import resample_output, var_df as df_var_out
 
 
 def gen_df_save(df_grid_group: pd.DataFrame) -> pd.DataFrame:
-    '''generate a dataframe for saving
+    """generate a dataframe for saving
 
     Parameters
     ----------
-    df_output_grid_group : pd.DataFrame
+    df_grid_group : pd.DataFrame
         an output dataframe of a single group and grid
 
     Returns
     -------
     pd.DataFrame
         a dataframe with date time info prepended for saving
-    '''
+    """
     # generate df_datetime for prepending
     idx_dt = df_grid_group.index
-    ser_year = pd.Series(idx_dt.year, index=idx_dt, name='Year')
-    ser_DOY = pd.Series(idx_dt.dayofyear, index=idx_dt, name='DOY')
-    ser_hour = pd.Series(idx_dt.hour, index=idx_dt, name='Hour')
-    ser_min = pd.Series(idx_dt.minute, index=idx_dt, name='Min')
-    df_datetime = pd.concat([
-        ser_year,
-        ser_DOY,
-        ser_hour,
-        ser_min,
-    ], axis=1)
-    df_datetime['Dectime'] = ser_DOY - 1 + idx_dt.to_perioddelta(
-        'd').total_seconds() / (24 * 60 * 60)
+    ser_year = pd.Series(idx_dt.year, index=idx_dt, name="Year")
+    ser_DOY = pd.Series(idx_dt.dayofyear, index=idx_dt, name="DOY")
+    ser_hour = pd.Series(idx_dt.hour, index=idx_dt, name="Hour")
+    ser_min = pd.Series(idx_dt.minute, index=idx_dt, name="Min")
+    df_datetime = pd.concat([ser_year, ser_DOY, ser_hour, ser_min,], axis=1)
+    df_datetime["Dectime"] = (
+        ser_DOY - 1 + idx_dt.to_perioddelta("d").total_seconds() / (24 * 60 * 60)
+    )
     df_save = pd.concat([df_datetime, df_grid_group], axis=1)
     return df_save
 
@@ -45,84 +43,136 @@ def format_df_save(df_save):
     for var in df_save.columns[:4]:
         width_var_name = max([3, len(var)])
         df_save[var] = df_save[var].map(
-            lambda s: '{s:{c}>{n}}'.format(s=s, n=width_var_name, c=' '))
+            lambda s: "{s:{c}>{n}}".format(s=s, n=width_var_name, c=" ")
+        )
 
     df_save.Dectime = df_save.Dectime.map(
-        lambda s: '{s:{c}>{n}.4f}'.format(s=s, n=8, c=' '))
+        lambda s: "{s:{c}>{n}.4f}".format(s=s, n=8, c=" ")
+    )
     # fill nan values
-    df_save = df_save.fillna(-999.)
+    df_save = df_save.fillna(-999.0)
     # format value columns
 
     for var in df_save.columns[5:]:
         width_var_name = max([8, len(var)])
         df_save[var] = df_save[var].map(
-            lambda s: '{s:{c}>{n}.2f}'.format(s=s, n=width_var_name, c=' '))
+            lambda s: "{s:{c}>{n}.2f}".format(s=s, n=width_var_name, c=" ")
+        )
 
     # format column names
     col_fmt = df_save.columns.to_series()
     col_fmt[4:] = col_fmt[4:].map(
-        lambda s: '{s:{c}>{n}}'.format(s=s, n=max([8, len(s)]), c=' '))
+        lambda s: "{s:{c}>{n}}".format(s=s, n=max([8, len(s)]), c=" ")
+    )
     df_save.columns = col_fmt
 
     return df_save
 
 
-def save_df_grid_group(df_grid_group, grid, group, site='test', dir_save='.'):
+# def save_df_grid_group_year(
+#     df_save, grid, group, year, output_level=1, site="test", dir_save=".",
+# ):
+#     df_year = gen_df_year(df_save, year, grid, group, output_level)
+
+#     path_out = save_df_grid_group(df_year, grid, group, dir_save, site)
+#     return path_out
+
+
+def gen_df_year(df_save, year, grid, group, output_level):
+    # retrieve dataframe of grid for `group`
+    df_grid_group = df_save.loc[grid, group].copy()
+    # get temporal index
+    idx_dt = df_grid_group.index
+    freq = idx_dt.to_series().diff()[-1]
+    df_grid_group = df_grid_group.asfreq(freq)
+    # select output variables in `SUEWS` based on output level
+    if group == "SUEWS":
+        df_grid_group = df_grid_group[dict_level_var[output_level]]
+    # select data from year of interest and shift back to align with SUEWS convention
+    df_year = df_grid_group.loc[f"{year}"]
+    df_year.index = df_year.index.shift(1)
+    # remove `nan`s
+    df_year = df_year.dropna(how="all", axis=0)
+    return df_year
+
+
+def save_df_grid_group(df_year, grid, group, dir_save, site):
     # processing path
     path_dir = Path(dir_save)
-
     # pandas bug here: monotonic datetime index would lose `freq` once `pd.concat`ed
-    if df_grid_group.shape[0] > 0 and df_grid_group.index.size > 2:
-        ind = df_grid_group.index
+    if df_year.shape[0] > 0 and df_year.index.size > 2:
+        ind = df_year.index
         freq_cal = ind[1] - ind[0]
-        df_grid_group = df_grid_group.asfreq(freq_cal)
+        df_year = df_year.asfreq(freq_cal)
     else:
-        df_grid_group = df_grid_group.asfreq('5T')
+        df_year = df_year.asfreq("5T")
     # output frequency in min
-    freq_min = int(df_grid_group.index.freq.delta.total_seconds() / 60)
+    freq_min = int(df_year.index.freq.delta.total_seconds() / 60)
     # staring year
-    year = df_grid_group.index[0].year
+    year = df_year.index[0].year
     # sample file name: 'Kc98_2012_SUEWS_60.txt'
-    file_out = '{site}{grid}_{year}_{group}_{freq_min}.txt'.format(
-        site=site, grid=grid, year=year, group=group, freq_min=freq_min)
+    file_out = f"{site}{grid}_{year}_{group}_{freq_min}.txt"
     # 'DailyState_1440' will be trimmed
-    file_out = file_out.replace('DailyState_1440', 'DailyState')
+    file_out = file_out.replace("DailyState_1440", "DailyState")
     path_out = path_dir / file_out
-    # print('writing out: {path_out}'.format(path_out=path_out))
+    logger_supy.debug(f"writing out: {path_out}")
     import time
+
     t_start = time.time()
     # generate df_save with datetime info prepended to each row
-    df_save = gen_df_save(df_grid_group)
+    df_save = gen_df_save(df_year)
     t_end = time.time()
-    logger_supy.debug(f'df_save generated in {t_end-t_start:.2f} s')
-
-    t_start = time.time()
+    logger_supy.debug(f"df_save for {path_out.name} is generated in {t_end - t_start:.2f} s")
     # format df_save with right-justified view
     df_save = format_df_save(df_save)
-    t_end = time.time()
-    # print(t_end-t_start)
-
     t_start = time.time()
     # save to txt file
     df_save.to_csv(
-        path_out,
-        index=False,
-        sep='\t',
+        path_out, index=False, sep="\t",
     )
     t_end = time.time()
-    logger_supy.debug(f'{path_out} saved in {t_end-t_start:.2f} s')
+    # remove freq info from `DailyState` file
+    if "DailyState" in path_out.name:
+        str_fn_dd = str(path_out).replace("DailyState_5", "DailyState")
+        path_out.rename(Path(str_fn_dd))
+        path_out = Path(str_fn_dd)
+    logger_supy.debug(f"{path_out} saved in {t_end - t_start:.2f} s")
     return path_out
+
+
+# @ray.remote
+# def save_df_year(df_year, grid, group, year, output_level, site, dir_save):
+#     return save_df_grid_group_year(
+#         df_year, grid, group, year, output_level, site, dir_save
+#     )
+
+
+# a pd.Series of variables of different output levels
+ser_level_var = df_var_out.loc["SUEWS", "outlevel"].astype(int)
+
+# a dict of variables of different output level
+dict_level_var = {
+    # all but snow-related variables
+    0: ser_level_var.loc[ser_level_var <= 1].index,
+    # all output variables
+    1: ser_level_var.loc[ser_level_var <= 2].index,
+    # minimal set of variables
+    2: ser_level_var.loc[ser_level_var == 0].index,
+}
 
 
 # save output files
 def save_df_output(
-        df_output: pd.DataFrame,
-        freq_s: int = 3600,
-        site: str = '',
-        path_dir_save: Path = Path('.'),
-        save_tstep=False,
+    df_output: pd.DataFrame,
+    freq_s: int = 3600,
+    site: str = "",
+    path_dir_save: Path = Path("."),
+    save_tstep=False,
+    output_level=1,
+    save_snow=True,
+    debug=False,
 ) -> list:
-    '''save supy output dataframe to txt files
+    """save supy output dataframe to txt files
 
     Parameters
     ----------
@@ -136,62 +186,166 @@ def save_df_output(
         site code used for filename (the default is '', which indicates no site name prepended to the filename)
     save_tstep : bool, optional
         whether to save results in temporal resolution as in simulation (which may result very large files and slow progress), by default False.
+    output_level : integer, optional
+        option to determine selection of output variables, by default 1.
+        Notes: 0 for all but snow-related; 1 for all; 2 for a minimal set without land cover specific information.
+    save_snow : bool, optional
+        whether to save snow-related output variables in a separate file, by default True.
+    debug : bool, optional
+        whether to enable debug mode (e.g., writing out in serial mode, and other debug uses), by default False.
 
     Returns
     -------
     list
         a list of `Path` objects for saved txt files
-    '''
+    """
+    # save a local copy
+    df_save = df_output.copy()
 
     # path list of files to save
     list_path_save = []
 
     # resample output if `freq_s` is different from runtime `freq` (usually 5 min)
-    freq_save = pd.Timedelta(freq_s, 's')
+    freq_save = pd.Timedelta(freq_s, "s")
+
+    # drop snow related group from output groups
+    if not save_snow:
+        df_save = df_save.drop("snow", axis=1)
+
     # resample `df_output` at `freq_save`
-    df_rsmp = resample_output(df_output, freq_save)
+    df_rsmp = resample_output(df_save, freq_save)
+
     # 'DailyState' group will be dropped in `resample_output` as resampling is not needed
-    df_rsmp = df_rsmp.drop(columns='DailyState')
+    df_rsmp = df_rsmp.drop(columns="DailyState")
 
     # dataframes to save
-    list_df_save = ([df_output, df_rsmp] if save_tstep else
-                    [df_rsmp, df_output.loc[:, ['DailyState']]])
+    list_df_save = (
+        # both original and resampled output dataframes
+        [df_save, df_rsmp]
+        if save_tstep
+        # only those resampled ones
+        else [df_save.loc[:, ["DailyState"]], df_rsmp]
+    )
+
     # save output at the resampling frequency
-    for df_save in list_df_save:
-        list_grid = df_save.index.get_level_values('grid').unique()
-        for grid in list_grid:
-            list_group = df_save.columns.get_level_values('group').unique()
-            for group in list_group:
-                df_output_grid_group = df_save\
-                    .loc[grid, group]\
-                    .dropna(how='all', axis=0)
-                path_save = save_df_grid_group(
-                    df_output_grid_group,
-                    grid,
-                    group,
-                    site=site,
-                    dir_save=path_dir_save,
-                )
+    for i, df_save in enumerate(list_df_save):
+        # shift temporal index to make timestampes indicating the start of periods
+        idx_dt = df_save.index.get_level_values("datetime").drop_duplicates()
 
-                # remove freq info from `DailyState` file
-                if 'DailyState' in path_save.name:
-                    str_fn_dd = str(path_save).replace('DailyState_5',
-                                                       'DailyState')
-                    path_save.rename(Path(str_fn_dd))
-                    path_save = Path(str_fn_dd)
+        # cast freq to index if not associated
+        if idx_dt.freq is None:
+            ser_idx = idx_dt.to_series()
+            freq = ser_idx.diff()[-1]
+            idx_dt = ser_idx.asfreq(freq).index
 
-                list_path_save.append(path_save)
+        idx_dt = idx_dt.shift(-1)
+        df_save.index = df_save.index.set_levels(idx_dt, level="datetime")
+        # tidy up columns so only necessary groups are included in the output
+        df_save.columns = df_save.columns.remove_unused_levels()
+        # import os
+        # if os.name != "nt" and not debug:
+        #
+        #     try:
+        #         # PARALLEL mode:
+        #         # supported by ray: only used on Linux/macOS; Windows is not supported yet.
+        #         ray.shutdown()
+        #         ray.init(object_store_memory=4 * 1000 ** 3)
+        #         list_path_save_df = save_df_par(df_save, path_dir_save, site, output_level)
+        #         ray.shutdown()
+        #     except:
+        #         # fallback to SERIAL mode
+        #         logger_supy.warning('falling back to serial mode for writing out results.')
+        #         list_path_save_df = save_df_ser(df_save, path_dir_save, site, output_level)
+        #
+        # else:
+        # SERIAL mode: only on Windows
+        list_path_save_df = save_df_ser(df_save, path_dir_save, site, output_level)
 
+        # add up path list
+        list_path_save += list_path_save_df
     return list_path_save
+
+
+# def save_df_year_par(df_year, output_level, site, dir_save):
+#     ray.shutdown()
+#     info_ray = ray.init(object_store_memory=1 * 1000 ** 3)
+#     list_path = []
+#     id_df_year = ray.put(df_year)
+#     list_grid = df_year.index.levels[0]
+#     list_group = df_year.columns.levels[0]
+#     for grid in list_grid:
+#         for group in list_group:
+#             list_path.append(
+#                 save_df_year.remote(
+#                     id_df_year, grid, group, year, output_level, site, dir_save
+#                 )
+#             )
+#     list_path = ray.get(list_path)
+#     ray.shutdown()
+#     return list_path
+
+
+# save `df_save` in serial mode
+def save_df_par(df_save, path_dir_save, site, output_level):
+    # number of years for grouping
+    n_yr = 5
+    idx_yr = df_save.index.get_level_values("datetime").year
+    grp_year = df_save.groupby((idx_yr - idx_yr.min()) // n_yr,)
+
+    list_path = []
+    for grp in grp_year.groups:
+        df_grp = grp_year.get_group(grp)
+        list_grid = df_grp.index.get_level_values("grid").unique()
+        list_group = df_grp.columns.get_level_values("group").unique()
+        list_year = df_grp.index.get_level_values("datetime").year[-1].unique()
+        # put large df as common data object for parallel mode
+        id_df_grp = ray.put(df_grp)
+
+        # the below runs in parallel by `ray.remote`
+        for year in list_year:
+            for grid in list_grid:
+                for group in list_group:
+                    list_path.append(
+                        save_df_year.remote(
+                            id_df_grp,
+                            grid,
+                            group,
+                            year,
+                            output_level,
+                            site,
+                            path_dir_save,
+                        )
+                    )
+
+    list_path = ray.get(list_path)
+
+    return list_path
+
+
+# save `df_save` in serial mode
+def save_df_ser(df_save, path_dir_save, site, output_level):
+    list_grid = df_save.index.get_level_values("grid").unique()
+    list_group = df_save.columns.get_level_values("group").unique()
+    list_year = df_save.index.get_level_values("datetime").year[:-1].unique()
+    list_path_save_df = []
+    for grid in list_grid:
+        for group in list_group:
+            # the last index value is dropped as supy uses starting timestamp of each year
+            # for naming files
+            for year in list_year:
+                df_year = gen_df_year(df_save, year, grid, group, output_level)
+                path_save = save_df_grid_group(
+                    df_year, grid, group, path_dir_save, site
+                )
+                list_path_save_df.append(path_save)
+    return list_path_save_df
 
 
 # save model state for restart runs
 def save_df_state(
-        df_state: pd.DataFrame,
-        site: str = '',
-        path_dir_save: Path = Path('.'),
+    df_state: pd.DataFrame, site: str = "", path_dir_save: Path = Path("."),
 ) -> Path:
-    '''save `df_state` to a csv file
+    """save `df_state` to a csv file
 
     Parameters
     ----------
@@ -206,20 +360,20 @@ def save_df_state(
     -------
     Path
         path to the saved csv file
-    '''
+    """
 
-    file_state_save = 'df_state_{site}.csv'.format(site=site)
+    file_state_save = "df_state_{site}.csv".format(site=site)
     # trim filename if site == ''
-    file_state_save = file_state_save.replace('_.csv', '.csv')
+    file_state_save = file_state_save.replace("_.csv", ".csv")
     path_state_save = Path(path_dir_save) / file_state_save
-    # print('writing out: {path_out}'.format(path_out=path_state_save))
+    logger_supy.debug(f"writing out: {path_state_save}")
     df_state.to_csv(path_state_save)
     return path_state_save
 
 
 # get information for saving results
 def get_save_info(path_runcontrol: str) -> Tuple[int, Path, str]:
-    '''get necessary information for saving supy results, which are (freq_s, dir_save, site)
+    """get necessary information for saving supy results, which are (freq_s, dir_save, site)
 
     Parameters
     ----------
@@ -229,104 +383,109 @@ def get_save_info(path_runcontrol: str) -> Tuple[int, Path, str]:
     Returns
     -------
     tuple
-        A tuple including (freq_s, dir_save, site):
+        A tuple including (freq_s, dir_save, site, writeoutoption):
         freq_s: output frequency in seconds
         dir_save: directory name to save results
         site: site identifier
-    '''
+        writeoutoption: option for selection of output variables
+    """
 
     try:
         path_runcontrol = Path(path_runcontrol).expanduser().resolve()
     except FileNotFoundError:
-        logger_supy.exception(f'{path_runcontrol} does not exists!')
+        logger_supy.exception(f"{path_runcontrol} does not exists!")
     else:
         dict_mod_cfg = load_SUEWS_dict_ModConfig(path_runcontrol)
-        freq_s, dir_save, site, save_tstep = [
-            dict_mod_cfg[x] for x in [
-                'resolutionfilesout',
-                'fileoutputpath',
-                'filecode',
-                'keeptstepfilesout',
+        freq_s, dir_save, site, save_tstep, writeoutoption = [
+            dict_mod_cfg[x]
+            for x in [
+                "resolutionfilesout",
+                "fileoutputpath",
+                "filecode",
+                "keeptstepfilesout",
+                "writeoutoption",
             ]
         ]
         dir_save = path_runcontrol.parent / dir_save
         if not dir_save.exists():
             dir_save.mkdir()
-        return freq_s, dir_save, site, save_tstep
+        return freq_s, dir_save, site, save_tstep, writeoutoption
+
 
 # TODO: fix gdd/sdd initialisation
 # dict for {nml_save:(df_state_var,index)}
 dict_init_nml = {
-    'dayssincerain': ('hdd_id', '(11,)'),
-    'temp_c0': ('hdd_id', '(8,)'),
-    'gdd_1_0': ('gdd_id', '(0,)'),
-    'gdd_2_0': ('sdd_id', '(0,)'),
-    'laiinitialevetr': ('lai_id', '(0,)'),
-    'laiinitialdectr': ('lai_id', '(1,)'),
-    'laiinitialgrass': ('lai_id', '(2,)'),
-    'albevetr0': ('albevetr_id', '0'),
-    'albdectr0': ('albdectr_id', '0'),
-    'albgrass0': ('albgrass_id', '0'),
-    'decidcap0': ('decidcap_id', '0'),
-    'porosity0': ('porosity_id', '0'),
-    'soilstorepavedstate': ('soilstore_id', '(0,)'),
-    'soilstorebldgsstate': ('soilstore_id', '(1,)'),
-    'soilstoreevetrstate': ('soilstore_id', '(2,)'),
-    'soilstoredectrstate': ('soilstore_id', '(3,)'),
-    'soilstoregrassstate': ('soilstore_id', '(4,)'),
-    'soilstorebsoilstate': ('soilstore_id', '(5,)'),
-    'pavedstate': ('state_id', '(0,)'),
-    'bldgsstate': ('state_id', '(1,)'),
-    'evetrstate': ('state_id', '(2,)'),
-    'dectrstate': ('state_id', '(3,)'),
-    'grassstate': ('state_id', '(4,)'),
-    'bsoilstate': ('state_id', '(5,)'),
-    'waterstate': ('state_id', '(6,)'),
-    'snowwaterpavedstate': ('snowwater', '(0,)'),
-    'snowwaterbldgsstate': ('snowwater', '(1,)'),
-    'snowwaterevetrstate': ('snowwater', '(2,)'),
-    'snowwaterdectrstate': ('snowwater', '(3,)'),
-    'snowwatergrassstate': ('snowwater', '(4,)'),
-    'snowwaterbsoilstate': ('snowwater', '(5,)'),
-    'snowwaterwaterstate': ('snowwater', '(6,)'),
-    'snowpackpaved': ('snowpack', '(0,)'),
-    'snowpackbldgs': ('snowpack', '(1,)'),
-    'snowpackevetr': ('snowpack', '(2,)'),
-    'snowpackdectr': ('snowpack', '(3,)'),
-    'snowpackgrass': ('snowpack', '(4,)'),
-    'snowpackbsoil': ('snowpack', '(5,)'),
-    'snowpackwater': ('snowpack', '(6,)'),
-    'snowfracpaved': ('snowfrac', '(0,)'),
-    'snowfracbldgs': ('snowfrac', '(1,)'),
-    'snowfracevetr': ('snowfrac', '(2,)'),
-    'snowfracdectr': ('snowfrac', '(3,)'),
-    'snowfracgrass': ('snowfrac', '(4,)'),
-    'snowfracbsoil': ('snowfrac', '(5,)'),
-    'snowfracwater': ('snowfrac', '(6,)'),
-    'snowdenspaved': ('snowdens', '(0,)'),
-    'snowdensbldgs': ('snowdens', '(1,)'),
-    'snowdensevetr': ('snowdens', '(2,)'),
-    'snowdensdectr': ('snowdens', '(3,)'),
-    'snowdensgrass': ('snowdens', '(4,)'),
-    'snowdensbsoil': ('snowdens', '(5,)'),
-    'snowdenswater': ('snowdens', '(6,)'),
-    'snowalb0': ('snowalb', '0'),
+    "dayssincerain": ("hdd_id", "(11,)"),
+    "temp_c0": ("hdd_id", "(8,)"),
+    "gdd_1_0": ("gdd_id", "(0,)"),
+    "gdd_2_0": ("sdd_id", "(0,)"),
+    "laiinitialevetr": ("lai_id", "(0,)"),
+    "laiinitialdectr": ("lai_id", "(1,)"),
+    "laiinitialgrass": ("lai_id", "(2,)"),
+    "albevetr0": ("albevetr_id", "0"),
+    "albdectr0": ("albdectr_id", "0"),
+    "albgrass0": ("albgrass_id", "0"),
+    "decidcap0": ("decidcap_id", "0"),
+    "porosity0": ("porosity_id", "0"),
+    "soilstorepavedstate": ("soilstore_id", "(0,)"),
+    "soilstorebldgsstate": ("soilstore_id", "(1,)"),
+    "soilstoreevetrstate": ("soilstore_id", "(2,)"),
+    "soilstoredectrstate": ("soilstore_id", "(3,)"),
+    "soilstoregrassstate": ("soilstore_id", "(4,)"),
+    "soilstorebsoilstate": ("soilstore_id", "(5,)"),
+    "pavedstate": ("state_id", "(0,)"),
+    "bldgsstate": ("state_id", "(1,)"),
+    "evetrstate": ("state_id", "(2,)"),
+    "dectrstate": ("state_id", "(3,)"),
+    "grassstate": ("state_id", "(4,)"),
+    "bsoilstate": ("state_id", "(5,)"),
+    "waterstate": ("state_id", "(6,)"),
+    "snowwaterpavedstate": ("snowwater", "(0,)"),
+    "snowwaterbldgsstate": ("snowwater", "(1,)"),
+    "snowwaterevetrstate": ("snowwater", "(2,)"),
+    "snowwaterdectrstate": ("snowwater", "(3,)"),
+    "snowwatergrassstate": ("snowwater", "(4,)"),
+    "snowwaterbsoilstate": ("snowwater", "(5,)"),
+    "snowwaterwaterstate": ("snowwater", "(6,)"),
+    "snowpackpaved": ("snowpack", "(0,)"),
+    "snowpackbldgs": ("snowpack", "(1,)"),
+    "snowpackevetr": ("snowpack", "(2,)"),
+    "snowpackdectr": ("snowpack", "(3,)"),
+    "snowpackgrass": ("snowpack", "(4,)"),
+    "snowpackbsoil": ("snowpack", "(5,)"),
+    "snowpackwater": ("snowpack", "(6,)"),
+    "snowfracpaved": ("snowfrac", "(0,)"),
+    "snowfracbldgs": ("snowfrac", "(1,)"),
+    "snowfracevetr": ("snowfrac", "(2,)"),
+    "snowfracdectr": ("snowfrac", "(3,)"),
+    "snowfracgrass": ("snowfrac", "(4,)"),
+    "snowfracbsoil": ("snowfrac", "(5,)"),
+    "snowfracwater": ("snowfrac", "(6,)"),
+    "snowdenspaved": ("snowdens", "(0,)"),
+    "snowdensbldgs": ("snowdens", "(1,)"),
+    "snowdensevetr": ("snowdens", "(2,)"),
+    "snowdensdectr": ("snowdens", "(3,)"),
+    "snowdensgrass": ("snowdens", "(4,)"),
+    "snowdensbsoil": ("snowdens", "(5,)"),
+    "snowdenswater": ("snowdens", "(6,)"),
+    "snowalb0": ("snowalb", "0"),
 }
 
 
 # save initcond namelist as SUEWS binary
 def save_initcond_nml(
-        df_state: pd.DataFrame,
-        site: str = '',
-        path_dir_save: Path = Path('.'),
+    df_state: pd.DataFrame, site: str = "", path_dir_save: Path = Path("."),
 ) -> Path:
     # get last time step
     try:
         tstep_last = df_state.index.levels[0].max()
     except AttributeError:
         logger_supy.exception(
-            ('incorrect structure detected;' +
-             ' check if `df_state` is the final model state.'))
+            (
+                "incorrect structure detected;"
+                + " check if `df_state` is the final model state."
+            )
+        )
         return
 
     # get year for filename formatting
@@ -340,12 +499,12 @@ def save_initcond_nml(
     list_path_nml = []
     for grid in list_grid:
         # generate nml filename
-        filename_out_grid = f'InitialConditions{site}{grid}_{year_last}_EndofRun.nml'
+        filename_out_grid = f"InitialConditions{site}{grid}_{year_last}_EndofRun.nml"
         # derive a save path
         path_nml = path_dir_save / filename_out_grid
         # retrieve initcond values from `df_state_last_tstep`
         nml = {
-            'InitialConditions': {
+            "InitialConditions": {
                 key: df_state_last_tstep.loc[grid, var]
                 for key, var in dict_init_nml.items()
             }

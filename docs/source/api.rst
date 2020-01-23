@@ -31,6 +31,7 @@ ERA-5 Data Downloader
     :toctree: api/supy.util
 
     download_era5
+    gen_forcing_era5
 
 Typical Meteorological Year
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

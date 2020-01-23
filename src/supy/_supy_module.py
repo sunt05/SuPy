@@ -17,10 +17,12 @@
 import logging
 import multiprocessing
 import time
+
 # from multiprocessing import Pool, cpu_count, freeze_support
 
 import os
 import sys
+
 # import functools
 from pathlib import Path
 from typing import Tuple
@@ -39,7 +41,8 @@ from ._load import (
     load_SUEWS_Forcing_met_df_raw,
     load_df_state,
     resample_forcing_met,
-    resample_linear)
+    resample_linear,
+)
 from ._post import pack_df_output, pack_df_output_array, pack_df_state
 from ._run import run_supy_ser, run_supy_par
 from ._save import get_save_info, save_df_output, save_df_state, save_initcond_nml
@@ -53,12 +56,8 @@ logger_supy.setLevel(logging.INFO)
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
 # @functools.lru_cache(maxsize=16)
-def init_supy(
-        path_init: str,
-        force_reload=True,
-        check_input=False,
-) -> pd.DataFrame:
-    '''Initialise supy by loading initial model states.
+def init_supy(path_init: str, force_reload=True, check_input=False, ) -> pd.DataFrame:
+    """Initialise supy by loading initial model states.
 
     Parameters
     ----------
@@ -90,33 +89,35 @@ def init_supy(
     >>> path_init = "~/SuPy_res/df_state_test.csv"
     >>> df_state_init = supy.init_supy(path_init)
 
-    '''
+    """
 
     try:
         path_init_x = Path(path_init).expanduser().resolve()
     except FileNotFoundError:
-        logger_supy.exception(f'{path_init_x} does not exists!')
+        logger_supy.exception(f"{path_init_x} does not exists!")
     else:
-        if path_init_x.suffix == '.nml':
+        if path_init_x.suffix == ".nml":
             # SUEWS `RunControl.nml`:
-            df_state_init = load_InitialCond_grid_df(path_init_x,
-                                                     force_reload=force_reload)
-        elif path_init_x.suffix == '.csv':
+            df_state_init = load_InitialCond_grid_df(
+                path_init_x, force_reload=force_reload
+            )
+        elif path_init_x.suffix == ".csv":
             # SuPy `df_state.csv`:
             df_state_init = load_df_state(path_init_x)
         else:
             logger_supy.critical(
-                f'{path_init_x} is NOT a valid file to initialise SuPy!')
-            sys.exit()
+                f"{path_init_x} is NOT a valid file to initialise SuPy!"
+            )
+            raise RuntimeError("{path_init_x} is NOT a valid file to initialise SuPy!")
         if check_input:
             try:
                 list_issues = check_state(df_state_init)
                 if isinstance(list_issues, list):
                     logger_supy.critical(
-                        f'`df_state_init` loaded from {path_init_x} is NOT valid to initialise SuPy!'
+                        f"`df_state_init` loaded from {path_init_x} is NOT valid to initialise SuPy!"
                     )
             except:
-                sys.exit()
+                raise RuntimeError("{path_init_x} is NOT a valid file to initialise SuPy!")
         else:
             return df_state_init
 
@@ -129,11 +130,9 @@ def init_supy(
 # TODO:
 # to be superseded by a more generic wrapper: load_forcing
 def load_forcing_grid(
-        path_runcontrol: str,
-        grid: int,
-        check_input=False,
+        path_runcontrol: str, grid: int, check_input=False,
 ) -> pd.DataFrame:
-    '''Load forcing data for a specific grid included in the index of `df_state_init </data-structure/supy-io.ipynb#df_state_init:-model-initial-states>`.
+    """Load forcing data for a specific grid included in the index of `df_state_init </data-structure/supy-io.ipynb#df_state_init:-model-initial-states>`.
 
     Parameters
     ----------
@@ -155,56 +154,69 @@ def load_forcing_grid(
     >>> df_forcing = supy.load_forcing_grid(path_runcontrol, grid) # get df_forcing
 
 
-    '''
+    """
 
     try:
         path_runcontrol = Path(path_runcontrol).expanduser().resolve()
     except FileNotFoundError:
-        logger_supy.exception(f'{path_runcontrol} does not exists!')
+        logger_supy.exception(f"{path_runcontrol} does not exists!")
     else:
         dict_mod_cfg = load_SUEWS_dict_ModConfig(path_runcontrol)
         df_state_init = init_supy(path_runcontrol)
 
         # load setting variables from dict_mod_cfg
-        (filecode, kdownzen, tstep_met_in, tstep_ESTM_in, multiplemetfiles,
-         multipleestmfiles, dir_input_cfg) = (dict_mod_cfg[x] for x in [
-             'filecode', 'kdownzen', 'resolutionfilesin',
-             'resolutionfilesinestm', 'multiplemetfiles', 'multipleestmfiles',
-             'fileinputpath'
-         ])
-        tstep_mod, lat, lon, alt, timezone = df_state_init.loc[grid, [(
-            x,
-            '0') for x in ['tstep', 'lat', 'lng', 'alt', 'timezone']]].values
+        (
+            filecode,
+            kdownzen,
+            tstep_met_in,
+            tstep_ESTM_in,
+            multiplemetfiles,
+            multipleestmfiles,
+            dir_input_cfg,
+        ) = (
+            dict_mod_cfg[x]
+            for x in [
+            "filecode",
+            "kdownzen",
+            "resolutionfilesin",
+            "resolutionfilesinestm",
+            "multiplemetfiles",
+            "multipleestmfiles",
+            "fileinputpath",
+        ]
+        )
+        tstep_mod, lat, lon, alt, timezone = df_state_init.loc[
+            grid, [(x, "0") for x in ["tstep", "lat", "lng", "alt", "timezone"]]
+        ].values
 
         path_site = path_runcontrol.parent
-        path_input = path_site / dict_mod_cfg['fileinputpath']
+        path_input = path_site / dict_mod_cfg["fileinputpath"]
 
         # load raw data
         # met forcing
-        df_forcing_met = load_SUEWS_Forcing_met_df_raw(path_input, filecode,
-                                                       grid, tstep_met_in,
-                                                       multiplemetfiles)
+        df_forcing_met = load_SUEWS_Forcing_met_df_raw(
+            path_input, filecode, grid, tstep_met_in, multiplemetfiles
+        )
 
         # resample raw data from tstep_in to tstep_mod
-        df_forcing_met_tstep = resample_forcing_met(df_forcing_met,
-                                                    tstep_met_in, tstep_mod,
-                                                    lat, lon, alt, timezone,
-                                                    kdownzen)
+        df_forcing_met_tstep = resample_forcing_met(
+            df_forcing_met, tstep_met_in, tstep_mod, lat, lon, alt, timezone, kdownzen
+        )
 
         # coerced precision here to prevent numerical errors inside Fortran
         df_forcing = df_forcing_met_tstep.round(10)
 
         # new columns for later use in main calculation
-        df_forcing[['iy', 'id', 'it',
-                    'imin']] = df_forcing[['iy', 'id', 'it',
-                                           'imin']].astype(np.int64)
+        df_forcing[["iy", "id", "it", "imin"]] = df_forcing[
+            ["iy", "id", "it", "imin"]
+        ].astype(np.int64)
 
     if check_input:
         try:
             list_issues = check_forcing(df_forcing)
             if isinstance(list_issues, list):
                 logger_supy.critical(
-                    f'`df_forcing` loaded from {path_init_x} is NOT valid to drive SuPy!'
+                    f"`df_forcing` loaded from {path_init_x} is NOT valid to drive SuPy!"
                 )
         except:
             sys.exit()
@@ -215,7 +227,7 @@ def load_forcing_grid(
 # load sample data for quickly starting a demo run
 # TODO: to deprecate this by renaming for case consistency: load_SampleData-->load_sample_data
 def load_SampleData() -> Tuple[pandas.DataFrame, pandas.DataFrame]:
-    '''Load sample data for quickly starting a demo run.
+    """Load sample data for quickly starting a demo run.
 
     Returns
     -------
@@ -228,10 +240,10 @@ def load_SampleData() -> Tuple[pandas.DataFrame, pandas.DataFrame]:
 
     >>> df_state_init, df_forcing = supy.load_SampleData()
 
-    '''
+    """
 
-    path_SampleData = Path(path_supy_module) / 'sample_run'
-    path_runcontrol = path_SampleData / 'RunControl.nml'
+    path_SampleData = Path(path_supy_module) / "sample_run"
+    path_runcontrol = path_SampleData / "RunControl.nml"
     df_state_init = init_supy(path_runcontrol, force_reload=False)
     # path_input = path_runcontrol.parent / ser_mod_cfg['fileinputpath']
     df_forcing = load_forcing_grid(path_runcontrol, df_state_init.index[0])
@@ -254,7 +266,7 @@ def run_supy(
         logging_level=logging.INFO,
         check_input=False,
 ) -> Tuple[pandas.DataFrame, pandas.DataFrame]:
-    '''Perform supy simulation.
+    """Perform supy simulation.
 
     Parameters
     ----------
@@ -292,22 +304,22 @@ def run_supy(
     >>> df_output, df_state_final = supy.run_supy(df_forcing, df_state_init)
 
 
-    '''
+    """
     # validate input dataframes
     if check_input:
         # forcing:
         list_issues_forcing = check_forcing(df_forcing)
         if isinstance(list_issues_forcing, list):
-            logger_supy.critical(f'`df_forcing` is NOT valid to drive SuPy!')
+            logger_supy.critical(f"`df_forcing` is NOT valid to drive SuPy!")
             raise RuntimeError(
-                'SuPy stopped entering simulation due to invalid forcing!')
+                "SuPy stopped entering simulation due to invalid forcing!"
+            )
         # initial model states:
         list_issues_state = check_state(df_state_init)
         if isinstance(list_issues_state, list):
-            logger_supy.critical(
-                f'`df_state_init` is NOT valid to initialise SuPy!')
+            logger_supy.critical(f"`df_state_init` is NOT valid to initialise SuPy!")
             raise RuntimeError(
-                'SuPy stopped entering simulation due to invalid initial states!'
+                "SuPy stopped entering simulation due to invalid initial states!"
             )
 
     # set up a timer for simulation time
@@ -321,28 +333,30 @@ def run_supy(
     # df_init = df_state_init.copy()
 
     # print some diagnostic info
-    logger_supy.info(f'====================')
-    logger_supy.info(f'Simulation period:')
-    logger_supy.info(f'  Start: {df_forcing.index[0]}')
-    logger_supy.info(f'  End: {df_forcing.index[-1]}')
-    logger_supy.info('')
-    list_grid = df_state_init.index.get_level_values('grid').unique()
+    logger_supy.info(f"====================")
+    logger_supy.info(f"Simulation period:")
+    logger_supy.info(f"  Start: {df_forcing.index[0]}")
+    logger_supy.info(f"  End: {df_forcing.index[-1]}")
+    logger_supy.info("")
+    list_grid = df_state_init.index.get_level_values("grid").unique()
     n_grid = list_grid.size
-    logger_supy.info(f'No. of grids: {n_grid}')
+    logger_supy.info(f"No. of grids: {n_grid}")
 
-    if n_grid > 1 and os.name != 'nt':
-        logger_supy.info(f'SuPy is running in parallel mode')
-        df_output, df_state_final = run_supy_par(df_forcing, df_state_init,
-                                                 save_state, n_yr)
+    if n_grid > 1 and os.name != "nt":
+        logger_supy.info(f"SuPy is running in parallel mode")
+        df_output, df_state_final = run_supy_par(
+            df_forcing, df_state_init, save_state, n_yr
+        )
     else:
-        logger_supy.info(f'SuPy is running in serial mode')
-        df_output, df_state_final = run_supy_ser(df_forcing, df_state_init,
-                                                 save_state, n_yr)
+        logger_supy.info(f"SuPy is running in serial mode")
+        df_output, df_state_final = run_supy_ser(
+            df_forcing, df_state_init, save_state, n_yr
+        )
 
     # show simulation time
     end = time.time()
-    logger_supy.info(f'Execution time: {(end - start):.1f} s')
-    logger_supy.info(f'====================\n')
+    logger_supy.info(f"Execution time: {(end - start):.1f} s")
+    logger_supy.info(f"====================\n")
 
     return df_output, df_state_final
 
@@ -353,13 +367,15 @@ def save_supy(
         df_output: pandas.DataFrame,
         df_state_final: pandas.DataFrame,
         freq_s: int = 3600,
-        site: str = '',
-        path_dir_save: str = Path('.'),
+        site: str = "",
+        path_dir_save: str = Path("."),
         path_runcontrol: str = None,
         save_tstep=False,
         logging_level=50,
+        output_level=1,
+        debug=False,
 ) -> list:
-    '''Save SuPy run results to files
+    """Save SuPy run results to files
 
     Parameters
     ----------
@@ -381,6 +397,12 @@ def save_supy(
     logging_level: logging level
         one of these values [50 (CRITICAL), 40 (ERROR), 30 (WARNING), 20 (INFO), 10 (DEBUG)].
         A lower value informs SuPy for more verbose logging info.
+    output_level : integer, optional
+        option to determine selection of output variables, by default 1.
+        Notes: 0 for all but snow-related; 1 for all; 2 for a minimal set without land cover specific information.
+    debug : bool, optional
+        whether to enable debug mode (e.g., writing out in serial mode, and other debug uses), by default False.
+
 
     Returns
     -------
@@ -402,22 +424,28 @@ def save_supy(
     3. save results of a supy run at resampling frequency of 1800 s (i.e., half-hourly results) under the site code ``Test`` to a customised location 'path/to/some/dir'
 
     >>> list_path_save = supy.save_supy(df_output, df_state_final, freq_s=1800, site='Test', path_dir_save='path/to/some/dir')
-    '''
+    """
     # adjust logging level
     logger_supy.setLevel(logging_level)
 
     # get necessary information for saving procedure
     if path_runcontrol is not None:
-        freq_s, path_dir_save, site, save_tstep = get_save_info(
-            path_runcontrol)
+        freq_s, path_dir_save, site, save_tstep, output_level = get_save_info(
+            path_runcontrol
+        )
+
+    # determine `save_snow` option
+    snowuse = df_state_final.iloc[-1].loc["snowuse"].values.item()
+    save_snow = True if snowuse == 1 else False
+
+    # check if directory for saving results exists; if not, create one.
+    path_dir_save = Path(path_dir_save)
+    if not path_dir_save.exists():
+        path_dir_save.mkdir(parents=True)
 
     # save df_output to several files
     list_path_save = save_df_output(
-        df_output,
-        freq_s,
-        site,
-        path_dir_save,
-        save_tstep,
+        df_output, freq_s, site, path_dir_save, save_tstep, output_level, save_snow, debug
     )
 
     # save df_state

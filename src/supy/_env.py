@@ -13,8 +13,7 @@ import tempfile
 path_supy_module = Path(inspect.getsourcefile(lambda: 0)).resolve().parent
 
 # set up logger format, note `u` to guarantee UTF-8 encoding
-FORMATTER = logging.Formatter(
-    u"%(asctime)s — %(name)s — %(levelname)s — %(message)s")
+FORMATTER = logging.Formatter(u"%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 # log file name
 LOG_FILE = "SuPy.log"
@@ -35,9 +34,7 @@ def get_file_handler():
         path_logfile = Path(tempdir) / LOG_FILE
 
     file_handler = TimedRotatingFileHandler(
-        path_logfile,
-        when='midnight',
-        encoding="utf-8",
+        path_logfile, when="midnight", encoding="utf-8",
     )
     file_handler.setFormatter(FORMATTER)
     return file_handler
