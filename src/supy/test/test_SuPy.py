@@ -36,7 +36,7 @@ class TestSuPy(TestCase):
     def test_is_supy_running_multi_step(self):
         df_state_init, df_forcing_tstep = sp.load_SampleData()
         df_forcing_part = df_forcing_tstep.iloc[:]
-        df_output, df_state = sp.run_supy(df_forcing_part, df_state_init)
+        df_output, df_state = sp.run_supy(df_forcing_part, df_state_init,check_input=True)
 
         # # only print to screen on macOS due incompatibility on Windows
         # if platform.system() == "Darwin":
