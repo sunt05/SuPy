@@ -53,17 +53,23 @@ class TestSuPy(TestCase):
 
     # test if multi-grid simulation can run in parallel
     def test_is_supy_sim_save_multi_grid_par(self):
-        n_grid=4
+        n_grid = 4
         df_state_init, df_forcing_tstep = sp.load_SampleData()
         df_state_init = pd.concat([df_state_init for x in range(n_grid)])
-        df_state_init.index=pd.RangeIndex(n_grid,name='grid')
+        df_state_init.index = pd.RangeIndex(n_grid, name="grid")
         df_forcing_part = df_forcing_tstep.iloc[:]
         df_output, df_state = sp.run_supy(df_forcing_part, df_state_init)
 
         test_success_sim = np.all([not df_output.empty, not df_state.empty,])
 
         with tempfile.TemporaryDirectory() as dir_temp:
-            list_outfile = sp.save_supy(df_output, df_state, path_dir_save=dir_temp,logging_level=10)
+            list_outfile = sp.save_supy(
+                df_output,
+                df_state,
+                path_dir_save=dir_temp,
+                site="pytest",
+                logging_level=10,
+            )
 
         test_success_save = np.all([isinstance(fn, Path) for fn in list_outfile])
         self.assertTrue(test_success_sim and test_success_save)

@@ -33,10 +33,10 @@ main:
 	$(MAKE) clean
 	${PYTHON} setup.py bdist_wheel
 
-# make fortran exe and run test cases
+# install package in dev mode and do pytest
 test:
-	# ${PYTHON} setup.py test
-	pytest -s ${MODULE}/test/test-SuPy.py
+	pip install -e .
+	pytest -s ${MODULE}/test
 
 
 # If wanted, clean all *.o files after build
