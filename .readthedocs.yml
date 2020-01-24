@@ -1,5 +1,8 @@
 # .readthedocs.yml
 
+# Required
+version: 2
+
 build:
   image: latest
 

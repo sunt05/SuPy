@@ -265,6 +265,7 @@ def run_supy(
         n_yr=10,
         logging_level=logging.INFO,
         check_input=False,
+        serial_mode=False,
 ) -> Tuple[pandas.DataFrame, pandas.DataFrame]:
     """Perform supy simulation.
 
@@ -289,7 +290,11 @@ def run_supy(
         If set to `True`, any detected invalid input will stop SuPy simulation;
         a `False` flag will bypass such validation and may incur kernel error if any invalid input.
         *Note: such checking procedure may take some time if the input is large.*
-        (the default is `False`, which bypass the validation).
+        (the default is `False`, which bypasses the validation).
+     serial_mode : bool, optional
+        If set to `True`, SuPy simulation will be conducted in serial mode;
+        a `False` flag will try parallel simulation if possible (Windows not supported, i.e., always serial).
+        (the default is `False`).
 
 
     Returns
@@ -342,7 +347,7 @@ def run_supy(
     n_grid = list_grid.size
     logger_supy.info(f"No. of grids: {n_grid}")
 
-    if n_grid > 1 and os.name != "nt":
+    if n_grid > 1 and os.name != "nt" and (not serial_mode):
         logger_supy.info(f"SuPy is running in parallel mode")
         df_output, df_state_final = run_supy_par(
             df_forcing, df_state_init, save_state, n_yr
