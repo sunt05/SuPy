@@ -162,7 +162,7 @@ jobs:
   #   condition:        succeededOrFailed()
 
 - job:                  'Build_Test_Docs'
-  dependsOn:            'Build_Test_Ubuntu'
+  dependsOn:            'Build_Test_Ubuntu_1604'
   pool:
     vmImage:            'Ubuntu 16.04'
   strategy:
