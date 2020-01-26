@@ -10,12 +10,12 @@ python:
    version: 3.7
    install:
       - requirements: docs/requirements.txt
-      # - method: pip
-      #   path: src
+      - method: pip
+        path: src
       #   extra_requirements:
       #       - docs
-      - method: setuptools
-        path: src
+      # - method: setuptools
+      #   path: src
    system_packages: true
 
 formats:
