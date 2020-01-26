@@ -7,8 +7,12 @@ __version__ = f"{ser_ver.ver_milestone}.{ser_ver.ver_major}.{ser_ver.ver_minor}{
 
 
 def readme():
-    with open("../README.md", encoding="utf-8") as f:
-        return f.read()
+    try:
+        with open("../README.md", encoding="utf-8") as f:
+            return f.read()
+    except:
+        return f'SuPy package'
+
 
 
 setup(
