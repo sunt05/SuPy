@@ -71,6 +71,7 @@ setup(
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Intended Audience :: Education",
         "Intended Audience :: Science/Research",
         "Operating System :: MacOS :: MacOS X",
