@@ -328,20 +328,20 @@ def run_supy_ser(
         idx_all = df_forcing.index
         grp_forcing_chunk = df_forcing.groupby((idx_all - idx_start) // pd.Timedelta(chunk_day, 'd'))
         if len(grp_forcing_chunk) > 1:
-            df_state_init_yr = df_state_init.copy()
+            df_state_init_chunk = df_state_init.copy()
             list_df_output = []
             list_df_state = []
             for grp in grp_forcing_chunk.groups:
                 # get forcing of a specific year
                 df_forcing_chunk = grp_forcing_chunk.get_group(grp)
                 # run supy: actual execution done in the `else` clause below
-                df_output_yr, df_state_final_yr = run_supy_ser(
-                    df_forcing_chunk, df_state_init_yr, chunk_day=chunk_day
+                df_output_yr, df_state_final_chunk = run_supy_ser(
+                    df_forcing_chunk, df_state_init_chunk, chunk_day=chunk_day
                 )
-                df_state_init_yr = df_state_final_yr.copy()
+                df_state_init_chunk = df_state_final_chunk.copy()
                 # collect results
                 list_df_output.append(df_output_yr)
-                list_df_state.append(df_state_final_yr)
+                list_df_state.append(df_state_final_chunk)
 
             # re-organise results of each year
             df_output = pd.concat(list_df_output).sort_index()
