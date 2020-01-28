@@ -403,7 +403,7 @@ def sel_list_pres(ds_sfc_x):
 def gen_req_ml(fn_sfc, grid=[0.125, 0.125], scale=0):
     import xarray as xr
 
-    ds_sfc_x = xr.open_dataset(fn_sfc)
+    ds_sfc_x = xr.load_dataset(fn_sfc)
     list_pres_sel = sel_list_pres(ds_sfc_x)
     size = grid[0] * scale
     lat_x, lon_x = ds_sfc_x.latitude.values[0], ds_sfc_x.longitude.values[0]
@@ -424,7 +424,7 @@ def gen_req_ml(fn_sfc, grid=[0.125, 0.125], scale=0):
     dict_req_ml = {gen_fn(dict_req_ml): gen_dict_proc(dict_req_ml)}
 
     # close nc files
-    ds_sfc_x.close()
+    # ds_sfc_x.close()
 
     return dict_req_ml
 

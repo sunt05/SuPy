@@ -114,8 +114,9 @@ def suews_cal_tstep_multi(dict_state_start_grid, df_met_forcing_block):
 
     # main calculation:
     try:
-        print('sd.suews_cal_multitsteps ...',file=open('xx.log','a'))
+        # print('sd.suews_cal_multitsteps ...',file=open('xx.log','a'))
         res_suews_tstep_multi = sd.suews_cal_multitsteps(**dict_input)
+        # print('finished suews_cal_tstep_multi ...',file=open('xx.log','a'))
     except Exception as ex:
         # show trace info
         # print(traceback.format_exc())
@@ -350,7 +351,7 @@ def run_supy_ser(
             return df_output, df_state_final
 
         else:
-            print('single chunk ...',file=open('xx.log','a'))
+            # print('single chunk ...',file=open('xx.log','a'))
             # for single-chunk run (1 chunk = {chunk_day} years), directly put df_forcing into supy_driver for calculation
             # use higher level wrapper that calculate at a `block` level
             # for better performance
@@ -364,12 +365,13 @@ def run_supy_ser(
             ]
 
             try:
-                print('suews_cal_tstep_multi ...',file=open('xx.log','a'))
+                # print('suews_cal_tstep_multi ...',file=open('xx.log','a'))
                 list_res = [
                     suews_cal_tstep_multi(input_grid, df_forcing)
                     for input_grid in list_input
                 ]
                 list_state_end, list_output_array = zip(*list_res)
+
             except:
                 raise RuntimeError("SUEWS kernel error")
 
