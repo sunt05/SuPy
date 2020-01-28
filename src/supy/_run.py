@@ -114,6 +114,7 @@ def suews_cal_tstep_multi(dict_state_start_grid, df_met_forcing_block):
 
     # main calculation:
     try:
+        print('sd.suews_cal_multitsteps ...')
         res_suews_tstep_multi = sd.suews_cal_multitsteps(**dict_input)
     except Exception as ex:
         # show trace info
@@ -349,6 +350,7 @@ def run_supy_ser(
             return df_output, df_state_final
 
         else:
+            print('single chunk ...')
             # for single-chunk run (1 chunk = {chunk_day} years), directly put df_forcing into supy_driver for calculation
             # use higher level wrapper that calculate at a `block` level
             # for better performance
@@ -362,6 +364,7 @@ def run_supy_ser(
             ]
 
             try:
+                print('suews_cal_tstep_multi ...')
                 list_res = [
                     suews_cal_tstep_multi(input_grid, df_forcing)
                     for input_grid in list_input
