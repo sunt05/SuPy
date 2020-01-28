@@ -647,45 +647,47 @@ def gen_forcing_era5(
     list_fn_sfc, list_fn_ml = load_filelist_era5(
         lat_x, lon_x, start, end, grid, scale, dir_save
     )
-    with xr.open_mfdataset(list_fn_sfc, concat_dim="time") as ds_sfc:
-    # ds_sfc = xr.open_mfdataset(list_fn_sfc, concat_dim="time")
-    # ds_sfc.close()
+
+    # load data from from `sfc` files
+    ds_sfc = xr.open_mfdataset(list_fn_sfc, concat_dim="time").load()
+    # close dangling handlers
+    ds_sfc.close()
 
 
-        # generate diagnostics at a higher level
-        ds_diag = gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag, simple_mode)
+    # generate diagnostics at a higher level
+    ds_diag = gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag, simple_mode)
 
-        # merge diagnostics above with surface variables
-        ds_forcing_era5 = ds_sfc.merge(ds_diag)
+    # merge diagnostics above with surface variables
+    ds_forcing_era5 = ds_sfc.merge(ds_diag)
 
-        # convert to dataframe for further processing
-        df_forcing_raw = ds_forcing_era5[
-            [
-                "ssrd",
-                "strd",
-                "sshf",
-                "slhf",
-                "tp",
-                "uv_z",
-                "theta_z",
-                "q_z",
-                "p_z",
-                "alt_z",
-            ]
-        ].to_dataframe()
+    # convert to dataframe for further processing
+    df_forcing_raw = ds_forcing_era5[
+        [
+            "ssrd",
+            "strd",
+            "sshf",
+            "slhf",
+            "tp",
+            "uv_z",
+            "theta_z",
+            "q_z",
+            "p_z",
+            "alt_z",
+        ]
+    ].to_dataframe()
 
-        # split based on grid coordinates
-        grp_grid = df_forcing_raw.groupby(level=["latitude", "longitude"])
+    # split based on grid coordinates
+    grp_grid = df_forcing_raw.groupby(level=["latitude", "longitude"])
 
-        # generate dataframe acceptable by supy
-        df_forcing = grp_grid.apply(
-            lambda df: format_df_forcing(
-                df.reset_index(["latitude", "longitude"], drop=True)
-            )
+    # generate dataframe acceptable by supy
+    df_forcing = grp_grid.apply(
+        lambda df: format_df_forcing(
+            df.reset_index(["latitude", "longitude"], drop=True)
         )
+    )
 
-        # save results as SUEWS met input files
-        list_fn = save_forcing_era5(df_forcing, dir_save)
+    # save results as SUEWS met input files
+    list_fn = save_forcing_era5(df_forcing, dir_save)
 
     return list_fn
 
@@ -800,109 +802,111 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True
     #     lat_x, lon_x, start, end, grid, scale, dir_save)
 
     # load data from from `sfc` files
-    with xr.open_mfdataset(list_fn_sfc, concat_dim="time") as ds_sfc:
-    # ds_sfc = xr.open_mfdataset(list_fn_sfc, concat_dim="time")
+    ds_sfc = xr.open_mfdataset(list_fn_sfc, concat_dim="time").load()
+    # close dangling handlers
+    ds_sfc.close()
 
-        # surface level atmospheric pressure
-        pres_z0 = ds_sfc.sp
+    # load data from from `ml` files
+    ds_ml = xr.open_mfdataset(list_fn_ml, concat_dim="time").load()
+    # close dangling handlers
+    ds_ml.close()
 
-        with xr.open_mfdataset(list_fn_ml, concat_dim="time") as ds_ml:
-            # load data from from `ml` files
-            # ds_ml = xr.open_mfdataset(list_fn_ml, concat_dim="time")
+    # surface level atmospheric pressure
+    pres_z0 = ds_sfc.sp
 
-            # hgt_agl_diag: height where to calculate diagnostics
-            # hgt_agl_diag = 100
+    # hgt_agl_diag: height where to calculate diagnostics
+    # hgt_agl_diag = 100
 
-            # determine a lowest level higher than surface at all times
-            level_sel = get_level_diag(ds_sfc, ds_ml, hgt_agl_diag)
+    # determine a lowest level higher than surface at all times
+    level_sel = get_level_diag(ds_sfc, ds_ml, hgt_agl_diag)
 
-            # retrieve variables from the identified lowest level
-            ds_ll = ds_ml.sel(
-                time=ds_ml.time, level=xr.DataArray(level_sel.values, dims="time")
-            )
+    # retrieve variables from the identified lowest level
+    ds_ll = ds_ml.sel(
+        time=ds_ml.time, level=xr.DataArray(level_sel.values, dims="time")
+    )
 
-            # altitude
-            alt_z0 = geopotential2geometric(ds_sfc.z, ds_sfc.latitude)
-            alt_za = geopotential2geometric(ds_ll.z, ds_ll.latitude)
+    # altitude
+    alt_z0 = geopotential2geometric(ds_sfc.z, ds_sfc.latitude)
+    alt_za = geopotential2geometric(ds_ll.z, ds_ll.latitude)
 
-            # atmospheric pressure [Pa]
-            pres_za = pres_z0 * 0 + ds_ll.level * 100
+    # atmospheric pressure [Pa]
+    pres_za = pres_z0 * 0 + ds_ll.level * 100
 
-            # u-wind [m s-1]
-            u_za = ds_ll.u
-            # u-wind [m s-1]
-            v_za = ds_ll.v
-            # wind speed [m s-1]
-            uv_za = np.sqrt(u_za ** 2 + v_za ** 2)
+    # u-wind [m s-1]
+    u_za = ds_ll.u
+    # u-wind [m s-1]
+    v_za = ds_ll.v
+    # wind speed [m s-1]
+    uv_za = np.sqrt(u_za ** 2 + v_za ** 2)
 
-            # potential temperature [K]
-            theta_za = ds_ll.t
+    # potential temperature [K]
+    theta_za = ds_ll.t
 
-            # specific humidity [kg kg-1]
-            q_za = ds_ll.q
+    # specific humidity [kg kg-1]
+    q_za = ds_ll.q
 
-            # ------------------------
-            # retrieve surface data
+    # ------------------------
+    # retrieve surface data
 
-            # wind speed
-            u10 = ds_sfc.u10
-            v10 = ds_sfc.v10
-            uv10 = np.sqrt(u10 ** 2 + v10 ** 2)
+    # wind speed
+    u10 = ds_sfc.u10
+    v10 = ds_sfc.v10
+    uv10 = np.sqrt(u10 ** 2 + v10 ** 2)
 
-            # sensible/latent heat flux [W m-2]
-            # conversion from cumulative value to hourly average
-            qh = -ds_sfc.sshf / 3600
-            qe = -ds_sfc.slhf / 3600
+    # sensible/latent heat flux [W m-2]
+    # conversion from cumulative value to hourly average
+    qh = -ds_sfc.sshf / 3600
+    qe = -ds_sfc.slhf / 3600
 
-            # surface roughness [m]
-            z0m = ds_sfc.fsr
+    # surface roughness [m]
+    z0m = ds_sfc.fsr
 
-            # friction velocity [m s-1]
-            ustar = ds_sfc.zust
+    # friction velocity [m s-1]
+    ustar = ds_sfc.zust
 
-            # air temperature
-            t2 = ds_sfc.t2m
+    # air temperature
+    t2 = ds_sfc.t2m
 
-            # dew point
-            d2 = ds_sfc.d2m
+    # dew point
+    d2 = ds_sfc.d2m
 
-            # specific humidity
-            q2 = ac("qv", Td=d2, T=t2, p=pres_z0)
+    # specific humidity
+    q2 = ac("qv", Td=d2, T=t2, p=pres_z0)
 
-            # diagnose wind, temperature and humidity at 100 m agl or `hgt_agl_max` (see below)
-            # conform dimensionality using an existing variable
-            za = alt_za - alt_z0
-            z = za * 0 + hgt_agl_diag
-            da_alt_z = (alt_z0 + z).rename("alt_z")
-            ds_alt_z = da_alt_z.to_dataset()
+    # diagnose wind, temperature and humidity at 100 m agl or `hgt_agl_max` (see below)
+    # conform dimensionality using an existing variable
+    za = alt_za - alt_z0
+    z = za * 0 + hgt_agl_diag
+    da_alt_z = (alt_z0 + z).rename("alt_z")
+    ds_alt_z = da_alt_z.to_dataset()
 
-            # get dataset of diagnostics
-            if simple_mode:
-                ds_diag = diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z)
-            else:
-                ds_diag = diag_era5(
-                    za,
-                    uv_za,
-                    theta_za,
-                    q_za,
-                    pres_za,
-                    qh,
-                    qe,
-                    z0m,
-                    ustar,
-                    pres_z0,
-                    uv10,
-                    t2,
-                    q2,
-                    z,
-                )
+    # get dataset of diagnostics
+    if simple_mode:
+        ds_diag = diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z)
+    else:
+        ds_diag = diag_era5(
+            za,
+            uv_za,
+            theta_za,
+            q_za,
+            pres_za,
+            qh,
+            qe,
+            z0m,
+            ustar,
+            pres_z0,
+            uv10,
+            t2,
+            q2,
+            z,
+        )
 
-            # merge altitude
-            ds_diag = ds_diag.merge(ds_alt_z).drop("level")
+    # merge altitude
+    ds_diag = ds_diag.merge(ds_alt_z).drop("level")
 
-            # # close nc files
-            # ds_sfc.close()
-            # ds_ml.close()
+    # # close nc files
+    # ds_sfc.close()
+    # ds_ml.close()
 
     return ds_diag
 
