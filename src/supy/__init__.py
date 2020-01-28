@@ -30,7 +30,7 @@ from . import util
 
 
 # version info
-from ._version import show_version, __version__, __version_driver__
+from ._version import show_version
 
 
 # module docs
