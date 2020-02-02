@@ -262,7 +262,7 @@ def run_supy(
         df_forcing: pandas.DataFrame,
         df_state_init: pandas.DataFrame,
         save_state=False,
-        n_yr=10,
+        chunk_day=3660,
         logging_level=logging.INFO,
         check_input=False,
         serial_mode=False,
@@ -279,9 +279,9 @@ def run_supy(
     save_state : bool, optional
         flag for saving model states at each time step, which can be useful in diagnosing model runtime performance or performing a restart run.
         (the default is False, which instructs supy not to save runtime model states).
-    n_yr : int, optional
-        chunk size (`n_yr` years) to split simulation periods so memory usage can be reduced.
-        (the default is 10, which implies 10-year forcing chunks used in simulations).
+    chunk_day : int, optional
+        chunk size (`chunk_day` days) to split simulation periods so memory usage can be reduced.
+        (the default is 3660, which implies ~10-year forcing chunks used in simulations).
     logging_level: logging level
         one of these values [50 (CRITICAL), 40 (ERROR), 30 (WARNING), 20 (INFO), 10 (DEBUG)].
         A lower value informs SuPy for more verbose logging info.
@@ -291,7 +291,7 @@ def run_supy(
         a `False` flag will bypass such validation and may incur kernel error if any invalid input.
         *Note: such checking procedure may take some time if the input is large.*
         (the default is `False`, which bypasses the validation).
-     serial_mode : bool, optional
+    serial_mode : bool, optional
         If set to `True`, SuPy simulation will be conducted in serial mode;
         a `False` flag will try parallel simulation if possible (Windows not supported, i.e., always serial).
         (the default is `False`).
@@ -350,12 +350,12 @@ def run_supy(
     if n_grid > 1 and os.name != "nt" and (not serial_mode):
         logger_supy.info(f"SuPy is running in parallel mode")
         df_output, df_state_final = run_supy_par(
-            df_forcing, df_state_init, save_state, n_yr
+            df_forcing, df_state_init, save_state, chunk_day
         )
     else:
         logger_supy.info(f"SuPy is running in serial mode")
         df_output, df_state_final = run_supy_ser(
-            df_forcing, df_state_init, save_state, n_yr
+            df_forcing, df_state_init, save_state, chunk_day
         )
 
     # show simulation time

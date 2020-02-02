@@ -17,6 +17,8 @@ jobs:
         python.version: '3.6'
       Python37:
         python.version: '3.7'
+      Python38:
+        python.version: '3.8'
 
 
   steps:
@@ -51,6 +53,8 @@ jobs:
         python.version: '3.6'
       Python37:
         python.version: '3.7'
+      Python38:
+        python.version: '3.8'
 
 
   steps:
@@ -73,7 +77,7 @@ jobs:
       make test
     displayName:      'pytest'
 
-- job:                  'Build_Test_Upload_macOS'
+- job:                'Build_Test_Upload_macOS'
   pool:
     vmImage:            'macOS-10.14'
   strategy:
@@ -84,6 +88,8 @@ jobs:
         python.version: '3.6'
       Python37:
         python.version: '3.7'
+      Python38:
+        python.version: '3.8'
     maxParallel:        4
 
   steps:
@@ -123,7 +129,7 @@ jobs:
     continueOnError:    true
 
 
-- job:                  'Build_Test_Windows'
+- job:                'Build_Test_Windows'
   pool:
     vmImage:            'vs2017-win2016'
   strategy:
@@ -134,6 +140,8 @@ jobs:
         python.version: '3.6'
       Python37:
         python.version: '3.7'
+      Python38:
+        python.version: '3.8'
     maxParallel:        4
 
   steps:
@@ -161,10 +169,10 @@ jobs:
   #     testRunTitle:   'Python $(python.version)'
   #   condition:        succeededOrFailed()
 
-- job:                  'Build_Test_Docs'
-  dependsOn:            'Build_Test_Ubuntu_1604'
+- job:                'Build_Test_Docs'
+  dependsOn:          'Build_Test_Ubuntu_1604'
   pool:
-    vmImage:            'Ubuntu 16.04'
+    vmImage:          'Ubuntu 16.04'
   strategy:
     matrix:
       # Python35:
@@ -185,6 +193,7 @@ jobs:
       python -m pip install --upgrade pip
       pip install pipreqs
       pip install dask[complete] --upgrade
+      pip install -e src
       cd docs
       sudo apt-get install pandoc
       make html

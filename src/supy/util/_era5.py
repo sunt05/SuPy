@@ -403,7 +403,7 @@ def sel_list_pres(ds_sfc_x):
 def gen_req_ml(fn_sfc, grid=[0.125, 0.125], scale=0):
     import xarray as xr
 
-    ds_sfc_x = xr.open_dataset(fn_sfc)
+    ds_sfc_x = xr.load_dataset(fn_sfc)
     list_pres_sel = sel_list_pres(ds_sfc_x)
     size = grid[0] * scale
     lat_x, lon_x = ds_sfc_x.latitude.values[0], ds_sfc_x.longitude.values[0]
@@ -422,6 +422,10 @@ def gen_req_ml(fn_sfc, grid=[0.125, 0.125], scale=0):
     dict_req_ml.update({"level": list_pres_sel})
     dict_req_ml.update(dict_dt)
     dict_req_ml = {gen_fn(dict_req_ml): gen_dict_proc(dict_req_ml)}
+
+    # close nc files
+    # ds_sfc_x.close()
+
     return dict_req_ml
 
 
@@ -644,7 +648,11 @@ def gen_forcing_era5(
         lat_x, lon_x, start, end, grid, scale, dir_save
     )
 
-    ds_sfc = xr.open_mfdataset(list_fn_sfc, concat_dim="time")
+    # load data from from `sfc` files
+    ds_sfc = xr.open_mfdataset(list_fn_sfc, concat_dim="time").load()
+    # close dangling handlers
+    ds_sfc.close()
+
 
     # generate diagnostics at a higher level
     ds_diag = gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag, simple_mode)
@@ -794,13 +802,17 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True
     #     lat_x, lon_x, start, end, grid, scale, dir_save)
 
     # load data from from `sfc` files
-    ds_sfc = xr.open_mfdataset(list_fn_sfc, concat_dim="time")
+    ds_sfc = xr.open_mfdataset(list_fn_sfc, concat_dim="time").load()
+    # close dangling handlers
+    ds_sfc.close()
+
+    # load data from from `ml` files
+    ds_ml = xr.open_mfdataset(list_fn_ml, concat_dim="time").load()
+    # close dangling handlers
+    ds_ml.close()
 
     # surface level atmospheric pressure
     pres_z0 = ds_sfc.sp
-
-    # load data from from `ml` files
-    ds_ml = xr.open_mfdataset(list_fn_ml, concat_dim="time")
 
     # hgt_agl_diag: height where to calculate diagnostics
     # hgt_agl_diag = 100
@@ -891,6 +903,10 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True
 
     # merge altitude
     ds_diag = ds_diag.merge(ds_alt_z).drop("level")
+
+    # # close nc files
+    # ds_sfc.close()
+    # ds_ml.close()
 
     return ds_diag
 

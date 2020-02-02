@@ -127,3 +127,5 @@ SuPy.log
 
 # pycharm configuration
 .idea/
+
+.DS_Store
