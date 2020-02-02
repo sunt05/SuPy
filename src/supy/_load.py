@@ -150,11 +150,11 @@ dict_libVar2File = {
 # this is described in SUEWS online manual:
 # https://suews.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/SUEWS_SiteInfo.html
 path_code2file = path_supy_module / "code2file.json"
-dict_Code2File = pd.read_json(path_code2file, typ="series").to_dict()
+dict_Code2File = pd.read_json(path_code2file, typ="series", convert_dates=False).to_dict()
 # variable translation as done in Fortran-SUEWS
 # path_var2siteselect = os.path.join(path_supy_module, 'var2siteselect.json')
 path_var2siteselect = path_supy_module / "var2siteselect.json"
-dict_var2SiteSelect = pd.read_json(path_var2siteselect, typ="series").to_dict()
+dict_var2SiteSelect = pd.read_json(path_var2siteselect, typ="series", convert_dates=False).to_dict()
 
 # expand dict_Code2File for retrieving surface characteristics
 dict_varSiteSelect2File = {
@@ -795,7 +795,8 @@ def build_code_df(code, path_input, df_base):
 
     df_code0 = pd.concat([dict_libs[str_lib]], axis=1, keys=[code])
     # df_siteselect = dict_libs['lib_SiteSelect']
-    if isinstance(df_base.columns, pd.core.index.MultiIndex):
+    # if isinstance(df_base.columns, pd.core.index.MultiIndex):
+    if isinstance(df_base.columns, pd.MultiIndex):
         code_base = df_base.columns.levels[0][0]
         code_index = (code_base, code)
     else:

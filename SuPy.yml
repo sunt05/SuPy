@@ -1,0 +1,24 @@
+name: SuPy
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - numpy
+  - pandas
+  - python==3.8
+  - xarray
+  - matplotlib
+  - seaborn
+  - scipy
+  - scikit-learn
+  - pip:
+    - click
+    - atmosp
+    - f90nml
+    - dask[complete]
+    - lmfit
+    - floweaver
+    - tables
+    - jupyter
+    - pytest
+
