@@ -193,6 +193,7 @@ jobs:
       python -m pip install --upgrade pip
       pip install pipreqs
       pip install dask[complete] --upgrade
+      pip install -e src
       cd docs
       sudo apt-get install pandoc
       make html
