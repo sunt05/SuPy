@@ -32,6 +32,15 @@
         },
         "unit": "1"
     },
+    "h_ponding": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "mm"
+    },
     "ahprof_24hr": {
         "cat": "grid",
         "logic": "range",

@@ -254,6 +254,9 @@
       "Ie_m3"
     ]
   },
+  "h_ponding": {
+    "IrrigationCode": "H_ponding"
+  },
   "ie_start": {
     "IrrigationCode": "Ie_start"
   },
