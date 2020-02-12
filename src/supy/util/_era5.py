@@ -541,6 +541,10 @@ def gen_req_era5(
     dict
         key: name of downloaded file
         value: CDS API request used for downloading the file named by the corresponding key
+
+    Note
+    ----
+        1. This function uses CDS API to download ERA5 data; follow this for configuration first: https://cds.climate.copernicus.eu/api-how-to
     """
 
     # path to directory for saving results
@@ -633,12 +637,13 @@ def gen_forcing_era5(
 
     Note
     ----
-        1. The generated forcing files can be imported using `supy.util.read_forcing` to get simulation-ready `DataFrame`s.
-        2. See Section 3.10.2 and 3.10.3 in the reference for details of diagnostics calculation.
+        1. This function uses CDS API to download ERA5 data; follow this for configuration first: https://cds.climate.copernicus.eu/api-how-to
+        2. The generated forcing files can be imported using `supy.util.read_forcing` to get simulation-ready `pandas.DataFrame`s.
+        3. See Section 3.10.2 and 3.10.3 in the reference for details of diagnostics calculation.
 
-    Reference
-    ---------
-        ECMWF, S. P. (2016). In IFS documentation CY41R2 Part IV: Physical Processes. ECMWF: Reading, UK, 111-113. https://www.ecmwf.int/en/elibrary/16648-part-iv-physical-processes
+        Reference
+        ---------
+            ECMWF, S. P. (2016). In IFS documentation CY41R2 Part IV: Physical Processes. ECMWF: Reading, UK, 111-113. https://www.ecmwf.int/en/elibrary/16648-part-iv-physical-processes
 
     """
     import xarray as xr
