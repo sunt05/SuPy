@@ -653,7 +653,6 @@ def gen_forcing_era5(
     # close dangling handlers
     ds_sfc.close()
 
-
     # generate diagnostics at a higher level
     ds_diag = gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag, simple_mode)
 
@@ -904,10 +903,6 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True
     # merge altitude
     ds_diag = ds_diag.merge(ds_alt_z).drop("level")
 
-    # # close nc files
-    # ds_sfc.close()
-    # ds_ml.close()
-
     return ds_diag
 
 
@@ -930,7 +925,8 @@ def diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z):
 
     # barometric equation with varying temperature:
     # (https://en.wikipedia.org/wiki/Barometric_formula)
-    p_z = pres_z0 * np.exp((grav * (0 - z)) / (rd * t2))
+    # p_z = pres_z0 * np.exp((grav * (0 - z)) / (rd * t2))
+    p_z = pres_z0 * (t2/(t2+env_lapse*(z-2)))**(g/(rd*env_lapse))
 
     # correct humidity assuming invariable relative humidity
     RH_z = ac("RH", qv=q2, p=pres_z0, theta=t2) + 0 * t_z
