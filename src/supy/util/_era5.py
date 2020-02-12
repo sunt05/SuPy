@@ -479,6 +479,11 @@ def download_era5(
     dict
         key: name of downloaded file.
         value: CDS API request used for downloading the file named by the corresponding key.
+
+    Note
+    ----
+
+        This function uses CDS API to download ERA5 data; follow this for configuration first: https://cds.climate.copernicus.eu/api-how-to
     """
 
     # generate requests for surface level data
