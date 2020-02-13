@@ -33,7 +33,6 @@ def gen_score_ser(ser_test):
     length = ser_score.size
     list_score = (np.arange(length) + 0.5) / length
     ser_score.loc[:] = list_score
-    # ser_score.loc[:] = gen_score_list(ser_score.size)
     return ser_score
 
 
@@ -429,13 +428,6 @@ def gen_epw(
     df_epw["Global Horizontal Radiation"] = np.ones(len(df_epw)) * 9999
     df_epw.index = df_TMY_x.index
 
-    # # convert `0h` to `24h` and take care of `day`
-    # loc_24h = df_epw.index == df_epw.index.normalize()
-    # ser_24h = df_epw.loc[loc_24h].index - pd.Timedelta("1h")
-    # df_epw.loc[loc_24h, "Year"] = ser_24h.year
-    # df_epw.loc[loc_24h, "Month"] = ser_24h.month
-    # df_epw.loc[loc_24h, "Day"] = ser_24h.day
-    # df_epw.loc[loc_24h, "Hour"] = 24
 
     df_epw = df_epw.sort_values(["Month", "Day", "Hour"], axis=0)
 

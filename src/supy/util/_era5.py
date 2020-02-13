@@ -779,12 +779,15 @@ def format_df_forcing(df_forcing_raw):
         "wdir",
         "alt_z",
     ]
+    col_suews = df_forcing_grid.columns.intersection(col_suews)
 
     df_forcing_grid = df_forcing_grid.loc[:, col_suews]
-    df_forcing_grid.loc[:, "iy"] = df_forcing_grid.index.year
-    df_forcing_grid.loc[:, "id"] = df_forcing_grid.index.dayofyear
-    df_forcing_grid.loc[:, "it"] = df_forcing_grid.index.hour
-    df_forcing_grid.loc[:, "imin"] = df_forcing_grid.index.minute
+    df_forcing_grid = df_forcing_grid.assign(
+        iy=df_forcing_grid.index.year,
+        id=df_forcing_grid.index.dayofyear,
+        it=df_forcing_grid.index.hour,
+        imin=df_forcing_grid.index.minute,
+    )
 
     # corrections
     df_forcing_grid.loc[:, "RH"] = df_forcing_grid.loc[:, "RH"].where(
@@ -936,7 +939,7 @@ def diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z):
     # barometric equation with varying temperature:
     # (https://en.wikipedia.org/wiki/Barometric_formula)
     # p_z = pres_z0 * np.exp((grav * (0 - z)) / (rd * t2))
-    p_z = pres_z0 * (t2/(t2+env_lapse*(z-2)))**(g/(rd*env_lapse))
+    p_z = pres_z0 * (t2 / (t2 + env_lapse * (z - 2))) ** (grav / (rd * env_lapse))
 
     # correct humidity assuming invariable relative humidity
     RH_z = ac("RH", qv=q2, p=pres_z0, theta=t2) + 0 * t_z
