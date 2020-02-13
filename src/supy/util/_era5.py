@@ -779,10 +779,16 @@ def format_df_forcing(df_forcing_raw):
         "wdir",
         "alt_z",
     ]
-    col_suews = df_forcing_grid.columns.intersection(col_suews)
+    # col_suews = df_forcing_grid.columns.intersection(col_suews)
+    n_row=df_forcing_grid.index.size
+    n_col=len(col_suews)
+    ar_suews=np.full((n_row,n_col),np.nan)
+    df_forcing_suews=pd.DataFrame(ar_suews,index=df_forcing_grid.index,columns=col_suews)
 
-    df_forcing_grid = df_forcing_grid.loc[:, col_suews]
-    df_forcing_grid = df_forcing_grid.assign(
+    df_forcing_suews.update(df_forcing_grid)
+
+    # df_forcing_grid = df_forcing_grid.loc[:, col_suews]
+    df_forcing_suews = df_forcing_suews.assign(
         iy=df_forcing_grid.index.year,
         id=df_forcing_grid.index.dayofyear,
         it=df_forcing_grid.index.hour,
@@ -790,19 +796,19 @@ def format_df_forcing(df_forcing_raw):
     )
 
     # corrections
-    df_forcing_grid.loc[:, "RH"] = df_forcing_grid.loc[:, "RH"].where(
-        df_forcing_grid.loc[:, "RH"].between(0.001, 105), 105
+    df_forcing_suews.loc[:, "RH"] = df_forcing_suews.loc[:, "RH"].where(
+        df_forcing_suews.loc[:, "RH"].between(0.001, 105), 105
     )
-    df_forcing_grid.loc[:, "kdown"] = df_forcing_grid.loc[:, "kdown"].where(
-        df_forcing_grid.loc[:, "kdown"] > 0, 0
+    df_forcing_suews.loc[:, "kdown"] = df_forcing_suews.loc[:, "kdown"].where(
+        df_forcing_suews.loc[:, "kdown"] > 0, 0
     )
 
     # trim decimals
-    df_forcing_grid.iloc[:, 4:] = df_forcing_grid.iloc[:, 4:].round(2)
+    df_forcing_suews.iloc[:, 4:] = df_forcing_suews.iloc[:, 4:].round(2)
 
-    df_forcing_grid = df_forcing_grid.replace(np.nan, -999).asfreq("1h")
+    df_forcing_suews = df_forcing_suews.replace(np.nan, -999).asfreq("1h")
 
-    return df_forcing_grid
+    return df_forcing_suews
 
 
 # generate supy forcing using ERA-5 data
