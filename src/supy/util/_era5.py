@@ -770,12 +770,14 @@ def format_df_forcing(df_forcing_raw):
         "wdir",
         "alt_z",
     ]
+    df_forcing_grid=df_forcing_grid.reindex(col_suews,axis=1)
 
-    df_forcing_grid = df_forcing_grid.loc[:, col_suews]
-    df_forcing_grid.loc[:, "iy"] = df_forcing_grid.index.year
-    df_forcing_grid.loc[:, "id"] = df_forcing_grid.index.dayofyear
-    df_forcing_grid.loc[:, "it"] = df_forcing_grid.index.hour
-    df_forcing_grid.loc[:, "imin"] = df_forcing_grid.index.minute
+    df_forcing_grid = df_forcing_grid.assign(
+        iy=df_forcing_grid.index.year,
+        id=df_forcing_grid.index.dayofyear,
+        it=df_forcing_grid.index.hour,
+        imin=df_forcing_grid.index.minute,
+    )
 
     # corrections
     df_forcing_grid.loc[:, "RH"] = df_forcing_grid.loc[:, "RH"].where(
