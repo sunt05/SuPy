@@ -828,7 +828,7 @@
         :option:`InternalWaterUse <suews:InternalWaterUse>`
 
 
-.. option:: irrfracconif
+.. option:: irrfracevetr
 
     :Description:
         Fraction of evergreen trees that are irrigated [-]
@@ -840,7 +840,7 @@
         :option:`IrrFr_EveTr <suews:IrrFr_EveTr>`
 
 
-.. option:: irrfracdecid
+.. option:: irrfracdectr
 
     :Description:
         Fraction of deciduous trees that are irrigated [-]
@@ -1117,7 +1117,7 @@
     :Dimensionality:
         (8,)
     :Dimensionality Remarks:
-        8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)} 
+        8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)}
     :SUEWS-related variables:
         :option:`OHMThresh_SW <suews:OHMThresh_SW>`
 
@@ -1129,7 +1129,7 @@
     :Dimensionality:
         (8,)
     :Dimensionality Remarks:
-        8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)} 
+        8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)}
     :SUEWS-related variables:
         :option:`OHMThresh_WD <suews:OHMThresh_WD>`
 

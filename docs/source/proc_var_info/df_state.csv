@@ -71,8 +71,8 @@ ie_end,0,Day when irrigation ends [DOY],:option:`Ie_end <suews:Ie_end>`,Scalar
 ie_m,"(3,)",Coefficient for manual irrigation model.,":option:`Ie_m1 <suews:Ie_m1>`, :option:`Ie_m2 <suews:Ie_m2>`, :option:`Ie_m3 <suews:Ie_m3>`","3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}"
 ie_start,0,Day when irrigation starts [DOY],:option:`Ie_start <suews:Ie_start>`,Scalar
 internalwateruse_h,0,Internal water use [mm |h^-1|],:option:`InternalWaterUse <suews:InternalWaterUse>`,Scalar
-irrfracconif,0,Fraction of evergreen trees that are irrigated [-],:option:`IrrFr_EveTr <suews:IrrFr_EveTr>`,Scalar
-irrfracdecid,0,Fraction of deciduous trees that are irrigated [-],:option:`IrrFr_DecTr <suews:IrrFr_DecTr>`,Scalar
+irrfracevetr,0,Fraction of evergreen trees that are irrigated [-],:option:`IrrFr_EveTr <suews:IrrFr_EveTr>`,Scalar
+irrfracdectr,0,Fraction of deciduous trees that are irrigated [-],:option:`IrrFr_DecTr <suews:IrrFr_DecTr>`,Scalar
 irrfracgrass,0,Fraction of `Grass` that is irrigated [-],:option:`IrrFr_Grass <suews:IrrFr_Grass>`,Scalar
 kkanohm,"(7,)",Thermal conductivity for this surface to use in AnOHM [W m |K^-1|],:option:`AnOHM_Kk <suews:AnOHM_Kk>`,"7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}"
 kmax,0,Maximum incoming shortwave radiation [W |m^-2|],:option:`Kmax <suews:Kmax>`,Scalar

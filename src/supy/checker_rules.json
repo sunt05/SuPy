@@ -32,12 +32,12 @@
         },
         "unit": "1"
     },
-    "h_ponding": {
+    "h_maintain": {
         "cat": "grid",
         "logic": "range",
         "param": {
             "max": "inf",
-            "min": 0
+            "min": "-inf"
         },
         "unit": "mm"
     },
@@ -604,13 +604,13 @@
         "param": {},
         "unit": "1"
     },
-    "irrfracconif": {
+    "irrfracevetr": {
         "cat": "grid",
         "logic": "NA",
         "param": {},
         "unit": "1"
     },
-    "irrfracdecid": {
+    "irrfracdectr": {
         "cat": "grid",
         "logic": "NA",
         "param": {},

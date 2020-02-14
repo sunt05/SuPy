@@ -254,8 +254,8 @@
       "Ie_m3"
     ]
   },
-  "h_ponding": {
-    "IrrigationCode": "H_ponding"
+  "h_maintain": {
+    "IrrigationCode": "H_maintain"
   },
   "ie_start": {
     "IrrigationCode": "Ie_start"
@@ -263,8 +263,8 @@
   "internalwateruse_h": {
     "IrrigationCode": "InternalWaterUse"
   },
-  "irrfracconif": "IrrFr_EveTr",
-  "irrfracdecid": "IrrFr_DecTr",
+  "irrfracevetr": "IrrFr_EveTr",
+  "irrfracdectr": "IrrFr_DecTr",
   "irrfracgrass": "IrrFr_Grass",
   "kkanohm": {
     "Code_Paved": "AnOHM_Kk",
