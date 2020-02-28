@@ -483,6 +483,11 @@ def download_era5(
     dict
         key: name of downloaded file.
         value: CDS API request used for downloading the file named by the corresponding key.
+
+    Note
+    ----
+
+        This function uses CDS API to download ERA5 data; follow this for configuration first: https://cds.climate.copernicus.eu/api-how-to
     """
 
     # generate requests for surface level data
@@ -545,6 +550,10 @@ def gen_req_era5(
     dict
         key: name of downloaded file
         value: CDS API request used for downloading the file named by the corresponding key
+
+    Note
+    ----
+        1. This function uses CDS API to download ERA5 data; follow this for configuration first: https://cds.climate.copernicus.eu/api-how-to
     """
 
     # path to directory for saving results
@@ -637,12 +646,13 @@ def gen_forcing_era5(
 
     Note
     ----
-        1. The generated forcing files can be imported using `supy.util.read_forcing` to get simulation-ready `DataFrame`s.
-        2. See Section 3.10.2 and 3.10.3 in the reference for details of diagnostics calculation.
+        1. This function uses CDS API to download ERA5 data; follow this for configuration first: https://cds.climate.copernicus.eu/api-how-to
+        2. The generated forcing files can be imported using `supy.util.read_forcing` to get simulation-ready `pandas.DataFrame`s.
+        3. See Section 3.10.2 and 3.10.3 in the reference for details of diagnostics calculation.
 
-    Reference
-    ---------
-        ECMWF, S. P. (2016). In IFS documentation CY41R2 Part IV: Physical Processes. ECMWF: Reading, UK, 111-113. https://www.ecmwf.int/en/elibrary/16648-part-iv-physical-processes
+        Reference
+        ---------
+            ECMWF, S. P. (2016). In IFS documentation CY41R2 Part IV: Physical Processes. ECMWF: Reading, UK, 111-113. https://www.ecmwf.int/en/elibrary/16648-part-iv-physical-processes
 
     """
     import xarray as xr
@@ -656,7 +666,6 @@ def gen_forcing_era5(
     ds_sfc = xr.open_mfdataset(list_fn_sfc, concat_dim="time").load()
     # close dangling handlers
     ds_sfc.close()
-
 
     # generate diagnostics at a higher level
     ds_diag = gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag, simple_mode)
@@ -774,7 +783,9 @@ def format_df_forcing(df_forcing_raw):
         "wdir",
         "alt_z",
     ]
+
     df_forcing_grid=df_forcing_grid.reindex(col_suews,axis=1)
+
 
     df_forcing_grid = df_forcing_grid.assign(
         iy=df_forcing_grid.index.year,
@@ -910,10 +921,6 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True
     # merge altitude
     ds_diag = ds_diag.merge(ds_alt_z).drop("level")
 
-    # # close nc files
-    # ds_sfc.close()
-    # ds_ml.close()
-
     return ds_diag
 
 
@@ -936,7 +943,8 @@ def diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z):
 
     # barometric equation with varying temperature:
     # (https://en.wikipedia.org/wiki/Barometric_formula)
-    p_z = pres_z0 * np.exp((grav * (0 - z)) / (rd * t2))
+    # p_z = pres_z0 * np.exp((grav * (0 - z)) / (rd * t2))
+    p_z = pres_z0 * (t2 / (t2 + env_lapse * (z - 2))) ** (grav / (rd * env_lapse))
 
     # correct humidity assuming invariable relative humidity
     RH_z = ac("RH", qv=q2, p=pres_z0, theta=t2) + 0 * t_z
