@@ -431,6 +431,7 @@ def gen_req_ml(fn_sfc, grid=[0.125, 0.125], scale=0):
 
 def download_cds(fn, dict_req):
     import cdsapi
+    import tempfile
 
     c = cdsapi.Client()
     path_fn = Path(fn)
@@ -438,12 +439,15 @@ def download_cds(fn, dict_req):
         logger_supy.warning(f"{fn} exists!")
     else:
         logger_supy.info(f"To download: {fn}")
-        # this will download the file to current working directory
-        c.retrieve(**dict_req)
-        # move the downloaded file to desired location
-        Path(path_fn.name).replace(fn)
-        # hold on a bit for the next request
-        time.sleep(0.0100)
+
+        with tempfile.TemporaryDirectory() as td:
+            # this will download the file to a secure temporary directory without requirement for extra permission
+            os.chdir(td)
+            c.retrieve(**dict_req)
+            # move the downloaded file to desired location
+            Path(path_fn.name).replace(fn)
+            # hold on a bit for the next request
+            time.sleep(0.0100)
 
 
 def download_era5(
