@@ -440,14 +440,14 @@ def download_cds(fn, dict_req):
     else:
         logger_supy.info(f"To download: {fn}")
 
-        with tempfile.TemporaryDirectory() as td:
-            # this will download the file to a secure temporary directory without requirement for extra permission
-            os.chdir(td)
-            c.retrieve(**dict_req)
-            # move the downloaded file to desired location
-            Path(path_fn.name).replace(fn)
-            # hold on a bit for the next request
-            time.sleep(0.0100)
+        # this will download the file to a secure temporary directory without requirement for extra permission
+        td=tempfile.gettempdir()
+        os.chdir(td)
+        c.retrieve(**dict_req)
+        # move the downloaded file to desired location
+        Path(path_fn.name).replace(fn)
+        # hold on a bit for the next request
+        time.sleep(0.0100)
 
 
 def download_era5(
