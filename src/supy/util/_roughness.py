@@ -1,11 +1,9 @@
 import numpy as np
-import pandas as pd
-from platypus.core import *
-from platypus.types import *
-from platypus.algorithms import *
+from platypus.core import Algorithm,Problem
+from platypus.types import Real,random
+from platypus.algorithms import NSGAIII
+
 # saturation vapour pressure [hPa]
-
-
 def cal_vap_sat(Temp_C, Press_hPa):
     # temp_c= 0.001 if np.abs(Temp_C)<0.001 else Temp_C
     Press_kPa = Press_hPa/10
@@ -100,8 +98,7 @@ def cal_Lob(QH, UStar, Temp_C, RH_pct, Press_hPa, g=9.8, k=0.4):
     return Lob
 
 
-
-def cal_neutral(df_val,z_meas,h_sfc):
+def cal_neutral(df_val, z_meas, h_sfc):
 
     # calculate Obukhov length
     ser_Lob = df_val.apply(
@@ -123,19 +120,17 @@ def cal_neutral(df_val,z_meas,h_sfc):
     limit_neutral = 0.01
     ind_neutral = ser_zL.between(-limit_neutral, limit_neutral)
 
-    ind_neutral=ind_neutral[ind_neutral==True]
+    ind_neutral = ind_neutral[ind_neutral]
 
     df_sel = df_val.loc[ind_neutral.index, ['WS', 'USTAR']].dropna()
     ser_ustar = df_sel.USTAR
     ser_ws = df_sel.WS
-    
-    
-    return ser_ws,ser_ustar
 
+    return ser_ws, ser_ustar
 
 
 # Optimization for calculating z0 and d
-def optimize_MO(df_val,z_meas,h_sfc):
+def optimize_MO(df_val, z_meas, h_sfc):
     '''
     Parameters
     ----------
@@ -154,45 +149,43 @@ def optimize_MO(df_val,z_meas,h_sfc):
     ser_ustar: pd.series
         observation time series of u* (Neutral coditions)
     '''
-    ser_ws,ser_ustar=cal_neutral(df_val,z_meas,h_sfc)
+    ser_ws, ser_ustar = cal_neutral(df_val, z_meas, h_sfc)
 
     def func_uz(params):
-        z0=params[0]
-        d=params[1]
+        z0 = params[0]
+        d = params[1]
         z = z_meas
         k = 0.4
         uz = (ser_ustar / k) * np.log((z - d) / z0)
 
-        o1=abs(1-np.std(uz)/np.std(ser_ws))
-        o2=np.mean(abs(uz-ser_ws))/(np.mean(ser_ws))
+        o1 = abs(1-np.std(uz)/np.std(ser_ws))
+        o2 = np.mean(abs(uz-ser_ws))/(np.mean(ser_ws))
 
-        return [o1,o2],[uz.min(),d-z0]
+        return [o1, o2], [uz.min(), d-z0]
 
-    problem = Problem(2,2,2)
+    problem = Problem(2, 2, 2)
     problem.types[0] = Real(0, 10)
     problem.types[1] = Real(0, h_sfc)
-
 
     problem.constraints[0] = ">=0"
     problem.constraints[1] = ">=0"
 
     problem.function = func_uz
     random.seed(12345)
-    algorithm=NSGAIII(problem, divisions_outer=50)
+    algorithm = NSGAIII(problem, divisions_outer=50)
     algorithm.run(30000)
 
-    z0s=[]
-    ds=[]
-    os1=[]
-    os2=[]
+    z0s = []
+    ds = []
+    os1 = []
+    os2 = []
     for s in algorithm.result:
         z0s.append(s.variables[0])
         ds.append(s.variables[1])
         os1.append(s.objectives[0])
         os2.append(s.objectives[1])
-        
-    idx=os2.index(min(os2, key=lambda x:abs(x-np.mean(os2))))
-    z0=z0s[idx]
-    d=ds[idx]
+    idx = os2.index(min(os2, key=lambda x: abs(x-np.mean(os2))))
+    z0 = z0s[idx]
+    d = ds[idx]
 
-    return z0,d,ser_ws,ser_ustar
+    return z0, d, ser_ws, ser_ustar
