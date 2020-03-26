@@ -1,5 +1,5 @@
 import numpy as np
-from platypus.core import Algorithm,Problem
+from platypus.core import Problem
 from platypus.types import Real,random
 from platypus.algorithms import NSGAIII
 
