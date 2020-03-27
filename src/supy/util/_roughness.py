@@ -2,6 +2,7 @@ import numpy as np
 from platypus.core import Problem
 from platypus.types import Real,random
 from platypus.algorithms import NSGAIII
+from .._env import logger_supy
 
 # saturation vapour pressure [hPa]
 def cal_vap_sat(Temp_C, Press_hPa):
@@ -100,6 +101,27 @@ def cal_Lob(QH, UStar, Temp_C, RH_pct, Press_hPa, g=9.8, k=0.4):
 
 def cal_neutral(df_val, z_meas, h_sfc):
 
+    ''' Calculates the rows associated with neutral condition (threshold=0.01)
+
+
+    Parameters
+    ----------
+    df_val: pd.DataFrame
+        Index should be time with columns: 'H', 'USTAR', 'TA', 'RH', 'PA', 'WS'
+    z_meas 
+        measurement height in m
+    h_sfc 
+        vegetation height in m
+
+    Returns
+    -------
+    ser_ws: pd.series
+        observation time series of WS (Neutral conditions)
+    ser_ustar: pd.series
+        observation time series of u* (Neutral coditions)
+    '''
+
+
     # calculate Obukhov length
     ser_Lob = df_val.apply(
         lambda ser: cal_Lob(ser.H, ser.USTAR, ser.TA, ser.RH, ser.PA * 10), axis=1)
@@ -109,8 +131,8 @@ def cal_neutral(df_val, z_meas, h_sfc):
     z_d = 0.7 * h_sfc
 
     if z_d >= z_meas:
-        print(
-            'vegetation height is greater than measuring height. Please fix this before continuing'
+        logger_supy.exception(
+            'vegetation height is greater than measuring height. Please fix this before continuing . . .'
         )
 
     # calculate stability scale
@@ -131,44 +153,51 @@ def cal_neutral(df_val, z_meas, h_sfc):
 
 # Optimization for calculating z0 and d
 def optimize_MO(df_val, z_meas, h_sfc):
-    '''
+    '''Calculates surface roughness and zero plane displacement height. Refer to https://suews-parameters-docs.readthedocs.io/en/latest/steps/roughness-SuPy.html for example
+
     Parameters
     ----------
     df_val: pd.DataFrame
-        Index should be time
-        columns: 'H', 'USTAR', 'TA', 'RH', 'PA', 'WS'
-    z_meas: measurement height in m
-    h_sfc: vegetation height in m
+        Index should be time with columns: 'H', 'USTAR', 'TA', 'RH', 'PA', 'WS'
+    z_meas 
+        measurement height in m
+    h_sfc 
+        vegetation height in m
 
     Returns
     -------
-    z0: surface roughness
-    d: zero displacement height
+    z0 
+        surface roughness
+    d 
+        zero displacement height
     ser_ws: pd.series
         observation time series of WS (Neutral conditions)
     ser_ustar: pd.series
         observation time series of u* (Neutral coditions)
     '''
+
+    # Calculates rows related to neutral conditions
     ser_ws, ser_ustar = cal_neutral(df_val, z_meas, h_sfc)
 
+    # function to optimize
     def func_uz(params):
         z0 = params[0]
         d = params[1]
         z = z_meas
         k = 0.4
-        uz = (ser_ustar / k) * np.log((z - d) / z0)
+        uz = (ser_ustar / k) * np.log((z - d) / z0) # logarithmic law
 
-        o1 = abs(1-np.std(uz)/np.std(ser_ws))
-        o2 = np.mean(abs(uz-ser_ws))/(np.mean(ser_ws))
+        o1 = abs(1-np.std(uz)/np.std(ser_ws)) # objective 1: normalized STD
+        o2 = np.mean(abs(uz-ser_ws))/(np.mean(ser_ws)) # objective 2: normalized MAE
 
         return [o1, o2], [uz.min(), d-z0]
 
     problem = Problem(2, 2, 2)
-    problem.types[0] = Real(0, 10)
-    problem.types[1] = Real(0, h_sfc)
+    problem.types[0] = Real(0, 10) # bounds for first parameter (z0)
+    problem.types[1] = Real(0, h_sfc) # bounds for second parameter (zd)
 
-    problem.constraints[0] = ">=0"
-    problem.constraints[1] = ">=0"
+    problem.constraints[0] = ">=0" # constrain for first parameter
+    problem.constraints[1] = ">=0" # constrain for second parameter
 
     problem.function = func_uz
     random.seed(12345)
@@ -179,11 +208,13 @@ def optimize_MO(df_val, z_meas, h_sfc):
     ds = []
     os1 = []
     os2 = []
+    # getting the solution vaiables
     for s in algorithm.result:
         z0s.append(s.variables[0])
         ds.append(s.variables[1])
         os1.append(s.objectives[0])
         os2.append(s.objectives[1])
+    # getting the solution associated with minimum obj2 (can be changed)
     idx = os2.index(min(os2, key=lambda x: abs(x-np.mean(os2))))
     z0 = z0s[idx]
     d = ds[idx]

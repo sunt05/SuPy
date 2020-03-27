@@ -55,7 +55,7 @@ setup(
         "lmfit",  # optimiser
         "floweaver",  # wrf reclassification Sankey chart
         "supy_driver==2019b5",  # a separate f2py-based driver
-        "platypus-opt"
+        "platypus-opt==1.0.3"
     ],
     entry_points={
         #   command line tools
