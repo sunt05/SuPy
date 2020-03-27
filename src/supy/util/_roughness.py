@@ -1,10 +1,12 @@
 import numpy as np
 from platypus.core import Problem
-from platypus.types import Real,random
+from platypus.types import Real, random
 from platypus.algorithms import NSGAIII
 from .._env import logger_supy
 
 # saturation vapour pressure [hPa]
+
+
 def cal_vap_sat(Temp_C, Press_hPa):
     # temp_c= 0.001 if np.abs(Temp_C)<0.001 else Temp_C
     Press_kPa = Press_hPa/10
@@ -100,7 +102,6 @@ def cal_Lob(QH, UStar, Temp_C, RH_pct, Press_hPa, g=9.8, k=0.4):
 
 
 def cal_neutral(df_val, z_meas, h_sfc):
-
     ''' Calculates the rows associated with neutral condition (threshold=0.01)
 
 
@@ -120,7 +121,6 @@ def cal_neutral(df_val, z_meas, h_sfc):
     ser_ustar: pd.series
         observation time series of u* (Neutral coditions)
     '''
-
 
     # calculate Obukhov length
     ser_Lob = df_val.apply(
@@ -159,16 +159,16 @@ def optimize_MO(df_val, z_meas, h_sfc):
     ----------
     df_val: pd.DataFrame
         Index should be time with columns: 'H', 'USTAR', 'TA', 'RH', 'PA', 'WS'
-    z_meas 
+    z_meas
         measurement height in m
-    h_sfc 
+    h_sfc
         vegetation height in m
 
     Returns
     -------
-    z0 
+    z0
         surface roughness
-    d 
+    d
         zero displacement height
     ser_ws: pd.series
         observation time series of WS (Neutral conditions)
@@ -185,19 +185,20 @@ def optimize_MO(df_val, z_meas, h_sfc):
         d = params[1]
         z = z_meas
         k = 0.4
-        uz = (ser_ustar / k) * np.log((z - d) / z0) # logarithmic law
+        uz = (ser_ustar / k) * np.log((z - d) / z0)  # logarithmic law
 
-        o1 = abs(1-np.std(uz)/np.std(ser_ws)) # objective 1: normalized STD
-        o2 = np.mean(abs(uz-ser_ws))/(np.mean(ser_ws)) # objective 2: normalized MAE
+        o1 = abs(1-np.std(uz)/np.std(ser_ws))  # objective 1: normalized STD
+        # objective 2: normalized MAE
+        o2 = np.mean(abs(uz-ser_ws))/(np.mean(ser_ws))
 
         return [o1, o2], [uz.min(), d-z0]
 
     problem = Problem(2, 2, 2)
-    problem.types[0] = Real(0, 10) # bounds for first parameter (z0)
-    problem.types[1] = Real(0, h_sfc) # bounds for second parameter (zd)
+    problem.types[0] = Real(0, 10)  # bounds for first parameter (z0)
+    problem.types[1] = Real(0, h_sfc)  # bounds for second parameter (zd)
 
-    problem.constraints[0] = ">=0" # constrain for first parameter
-    problem.constraints[1] = ">=0" # constrain for second parameter
+    problem.constraints[0] = ">=0"  # constrain for first parameter
+    problem.constraints[1] = ">=0"  # constrain for second parameter
 
     problem.function = func_uz
     random.seed(12345)
