@@ -109,9 +109,9 @@ def cal_neutral(df_val, z_meas, h_sfc):
     ----------
     df_val: pd.DataFrame
         Index should be time with columns: 'H', 'USTAR', 'TA', 'RH', 'PA', 'WS'
-    z_meas 
+    z_meas
         measurement height in m
-    h_sfc 
+    h_sfc
         vegetation height in m
 
     Returns
