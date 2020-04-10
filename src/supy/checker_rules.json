@@ -604,6 +604,18 @@
         "param": {},
         "unit": "1"
     },
+    "irrfracpaved": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "irrfracbldgs": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
     "irrfracevetr": {
         "cat": "grid",
         "logic": "NA",
@@ -617,6 +629,18 @@
         "unit": "1"
     },
     "irrfracgrass": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "irrfracbsoil": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "irrfracwater": {
         "cat": "grid",
         "logic": "NA",
         "param": {},
