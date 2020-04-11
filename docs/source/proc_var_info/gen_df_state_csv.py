@@ -472,8 +472,8 @@ def proc_df_state(
         'qf_a': 'Base value for QF calculation.',
         'qf_b': 'Parameter related to heating degree days.',
         'qf_c': 'Parameter related to heating degree days.',
-        't_critic_heating': 'Critical heating temperature.',
-        't_critic_cooling': 'Critical cooling temperature.',
+        'baset_heating': 'Critical heating temperature.',
+        'baset_cooling': 'Critical cooling temperature.',
         'trafficrate': 'Traffic rate used for CO2 flux calculation.',
         # irrigation related:
         'daywat': 'Irrigation flag: 1 for on and 0 for off.',

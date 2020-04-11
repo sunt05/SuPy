@@ -83,8 +83,8 @@
     "Code_DecTr": "BaseTe",
     "Code_Grass": "BaseTe"
   },
-  "basethdd": {
-    "AnthropogenicCode": "BaseTHDD"
+  "baset_hc": {
+    "AnthropogenicCode": "BaseT_HC"
   },
   "beta_bioco2": {
     "Code_EveTr": {
@@ -804,13 +804,13 @@
     }
   ],
   "surfacearea": "SurfaceArea",
-  "t_critic_cooling": {
+  "baset_cooling": {
     "AnthropogenicCode": [
       "TCritic_Cooling_WD",
       "TCritic_Cooling_WE"
     ]
   },
-  "t_critic_heating": {
+  "baset_heating": {
     "AnthropogenicCode": [
       "TCritic_Heating_WD",
       "TCritic_Heating_WE"
