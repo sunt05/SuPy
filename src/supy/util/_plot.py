@@ -89,19 +89,36 @@ def plot_day_clm(df_var, fig=None, ax=None, show_dif=False, col_ref="Obs"):
     quar_sel_pos_clm = quar_sel_pos_clm.set_index(idx)
 
     for var in quar_sel_pos_clm.columns.levels[0]:
-        df_x = quar_sel_pos_clm.loc[:, var]
-        y0 = df_x[0.5]
-        y1, y2 = df_x[0.75], df_x[0.25]
-        y0.plot(ax=ax, label=var).fill_between(
-            quar_sel_pos_clm.index, y1, y2, alpha=0.3
-        )
+        if show_dif:
+            df_ref = quar_sel_pos_clm.loc[:, col_ref]
+            df_x = quar_sel_pos_clm.loc[:, var] - df_ref
+        else:
+            df_x = quar_sel_pos_clm.loc[:, var]
+
+        if show_dif and var == col_ref:
+            y0 = df_ref[0.5]
+            y1, y2 = df_ref[0.75], df_ref[0.25]
+            ax2 = ax.twinx()
+            y0.plot(ax=ax2, label=var, linestyle="-.").fill_between(
+                quar_sel_pos_clm.index, y1, y2, alpha=0.
+            )
+        else:
+            y0 = df_x[0.5]
+            y1, y2 = df_x[0.75], df_x[0.25]
+            y0.plot(ax=ax, label=var).fill_between(
+                quar_sel_pos_clm.index, y1, y2, alpha=(0. if show_dif else 0.3)
+            )
     # add legend
     ax.legend(title="variable")
     # adjust xticks formar
     ax.xaxis.set_major_locator(mdates.HourLocator(byhour=np.arange(0, 23, 3)))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
 
-    return fig, ax
+    # return different objects based on `show_dif`
+    if show_dif:
+        return fig, ax, ax2
+    else:
+        return fig, ax
 
 
 # comparison plot with 1:1 line added:
@@ -152,6 +169,7 @@ def plot_comp(
     val_y = df_var_fit["Sim"]
     slope, intercept, r_value, p_value, std_err = stats.linregress(val_x, val_y)
     mae = (val_y - val_x).abs().mean()
+    mbe = (val_y - val_x).mean()
 
     sns.regplot(
         x="Obs",
@@ -165,6 +183,7 @@ def plot_comp(
                     f"y={slope:.2f}x{'+' if intercept > 0 else ''}{intercept:.2f}",
                     f"$R^2$={r_value:.4f}",
                     f"MAE={mae:.2f}",
+                    f"MBE={mbe:.2f}",
                     f"n={df_var.shape[0]}",
                 ]
             )
