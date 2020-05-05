@@ -119,7 +119,7 @@ def cal_neutral(df_val, z_meas, h_sfc):
     ser_ws: pd.series
         observation time series of WS (Neutral conditions)
     ser_ustar: pd.series
-        observation time series of u* (Neutral coditions)
+        observation time series of u* (Neutral conditions)
     '''
 
     # calculate Obukhov length
@@ -173,7 +173,7 @@ def optimize_MO(df_val, z_meas, h_sfc):
     ser_ws: pd.series
         observation time series of WS (Neutral conditions)
     ser_ustar: pd.series
-        observation time series of u* (Neutral coditions)
+        observation time series of u* (Neutral conditions)
     '''
 
     # Calculates rows related to neutral conditions
