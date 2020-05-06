@@ -110,7 +110,7 @@ def plot_comp(df_var, fig=None, ax=None):
     sns.regplot(
         x="Obs",
         y="Sim",
-        data=df_var,
+        data=df_var_fit,
         ax=ax,
         fit_reg=True,
         line_kws={
@@ -122,7 +122,7 @@ def plot_comp(df_var, fig=None, ax=None):
             + "\n"
             + "MAE={0:.2f}".format(mae)
             + "\n"
-            + "n={}".format(df_var.shape[0])
+            + "n={}".format(df_var_fit.shape[0])
         },
     )
 
