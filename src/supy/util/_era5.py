@@ -1,17 +1,18 @@
 # suppress pandas warnings
 
-from supy_driver import meteo
-from supy_driver import atmmoiststab_module as stab
 import os
-from .._env import logger_supy
-from numpy import cos, deg2rad, sin, sqrt
-import pandas as pd
-import numpy as np
-from pathlib import Path
 import time
 import warnings
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from numpy import cos, deg2rad, sin, sqrt
+
+from .._env import logger_supy
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
+
 
 ################################################
 # more ERA-5 related functions
@@ -96,7 +97,7 @@ def geopotential2geometric(h: float, latitude: float) -> float:
 
 
 # functions to interpolate the atmospheric variables to a specified height/altitude
-def get_ser_val_alt(lat: float, lon: float, da_alt_x, da_alt, da_val,) -> pd.Series:
+def get_ser_val_alt(lat: float, lon: float, da_alt_x, da_alt, da_val, ) -> pd.Series:
     """interpolate atmospheric variable to a specified altitude
 
     Parameters
@@ -125,7 +126,7 @@ def get_ser_val_alt(lat: float, lon: float, da_alt_x, da_alt, da_val,) -> pd.Ser
     val_alt = np.array(
         [interp1d(alt_1d, val_1d)(alt_x) for alt_1d, val_1d in zip(alt_t_1d, val_t_1d)]
     )
-    ser_alt = pd.Series(val_alt, index=da_val.time.values, name=da_val.name,)
+    ser_alt = pd.Series(val_alt, index=da_val.time.values, name=da_val.name, )
     return ser_alt
 
 
@@ -211,7 +212,7 @@ def gen_dict_proc(dict_x):
         "ml": "reanalysis-era5-pressure-levels",
     }
     feed_x = dict_feed[type_x]
-    dict_proc = dict(name=feed_x, request=dict_x, target=gen_fn(dict_x),)
+    dict_proc = dict(name=feed_x, request=dict_x, target=gen_fn(dict_x), )
 
     return dict_proc
 
@@ -283,6 +284,7 @@ list_pres_level = [
     "975",
     "1000",
 ]
+
 
 # generate a dict of reqs kwargs for (lat_x,lon_x) spanning [start, end]
 
@@ -441,7 +443,7 @@ def download_cds(fn, dict_req):
         logger_supy.info(f"To download: {fn}")
 
         # this will download the file to a secure temporary directory without requirement for extra permission
-        td=tempfile.gettempdir()
+        td = tempfile.gettempdir()
         os.chdir(td)
         c.retrieve(**dict_req)
         # move the downloaded file to desired location
@@ -451,13 +453,13 @@ def download_cds(fn, dict_req):
 
 
 def download_era5(
-    lat_x: float,
-    lon_x: float,
-    start: str,
-    end: str,
-    dir_save=Path("."),
-    grid=[0.125, 0.125],
-    scale=0,
+        lat_x: float,
+        lon_x: float,
+        start: str,
+        end: str,
+        dir_save=Path("."),
+        grid=[0.125, 0.125],
+        scale=0,
 ) -> dict:
     """Generate ERA-5 cdsapi-based requests and download data for area of interests.
 
@@ -491,7 +493,7 @@ def download_era5(
     """
 
     # generate requests for surface level data
-    dict_req_sfc = gen_req_sfc(lat_x, lon_x, start, end, grid=[0.125, 0.125], scale=0,)
+    dict_req_sfc = gen_req_sfc(lat_x, lon_x, start, end, grid=[0.125, 0.125], scale=0, )
 
     # parse and create (if needed) the saving directory
     path_dir_save = Path(dir_save).expanduser().resolve()
@@ -520,13 +522,13 @@ def download_era5(
 
 # generate requests
 def gen_req_era5(
-    lat_x: float,
-    lon_x: float,
-    start: str,
-    end: str,
-    grid=[0.125, 0.125],
-    scale=0,
-    dir_save=Path("."),
+        lat_x: float,
+        lon_x: float,
+        start: str,
+        end: str,
+        grid=[0.125, 0.125],
+        scale=0,
+        dir_save=Path("."),
 ) -> dict:
     """Generate ERA-5 cdsapi-based requests and download data for area of interests.
 
@@ -560,7 +562,7 @@ def gen_req_era5(
     path_dir_save = Path(dir_save).expanduser().resolve()
 
     # generate requests for surface level data
-    dict_req_sfc = gen_req_sfc(lat_x, lon_x, start, end, grid=[0.125, 0.125], scale=0,)
+    dict_req_sfc = gen_req_sfc(lat_x, lon_x, start, end, grid=[0.125, 0.125], scale=0, )
 
     # generate requests for atmospheric level data
     dict_req_ml = {}
@@ -579,13 +581,13 @@ def gen_req_era5(
 
 # load downloaded files
 def load_filelist_era5(
-    lat_x: float,
-    lon_x: float,
-    start: str,
-    end: str,
-    grid=[0.125, 0.125],
-    scale=0,
-    dir_save=Path("."),
+        lat_x: float,
+        lon_x: float,
+        start: str,
+        end: str,
+        grid=[0.125, 0.125],
+        scale=0,
+        dir_save=Path("."),
 ):
     # download data: existing files will be excluded from the downloading list
     download_era5(lat_x, lon_x, start, end, dir_save, grid, scale)
@@ -602,15 +604,15 @@ def load_filelist_era5(
 
 # generate supy forcing using ERA-5 data
 def gen_forcing_era5(
-    lat_x: float,
-    lon_x: float,
-    start: str,
-    end: str,
-    dir_save=Path("."),
-    grid=[0.125, 0.125],
-    hgt_agl_diag=100.0,
-    scale=0,
-    simple_mode=True,
+        lat_x: float,
+        lon_x: float,
+        start: str,
+        end: str,
+        dir_save=Path("."),
+        grid=[0.125, 0.125],
+        hgt_agl_diag=100.0,
+        scale=0,
+        simple_mode=True,
 ) -> list:
     """Generate SUEWS forcing files using ERA-5 data.
 
@@ -682,7 +684,7 @@ def gen_forcing_era5(
             "slhf",
             "tp",
             "uv_z",
-            "theta_z",
+            "t_z",
             "q_z",
             "p_z",
             "alt_z",
@@ -722,19 +724,13 @@ def format_df_forcing(df_forcing_raw):
 
     # get dry bulb temperature and relative humidity
     df_forcing_grid = df_forcing_grid.assign(
-        Tair=ac(
-            "T",
-            qv=df_forcing_grid.q_z,
-            theta=df_forcing_grid.theta_z,
-            p=df_forcing_grid.p_z,
-        )
-        - 273.15
+        Tair=df_forcing_grid.t_z- 273.15
     )
     df_forcing_grid = df_forcing_grid.assign(
         RH=ac(
             "RH",
             qv=df_forcing_grid.q_z,
-            theta=df_forcing_grid.theta_z,
+            T=df_forcing_grid.t_z,
             p=df_forcing_grid.p_z,
         )
     )
@@ -784,8 +780,7 @@ def format_df_forcing(df_forcing_raw):
         "alt_z",
     ]
 
-    df_forcing_grid=df_forcing_grid.reindex(col_suews,axis=1)
-
+    df_forcing_grid = df_forcing_grid.reindex(col_suews, axis=1)
 
     df_forcing_grid = df_forcing_grid.assign(
         iy=df_forcing_grid.index.year,
@@ -856,8 +851,8 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True
     # wind speed [m s-1]
     uv_za = np.sqrt(u_za ** 2 + v_za ** 2)
 
-    # potential temperature [K]
-    theta_za = ds_ll.t
+    # temperature [K]
+    t_za = ds_ll.t
 
     # specific humidity [kg kg-1]
     q_za = ds_ll.q
@@ -904,7 +899,7 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True
         ds_diag = diag_era5(
             za,
             uv_za,
-            theta_za,
+            t_za,
             q_za,
             pres_za,
             qh,
@@ -928,7 +923,6 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True
 def diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z):
     from atmosp import calculate as ac
     import xarray as xr
-    from ._atm import cal_lat_vap, cal_cp, cal_psi_mom, cal_psi_heat
 
     # constants
     # environmental lapse rate [K m^-1]
@@ -947,8 +941,8 @@ def diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z):
     p_z = pres_z0 * (t2 / (t2 + env_lapse * (z - 2))) ** (grav / (rd * env_lapse))
 
     # correct humidity assuming invariable relative humidity
-    RH_z = ac("RH", qv=q2, p=pres_z0, theta=t2) + 0 * t_z
-    q_z = ac("qv", RH=RH_z, p=p_z, theta=t_z) + 0 * t_z
+    RH_z = ac("RH", qv=q2, p=pres_z0, T=t2) + 0 * t_z
+    q_z = ac("qv", RH=RH_z, p=p_z, T=t_z) + 0 * t_z
 
     # correct wind speed using log law; assuming neutral condition (without stability correction)
     uv_z = uv10 * (np.log((z + z0m) / z0m) / np.log((10 + z0m) / z0m))
@@ -957,7 +951,7 @@ def diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z):
     ds_diag = xr.merge(
         [
             uv_z.rename("uv_z"),
-            t_z.rename("theta_z"),
+            t_z.rename("t_z"),
             q_z.rename("q_z"),
             RH_z.rename("RH_z"),
             p_z.rename("p_z"),
@@ -969,9 +963,8 @@ def diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z):
 
 # diagnose ISL variable using MOST
 def diag_era5(
-    za, uv_za, theta_za, q_za, pres_za, qh, qe, z0m, ustar, pres_z0, uv10, t2, q2, z
+        za, uv_za, t_za, q_za, pres_za, qh, qe, z0m, ustar, pres_z0, uv10, t2, q2, z
 ):
-
     # reference:
     # Section 3.10.2 and 3.10.3 in
     # IFS Documentation CY41R2: Part IV: Physical Processes
@@ -1018,14 +1011,10 @@ def diag_era5(
     psim_10 = cal_psi_mom((10 + z0m) / l_mod)
 
     # wind speed
-    # uv_z = uv_za * (
-    #     (np.log(z / z0m) - psim_z + psim_z0) / (np.log(za / z0m) - psim_za + psim_z0)
-    # )
     uv_z = uv10 * (
-        (np.log((z + z0m) / z0m) - psim_z + psim_z0)
-        / (np.log((10 + z0m) / z0m) - psim_10 + psim_z0)
+            (np.log((z + z0m) / z0m) - psim_z + psim_z0)
+            / (np.log((10 + z0m) / z0m) - psim_10 + psim_z0)
     )
-    # uv_z = ustar / kappa * (np.log(z / z0m) - psim_z + psim_z0)
 
     # stability correction for heat
     psih_z = cal_psi_heat(zoL)
@@ -1038,53 +1027,44 @@ def diag_era5(
     p_z = pres_z0 + (pres_za - pres_z0) * z / za
 
     # specific humidity
-    # q_z = q_za + qstar / kappa * (np.log(z / za) - psih_z + psih_za)
     q_z = q2 + (q_za - q2) * (
-        (np.log(z / z0m) - psih_z + psih_z0) / (np.log(za / z0m) - psih_za + psih_z0)
+            (np.log(z / z0m) - psih_z + psih_z0) / (np.log(za / z0m) - psih_za + psih_z0)
     )
 
-    # potential temperature
-    # theta_z = theta_za + tstar / kappa * (np.log(z / za) - psih_z + psih_za)
-    # theta_z = t2 + (theta_za - t2) * ((np.log(z / z0m) - psih_z + psih_z0) /
-    #                                   (np.log(za / z0m) - psih_za + psih_z0))
+
 
     # dry static energy: eq 3.5 in EC tech report;
     # also AMS ref: http://glossary.ametsoc.org/wiki/Dry_static_energy
     # 2 m agl:
     cp2 = cal_cp(q2, t2, pres_z0 / 100)
-    cp_za = cal_cp(q_za, theta_za, pres_za / 100)
     s2 = g * 2 + cp2 * t2
     # za:
-    t_za = ac("T", qv=q_za, p=pres_za, theta=theta_za)
+    cp_za = cal_cp(q_za, t_za, pres_za / 100)
     s_za = g * za + cp_za * t_za
 
-    # s_z = s2 + (s_za - s2) * (
-    #     (np.log(z / z0m) - psih_z + psih_z0) / (np.log(za / z0m) - psih_za + psih_z0)
-    # )
     s_z = s2 + (s_za - s2) * (
-        (np.log(z / 2) - psih_z + psih_2) / (np.log(za / 2) - psih_za + psih_2)
+            (np.log(z / 2) - psih_z + psih_2) / (np.log(za / 2) - psih_za + psih_2)
     )
 
-    # calculate potential temperature at z
-    theta_z_x = theta_za
+    # calculate temperature at z
+    tx_z = t_za
     dif = 10
     while dif > 0.1:
-        cp_z = cal_cp(q_z, theta_z_x, p_z / 100)
+        cp_z = cal_cp(q_z, tx_z, p_z / 100)
         t_z = (s_z - g * z) / cp_z
-        theta_z = ac("theta", T=t_z, qv=q_z, p=p_z)
-        dif = np.mean(np.abs(theta_z_x - theta_z))
-        theta_z_x = theta_z
+        dif = np.mean(np.abs(t_z - tx_z))
+        tx_z = t_z
 
-    theta_z = theta_z + theta_za * 0
+    t_z = t_z + t_za * 0
 
-    RH_z = ac("RH", qv=q_z, p=p_z, theta=theta_z) + 0 * q_z
+    RH_z = ac("RH", qv=q_z, p=p_z, T=t_z) + 0 * q_z
     RH_z = RH_z.where(RH_z < 105, 105)
 
     # generate dataset
     ds_diag = xr.merge(
         [
             uv_z.rename("uv_z"),
-            theta_z.rename("theta_z"),
+            t_z.rename("t_z"),
             q_z.rename("q_z"),
             RH_z.rename("RH_z"),
             p_z.rename("p_z"),

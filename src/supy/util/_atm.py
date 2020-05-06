@@ -439,12 +439,12 @@ def cal_lat_vap(qa_kgkg, theta_K, pres_hPa):
 
 
 # calculate heat capacity of air
-def cal_cp(qa_kgkg, theta_K, pres_hPa):
+def cal_cp(qa_kgkg, ta_K, pres_hPa):
     from atmosp import calculate as ac
 
-    temp_C = ac("T", theta=theta_K, p=pres_hPa * 100) - 273.15
+    temp_C = ta_K - 273.15
 
-    rh_pct = ac("RH", qv=qa_kgkg, theta=theta_K, p=pres_hPa * 100)
+    rh_pct = ac("RH", qv=qa_kgkg, T=ta_K, p=pres_hPa * 100)
 
     # Garratt equation a20(1992)
     cpd = 1005.0 + ((temp_C + 23.16) ** 2) / 3364.0
@@ -458,10 +458,10 @@ def cal_cp(qa_kgkg, theta_K, pres_hPa):
     )
 
     # air density
-    rho = ac("rho", qv=qa_kgkg, theta=theta_K, p=pres_hPa * 100)
+    rho = ac("rho", qv=qa_kgkg, T=ta_K, p=pres_hPa * 100)
 
     # water vapour mixing ratio
-    rv = ac("rv", qv=qa_kgkg, theta=theta_K, p=pres_hPa * 100)
+    rv = ac("rv", qv=qa_kgkg, T=ta_K, p=pres_hPa * 100)
 
     # dry air density
     rho_d = rv / (1 + rv) * rho

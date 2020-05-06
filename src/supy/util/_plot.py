@@ -174,7 +174,7 @@ def plot_comp(
     sns.regplot(
         x="Obs",
         y="Sim",
-        data=df_var,
+        data=df_var_fit,
         ax=ax,
         fit_reg=True,
         line_kws={
@@ -184,7 +184,7 @@ def plot_comp(
                     f"$R^2$={r_value:.4f}",
                     f"MAE={mae:.2f}",
                     f"MBE={mbe:.2f}",
-                    f"n={df_var.shape[0]}",
+                    f"n={df_var_fit.shape[0]}",
                 ]
             )
         },
