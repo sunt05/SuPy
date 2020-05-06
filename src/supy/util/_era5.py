@@ -1104,8 +1104,7 @@ def save_forcing_era5(df_forcing_era5, dir_save):
     for lat, lon in list_grid:
         df_grid = df_forcing_era5.loc[lat, lon]
         s_lat = f"{lat}N" if lat >= 0 else f"{-lat}S"
-        s_lat = f"{lat}N" if lat >= 0 else f"{lat}S"
-        s_lon = f"{lon}E" if lon >= 0 else f"{lon}W"
+        s_lon = f"{lon}E" if lon >= 0 else f"{-lon}W"
         alt_z = df_grid.alt_z[0]
         df_grid = df_grid.drop("alt_z", axis=1)
         s_alt = f"{alt_z:.1f}A"
