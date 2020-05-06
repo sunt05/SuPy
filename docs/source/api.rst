@@ -86,6 +86,15 @@ Plotting
     plot_comp
     plot_day_clm
 
+Roughness Calculation
+~~~~~~~~
+
+.. autosummary::
+    :toctree: api/supy.util
+
+    optimize_MO
+    cal_neutral
+
 
 Command-Line Tools
 -------------------

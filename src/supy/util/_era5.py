@@ -440,14 +440,14 @@ def download_cds(fn, dict_req):
     else:
         logger_supy.info(f"To download: {fn}")
 
-        with tempfile.TemporaryDirectory() as td:
-            # this will download the file to a secure temporary directory without requirement for extra permission
-            os.chdir(td)
-            c.retrieve(**dict_req)
-            # move the downloaded file to desired location
-            Path(path_fn.name).replace(fn)
-            # hold on a bit for the next request
-            time.sleep(0.0100)
+        # this will download the file to a secure temporary directory without requirement for extra permission
+        td=tempfile.gettempdir()
+        os.chdir(td)
+        c.retrieve(**dict_req)
+        # move the downloaded file to desired location
+        Path(path_fn.name).replace(fn)
+        # hold on a bit for the next request
+        time.sleep(0.0100)
 
 
 def download_era5(
@@ -783,7 +783,9 @@ def format_df_forcing(df_forcing_raw):
         "wdir",
         "alt_z",
     ]
+
     df_forcing_grid=df_forcing_grid.reindex(col_suews,axis=1)
+
 
     df_forcing_grid = df_forcing_grid.assign(
         iy=df_forcing_grid.index.year,
@@ -1102,7 +1104,8 @@ def save_forcing_era5(df_forcing_era5, dir_save):
     for lat, lon in list_grid:
         df_grid = df_forcing_era5.loc[lat, lon]
         s_lat = f"{lat}N" if lat >= 0 else f"{-lat}S"
-        s_lon = f"{lon}E" if lon >= 0 else f"{-lon}W"
+        s_lat = f"{lat}N" if lat >= 0 else f"{lat}S"
+        s_lon = f"{lon}E" if lon >= 0 else f"{lon}W"
         alt_z = df_grid.alt_z[0]
         df_grid = df_grid.drop("alt_z", axis=1)
         s_alt = f"{alt_z:.1f}A"
