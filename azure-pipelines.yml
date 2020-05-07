@@ -172,7 +172,7 @@ jobs:
 - job:                'Build_Test_Docs'
   dependsOn:          'Build_Test_Ubuntu_1804'
   pool:
-    vmImage:          'ubuntu-18.04'
+    vmImage:          'ubuntu-latest'
   strategy:
     matrix:
       # Python35:
