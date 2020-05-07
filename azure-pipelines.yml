@@ -170,7 +170,7 @@ jobs:
   #   condition:        succeededOrFailed()
 
 - job:                'Build_Test_Docs'
-  dependsOn:          'Build_Test_Ubuntu_latest'
+  dependsOn:          'Build_Test_Ubuntu_1804'
   pool:
     vmImage:          'ubuntu-latest'
   strategy:
