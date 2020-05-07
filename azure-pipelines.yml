@@ -170,9 +170,9 @@ jobs:
   #   condition:        succeededOrFailed()
 
 - job:                'Build_Test_Docs'
-  dependsOn:          'Build_Test_Ubuntu_1604'
+  dependsOn:          'Build_Test_Ubuntu_latest'
   pool:
-    vmImage:          'Ubuntu 16.04'
+    vmImage:          'ubuntu-latest'
   strategy:
     matrix:
       # Python35:
