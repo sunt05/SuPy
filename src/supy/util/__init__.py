@@ -9,7 +9,7 @@ from ._era5 import download_era5, gen_forcing_era5
 from ._gap_filler import fill_gap_all
 
 
-from ._plot import plot_comp, plot_day_clm
+from ._plot import plot_comp, plot_day_clm, plot_rsl
 
 
 from ._ohm import derive_ohm_coef, sim_ohm, replace_ohm_coeffs

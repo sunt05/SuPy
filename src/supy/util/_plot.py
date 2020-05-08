@@ -100,13 +100,13 @@ def plot_day_clm(df_var, fig=None, ax=None, show_dif=False, col_ref="Obs"):
             y1, y2 = df_ref[0.75], df_ref[0.25]
             ax2 = ax.twinx()
             y0.plot(ax=ax2, label=var, linestyle="-.").fill_between(
-                quar_sel_pos_clm.index, y1, y2, alpha=0.
+                quar_sel_pos_clm.index, y1, y2, alpha=0.0
             )
         else:
             y0 = df_x[0.5]
             y1, y2 = df_x[0.75], df_x[0.25]
             y0.plot(ax=ax, label=var).fill_between(
-                quar_sel_pos_clm.index, y1, y2, alpha=(0. if show_dif else 0.3)
+                quar_sel_pos_clm.index, y1, y2, alpha=(0.0 if show_dif else 0.3)
             )
     # add legend
     ax.legend(title="variable")
@@ -336,3 +336,84 @@ def plot_colortable(colors, title, sort_colors=True, emptycols=0):
         ax.hlines(y, swatch_start_x, swatch_end_x, color=colors[name], linewidth=18)
 
     return fig
+
+
+# plotting RSL profiles
+def plot_rsl(
+    df_output, var=None, fig=None, ax=None,
+):
+    """
+    Produce a quick plot of RSL results
+
+    Parameters
+    ----------
+    df_output : pandas.DataFrame
+        SuPy output dataframe with RSL results.
+    var : str, optional
+        Varible to plot; must be one of 'U', 'T', or 'q'; or use `None` to plot all; by default None
+
+    Returns
+    -------
+    tuple
+        `(fig,ax)` of plot.
+
+    Raises
+    ------
+    issue
+        If an invalid variable is specified, an issue will be raised.
+    """
+
+
+
+
+    # import when used for better performance in loading supy
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    from scipy import stats
+    from .._env import logger_supy
+    from .._post import proc_df_rsl
+
+    # convert df_output to an easier format
+    df_rsl = proc_df_rsl(df_output)
+
+    # retrive heights: the number of levels is fixed to 30 as set in SUEWS
+    ar_z = df_rsl.loc[:, "z"].iloc[:30].values
+
+    # retrieve times
+    df_x = df_rsl.droplevel("level")
+    ser_t = df_x.index.drop_duplicates()
+
+    # dict of x labels
+    dict_xlabel = {"U": "(m s$^{-1}$)", "T": "($^\degree$C)", "q": "(g kg$^{-1}$)"}
+
+    if var == None:
+        # plot all variables in subplots
+        # force create a new figure to contain all variables
+        fig, axes = plt.subplots(1, 3, figsize=(12 * 0.68, 4), sharey=True)
+        for var, ax in zip(["U", "T", "q"], axes.flat):
+            for t in ser_t:
+                _ = df_x.loc[t].plot(x=var, y="z", label=t, ax=ax)
+                _ = ax.set_ylabel("z (m)")
+                _ = ax.set_xlabel(var + " " + dict_xlabel[var])
+        fig.tight_layout()
+
+        return fig, axes
+
+    elif var in ["U", "T", "q"]:
+        if fig is None and ax is None:
+            fig, ax = plt.subplots()
+        elif fig is None:
+            fig = ax.get_figure()
+        elif ax is None:
+            ax = fig.gca()
+
+        for t in ser_t:
+            _ = df_x.loc[t].plot(x=var, y="z", label=t, ax=ax)
+        _ = ax.set_ylabel("z (m)")
+        _ = ax.set_xlabel(var + " " + dict_xlabel[var])
+
+        return fig, ax
+
+    else:
+        # raise issue
+        logger_supy.error(f"`var` cannoot be {var}: must be one of 'U', 'T', or 'q'. ")
