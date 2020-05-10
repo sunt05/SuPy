@@ -1,4 +1,5 @@
 From,To,Action,File,Variable,Column,Value
+2019b,2020a,Add,SUEWS_Irrigation.txt,H_maintain,6,-999
 2019b,2020a,Add,RunControl.nml,BaseTMethod,-999,1
 2019b,2020a,Add,SUEWS_SiteSelect.txt,IrrFr_Water,27,0
 2019b,2020a,Add,SUEWS_SiteSelect.txt,IrrFr_BSoil,26,0
