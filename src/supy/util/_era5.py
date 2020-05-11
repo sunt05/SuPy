@@ -815,9 +815,6 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True
     import xarray as xr
     from atmosp import calculate as ac
 
-    # list_fn_sfc, list_fn_ml = load_download_era5(
-    #     lat_x, lon_x, start, end, grid, scale, dir_save)
-
     # load data from from `sfc` files
     ds_sfc = xr.open_mfdataset(list_fn_sfc, concat_dim="time").load()
     # close dangling handlers
@@ -902,20 +899,7 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True
         ds_diag = diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z)
     else:
         ds_diag = diag_era5(
-            za,
-            uv_za,
-            t_za,
-            q_za,
-            pres_za,
-            qh,
-            qe,
-            z0m,
-            ustar,
-            pres_z0,
-            uv10,
-            t2,
-            q2,
-            z,
+            za, uv_za, t_za, q_za, pres_za, qh, qe, z0m, ustar, pres_z0, uv10, t2, q2, z
         )
 
     # merge altitude
@@ -942,7 +926,6 @@ def diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z):
 
     # barometric equation with varying temperature:
     # (https://en.wikipedia.org/wiki/Barometric_formula)
-    # p_z = pres_z0 * np.exp((grav * (0 - z)) / (rd * t2))
     p_z = pres_z0 * (t2 / (t2 + env_lapse * (z - 2))) ** (grav / (rd * env_lapse))
 
     # correct humidity assuming invariable relative humidity
@@ -1007,7 +990,6 @@ def diag_era5(
         (z + z0m) / l_mod,
         np.sign((z + z0m) / l_mod) * 5,
     )
-    # l_mod = np.where(np.abs(l_mod) < 5, l_mod, np.sign(l_mod)*5)
 
     # `stab_psi_mom`, `stab_psi_heat`
     # stability correction for momentum
@@ -1036,7 +1018,6 @@ def diag_era5(
         (np.log(z / z0m) - psih_z + psih_z0) / (np.log(za / z0m) - psih_za + psih_z0)
     )
 
-
     # dry static energy: eq 3.5 in EC tech report;
     # also AMS ref: http://glossary.ametsoc.org/wiki/Dry_static_energy
     # 2 m agl:
@@ -1058,9 +1039,10 @@ def diag_era5(
         t_z = (s_z - g * z) / cp_z
         dif = np.mean(np.abs(t_z - tx_z))
         tx_z = t_z
-
+    # get final `t_z` and store in the conformity to `t_za`
     t_z = t_z + t_za * 0
 
+    # relative humidity; cap at 105% if above
     RH_z = ac("RH", qv=q_z, p=p_z, T=t_z) + 0 * q_z
     RH_z = RH_z.where(RH_z < 105, 105)
 
@@ -1123,7 +1105,6 @@ def get_level_diag(ds_sfc, ds_ml, hgt_agl_diag):
     da_alt_ml = geopotential2geometric(da_gph_ml, da_lat_ml)
 
     # determine a lowest level higher than surface at all times
-    #     hgt_agl_diag = 100
     ind_alt = ((da_alt_sfc + hgt_agl_diag) < da_alt_ml).compute()
     level_sel = (ind_alt.sum(dim="level") - 1).values.flatten()
     level_sel = da_alt_ml.level[level_sel]
