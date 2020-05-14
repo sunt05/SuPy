@@ -507,7 +507,8 @@ def download_era5(
     logger_supy.setLevel(logging_level)
 
     # generate requests for surface level data
-    dict_req_sfc = gen_req_sfc(lat_x, lon_x, start, end, grid=[0.125, 0.125], scale=0,)
+    dict_req_sfc = gen_req_sfc(lat_x, lon_x, start, end, grid, scale)
+    logger_supy.debug(dict_req_sfc)
 
     # parse and create (if needed) the saving directory
     path_dir_save = Path(dir_save).expanduser().resolve()
@@ -522,6 +523,8 @@ def download_era5(
     for fn_sfc in dict_req_sfc.keys():
         dict_req = gen_req_ml(path_dir_save / fn_sfc, grid, scale)
         dict_req_ml.update(dict_req)
+
+    logger_supy.debug(dict_req_ml)
 
     for fn_ml, dict_req in dict_req_ml.items():
         download_cds(path_dir_save / fn_ml, dict_req)
