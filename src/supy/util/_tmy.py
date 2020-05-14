@@ -313,7 +313,7 @@ def read_epw(path_epw: Path) -> pd.DataFrame:
 
 # generate EPW file from `df_TMY`
 def gen_epw(
-    df_output: pd.DataFrame, path_epw=Path("TMY.epw"), ratio_dif_dir=0.15
+    df_output: pd.DataFrame, path_epw=Path("TMY.epw"), ratio_dif_dir=0.15, lat=51.5, lon=-0.11, time_zone=0
 ) -> Tuple[pd.DataFrame, str, Path]:
     """Generate an `epw` file of uTMY (urbanised Typical Meteorological Year) using SUEWS simulation results
 
@@ -325,6 +325,12 @@ def gen_epw(
         Path to store generated epw file, by default Path('./uTMY.epw')
     ratio_dif_dir : float, optional
         Ratio between direct and diffuse solar radiation, by default 0.15
+    lat: float
+        Latitude of the site, used for calculating solar angle, by default 51.5
+    lon: float
+        Longitude of the site, used for calculating solar angle, by default -0.11
+    time_zone: float
+        Time zone of the site, used for calculating solar angle, by default 0 (e.g. 8 for UTC+08:00)
 
     Returns
     -------
@@ -335,6 +341,10 @@ def gen_epw(
 
     """
     import atmosp
+    from pysolar import solar
+    import datetime
+    from pathlib import Path
+    import pvlib
 
     df_tmy = gen_TMY(df_output.copy())
     # df_tmy = pd.concat([df_tmy.iloc[1:], df_tmy.iloc[[0]]])
@@ -373,12 +383,38 @@ def gen_epw(
     # df_TMY['Kdown'] = df_TMY['Kdown']*2.4
     # processing solar radiation components
     df_tmy.loc[df_tmy["Kdown"] < 0.001, "Kdown"] = 0
-    # direct beam
-    frac_dir = 1 / (1 + ratio_dif_dir)
-    df_tmy["Direct Normal Radiation"] = df_tmy["Kdown"] * frac_dir
+    
+    # global horizontal radiation
+    df_tmy["Global Horizontal Radiation"] = df_tmy["Kdown"]
+    
     # diffuse radiation
     frac_dif = 1 - (1 / (1 + ratio_dif_dir))
     df_tmy["Diffuse Horizontal Radiation"] = df_tmy["Kdown"] * frac_dif
+
+    # direct normal radaition
+    # GHI = DHI + DNI * cos (Z)
+    # solar zenith angle
+    def get_sza(dobj,lat,lon,time_zone):
+        dobj=dobj.replace(tzinfo=datetime.timezone.utc) - datetime.timedelta(hours=time_zone)
+        sza= float(90) -  solar.get_altitude(lat, lon, dobj)
+        return sza
+    
+    # series of solar zenith angle in degree
+    sza = df_tmy.copy().reset_index()['datetime'].apply(lambda x: get_sza(x,lat,lon,time_zone))
+
+    # sza2 = np.cos(np.radians(sza))
+    # sza2.index = df_tmy.index
+    # df_tmy['sza'] = sza2
+
+    # df_tmy["Direct Normal Radiation"] = df_tmy.apply(lambda x: (x["Kdown"]*(1 - frac_dif)) / x['sza'], axis=1)
+    # df_tmy.drop(['sza'],axis=1) -- a problem for this method: when sza is very small, dni can be too large.
+
+    # Determine DNI from GHI using the DIRINT modification of the DISC model.
+    dni=pvlib.irradiance.dirint(ghi=df_tmy['Kdown'].values,times=df_tmy.index,solar_zenith=sza.values,pressure=df_tmy['Atmospheric Station Pressure'].values,temp_dew=df_tmy['Dew Point Temperature'],use_delta_kt_prime=True).replace(np.nan,0)
+    df_tmy['Direct Normal Radiation'] = dni.values
+
+    # horizontal infrared radiation
+    df_tmy["Horizontal Infrared Radiation Intensity"] = df_tmy["Ldown"]
 
     # conform column names to EPW standard
     df_TMY_x = df_tmy.rename(columns=dict_supy_epw)
@@ -425,7 +461,7 @@ def gen_epw(
     df_epw[
         "Data Source and Uncertainty Flags"
     ] = "?9?9?9?9E0?9?9?9*9*9?9*9*9?9*9*9?9?9*9*_*9*9*9*9*9"
-    df_epw["Global Horizontal Radiation"] = np.ones(len(df_epw)) * 9999
+    # df_epw["Global Horizontal Radiation"] = np.ones(len(df_epw)) * 9999
     df_epw.index = df_TMY_x.index
 
 
