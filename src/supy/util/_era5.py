@@ -412,12 +412,15 @@ def sel_list_pres(ds_sfc_x):
 # for each sfc data file, determine the necessary vertical levels to model level data download
 def gen_req_ml(fn_sfc, grid=[0.125, 0.125], scale=0):
     import xarray as xr
-
+    
     ds_sfc_x = xr.load_dataset(fn_sfc)
     list_pres_sel = sel_list_pres(ds_sfc_x)
     size = grid[0] * scale
     lat_x, lon_x = ds_sfc_x.latitude.values[0], ds_sfc_x.longitude.values[0]
     lat_c, lon_c = (roundPartial(x, grid[0]) for x in [lat_x, lon_x])
+    # This is to correct the central coordinate of the area
+    lat_c = lat_c - size
+    lon_c = lon_c + size
     area = [lat_c + size, lon_c - size, lat_c - size, lon_c + size]
     idx_time = ds_sfc_x.time.to_pandas()
     dict_dt = list(gen_dict_dt_sub(idx_time).values())[0]
