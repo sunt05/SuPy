@@ -29,7 +29,7 @@ from ..util._converter import convert_table, list_ver_from, list_ver_to
     "-i",
     "--input",
     "fromDir",
-    help="Original directory to convert",
+    help="Original directory to convert, which must have the `RunControl.nml` file",
     type=click.Path(),
     required=True,
 )
@@ -37,7 +37,7 @@ from ..util._converter import convert_table, list_ver_from, list_ver_to
     "-o",
     "--output",
     "toDir",
-    help="New directory to create for converted tables",
+    help="New directory to create for converted tables. Note: the created directory will have the same structure as the origianl one; however, forcing files and output folder won't be includede.",
     type=click.Path(),
     required=True,
 )
