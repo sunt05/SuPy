@@ -4,6 +4,7 @@ import os
 import time
 import warnings
 from pathlib import Path
+import shutil
 
 import numpy as np
 import pandas as pd
@@ -454,7 +455,7 @@ def download_cds(fn, dict_req):
         os.chdir(td)
         c.retrieve(**dict_req)
         # move the downloaded file to desired location
-        Path(path_fn.name).replace(fn)
+        shutil.move(path_fn.name, fn)
         # hold on a bit for the next request
         time.sleep(0.0100)
 
