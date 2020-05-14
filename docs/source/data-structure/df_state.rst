@@ -77,7 +77,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`AlbedoMax <suews:AlbedoMax>`
 
@@ -197,7 +197,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`alpha <suews:alpha>`
 
@@ -209,7 +209,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`alpha_enh <suews:alpha_enh>`
 
@@ -233,9 +233,45 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`BaseT <suews:BaseT>`
+
+
+.. option:: baset_cooling
+
+    :Description:
+        Critical cooling temperature.
+    :Dimensionality:
+        (2,)
+    :Dimensionality Remarks:
+        2: {Weekday, Weekend}
+    :SUEWS-related variables:
+        :option:`TCritic_Cooling_WD <suews:TCritic_Cooling_WD>`, :option:`TCritic_Cooling_WE <suews:TCritic_Cooling_WE>`
+
+
+.. option:: baset_hc
+
+    :Description:
+        Base temperature for heating degree days [°C]
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        :option:`BaseT_HC <suews:BaseT_HC>`
+
+
+.. option:: baset_heating
+
+    :Description:
+        Critical heating temperature.
+    :Dimensionality:
+        (2,)
+    :Dimensionality Remarks:
+        2: {Weekday, Weekend}
+    :SUEWS-related variables:
+        :option:`TCritic_Heating_WD <suews:TCritic_Heating_WD>`, :option:`TCritic_Heating_WE <suews:TCritic_Heating_WE>`
 
 
 .. option:: basete
@@ -245,21 +281,21 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`BaseTe <suews:BaseTe>`
 
 
-.. option:: basethdd
+.. option:: basetmethod
 
     :Description:
-        Base temperature for heating degree days [°C]
+        Determines method for base temperature used in HDD/CDD calculations.
     :Dimensionality:
         0
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        :option:`BaseTHDD <suews:BaseTHDD>`
+        :option:`BaseTMethod <suews:BaseTMethod>`
 
 
 .. option:: beta_bioco2
@@ -269,7 +305,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`beta <suews:beta>`
 
@@ -281,7 +317,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`beta_enh <suews:beta_enh>`
 
@@ -329,7 +365,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`AnOHM_Ch <suews:AnOHM_Ch>`
 
@@ -353,7 +389,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`AnOHM_Cp <suews:AnOHM_Cp>`
 
@@ -497,7 +533,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`Emissivity <suews:Emissivity>`
 
@@ -737,7 +773,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`GDDFull <suews:GDDFull>`
 
@@ -752,6 +788,18 @@
         Scalar
     :SUEWS-related variables:
         :option:`gsModel <suews:gsModel>`
+
+
+.. option:: h_maintain
+
+    :Description:
+        water depth to maintain used in automatic irrigation (e.g., ponding water due to flooding irrigation in rice crop-field) [mm].
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        :option:`H_maintain <suews:H_maintain>`
 
 
 .. option:: humactivity_24hr
@@ -775,7 +823,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`Ie_a1 <suews:Ie_a1>`, :option:`Ie_a2 <suews:Ie_a2>`, :option:`Ie_a3 <suews:Ie_a3>`
 
@@ -799,7 +847,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`Ie_m1 <suews:Ie_m1>`, :option:`Ie_m2 <suews:Ie_m2>`, :option:`Ie_m3 <suews:Ie_m3>`
 
@@ -828,28 +876,52 @@
         :option:`InternalWaterUse <suews:InternalWaterUse>`
 
 
-.. option:: irrfracconif
+.. option:: irrfracbldgs
 
     :Description:
-        Fraction of evergreen trees that are irrigated [-]
+        Fraction of `Bldgs` that is irrigated [-]
     :Dimensionality:
         0
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
-        :option:`IrrFr_EveTr <suews:IrrFr_EveTr>`
+        :option:`IrrFr_Bldgs <suews:IrrFr_Bldgs>`
 
 
-.. option:: irrfracdecid
+.. option:: irrfracbsoil
 
     :Description:
-        Fraction of deciduous trees that are irrigated [-]
+        Fraction of `BSoil` that is irrigated [-]
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        :option:`IrrFr_BSoil <suews:IrrFr_BSoil>`
+
+
+.. option:: irrfracdectr
+
+    :Description:
+        Fraction of `DecTr` that is irrigated [-]
     :Dimensionality:
         0
     :Dimensionality Remarks:
         Scalar
     :SUEWS-related variables:
         :option:`IrrFr_DecTr <suews:IrrFr_DecTr>`
+
+
+.. option:: irrfracevetr
+
+    :Description:
+        Fraction of `EveTr` that is irrigated [-]
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        :option:`IrrFr_EveTr <suews:IrrFr_EveTr>`
 
 
 .. option:: irrfracgrass
@@ -864,6 +936,30 @@
         :option:`IrrFr_Grass <suews:IrrFr_Grass>`
 
 
+.. option:: irrfracpaved
+
+    :Description:
+        Fraction of `Paved` that is irrigated [-]
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        :option:`IrrFr_Paved <suews:IrrFr_Paved>`
+
+
+.. option:: irrfracwater
+
+    :Description:
+        Fraction of `Water` that is irrigated [-]
+    :Dimensionality:
+        0
+    :Dimensionality Remarks:
+        Scalar
+    :SUEWS-related variables:
+        :option:`IrrFr_Water <suews:IrrFr_Water>`
+
+
 .. option:: kkanohm
 
     :Description:
@@ -871,7 +967,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`AnOHM_Kk <suews:AnOHM_Kk>`
 
@@ -895,7 +991,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`LAIinitialDecTr <suews:LAIinitialDecTr>`, :option:`LAIinitialEveTr <suews:LAIinitialEveTr>`, :option:`LAIinitialGrass <suews:LAIinitialGrass>`
 
@@ -919,7 +1015,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`LAIMax <suews:LAIMax>`
 
@@ -931,7 +1027,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`LAIMin <suews:LAIMin>`
 
@@ -945,7 +1041,7 @@
     :Dimensionality Remarks:
         4: {`LeafGrowthPower1`, `LeafGrowthPower2`, `LeafOffPower1`, `LeafOffPower2`}
 
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`LeafGrowthPower1 <suews:LeafGrowthPower1>`, :option:`LeafGrowthPower2 <suews:LeafGrowthPower2>`, :option:`LeafOffPower1 <suews:LeafOffPower1>`, :option:`LeafOffPower2 <suews:LeafOffPower2>`
 
@@ -957,7 +1053,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`LAIEq <suews:LAIEq>`
 
@@ -993,7 +1089,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`MaxConductance <suews:MaxConductance>`
 
@@ -1029,7 +1125,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`min_respi <suews:min_respi>`
 
@@ -1101,7 +1197,7 @@
     :Dimensionality:
         (8, 4, 3)
     :Dimensionality Remarks:
-        8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)}
+        8: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`, one extra land cover type (currently NOT used)}
 
         4: {SummerWet, SummerDry, WinterWet, WinterDry}
 
@@ -1117,7 +1213,7 @@
     :Dimensionality:
         (8,)
     :Dimensionality Remarks:
-        8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)} 
+        8: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`, one extra land cover type (currently NOT used)} 
     :SUEWS-related variables:
         :option:`OHMThresh_SW <suews:OHMThresh_SW>`
 
@@ -1129,7 +1225,7 @@
     :Dimensionality:
         (8,)
     :Dimensionality Remarks:
-        8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)} 
+        8: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`, one extra land cover type (currently NOT used)} 
     :SUEWS-related variables:
         :option:`OHMThresh_WD <suews:OHMThresh_WD>`
 
@@ -1347,7 +1443,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`resp_a <suews:resp_a>`
 
@@ -1359,7 +1455,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`resp_b <suews:resp_b>`
 
@@ -1431,7 +1527,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`SatHydraulicCond <suews:SatHydraulicCond>`
 
@@ -1443,7 +1539,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`SDDFull <suews:SDDFull>`
 
@@ -1455,7 +1551,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`Fr_Bldgs <suews:Fr_Bldgs>`, :option:`Fr_Bsoil <suews:Fr_Bsoil>`, :option:`Fr_DecTr <suews:Fr_DecTr>`, :option:`Fr_EveTr <suews:Fr_EveTr>`, :option:`Fr_Grass <suews:Fr_Grass>`, :option:`Fr_Paved <suews:Fr_Paved>`, :option:`Fr_Water <suews:Fr_Water>`
 
@@ -1515,7 +1611,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`SnowDensBldgs <suews:SnowDensBldgs>`, :option:`SnowDensPaved <suews:SnowDensPaved>`, :option:`SnowDensDecTr <suews:SnowDensDecTr>`, :option:`SnowDensEveTr <suews:SnowDensEveTr>`, :option:`SnowDensGrass <suews:SnowDensGrass>`, :option:`SnowDensBSoil <suews:SnowDensBSoil>`, :option:`SnowDensWater <suews:SnowDensWater>`
 
@@ -1551,7 +1647,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`SnowFracBldgs <suews:SnowFracBldgs>`, :option:`SnowFracPaved <suews:SnowFracPaved>`, :option:`SnowFracDecTr <suews:SnowFracDecTr>`, :option:`SnowFracEveTr <suews:SnowFracEveTr>`, :option:`SnowFracGrass <suews:SnowFracGrass>`, :option:`SnowFracBSoil <suews:SnowFracBSoil>`, :option:`SnowFracWater <suews:SnowFracWater>`
 
@@ -1587,7 +1683,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`SnowPackBldgs <suews:SnowPackBldgs>`, :option:`SnowPackPaved <suews:SnowPackPaved>`, :option:`SnowPackDecTr <suews:SnowPackDecTr>`, :option:`SnowPackEveTr <suews:SnowPackEveTr>`, :option:`SnowPackGrass <suews:SnowPackGrass>`, :option:`SnowPackBSoil <suews:SnowPackBSoil>`, :option:`SnowPackWater <suews:SnowPackWater>`
 
@@ -1599,7 +1695,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`SnowLimPatch <suews:SnowLimPatch>`
 
@@ -1637,7 +1733,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`SnowWaterBldgsState <suews:SnowWaterBldgsState>`, :option:`SnowWaterPavedState <suews:SnowWaterPavedState>`, :option:`SnowWaterDecTrState <suews:SnowWaterDecTrState>`, :option:`SnowWaterEveTrState <suews:SnowWaterEveTrState>`, :option:`SnowWaterGrassState <suews:SnowWaterGrassState>`, :option:`SnowWaterBSoilState <suews:SnowWaterBSoilState>`, :option:`SnowWaterWaterState <suews:SnowWaterWaterState>`
 
@@ -1649,7 +1745,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`SoilDepth <suews:SoilDepth>`
 
@@ -1661,7 +1757,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`SoilstoreBldgsState <suews:SoilstoreBldgsState>`, :option:`SoilstorePavedState <suews:SoilstorePavedState>`, :option:`SoilstoreDecTrState <suews:SoilstoreDecTrState>`, :option:`SoilstoreEveTrState <suews:SoilstoreEveTrState>`, :option:`SoilstoreGrassState <suews:SoilstoreGrassState>`, :option:`SoilstoreBSoilState <suews:SoilstoreBSoilState>`
 
@@ -1673,7 +1769,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`SoilStoreCap <suews:SoilStoreCap>`
 
@@ -1709,7 +1805,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`BldgsState <suews:BldgsState>`, :option:`PavedState <suews:PavedState>`, :option:`DecTrState <suews:DecTrState>`, :option:`EveTrState <suews:EveTrState>`, :option:`GrassState <suews:GrassState>`, :option:`BSoilState <suews:BSoilState>`, :option:`WaterState <suews:WaterState>`
 
@@ -1721,7 +1817,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`StateLimit <suews:StateLimit>`
 
@@ -1747,7 +1843,7 @@
     :Dimensionality Remarks:
         6: { `StorageMin`, `DrainageEq`, `DrainageCoef1`, `DrainageCoef2`, `StorageMax`, current storage}
 
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`DrainageCoef1 <suews:DrainageCoef1>`, :option:`DrainageCoef2 <suews:DrainageCoef2>`, :option:`DrainageEq <suews:DrainageEq>`, :option:`StorageMax <suews:StorageMax>`, :option:`StorageMin <suews:StorageMin>`
 
@@ -1762,30 +1858,6 @@
         Scalar
     :SUEWS-related variables:
         :option:`SurfaceArea <suews:SurfaceArea>`
-
-
-.. option:: t_critic_cooling
-
-    :Description:
-        Critical cooling temperature.
-    :Dimensionality:
-        (2,)
-    :Dimensionality Remarks:
-        2: {Weekday, Weekend}
-    :SUEWS-related variables:
-        :option:`TCritic_Cooling_WD <suews:TCritic_Cooling_WD>`, :option:`TCritic_Cooling_WE <suews:TCritic_Cooling_WE>`
-
-
-.. option:: t_critic_heating
-
-    :Description:
-        Critical heating temperature.
-    :Dimensionality:
-        (2,)
-    :Dimensionality Remarks:
-        2: {Weekday, Weekend}
-    :SUEWS-related variables:
-        :option:`TCritic_Heating_WD <suews:TCritic_Heating_WD>`, :option:`TCritic_Heating_WE <suews:TCritic_Heating_WE>`
 
 
 .. option:: tau_a
@@ -1855,7 +1927,7 @@
     :Dimensionality:
         (3,)
     :Dimensionality Remarks:
-        3: { :term:`EveTr`, :term:`DecTr`, :term:`Grass`}
+        3: { `suews:EveTr`, `suews:DecTr`, `suews:Grass`}
     :SUEWS-related variables:
         :option:`theta <suews:theta>`
 
@@ -1953,9 +2025,9 @@
     :Dimensionality:
         (8, 6)
     :Dimensionality Remarks:
-        8: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`, one extra land cover type (currently NOT used)}
+        8: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`, one extra land cover type (currently NOT used)}
 
-        6: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`}
+        6: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`}
     :SUEWS-related variables:
         :option:`ToBSoil <suews:ToBSoil>`, :option:`ToBldgs <suews:ToBldgs>`, :option:`ToDecTr <suews:ToDecTr>`, :option:`ToEveTr <suews:ToEveTr>`, :option:`ToGrass <suews:ToGrass>`, :option:`ToPaved <suews:ToPaved>`, :option:`ToRunoff <suews:ToRunoff>`, :option:`ToSoilStore <suews:ToSoilStore>`, :option:`ToWater <suews:ToWater>`
 
@@ -1979,7 +2051,7 @@
     :Dimensionality:
         (7,)
     :Dimensionality Remarks:
-        7: { :term:`Paved`, :term:`Bldgs`, :term:`EveTr`, :term:`DecTr`, :term:`Grass`, :term:`BSoil`, :term:`Water`}
+        7: { `suews:Paved`, `suews:Bldgs`, `suews:EveTr`, `suews:DecTr`, `suews:Grass`, `suews:BSoil`, `suews:Water`}
     :SUEWS-related variables:
         :option:`WetThreshold <suews:WetThreshold>`
 

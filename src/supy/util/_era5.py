@@ -4,12 +4,14 @@ import os
 import time
 import warnings
 from pathlib import Path
+import shutil
 
 import numpy as np
 import pandas as pd
 from numpy import cos, deg2rad, sin, sqrt
 
 from .._env import logger_supy
+import logging
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
@@ -97,7 +99,7 @@ def geopotential2geometric(h: float, latitude: float) -> float:
 
 
 # functions to interpolate the atmospheric variables to a specified height/altitude
-def get_ser_val_alt(lat: float, lon: float, da_alt_x, da_alt, da_val, ) -> pd.Series:
+def get_ser_val_alt(lat: float, lon: float, da_alt_x, da_alt, da_val,) -> pd.Series:
     """interpolate atmospheric variable to a specified altitude
 
     Parameters
@@ -126,7 +128,7 @@ def get_ser_val_alt(lat: float, lon: float, da_alt_x, da_alt, da_val, ) -> pd.Se
     val_alt = np.array(
         [interp1d(alt_1d, val_1d)(alt_x) for alt_1d, val_1d in zip(alt_t_1d, val_t_1d)]
     )
-    ser_alt = pd.Series(val_alt, index=da_val.time.values, name=da_val.name, )
+    ser_alt = pd.Series(val_alt, index=da_val.time.values, name=da_val.name,)
     return ser_alt
 
 
@@ -212,7 +214,7 @@ def gen_dict_proc(dict_x):
         "ml": "reanalysis-era5-pressure-levels",
     }
     feed_x = dict_feed[type_x]
-    dict_proc = dict(name=feed_x, request=dict_x, target=gen_fn(dict_x), )
+    dict_proc = dict(name=feed_x, request=dict_x, target=gen_fn(dict_x),)
 
     return dict_proc
 
@@ -294,23 +296,29 @@ def gen_req_sfc(lat_x, lon_x, start, end, grid=[0.125, 0.125], scale=0):
 
     Parameters
     ----------
-    lat_x : [type]
-        [description]
-    lon_x : [type]
-        [description]
-    start : [type]
-        [description]
-    end : [type]
-        [description]
+    lat_x : float
+        Latitude of centre at the area of interest.
+    lon_x : float
+        Longitude of centre at the area of interest.
+    start : str
+        Any datetime-like string that can be parsed by `pandas.daterange()`.
+    end : str
+        Any datetime-like string that can be parsed by `pandas.daterange()`.
     grid : list, optional
-        [description] (the default is [0.125, 0.125], which [default_description])
+        grid size used in CDS request API, by default [0.125, 0.125].
     scale : int, optional
-        [description] (the default is 0, which [default_description])
+        scaling factor that determines the area of interest (i.e., `area=grid[0]*scale`), by default 0.
 
     Returns
     -------
-    [type]
-        [description]
+    dict
+        key: name of downloaded file.
+        value: CDS API request used for downloading the file named by the corresponding key.
+
+    Note
+    ----
+
+        This function uses CDS API to download ERA5 data; follow this for configuration first: https://cds.climate.copernicus.eu/api-how-to
 
     Examples
     --------
@@ -447,19 +455,20 @@ def download_cds(fn, dict_req):
         os.chdir(td)
         c.retrieve(**dict_req)
         # move the downloaded file to desired location
-        Path(path_fn.name).replace(fn)
+        shutil.move(path_fn.name, fn)
         # hold on a bit for the next request
         time.sleep(0.0100)
 
 
 def download_era5(
-        lat_x: float,
-        lon_x: float,
-        start: str,
-        end: str,
-        dir_save=Path("."),
-        grid=[0.125, 0.125],
-        scale=0,
+    lat_x: float,
+    lon_x: float,
+    start: str,
+    end: str,
+    dir_save=Path("."),
+    grid=[0.125, 0.125],
+    scale=0,
+    logging_level=logging.INFO,
 ) -> dict:
     """Generate ERA-5 cdsapi-based requests and download data for area of interests.
 
@@ -479,6 +488,9 @@ def download_era5(
         scaling factor that determines the area of interest (i.e., `area=grid[0]*scale`), by default 0.
     dir_save: Path or path-like string
         path to directory for saving downloaded ERA5 netCDF files.
+    logging_level: logging level
+        one of these values [50 (CRITICAL), 40 (ERROR), 30 (WARNING), 20 (INFO), 10 (DEBUG)].
+        A lower value informs SuPy for more verbose logging info.
 
     Returns
     -------
@@ -492,8 +504,12 @@ def download_era5(
         This function uses CDS API to download ERA5 data; follow this for configuration first: https://cds.climate.copernicus.eu/api-how-to
     """
 
+    # adjust logging level
+    logger_supy.setLevel(logging_level)
+
     # generate requests for surface level data
-    dict_req_sfc = gen_req_sfc(lat_x, lon_x, start, end, grid=[0.125, 0.125], scale=0, )
+    dict_req_sfc = gen_req_sfc(lat_x, lon_x, start, end, grid, scale)
+    logger_supy.debug(dict_req_sfc)
 
     # parse and create (if needed) the saving directory
     path_dir_save = Path(dir_save).expanduser().resolve()
@@ -509,6 +525,8 @@ def download_era5(
         dict_req = gen_req_ml(path_dir_save / fn_sfc, grid, scale)
         dict_req_ml.update(dict_req)
 
+    logger_supy.debug(dict_req_ml)
+
     for fn_ml, dict_req in dict_req_ml.items():
         download_cds(path_dir_save / fn_ml, dict_req)
 
@@ -522,13 +540,13 @@ def download_era5(
 
 # generate requests
 def gen_req_era5(
-        lat_x: float,
-        lon_x: float,
-        start: str,
-        end: str,
-        grid=[0.125, 0.125],
-        scale=0,
-        dir_save=Path("."),
+    lat_x: float,
+    lon_x: float,
+    start: str,
+    end: str,
+    grid=[0.125, 0.125],
+    scale=0,
+    dir_save=Path("."),
 ) -> dict:
     """Generate ERA-5 cdsapi-based requests and download data for area of interests.
 
@@ -562,7 +580,7 @@ def gen_req_era5(
     path_dir_save = Path(dir_save).expanduser().resolve()
 
     # generate requests for surface level data
-    dict_req_sfc = gen_req_sfc(lat_x, lon_x, start, end, grid=[0.125, 0.125], scale=0, )
+    dict_req_sfc = gen_req_sfc(lat_x, lon_x, start, end, grid=[0.125, 0.125], scale=0,)
 
     # generate requests for atmospheric level data
     dict_req_ml = {}
@@ -581,13 +599,13 @@ def gen_req_era5(
 
 # load downloaded files
 def load_filelist_era5(
-        lat_x: float,
-        lon_x: float,
-        start: str,
-        end: str,
-        grid=[0.125, 0.125],
-        scale=0,
-        dir_save=Path("."),
+    lat_x: float,
+    lon_x: float,
+    start: str,
+    end: str,
+    grid=[0.125, 0.125],
+    scale=0,
+    dir_save=Path("."),
 ):
     # download data: existing files will be excluded from the downloading list
     download_era5(lat_x, lon_x, start, end, dir_save, grid, scale)
@@ -604,15 +622,16 @@ def load_filelist_era5(
 
 # generate supy forcing using ERA-5 data
 def gen_forcing_era5(
-        lat_x: float,
-        lon_x: float,
-        start: str,
-        end: str,
-        dir_save=Path("."),
-        grid=[0.125, 0.125],
-        hgt_agl_diag=100.0,
-        scale=0,
-        simple_mode=True,
+    lat_x: float,
+    lon_x: float,
+    start: str,
+    end: str,
+    dir_save=Path("."),
+    grid=[0.125, 0.125],
+    hgt_agl_diag=100.0,
+    scale=0,
+    simple_mode=True,
+    logging_level=logging.INFO,
 ) -> list:
     """Generate SUEWS forcing files using ERA-5 data.
 
@@ -639,6 +658,9 @@ def gen_forcing_era5(
         if use the *simple* mode for diagnosing the forcing variables, by default `True`.
         In the simple mode, temperature is diagnosed using environmental lapse rate 6.5 K/km and wind speed using MOST under neutral condition.
         If `False`, MOST with consideration of stability conditions will be used to diagnose forcing variables.
+    logging_level: logging level
+        one of these values [50 (CRITICAL), 40 (ERROR), 30 (WARNING), 20 (INFO), 10 (DEBUG)].
+        A lower value informs SuPy for more verbose logging info.
 
 
     Returns
@@ -659,6 +681,9 @@ def gen_forcing_era5(
     """
     import xarray as xr
 
+    # adjust logging level
+    logger_supy.setLevel(logging_level)
+
     # download data
     list_fn_sfc, list_fn_ml = load_filelist_era5(
         lat_x, lon_x, start, end, grid, scale, dir_save
@@ -677,18 +702,7 @@ def gen_forcing_era5(
 
     # convert to dataframe for further processing
     df_forcing_raw = ds_forcing_era5[
-        [
-            "ssrd",
-            "strd",
-            "sshf",
-            "slhf",
-            "tp",
-            "uv_z",
-            "t_z",
-            "q_z",
-            "p_z",
-            "alt_z",
-        ]
+        ["ssrd", "strd", "sshf", "slhf", "tp", "uv_z", "t_z", "q_z", "p_z", "alt_z",]
     ].to_dataframe()
 
     # split based on grid coordinates
@@ -723,15 +737,10 @@ def format_df_forcing(df_forcing_raw):
     df_forcing_grid.loc[:, "tp"] *= 1000
 
     # get dry bulb temperature and relative humidity
-    df_forcing_grid = df_forcing_grid.assign(
-        Tair=df_forcing_grid.t_z- 273.15
-    )
+    df_forcing_grid = df_forcing_grid.assign(Tair=df_forcing_grid.t_z - 273.15)
     df_forcing_grid = df_forcing_grid.assign(
         RH=ac(
-            "RH",
-            qv=df_forcing_grid.q_z,
-            T=df_forcing_grid.t_z,
-            p=df_forcing_grid.p_z,
+            "RH", qv=df_forcing_grid.q_z, T=df_forcing_grid.t_z, p=df_forcing_grid.p_z,
         )
     )
 
@@ -809,9 +818,6 @@ def format_df_forcing(df_forcing_raw):
 def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True):
     import xarray as xr
     from atmosp import calculate as ac
-
-    # list_fn_sfc, list_fn_ml = load_download_era5(
-    #     lat_x, lon_x, start, end, grid, scale, dir_save)
 
     # load data from from `sfc` files
     ds_sfc = xr.open_mfdataset(list_fn_sfc, concat_dim="time").load()
@@ -897,20 +903,7 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True
         ds_diag = diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z)
     else:
         ds_diag = diag_era5(
-            za,
-            uv_za,
-            t_za,
-            q_za,
-            pres_za,
-            qh,
-            qe,
-            z0m,
-            ustar,
-            pres_z0,
-            uv10,
-            t2,
-            q2,
-            z,
+            za, uv_za, t_za, q_za, pres_za, qh, qe, z0m, ustar, pres_z0, uv10, t2, q2, z
         )
 
     # merge altitude
@@ -937,7 +930,6 @@ def diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z):
 
     # barometric equation with varying temperature:
     # (https://en.wikipedia.org/wiki/Barometric_formula)
-    # p_z = pres_z0 * np.exp((grav * (0 - z)) / (rd * t2))
     p_z = pres_z0 * (t2 / (t2 + env_lapse * (z - 2))) ** (grav / (rd * env_lapse))
 
     # correct humidity assuming invariable relative humidity
@@ -963,7 +955,7 @@ def diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z):
 
 # diagnose ISL variable using MOST
 def diag_era5(
-        za, uv_za, t_za, q_za, pres_za, qh, qe, z0m, ustar, pres_z0, uv10, t2, q2, z
+    za, uv_za, t_za, q_za, pres_za, qh, qe, z0m, ustar, pres_z0, uv10, t2, q2, z
 ):
     # reference:
     # Section 3.10.2 and 3.10.3 in
@@ -1002,7 +994,6 @@ def diag_era5(
         (z + z0m) / l_mod,
         np.sign((z + z0m) / l_mod) * 5,
     )
-    # l_mod = np.where(np.abs(l_mod) < 5, l_mod, np.sign(l_mod)*5)
 
     # `stab_psi_mom`, `stab_psi_heat`
     # stability correction for momentum
@@ -1012,8 +1003,8 @@ def diag_era5(
 
     # wind speed
     uv_z = uv10 * (
-            (np.log((z + z0m) / z0m) - psim_z + psim_z0)
-            / (np.log((10 + z0m) / z0m) - psim_10 + psim_z0)
+        (np.log((z + z0m) / z0m) - psim_z + psim_z0)
+        / (np.log((10 + z0m) / z0m) - psim_10 + psim_z0)
     )
 
     # stability correction for heat
@@ -1028,10 +1019,8 @@ def diag_era5(
 
     # specific humidity
     q_z = q2 + (q_za - q2) * (
-            (np.log(z / z0m) - psih_z + psih_z0) / (np.log(za / z0m) - psih_za + psih_z0)
+        (np.log(z / z0m) - psih_z + psih_z0) / (np.log(za / z0m) - psih_za + psih_z0)
     )
-
-
 
     # dry static energy: eq 3.5 in EC tech report;
     # also AMS ref: http://glossary.ametsoc.org/wiki/Dry_static_energy
@@ -1043,7 +1032,7 @@ def diag_era5(
     s_za = g * za + cp_za * t_za
 
     s_z = s2 + (s_za - s2) * (
-            (np.log(z / 2) - psih_z + psih_2) / (np.log(za / 2) - psih_za + psih_2)
+        (np.log(z / 2) - psih_z + psih_2) / (np.log(za / 2) - psih_za + psih_2)
     )
 
     # calculate temperature at z
@@ -1054,9 +1043,10 @@ def diag_era5(
         t_z = (s_z - g * z) / cp_z
         dif = np.mean(np.abs(t_z - tx_z))
         tx_z = t_z
-
+    # get final `t_z` and store in the conformity to `t_za`
     t_z = t_z + t_za * 0
 
+    # relative humidity; cap at 105% if above
     RH_z = ac("RH", qv=q_z, p=p_z, T=t_z) + 0 * q_z
     RH_z = RH_z.where(RH_z < 105, 105)
 
@@ -1083,8 +1073,8 @@ def save_forcing_era5(df_forcing_era5, dir_save):
     # split into grids
     for lat, lon in list_grid:
         df_grid = df_forcing_era5.loc[lat, lon]
-        s_lat = f"{lat}N" if lat >= 0 else f"{lat}S"
-        s_lon = f"{lon}E" if lon >= 0 else f"{lon}W"
+        s_lat = f"{lat}N" if lat >= 0 else f"{-lat}S"
+        s_lon = f"{lon}E" if lon >= 0 else f"{-lon}W"
         alt_z = df_grid.alt_z[0]
         df_grid = df_grid.drop("alt_z", axis=1)
         s_alt = f"{alt_z:.1f}A"
@@ -1119,7 +1109,6 @@ def get_level_diag(ds_sfc, ds_ml, hgt_agl_diag):
     da_alt_ml = geopotential2geometric(da_gph_ml, da_lat_ml)
 
     # determine a lowest level higher than surface at all times
-    #     hgt_agl_diag = 100
     ind_alt = ((da_alt_sfc + hgt_agl_diag) < da_alt_ml).compute()
     level_sel = (ind_alt.sum(dim="level") - 1).values.flatten()
     level_sel = da_alt_ml.level[level_sel]

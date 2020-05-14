@@ -59,7 +59,7 @@ class TestSuPy(TestCase):
         df_state_init, df_forcing_tstep = sp.load_SampleData()
         df_state_init = pd.concat([df_state_init for x in range(n_grid)])
         df_state_init.index = pd.RangeIndex(n_grid, name="grid")
-        df_forcing_part = df_forcing_tstep.iloc[:]
+        df_forcing_part = df_forcing_tstep.iloc[:288*60]
         df_output, df_state = sp.run_supy(df_forcing_part, df_state_init)
 
         test_success_sim = np.all([not df_output.empty, not df_state.empty,])
