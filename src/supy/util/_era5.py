@@ -585,7 +585,7 @@ def gen_req_era5(
     path_dir_save = Path(dir_save).expanduser().resolve()
 
     # generate requests for surface level data
-    dict_req_sfc = gen_req_sfc(lat_x, lon_x, start, end, grid=[0.125, 0.125], scale=0,)
+    dict_req_sfc = gen_req_sfc(lat_x, lon_x, start, end, grid, scale)
 
     # generate requests for atmospheric level data
     dict_req_ml = {}
@@ -611,9 +611,10 @@ def load_filelist_era5(
     grid=[0.125, 0.125],
     scale=0,
     dir_save=Path("."),
+    logging_level=logging.INFO,
 ):
     # download data: existing files will be excluded from the downloading list
-    download_era5(lat_x, lon_x, start, end, dir_save, grid, scale)
+    download_era5(lat_x, lon_x, start, end, dir_save, grid, scale, logging_level)
 
     # attempt to generate requests
     dict_req_all = gen_req_era5(lat_x, lon_x, start, end, grid, scale, dir_save)
@@ -691,7 +692,7 @@ def gen_forcing_era5(
 
     # download data
     list_fn_sfc, list_fn_ml = load_filelist_era5(
-        lat_x, lon_x, start, end, grid, scale, dir_save
+        lat_x, lon_x, start, end, grid, scale, dir_save, logging_level
     )
 
     # load data from from `sfc` files
@@ -844,9 +845,7 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True
     level_sel = get_level_diag(ds_sfc, ds_ml, hgt_agl_diag)
 
     # retrieve variables from the identified lowest level
-    ds_ll = ds_ml.sel(
-        time=ds_ml.time, level=xr.DataArray(level_sel.values, dims="time")
-    )
+    ds_ll = ds_ml.sel(level=level_sel)
 
     # altitude
     alt_z0 = geopotential2geometric(ds_sfc.z, ds_sfc.latitude)
@@ -1115,7 +1114,7 @@ def get_level_diag(ds_sfc, ds_ml, hgt_agl_diag):
 
     # determine a lowest level higher than surface at all times
     ind_alt = ((da_alt_sfc + hgt_agl_diag) < da_alt_ml).compute()
-    level_sel = (ind_alt.sum(dim="level") - 1).values.flatten()
-    level_sel = da_alt_ml.level[level_sel]
+    level_lowest = ind_alt.sum(dim="level") - 1
+    level_sel = da_alt_ml.level[level_lowest]
 
     return level_sel
