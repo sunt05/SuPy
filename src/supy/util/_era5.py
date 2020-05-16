@@ -708,7 +708,7 @@ def gen_forcing_era5(
 
     # convert to dataframe for further processing
     df_forcing_raw = ds_forcing_era5[
-        ["ssrd", "strd", "sshf", "slhf", "tp", "uv_z", "t_z", "q_z", "p_z", "alt_z",]
+        ["ssrd", "strd", "sshf", "slhf", "tp", "uv_z", "t_z", "q_z", "p_z", "alt_z",'RH_z']
     ].to_dataframe()
 
     # split based on grid coordinates
@@ -731,7 +731,7 @@ def gen_forcing_era5(
 def format_df_forcing(df_forcing_raw):
     from atmosp import calculate as ac
 
-    df_forcing_grid = df_forcing_raw.copy().round(3)
+    df_forcing_grid = df_forcing_raw.copy()
 
     # convert energy fluxes: [J m-2] to [W m-2]
     df_forcing_grid.loc[:, ["ssrd", "strd", "sshf", "slhf"]] /= 3600
@@ -742,13 +742,8 @@ def format_df_forcing(df_forcing_raw):
     # convert rainfall: from [m] to [mm]
     df_forcing_grid.loc[:, "tp"] *= 1000
 
-    # get dry bulb temperature and relative humidity
+    # convert bulb temperature from K to degC
     df_forcing_grid = df_forcing_grid.assign(Tair=df_forcing_grid.t_z - 273.15)
-    df_forcing_grid = df_forcing_grid.assign(
-        RH=ac(
-            "RH", qv=df_forcing_grid.q_z, T=df_forcing_grid.t_z, p=df_forcing_grid.p_z,
-        )
-    )
 
     # convert atmospheric pressure: [Pa] to [kPa]
     df_forcing_grid.loc[:, "p_z"] /= 1000
@@ -762,6 +757,7 @@ def format_df_forcing(df_forcing_raw):
             "slhf": "qe",
             "tp": "rain",
             "uv_z": "U",
+            "RH_z": "RH",
             "p_z": "pres",
         },
         axis=1,
