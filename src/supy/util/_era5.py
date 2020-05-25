@@ -219,78 +219,7 @@ def gen_dict_proc(dict_x):
     return dict_proc
 
 
-list_var_sfc = [
-    "10m_u_component_of_wind",
-    "10m_v_component_of_wind",
-    "2m_dewpoint_temperature",
-    "2m_temperature",
-    "orography",
-    "surface_pressure",
-    "surface_solar_radiation_downwards",
-    "surface_thermal_radiation_downwards",
-    "surface_sensible_heat_flux",
-    "surface_latent_heat_flux",
-    "surface_net_solar_radiation",
-    "surface_net_thermal_radiation",
-    "total_precipitation",
-    "forecast_albedo",
-    "forecast_surface_roughness",
-    "friction_velocity",
-]
-
-list_var_ml = [
-    "geopotential",
-    #     'relative_humidity',
-    "specific_humidity",
-    "temperature",
-    "u_component_of_wind",
-    "v_component_of_wind",
-]
-
-list_pres_level = [
-    "1",
-    "2",
-    "3",
-    "5",
-    "7",
-    "10",
-    "20",
-    "30",
-    "50",
-    "70",
-    "100",
-    "125",
-    "150",
-    "175",
-    "200",
-    "225",
-    "250",
-    "300",
-    "350",
-    "400",
-    "450",
-    "500",
-    "550",
-    "600",
-    "650",
-    "700",
-    "750",
-    "775",
-    "800",
-    "825",
-    "850",
-    "875",
-    "900",
-    "925",
-    "950",
-    "975",
-    "1000",
-]
-
-
 # generate a dict of reqs kwargs for (lat_x,lon_x) spanning [start, end]
-
-
 def gen_req_sfc(lat_x, lon_x, start, end, grid=[0.125, 0.125], scale=0):
     """generate a dict of reqs kwargs for (lat_x,lon_x) spanning [start, end]
 
@@ -325,6 +254,26 @@ def gen_req_sfc(lat_x, lon_x, start, end, grid=[0.125, 0.125], scale=0):
     >>> gen_req_sfc(28, 116, '2015-01', '2015-01-31 23', grid=[0.125, 0.125], scale=0)
 
     """
+    # variable name: data type
+    dict_var_type_sfc = {
+        "10m_u_component_of_wind": "instantaneous",
+        "10m_v_component_of_wind": "instantaneous",
+        "2m_dewpoint_temperature": "instantaneous",
+        "2m_temperature": "instantaneous",
+        "orography": "instantaneous",
+        "surface_pressure": "instantaneous",
+        "surface_solar_radiation_downwards": "accumulation",
+        "surface_thermal_radiation_downwards": "accumulation",
+        "surface_sensible_heat_flux": "accumulation",
+        "surface_latent_heat_flux": "accumulation",
+        "surface_net_solar_radiation": "accumulation",
+        "surface_net_thermal_radiation": "accumulation",
+        "total_precipitation": "accumulation",
+        "forecast_albedo": "instantaneous",
+        "forecast_surface_roughness": "instantaneous",
+        "friction_velocity": "instantaneous",
+    }
+    list_var_sfc = list(dict_var_type_sfc.keys())
 
     # scale is a factor to rescale grid size
     size = grid[0] * scale
@@ -412,6 +361,17 @@ def sel_list_pres(ds_sfc_x):
 # for each sfc data file, determine the necessary vertical levels to model level data download
 def gen_req_ml(fn_sfc, grid=[0.125, 0.125], scale=0):
     import xarray as xr
+
+    # variable name: data type
+    dict_var_type_ml = {
+        "geopotential": "invariant",
+        "specific_humidity": "instantaneous",
+        "temperature": "instantaneous",
+        "u_component_of_wind": "instantaneous",
+        "v_component_of_wind": "instantaneous",
+    }
+
+    list_var_ml = list(dict_var_type_ml.keys())
 
     ds_sfc_x = xr.load_dataset(fn_sfc)
     list_pres_sel = sel_list_pres(ds_sfc_x)
@@ -708,7 +668,19 @@ def gen_forcing_era5(
 
     # convert to dataframe for further processing
     df_forcing_raw = ds_forcing_era5[
-        ["ssrd", "strd", "sshf", "slhf", "tp", "uv_z", "t_z", "q_z", "p_z", "alt_z",'RH_z']
+        [
+            "ssrd",
+            "strd",
+            "sshf",
+            "slhf",
+            "tp",
+            "uv_z",
+            "t_z",
+            "q_z",
+            "p_z",
+            "alt_z",
+            "RH_z",
+        ]
     ].to_dataframe()
 
     # split based on grid coordinates
