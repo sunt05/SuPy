@@ -216,7 +216,7 @@ def load_forcing_grid(
             list_issues = check_forcing(df_forcing)
             if isinstance(list_issues, list):
                 logger_supy.critical(
-                    f"`df_forcing` loaded from {path_init_x} is NOT valid to drive SuPy!"
+                    f"`df_forcing` loaded from {path_input} is NOT valid to drive SuPy!"
                 )
         except:
             sys.exit()
