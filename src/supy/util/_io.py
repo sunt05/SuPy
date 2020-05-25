@@ -55,7 +55,7 @@ def read_suews(path_suews_file: str) -> pd.DataFrame:
     return df_suews
 
 
-def read_forcing(filename_pattern: str, tstep_mod=300) -> pd.DataFrame:
+def read_forcing(path_suews_file: str, tstep_mod=300) -> pd.DataFrame:
     """read in SUEWS forcing files as DataFrame ready for SuPy simulation.
 
     Parameters
@@ -73,7 +73,7 @@ def read_forcing(filename_pattern: str, tstep_mod=300) -> pd.DataFrame:
         datetime-aware DataFrame
     """
 
-    path_suews_file = Path(filename_pattern)
+    path_suews_file = Path(path_suews_file)
     path_input = path_suews_file.parent
     str_pattern = path_suews_file.name
 
@@ -84,7 +84,9 @@ def read_forcing(filename_pattern: str, tstep_mod=300) -> pd.DataFrame:
     # resampling
     if tstep_mod is not None:
         df_forcing = df_forcing_raw.replace(-999, np.nan)
-        df_forcing = resample_forcing_met(df_forcing, tstep_met_in, tstep_mod)
+        df_forcing = resample_forcing_met(
+            df_forcing, tstep_met_in, tstep_mod, kdownzen=0
+        )
         df_forcing = df_forcing.replace(np.nan, -999)
     else:
         df_forcing = df_forcing_raw
