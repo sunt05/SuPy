@@ -81,7 +81,7 @@ def gen_FS_DF(df_output):
 
 
 def gen_WS_DF(df_met):
-    """generate DataFrame of weighted sums.
+    """generate DataFrame of weighted sums of F-score.
 
     Parameters
     ----------
@@ -91,6 +91,9 @@ def gen_WS_DF(df_met):
         - RH2: near surface relative humidity at 2 m agl
         - U10: near surface wind speed at 10 m agl
         - Kdown: incomidng solar radiation
+        - Year: calendar year
+        - Month: calendar month
+        - Day: calendar day
 
     Returns
     -------
@@ -248,20 +251,20 @@ def gen_TMY(df_output):
     """
 
     # calculate weighted score
-    df_output_x=df_output.assign(
-            Year=lambda df: df.index.year,
-            Month=lambda df: df.index.month,
-            Day=lambda df: df.index.day,
-            Hour=lambda df: df.index.hour,
-            Minute=lambda df: df.index.minute,
-        )
+    df_output_x = df_output.assign(
+        Year=lambda df: df.index.year,
+        Month=lambda df: df.index.month,
+        Day=lambda df: df.index.day,
+        Hour=lambda df: df.index.hour,
+        Minute=lambda df: df.index.minute,
+    )
     ws = gen_WS_DF(df_output_x)
 
     # select year
     year_sel = pick_year(ws, df_output_x, n=5)
 
     # convert `0h` to `24h` and take care of `day`: to follow EPW convention
-    df_output_x=conv_0to24(df_output_x)
+    df_output_x = conv_0to24(df_output_x)
 
     # generate TMY data
     df_TMY = pd.concat(
@@ -272,6 +275,7 @@ def gen_TMY(df_output):
     )
 
     return df_TMY
+
 
 def conv_0to24(df_TMY):
     # convert `0h` to `24h` and take care of `day`
@@ -298,7 +302,7 @@ def read_epw(path_epw: Path) -> pd.DataFrame:
     df_tmy: pd.DataFrame
         TMY results of `epw` file
     """
-    df_tmy = pd.read_csv(path_epw, skiprows=8, sep=u",", header=None)
+    df_tmy = pd.read_csv(path_epw, skiprows=8, sep=",", header=None)
     df_tmy.columns = [x.strip() for x in header_EPW.split("\n")[1:-1]]
     df_tmy["DateTime"] = pd.to_datetime(
         pd.to_datetime(
@@ -313,7 +317,12 @@ def read_epw(path_epw: Path) -> pd.DataFrame:
 
 # generate EPW file from `df_TMY`
 def gen_epw(
-    df_output: pd.DataFrame, path_epw=Path("TMY.epw"), ratio_dif_dir=0.15, lat=51.5, lon=-0.11, time_zone=0
+    df_output: pd.DataFrame,
+    lat,
+    lon,
+    tz=0,
+    path_epw=Path("./uTMY.epw"),
+    ratio_dif_dir=0.15,
 ) -> Tuple[pd.DataFrame, str, Path]:
     """Generate an `epw` file of uTMY (urbanised Typical Meteorological Year) using SUEWS simulation results
 
@@ -322,15 +331,15 @@ def gen_epw(
     df_output : pd.DataFrame
         SUEWS simulation results.
     path_epw : Path, optional
-        Path to store generated epw file, by default Path('./uTMY.epw')
+        Path to store generated epw file, by default Path('./uTMY.epw').
     ratio_dif_dir : float, optional
-        Ratio between direct and diffuse solar radiation, by default 0.15
+        Ratio between direct and diffuse solar radiation, by default 0.15.
     lat: float
-        Latitude of the site, used for calculating solar angle, by default 51.5
+        Latitude of the site, used for calculating solar angle.
     lon: float
-        Longitude of the site, used for calculating solar angle, by default -0.11
-    time_zone: float
-        Time zone of the site, used for calculating solar angle, by default 0 (e.g. 8 for UTC+08:00)
+        Longitude of the site, used for calculating solar angle.
+    tz: float
+        time zone represented by time difference from UTC+0 (e.g., 8 for UTC+8), by default 0 (i.e., UTC+0)
 
     Returns
     -------
@@ -341,13 +350,16 @@ def gen_epw(
 
     """
     import atmosp
-    from pysolar import solar
     import datetime
     from pathlib import Path
     import pvlib
 
+    # select months from representative years
     df_tmy = gen_TMY(df_output.copy())
-    # df_tmy = pd.concat([df_tmy.iloc[1:], df_tmy.iloc[[0]]])
+
+    # assign timezone info
+    df_tmy.index = df_tmy.index.tz_localize(tz * 3600)
+
     # adding necessary variables that can be derive from supy output
     df_tmy["Dew Point Temperature"] = (
         atmosp.calculate(
@@ -368,50 +380,48 @@ def gen_epw(
         RH=df_tmy["RH2"].values,
         rho=1.23,
     )
-    # index = df_TMY.index
-    # df_TMY = df_TMY.iloc[1:].append(df_TMY.ix[0])
-    # df_TMY.index = index
-    # df_tmy["Year"] = df_tmy.index.year
-    # df_tmy["Month"] = df_tmy.index.month
-    # df_tmy["Day"] = df_tmy.index.day
-    # df_tmy["Hour"] = df_tmy.index.hour
-    # df_tmy["Minute"] = df_tmy.index.minute
 
-    # convert air pressure to Pa
-    # df_tmy['Atmospheric Station Pressure'] *= 1000
-
-    # df_TMY['Kdown'] = df_TMY['Kdown']*2.4
     # processing solar radiation components
     df_tmy.loc[df_tmy["Kdown"] < 0.001, "Kdown"] = 0
-    
+
+    # ===================================================================
+    # relationship of solar radiation components:
+    # GHI = DHI + DNI * cos (Z)
+    # GHI: global horizontal irridiance
+    # DHI: diffuse horizontal irridiance
+    # DNI: direct normal irridiance
+    # cos(Z): cosine of solar zenith angle
+
+    # transfer simulated Kdown to GHI
+    GHI = df_tmy["Kdown"]
+
     # global horizontal radiation
-    df_tmy["Global Horizontal Radiation"] = df_tmy["Kdown"]
-    
-    # diffuse radiation
-    frac_dif = 1 - (1 / (1 + ratio_dif_dir))
-    df_tmy["Diffuse Horizontal Radiation"] = df_tmy["Kdown"] * frac_dif
+    df_tmy["Global Horizontal Radiation"] = GHI
+
+    # solar zenith angle
+    solar_zenith_deg = pvlib.solarposition.get_solarposition(
+        df_tmy.index, lat, lon
+    ).zenith
 
     # direct normal radaition
-    # GHI = DHI + DNI * cos (Z)
-    # solar zenith angle
-    def get_sza(dobj,lat,lon,time_zone):
-        dobj=dobj.replace(tzinfo=datetime.timezone.utc) - datetime.timedelta(hours=time_zone)
-        sza= float(90) -  solar.get_altitude(lat, lon, dobj)
-        return sza
-    
-    # series of solar zenith angle in degree
-    sza = df_tmy.copy().reset_index()['datetime'].apply(lambda x: get_sza(x,lat,lon,time_zone))
-
-    # sza2 = np.cos(np.radians(sza))
-    # sza2.index = df_tmy.index
-    # df_tmy['sza'] = sza2
-
-    # df_tmy["Direct Normal Radiation"] = df_tmy.apply(lambda x: (x["Kdown"]*(1 - frac_dif)) / x['sza'], axis=1)
-    # df_tmy.drop(['sza'],axis=1) -- a problem for this method: when sza is very small, dni can be too large.
-
     # Determine DNI from GHI using the DIRINT modification of the DISC model.
-    dni=pvlib.irradiance.dirint(ghi=df_tmy['Kdown'].values,times=df_tmy.index,solar_zenith=sza.values,pressure=df_tmy['Atmospheric Station Pressure'].values,temp_dew=df_tmy['Dew Point Temperature'],use_delta_kt_prime=True).replace(np.nan,0)
-    df_tmy['Direct Normal Radiation'] = dni.values
+    DNI = pvlib.irradiance.dirint(
+        ghi=df_tmy["Global Horizontal Radiation"],
+        times=df_tmy.index,
+        solar_zenith=solar_zenith_deg,
+        pressure=df_tmy["Atmospheric Station Pressure"],
+        temp_dew=df_tmy["Dew Point Temperature"],
+        use_delta_kt_prime=True,
+    ).replace(np.nan, 0)
+    df_tmy["Direct Normal Radiation"] = DNI.values
+
+    # diffuse horizontal radiation
+    # DHI = GHI - DNI * cos (Z)
+    df_tmy["Diffuse Horizontal Radiation"] = GHI - DNI * np.cos(
+        solar_zenith_deg * np.pi / 180
+    )
+    # end: solar radiation processing
+    # ===================================================================
 
     # horizontal infrared radiation
     df_tmy["Horizontal Infrared Radiation Intensity"] = df_tmy["Ldown"]
@@ -464,7 +474,6 @@ def gen_epw(
     # df_epw["Global Horizontal Radiation"] = np.ones(len(df_epw)) * 9999
     df_epw.index = df_TMY_x.index
 
-
     df_epw = df_epw.sort_values(["Month", "Day", "Hour"], axis=0)
 
     # save pure data to a csv for formatting
@@ -485,7 +494,7 @@ GROUND TEMPERATURES,3,.5,,,,13.31,10.23,9.39,10.12,14.28,18.95,23.34,26.51,27.44
 HOLIDAYS/DAYLIGHT SAVINGS,No,0,0,0
 COMMENTS 1, generated by SuPy
 COMMENTS 2, none
-DATA PERIODS,1,1,Data,Sunday, 1/ 1,12/31
+DATA PERIODS,1,1,Data,Sunday,1/1,12/31
     """
     text_meta = text_meta.split("\n")[1:-1]
     # lines = []
