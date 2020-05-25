@@ -150,11 +150,15 @@ dict_libVar2File = {
 # this is described in SUEWS online manual:
 # https://suews.readthedocs.io/en/latest/input_files/SUEWS_SiteInfo/SUEWS_SiteInfo.html
 path_code2file = path_supy_module / "code2file.json"
-dict_Code2File = pd.read_json(path_code2file, typ="series", convert_dates=False).to_dict()
+dict_Code2File = pd.read_json(
+    path_code2file, typ="series", convert_dates=False
+).to_dict()
 # variable translation as done in Fortran-SUEWS
 # path_var2siteselect = os.path.join(path_supy_module, 'var2siteselect.json')
 path_var2siteselect = path_supy_module / "var2siteselect.json"
-dict_var2SiteSelect = pd.read_json(path_var2siteselect, typ="series", convert_dates=False).to_dict()
+dict_var2SiteSelect = pd.read_json(
+    path_var2siteselect, typ="series", convert_dates=False
+).to_dict()
 
 # expand dict_Code2File for retrieving surface characteristics
 dict_varSiteSelect2File = {
@@ -456,7 +460,7 @@ def resample_kdn(data_raw_kdn, tstep_mod, timezone, lat, lon, alt):
 
 
 # correct precipitation by even redistribution over resampled periods
-def resample_precip(data_raw_precip, tstep_mod, tstep_in):
+def resample_sum(data_raw_precip, tstep_mod, tstep_in):
     ratio_precip = 1.0 * tstep_mod / tstep_in
     data_tstep_precip_adj = ratio_precip * data_raw_precip.copy().shift(
         -tstep_in + tstep_mod, freq="S"
@@ -476,95 +480,136 @@ def resample_precip(data_raw_precip, tstep_mod, tstep_in):
     return data_tstep_precip_adj
 
 
-# resample input forcing by linear interpolation
-def resample_linear_pd(data_raw, tstep_in, tstep_mod):
-    # reset index as timestamps
-    # shift by half-tstep_in to generate a time series with instantaneous
-    # values
-    data_raw_shift = data_raw.shift(-tstep_in / 2, freq="S")
-
+# resample input forcing with instantaneous values by linear interpolation
+def resample_linear_inst(data_raw_inst, tstep_in, tstep_mod):
     # downscale input data to desired time step
-    data_raw_tstep = (
-        data_raw_shift.asfreq(f"{tstep_mod/2}S")
-        .interpolate(method="linear")
-        .resample(f"{tstep_mod}S")
-        .mean()
-    )
+    # downscale input data to desired time step
+    data_raw_tstep = data_raw_inst.copy()
 
     # assign a new start with nan
-    t_start = data_raw.index.shift(-tstep_in + tstep_mod, freq="S")[0]
-    t_end = data_raw.index[-1]
+    t_start = data_raw_inst.index.shift(-tstep_in + tstep_mod, freq="S")[0]
+    t_end = data_raw_inst.index[-1]
     data_raw_tstep.loc[t_start, :] = np.nan
     data_raw_tstep.loc[t_end, :] = np.nan
 
     # re-align the index so after resampling we can have filled heading part
     data_raw_tstep = data_raw_tstep.sort_index()
-    data_raw_tstep = data_raw_tstep.asfreq(f"{tstep_mod}S")
+    data_raw_tstep = data_raw_tstep.asfreq(f"{tstep_mod}S").interpolate(method="linear")
     # fill gaps with valid values
     data_tstep = data_raw_tstep.copy().bfill().ffill().dropna(how="all")
-    # data_tstep = data_raw_tstep.copy()
-
-    # correct temporal information
-    data_tstep["iy"] = data_tstep.index.year
-    data_tstep["id"] = data_tstep.index.dayofyear
-    data_tstep["it"] = data_tstep.index.hour
-    data_tstep["imin"] = data_tstep.index.minute
 
     return data_tstep
 
 
-# a more performant version of `resample_linear_pd` using explicit interpolation methods
-def resample_linear(data_raw, tstep_in, tstep_mod):
+# resample input forcing with average values by linear interpolation
+def resample_linear_avg(data_raw_avg, tstep_in, tstep_mod):
+    # retrieve ending timestamps
+    t_start = data_raw_avg.index.shift(-tstep_in + tstep_mod, freq="S")[0]
+    t_end = data_raw_avg.index[-1]
+
     # reset index as timestamps
     # shift by half-tstep_in to generate a time series with instantaneous
     # values
-    data_raw_shift = data_raw.shift(-tstep_in / 2, freq="S")
-    xt = data_raw_shift.index
-    dt = (xt - xt.min()).total_seconds()
-    xt_new = pd.date_range(xt.min(), xt.max(), freq=f"{tstep_mod}S")
-    dt_new = (xt_new - xt_new.min()).total_seconds()
-
-    # using `interp1d` for better performance
-    from scipy.interpolate import interp1d
-    f = interp1d(dt, data_raw_shift.values, axis=0)
-    val_new = f(dt_new)
-
-    # manual running mean for better performance
-    val_new_mvavg = 0.5 * (val_new[:-1] + val_new[1:])
-
-    # construct a dataframe
-    data_raw_tstep = pd.DataFrame(
-        val_new_mvavg, columns=data_raw_shift.columns, index=xt_new[1:]
-    )
-
-    # assign a new start with nan
-    t_start = data_raw.index.shift(-tstep_in + tstep_mod, freq="S")[0]
-    t_end = data_raw.index[-1]
-    ind_t = pd.date_range(t_start, t_end, freq=f"{tstep_mod}S")
+    data_raw_shift = data_raw_avg.shift(-tstep_in / 2, freq="S")
 
     # re-align the index so after resampling we can have filled heading part
-    data_tstep = data_raw_tstep.reindex(ind_t)
-    data_tstep = data_tstep.bfill()
-    data_tstep = data_tstep.ffill()
+    data_raw_tstep = data_raw_shift.copy()
+    data_raw_tstep.loc[t_start, :] = np.nan
+    data_raw_tstep.loc[t_end, :] = np.nan
+    data_raw_tstep = data_raw_tstep.sort_index().asfreq(f"{tstep_mod}S")
 
-    # correct temporal information
-    ser_t = ind_t.to_series()
-    data_tstep["iy"] = ser_t.dt.year
-    data_tstep["id"] = ser_t.dt.dayofyear
-    data_tstep["it"] = ser_t.dt.hour
-    data_tstep["imin"] = ser_t.dt.minute
+    # timestamps desired for the resampled dataframe
+    idx_tstep = data_raw_tstep.index
+
+    # insert the shifted
+    data_raw_tstep = pd.concat([data_raw_tstep, data_raw_shift]).sort_index()
+    # interpolation so to get the instantaneous values
+    data_raw_tstep = data_raw_tstep.interpolate("linear")
+    # only `sow` those values at desirable timestamps
+    data_raw_tstep = data_raw_tstep.loc[idx_tstep].sort_index()
+
+    # fill gaps with valid values
+    data_tstep = data_raw_tstep.copy().bfill().ffill().dropna(how="all")
+
     return data_tstep
 
 
 # resample input met foring to tstep required by model
 def resample_forcing_met(
-    data_met_raw, tstep_in, tstep_mod, lat=51, lon=1, alt=100, timezone=0, kdownzen=0
+    data_met_raw, tstep_in, tstep_mod, lat=51, lon=0, alt=100, timezone=0, kdownzen=0
 ):
-    # overall resample by linear interpolation
+
+    if tstep_in % tstep_mod != 0:
+        raise RuntimeError(f'`tstep_in` ({tstep_in}) is not divisible by `tstep_mod` ({tstep_mod})')
+
+    data_met_raw = data_met_raw.copy()
+    data_met_raw = data_met_raw.replace(-999, np.nan)
+    # this line is kept for occasional debugging:
     # data_met_raw.to_pickle('data_met_raw.pkl')
-    data_met_tstep = resample_linear_pd(data_met_raw, tstep_in, tstep_mod)
-    # data_met_tstep = resample_linear(data_met_raw, tstep_in, tstep_mod)
-    # data_met_tstep.to_pickle('data_met_tstep.pkl')
+
+    # define data types for different resampling schemes
+    # time: temporal info
+    # avg: average values of period ending at timestamps
+    # inst: instantaneous values at timestamps
+    # sum: sum of period ending at timestamps
+    dict_var_type = {
+        "iy": "time",
+        "id": "time",
+        "it": "time",
+        "imin": "time",
+        "qn": "avg",
+        "qh": "avg",
+        "qe": "avg",
+        "qs": "avg",
+        "qf": "avg",
+        "U": "inst",
+        "RH": "inst",
+        "Tair": "inst",
+        "pres": "inst",
+        "rain": "sum",
+        "kdown": "avg",
+        "snow": "inst",
+        "ldown": "avg",
+        "fcld": "inst",
+        "Wuh": "sum",
+        "xsmd": "inst",
+        "lai": "inst",
+        "kdiff": "avg",
+        "kdir": "avg",
+        "wdir": "inst",
+        "isec": "time",
+    }
+
+    # linear interpolation:
+    # the interpolation schemes differ between instantaneous and average values
+    # instantaneous:
+    list_var_inst = [
+        var for var, data_type in dict_var_type.items() if data_type == "inst"
+    ]
+    data_met_tstep_inst = resample_linear_inst(
+        data_met_raw.filter(list_var_inst), tstep_in, tstep_mod
+    )
+    # average:
+    list_var_avg = [
+        var for var, data_type in dict_var_type.items() if data_type == "avg"
+    ]
+    data_met_tstep_avg = resample_linear_avg(
+        data_met_raw.filter(list_var_avg), tstep_in, tstep_mod
+    )
+
+    # distributing interpolation:
+    # sum:
+    list_var_sum = [
+        var for var, data_type in dict_var_type.items() if data_type == "sum"
+    ]
+    data_met_tstep_sum = resample_sum(
+        data_met_raw.filter(list_var_sum), tstep_mod, tstep_in
+    )
+
+    # combine the resampled individual dataframes
+    data_met_tstep = pd.concat(
+        [data_met_tstep_inst, data_met_tstep_avg, data_met_tstep_sum], axis=1
+    )
 
     # adjust solar radiation by zenith correction and total amount distribution
     if kdownzen == 1:
@@ -572,11 +617,14 @@ def resample_forcing_met(
             data_met_tstep["kdown"], tstep_mod, timezone, lat, lon, alt
         )
 
-    # correct rainfall
-    data_met_tstep["rain"] = resample_precip(data_met_raw["rain"], tstep_mod, tstep_in)
-
-    # # reset index with numbers
-    # data_met_tstep_out = data_met_tstep.copy().reset_index(drop=True)
+    # assign temporal info
+    data_met_tstep["iy"] = data_met_tstep.index.year
+    data_met_tstep["id"] = data_met_tstep.index.dayofyear
+    data_met_tstep["it"] = data_met_tstep.index.hour
+    data_met_tstep["imin"] = data_met_tstep.index.minute
+    data_met_tstep["isec"] = data_met_tstep.index.second
+    data_met_tstep = data_met_tstep.filter(list(dict_var_type.keys()))
+    data_met_tstep = data_met_tstep.replace(np.nan, -999)
 
     return data_met_tstep
 
@@ -1390,7 +1438,6 @@ def add_veg_init_df(df_init):
 
     # set veg related parameters
     for var_veg, var_leaves_on, var_leaves_off in list_var_veg:
-
         # get default values based on ser_leaves_on_flag
         val_dft = df_init[var_leaves_on].where(
             ser_leaves_on_flag, df_init[var_leaves_off]
@@ -1514,10 +1561,10 @@ def add_state_init_df(df_init):
 
 # add additional parameters to `df` produced by `load_SUEWS_InitialCond_df`
 def load_InitialCond_grid_df(path_runcontrol, force_reload=True):
-
     # clean all cached states
     if force_reload:
         import gc
+
         gc.collect()
         wrappers = [
             a for a in gc.get_objects() if isinstance(a, functools._lru_cache_wrapper)
