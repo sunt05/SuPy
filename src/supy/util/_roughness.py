@@ -1,7 +1,7 @@
 import numpy as np
 
 from .._env import logger_supy
-
+from ._atm import cal_cp
 
 # saturation vapour pressure [hPa]
 def cal_vap_sat(Temp_C, Press_hPa):
@@ -42,27 +42,28 @@ def cal_dens_vap(RH_pct, Temp_C, Press_hPa):
     return vap_dens
 
 
-# specific heat capacity of air mass [J kg-1 K-1]
-def cal_cpa(Temp_C, RH_pct, Press_hPa):
-    # heat capacity of dry air depending on air temperature
-    cpd = 1005.0 + ((Temp_C + 23.16) ** 2) / 3364.0
-    # heat capacity of vapour
-    cpm = (
-        1859
-        + 0.13 * RH_pct
-        + (19.3 + 0.569 * RH_pct) * (Temp_C / 100.0)
-        + (10.0 + 0.5 * RH_pct) * (Temp_C / 100.0) ** 2
-    )
-
-    # density of dry air
-    rho_d = cal_dens_dry(RH_pct, Temp_C, Press_hPa)
-
-    # density of vapour
-    rho_v = cal_dens_vap(RH_pct, Temp_C, Press_hPa)
-
-    # specific heat
-    cpa = cpd * (rho_d / (rho_d + rho_v)) + cpm * (rho_v / (rho_d + rho_v))
-    return cpa
+#
+# # specific heat capacity of air mass [J kg-1 K-1]
+# def cal_cpa(Temp_C, RH_pct, Press_hPa):
+#     # heat capacity of dry air depending on air temperature
+#     cpd = 1005.0 + ((Temp_C + 23.16) ** 2) / 3364.0
+#     # heat capacity of vapour
+#     cpm = (
+#         1859
+#         + 0.13 * RH_pct
+#         + (19.3 + 0.569 * RH_pct) * (Temp_C / 100.0)
+#         + (10.0 + 0.5 * RH_pct) * (Temp_C / 100.0) ** 2
+#     )
+#
+#     # density of dry air
+#     rho_d = cal_dens_dry(RH_pct, Temp_C, Press_hPa)
+#
+#     # density of vapour
+#     rho_v = cal_dens_vap(RH_pct, Temp_C, Press_hPa)
+#
+#     # specific heat
+#     cpa = cpd * (rho_d / (rho_d + rho_v)) + cpm * (rho_v / (rho_d + rho_v))
+#     return cpa
 
 
 # air density [kg m-3]
@@ -84,7 +85,7 @@ def cal_Lob(QH, UStar, Temp_C, RH_pct, Press_hPa, g=9.8, k=0.4):
     rho = cal_dens_air(Press_hPa, Temp_C)
 
     # specific heat capacity of air mass [J kg-1 K-1]
-    cpa = cal_cpa(Temp_C, RH_pct, Press_hPa)
+    cpa = cal_cp(Temp_C, RH_pct, Press_hPa)
 
     # Kinematic sensible heat flux [K m s-1]
     H = QH / (rho * cpa)

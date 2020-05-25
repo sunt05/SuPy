@@ -1,36 +1,11 @@
 import numpy as np
 from pathlib import Path
 import pandas as pd
-from .._load import load_SUEWS_Forcing_met_df_pattern, resample_forcing_met
-
-
-def parse_suews_datetime(df_raw: pd.DataFrame) -> pd.DataFrame:
-    """convert raw SUEWS DataFrame to datetime-aware DataFrame.
-
-    Parameters
-    ----------
-    df_raw : pd.DataFrame
-        raw SUEWS DataFrame
-
-    Returns
-    -------
-    pd.DataFrame
-        datetime-aware DataFrame
-    """
-
-    # set timestamp as index
-    idx_dt = pd.date_range(
-        *df_raw.iloc[[0, -1], :4]
-        .astype(int)
-        .astype(str)
-        .apply(lambda ser: ser.str.cat(sep=" "), axis=1)
-        .map(lambda dt: pd.to_datetime(dt, format="%Y %j %H %M")),
-        periods=df_raw.shape[0],
-    )
-
-    df_datetime = df_raw.set_index(idx_dt)
-
-    return df_datetime
+from .._load import (
+    load_SUEWS_Forcing_met_df_pattern,
+    resample_forcing_met,
+    set_index_dt,
+)
 
 
 def read_suews(path_suews_file: str) -> pd.DataFrame:
@@ -51,7 +26,7 @@ def read_suews(path_suews_file: str) -> pd.DataFrame:
     df_raw = pd.read_csv(
         path_suews_file, delim_whitespace=True, comment="!", error_bad_lines=True
     )
-    df_suews = parse_suews_datetime(df_raw)
+    df_suews = set_index_dt(df_raw)
     return df_suews
 
 

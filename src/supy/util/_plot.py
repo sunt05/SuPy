@@ -123,12 +123,12 @@ def plot_day_clm(df_var, fig=None, ax=None, show_dif=False, col_ref="Obs"):
 
 # comparison plot with 1:1 line added:
 def plot_comp(
-    df_var,
-    scatter_kws={"alpha": 0.1, "s": 0.3, "color": "k"},
-    kde_kws={"shade": True, "shade_lowest": False, "levels": 4,},
-    show_pdf=False,
-    fig=None,
-    ax=None,
+        df_var,
+        scatter_kws={"alpha": 0.1, "s": 0.3, "color": "k"},
+        kde_kws={"shade": True, "shade_lowest": False, "levels": 4, },
+        show_pdf=False,
+        fig=None,
+        ax=None,
 ):
     """Produce a scatter plot with linear regression line to compare simulation results and observations.
 
@@ -273,7 +273,6 @@ def gradient_color(color_list, color_sum=200):
 
 
 def plot_colortable(colors, title, sort_colors=True, emptycols=0):
-
     import matplotlib.pyplot as plt
     import matplotlib.colors as mcolors
 
@@ -340,7 +339,7 @@ def plot_colortable(colors, title, sort_colors=True, emptycols=0):
 
 # plotting RSL profiles
 def plot_rsl(
-    df_output, var=None, fig=None, ax=None,
+        df_output, var=None, fig=None, ax=None,
 ):
     """
     Produce a quick plot of RSL results
@@ -363,9 +362,6 @@ def plot_rsl(
         If an invalid variable is specified, an issue will be raised.
     """
 
-
-
-
     # import when used for better performance in loading supy
     import matplotlib.pyplot as plt
     import seaborn as sns
@@ -384,9 +380,9 @@ def plot_rsl(
     ser_t = df_x.index.drop_duplicates()
 
     # dict of x labels
-    dict_xlabel = {"U": "(m s$^{-1}$)", "T": "($^\degree$C)", "q": "(g kg$^{-1}$)"}
+    dict_xlabel = {"U": "(m s$^{-1}$)", "T": r"($^\degree$C)", "q": "(g kg$^{-1}$)"}
 
-    if var == None:
+    if var is None:
         # plot all variables in subplots
         # force create a new figure to contain all variables
         fig, axes = plt.subplots(1, 3, figsize=(12 * 0.68, 4), sharey=True)

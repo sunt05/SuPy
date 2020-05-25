@@ -114,6 +114,7 @@ def gen_df_sankey(path_nml: str):
 
 def in_ipynb():
     try:
+        from IPython import get_ipython
         cfg = get_ipython().has_trait("kernel")
         if cfg:
             return True
@@ -160,6 +161,7 @@ def plot_reclassification(
         Sankey Diagram showing the reclassification.
     """
     from floweaver import (
+        Bundle,
         Dataset,
         Partition,
         ProcessGroup,

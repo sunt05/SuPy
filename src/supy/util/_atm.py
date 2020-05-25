@@ -438,7 +438,7 @@ def cal_lat_vap(qa_kgkg, theta_K, pres_hPa):
     return Lv
 
 
-# calculate heat capacity of air
+# calculate specific heat capacity of air [J kg-1 K-1]
 def cal_cp(qa_kgkg, ta_K, pres_hPa):
     from atmosp import calculate as ac
 
