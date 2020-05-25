@@ -21,6 +21,12 @@ def get_args_suews(docstring=sd.suews_cal_main.__doc__):
     # split doc lines for processing
     docLines = np.array(docstring.splitlines(), dtype=str)
 
+    dict_inout_sd = extract_dict_docs(docLines)
+
+    return dict_inout_sd
+
+
+def extract_dict_docs(docLines):
     # get the information of input variables for SUEWS_driver
     ser_docs = pd.Series(docLines)
     varInputLines = ser_docs[ser_docs.str.contains("input|in/output")].values
@@ -29,7 +35,6 @@ def get_args_suews(docstring=sd.suews_cal_main.__doc__):
     )
     dict_InputInfo = {xx[0]: xx[1] for xx in varInputInfo}
     dict_InOutInfo = {xx[0]: xx[1] for xx in varInputInfo if "in/out" in xx[1]}
-
     # get the information of output variables for SUEWS_driver
     posOutput = np.where(docLines == "Returns")
     varOutputLines = docLines[posOutput[0][0] + 2 :]
@@ -37,7 +42,6 @@ def get_args_suews(docstring=sd.suews_cal_main.__doc__):
         [[xx.rstrip() for xx in x.split(":")] for x in varOutputLines]
     )
     dict_OutputInfo = {xx[0]: xx[1] for xx in varOutputInfo}
-
     # pack in/out results:
     dict_inout_sd = {
         # 'input' and 'output' are dict's that store variable information:
@@ -51,7 +55,6 @@ def get_args_suews(docstring=sd.suews_cal_main.__doc__):
         "var_inout": tuple(dict_InOutInfo.keys()),
         "var_output": tuple(varOutputInfo[:, 0]),
     }
-
     return dict_inout_sd
 
 
@@ -60,36 +63,7 @@ def get_args_suews_multitsteps():
     # split doc lines for processing
     docLines = np.array(sd.suews_cal_multitsteps.__doc__.splitlines(), dtype=str)
 
-    # get the information of input variables for SUEWS_driver
-    ser_docs = pd.Series(docLines)
-    varInputLines = ser_docs[ser_docs.str.contains("input|in/output")].values
-    varInputInfo = np.array(
-        [[xx.rstrip() for xx in x.split(":")] for x in varInputLines]
-    )
-    dict_InputInfo = {xx[0]: xx[1] for xx in varInputInfo}
-    dict_InOutInfo = {xx[0]: xx[1] for xx in varInputInfo if "in/out" in xx[1]}
-
-    # get the information of output variables for SUEWS_driver
-    posOutput = np.where(docLines == "Returns")
-    varOutputLines = docLines[posOutput[0][0] + 2 :]
-    varOutputInfo = np.array(
-        [[xx.rstrip() for xx in x.split(":")] for x in varOutputLines]
-    )
-    dict_OutputInfo = {xx[0]: xx[1] for xx in varOutputInfo}
-
-    # pack in/out results:
-    dict_inout_sd = {
-        # 'input' and 'output' are dict's that store variable information:
-        # 1. intent: e.g., input, in/output
-        # 2. dimension: e.g., (366,7)
-        "input": dict_InputInfo,
-        "output": dict_OutputInfo,
-        # 'var_input' and 'var_output' are tuples,
-        # that keep the order of arguments as in the Fortran subroutine
-        "var_input": tuple(varInputInfo[:, 0]),
-        "var_inout": tuple(dict_InOutInfo.keys()),
-        "var_output": tuple(varOutputInfo[:, 0]),
-    }
+    dict_inout_sd = extract_dict_docs(docLines)
 
     return dict_inout_sd
 
@@ -522,7 +496,7 @@ def resample_linear_avg(data_raw_avg, tstep_in, tstep_mod):
     idx_tstep = data_raw_tstep.index
 
     # insert the shifted
-    data_raw_tstep = pd.concat([data_raw_tstep, data_raw_shift]).sort_index()
+    data_raw_tstep.loc[data_raw_shift.index] = data_raw_shift.values
     # interpolation so to get the instantaneous values
     data_raw_tstep = data_raw_tstep.interpolate("linear")
     # only `sow` those values at desirable timestamps
@@ -534,13 +508,15 @@ def resample_linear_avg(data_raw_avg, tstep_in, tstep_mod):
     return data_tstep
 
 
-# resample input met foring to tstep required by model
+# resample input met forcing to tstep required by model
 def resample_forcing_met(
     data_met_raw, tstep_in, tstep_mod, lat=51, lon=0, alt=100, timezone=0, kdownzen=0
 ):
 
     if tstep_in % tstep_mod != 0:
-        raise RuntimeError(f'`tstep_in` ({tstep_in}) is not divisible by `tstep_mod` ({tstep_mod})')
+        raise RuntimeError(
+            f"`tstep_in` ({tstep_in}) is not divisible by `tstep_mod` ({tstep_mod})"
+        )
 
     data_met_raw = data_met_raw.copy()
     data_met_raw = data_met_raw.replace(-999, np.nan)
@@ -629,6 +605,45 @@ def resample_forcing_met(
     return data_met_tstep
 
 
+def set_index_dt(df_raw: pd.DataFrame) -> pd.DataFrame:
+    """convert raw SUEWS DataFrame to datetime-aware DataFrame.
+
+    Parameters
+    ----------
+    df_raw : pd.DataFrame
+        raw SUEWS DataFrame
+
+    Returns
+    -------
+    pd.DataFrame
+        datetime-aware DataFrame
+    """
+
+    # set timestamp as index
+    idx_dt = pd.date_range(
+        *df_raw.iloc[[0, -1], :4]
+        .astype(int)
+        .astype(str)
+        .apply(lambda ser: ser.str.cat(sep=" "), axis=1)
+        .map(lambda dt: pd.to_datetime(dt, format="%Y %j %H %M")),
+        periods=df_raw.shape[0],
+    )
+
+    # check if datetime index is evenly spaced:
+    dt_diff = idx_dt.to_series().diff()
+    if (~dt_diff[1:].duplicated()).sum() > 1:
+        # locate the problematic indices
+        loc_issue = idx_dt[~dt_diff]
+        raise RuntimeError(f"Loaded forcing files have gaps at: {loc_issue}")
+    else:
+        freq = dt_diff[1]
+        df_forcing_met = df_raw.set_index(idx_dt).asfreq(freq)
+
+    df_datetime = df_raw.set_index(idx_dt)
+
+    return df_datetime
+
+
 # load raw data: met forcing
 def load_SUEWS_Forcing_met_df_raw(
     path_input, filecode, grid, tstep_met_in, multiplemetfiles
@@ -647,13 +662,16 @@ def load_SUEWS_Forcing_met_df_raw(
 
 
 # caching loaded met df for better performance in initialisation
-def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
+def load_SUEWS_Forcing_met_df_pattern(path_input, file_pattern):
     """Short summary.
 
     Parameters
     ----------
-    forcingfile_met_pattern : type
-        Description of parameter `forcingfile_met_pattern`.
+    path_input: path-like object
+        path to SUEWS input folder, where met forcing files are placed
+
+    file_pattern : basestring
+        Description of parameter `file_pattern`.
 
     Returns
     -------
@@ -662,12 +680,13 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
 
     """
     from dask import dataframe as dd
+    from pathlib import Path
 
     # list of met forcing files
-    path_input = path_input.resolve()
+    path_input = Path(path_input).resolve()
     # forcingfile_met_pattern = os.path.abspath(forcingfile_met_pattern)
     list_file_MetForcing = sorted(
-        [f for f in path_input.glob(forcingfile_met_pattern) if "ESTM" not in f.name]
+        [f for f in path_input.glob(file_pattern) if "ESTM" not in f.name]
     )
 
     # print(forcingfile_met_pattern)
@@ -725,17 +744,7 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, forcingfile_met_pattern):
         ["iy", "id", "it", "imin", "isec"]
     ].astype(np.int64)
 
-    # set timestamp as index
-    idx_dt = pd.date_range(
-        *df_forcing_met.iloc[[0, -1], :4]
-        .astype(int)
-        .astype(str)
-        .apply(lambda ser: ser.str.cat(sep=" "), axis=1)
-        .map(lambda dt: pd.to_datetime(dt, format="%Y %j %H %M")),
-        periods=df_forcing_met.shape[0],
-    )
-
-    df_forcing_met = df_forcing_met.set_index(idx_dt)
+    df_forcing_met = set_index_dt(df_forcing_met)
 
     return df_forcing_met
 
@@ -1343,11 +1352,7 @@ def load_SUEWS_InitialCond_df(path_runcontrol):
     ]
     # set values according to `list_var_dim_from_dict_ModConfig`
     # and generate the secondary dimensions
-    for var, dim, val in list_var_dim_from_dict_ModConfig:
-        ind_dim = [str(i) for i in np.ndindex(int(dim))] if dim > 0 else ["0"]
-        val_x = df_init[val] if isinstance(val, str) else val
-        for ind in ind_dim:
-            df_init[(var, str(ind))] = val_x
+    df_init = modify_df_init(df_init, list_var_dim_from_dict_ModConfig)
 
     # initialise df_InitialCond_grid with default values
     for k in dict_InitCond_default:
@@ -1374,6 +1379,16 @@ def load_SUEWS_InitialCond_df(path_runcontrol):
     df_init[("file_init", "0")] = df_init[("file_init", "0")].map(
         lambda fn: path_input / fn
     )
+
+    return df_init
+
+
+def modify_df_init(df_init, list_var_dim):
+    for var, dim, val in list_var_dim:
+        ind_dim = [str(i) for i in np.ndindex(int(dim))] if dim > 0 else ["0"]
+        val_x = df_init[val] if isinstance(val, str) else val
+        for ind in ind_dim:
+            df_init[(var, str(ind))] = val_x
 
     return df_init
 
@@ -1514,11 +1529,7 @@ def add_state_init_df(df_init):
 
     # set values according to `list_var_dim`
     # and generate the secondary dimensions
-    for var, dim, val in list_var_dim:
-        ind_dim = [str(i) for i in np.ndindex(int(dim))] if dim > 0 else ["0"]
-        val_x = df_init[val] if isinstance(val, str) else val
-        for ind in ind_dim:
-            df_init[(var, str(ind))] = val_x
+    df_init = modify_df_init(df_init, list_var_dim)
 
     # modifications for special cases
     # `lai_id` corrections:
