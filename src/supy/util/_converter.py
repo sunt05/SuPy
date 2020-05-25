@@ -311,7 +311,7 @@ def dijkstra(edges, f, t):
             seen.add(v1)
             path = (v1, path)
             if v1 == t:
-                return (cost, path)
+                return cost, path
             for c, v2 in g.get(v1, ()):
                 if v2 not in seen:
                     heappush(q, (cost + c, v2, path))
@@ -370,7 +370,7 @@ def convert_table(fromDir, toDir, fromVer, toVer):
         # also convert all files to UTF-8 encoding in case inconsistent encoding exists
         for fileX in list_table_input:
             print(fileX)
-            path_dst = Path(tempDir_1) / (fileX.name)
+            path_dst = Path(tempDir_1) / fileX.name
             copyfile(fileX.resolve(), path_dst)
 
         # Indirect version conversion process
@@ -420,7 +420,7 @@ def convert_table(fromDir, toDir, fromVer, toVer):
     ]
 
     for fileX in list_table_input:
-        move(fileX.resolve(), path_input / (fileX.name))
+        move(fileX.resolve(), path_input / fileX.name)
 
 
 import os

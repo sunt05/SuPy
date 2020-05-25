@@ -141,11 +141,9 @@ def get_df_val_alt(lat: float, lon: float, da_alt_meas, ds_val):
         latitude of specified site
     lon : float
         longitude of specified site
-    da_alt_x
-        desired altitude to interpolate variable at
-    da_alt
+    da_alt_meas
         altitude associated with `da_val`: variable array to interpolate
-    da_val
+    ds_val
         atmospheric varialble to interpolate
 
     Returns
@@ -220,7 +218,7 @@ def gen_dict_proc(dict_x):
 
 
 # generate a dict of reqs kwargs for (lat_x,lon_x) spanning [start, end]
-def gen_req_sfc(lat_x, lon_x, start, end, grid=[0.125, 0.125], scale=0):
+def gen_req_sfc(lat_x, lon_x, start, end, grid=None, scale=0):
     """generate a dict of reqs kwargs for (lat_x,lon_x) spanning [start, end]
 
     Parameters
@@ -255,6 +253,8 @@ def gen_req_sfc(lat_x, lon_x, start, end, grid=[0.125, 0.125], scale=0):
 
     """
     # variable name: data type
+    if grid is None:
+        grid = [0.125, 0.125]
     dict_var_type_sfc = {
         "10m_u_component_of_wind": "instantaneous",
         "10m_v_component_of_wind": "instantaneous",
@@ -359,7 +359,9 @@ def sel_list_pres(ds_sfc_x):
 
 
 # for each sfc data file, determine the necessary vertical levels to model level data download
-def gen_req_ml(fn_sfc, grid=[0.125, 0.125], scale=0):
+def gen_req_ml(fn_sfc, grid=None, scale=0):
+    if grid is None:
+        grid = [0.125, 0.125]
     import xarray as xr
 
     # variable name: data type
@@ -431,7 +433,7 @@ def download_era5(
     start: str,
     end: str,
     dir_save=Path("."),
-    grid=[0.125, 0.125],
+        grid=None,
     scale=0,
     logging_level=logging.INFO,
 ) -> dict:
@@ -470,6 +472,8 @@ def download_era5(
     """
 
     # adjust logging level
+    if grid is None:
+        grid = [0.125, 0.125]
     logger_supy.setLevel(logging_level)
 
     # generate requests for surface level data
@@ -509,7 +513,7 @@ def gen_req_era5(
     lon_x: float,
     start: str,
     end: str,
-    grid=[0.125, 0.125],
+        grid=None,
     scale=0,
     dir_save=Path("."),
 ) -> dict:
@@ -517,6 +521,7 @@ def gen_req_era5(
 
     Parameters
     ----------
+    dir_save
     lat_x : float
         Latitude of centre at the area of interest.
     lon_x : float
@@ -542,6 +547,8 @@ def gen_req_era5(
     """
 
     # path to directory for saving results
+    if grid is None:
+        grid = [0.125, 0.125]
     path_dir_save = Path(dir_save).expanduser().resolve()
 
     # generate requests for surface level data
@@ -568,12 +575,14 @@ def load_filelist_era5(
     lon_x: float,
     start: str,
     end: str,
-    grid=[0.125, 0.125],
+        grid=None,
     scale=0,
     dir_save=Path("."),
     logging_level=logging.INFO,
 ):
     # download data: existing files will be excluded from the downloading list
+    if grid is None:
+        grid = [0.125, 0.125]
     download_era5(lat_x, lon_x, start, end, dir_save, grid, scale, logging_level)
 
     # attempt to generate requests
@@ -593,7 +602,7 @@ def gen_forcing_era5(
     start: str,
     end: str,
     dir_save=Path("."),
-    grid=[0.125, 0.125],
+        grid=None,
     hgt_agl_diag=100.0,
     scale=0,
     simple_mode=True,
@@ -645,6 +654,8 @@ def gen_forcing_era5(
             ECMWF, S. P. (2016). In IFS documentation CY41R2 Part IV: Physical Processes. ECMWF: Reading, UK, 111-113. https://www.ecmwf.int/en/elibrary/16648-part-iv-physical-processes
 
     """
+    if grid is None:
+        grid = [0.125, 0.125]
     import xarray as xr
 
     # adjust logging level
@@ -879,7 +890,7 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True
         )
 
     # merge altitude
-    ds_diag = ds_diag.merge(ds_alt_z).drop("level")
+    ds_diag = ds_diag.merge(ds_alt_z).drop_sel("level")
 
     return ds_diag
 

@@ -391,8 +391,8 @@ def func_parse_date_row(row):
 # calculate decimal time
 def dectime(timestamp):
     t = timestamp
-    dectime = (t.dayofyear - 1) + (t.hour + (t.minute + t.second / 60.0) / 60.0) / 24
-    return dectime
+    time_dec = (t.dayofyear - 1) + (t.hour + (t.minute + t.second / 60.0) / 60.0) / 24
+    return time_dec
 
 
 # resample solar radiation by zenith correction and total amount distribution
@@ -637,9 +637,7 @@ def set_index_dt(df_raw: pd.DataFrame) -> pd.DataFrame:
         raise RuntimeError(f"Loaded forcing files have gaps at: {loc_issue}")
     else:
         freq = dt_diff[1]
-        df_forcing_met = df_raw.set_index(idx_dt).asfreq(freq)
-
-    df_datetime = df_raw.set_index(idx_dt)
+        df_datetime = df_raw.set_index(idx_dt).asfreq(freq)
 
     return df_datetime
 

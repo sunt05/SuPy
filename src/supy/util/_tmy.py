@@ -41,8 +41,7 @@ def gen_FS_DF(df_output):
 
     Parameters
     ----------
-    df_WS_data : type
-        Description of parameter `df_WS_data`.
+    df_output
 
     Returns
     -------
@@ -365,7 +364,7 @@ def gen_epw(
         atmosp.calculate(
             "Td",
             T=df_tmy["T2"].values + 273.15,
-            qv=(df_tmy["Q2"].values),
+            qv=df_tmy["Q2"].values,
             qv_unit="g/kg",
             RH=df_tmy["RH2"].values,
             rho=1.23,
@@ -375,7 +374,7 @@ def gen_epw(
     df_tmy["Atmospheric Station Pressure"] = atmosp.calculate(
         "p",
         T=df_tmy["T2"].values + 273.15,
-        qv=(df_tmy["Q2"].values),
+        qv=df_tmy["Q2"].values,
         qv_unit="g/kg",
         RH=df_tmy["RH2"].values,
         rho=1.23,

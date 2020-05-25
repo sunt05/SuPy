@@ -68,6 +68,15 @@ def init_supy(path_init: str, force_reload=True, check_input=False,) -> pd.DataF
         Flag to force reload all initialisation files by clearing all cached states, with default value `True` (i.e., force reload all files).
         Note: If the number of simulation grids is large (e.g., > 100), `force_reload=False` is strongly recommended for better performance.
 
+    check_input: boolean, optional
+        flag for checking validity of input: `df_forcing` and `df_state_init`.
+        If set to `True`, any detected invalid input will stop SuPy simulation;
+        a `False` flag will bypass such validation and may incur kernel error if any invalid input.
+        *Note: such checking procedure may take some time if the input is large.*
+        (the default is `False`, which bypasses the validation).
+
+
+
 
     Returns
     -------
@@ -136,10 +145,17 @@ def load_forcing_grid(
 
     Parameters
     ----------
+
     path_runcontrol : str
         Path to SUEWS :ref:`RunControl.nml <suews:RunControl.nml>`
     grid : int
         Grid number
+    check_input : bool, optional
+        flag for checking validity of input: `df_forcing` and `df_state_init`.
+        If set to `True`, any detected invalid input will stop SuPy simulation;
+        a `False` flag will bypass such validation and may incur kernel error if any invalid input.
+        *Note: such checking procedure may take some time if the input is large.*
+        (the default is `False`, which bypasses the validation).
 
     Returns
     -------
