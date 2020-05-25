@@ -47,6 +47,7 @@ clean:
 	rm -rf ${MODULE}/cmd/*.pyc ${MODULE}/cmd/__pycache__
 	rm -rf SuPy.log SuPy.log.*
 	rm -rf build dist
+	rm -rf .eggs .pytest_cache
 
 # upload wheels to pypi using twine
 upload:
