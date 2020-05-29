@@ -9,19 +9,16 @@
 # TS, 21 May 2019: integrated into supy
 ########################################################
 # %%
-import logging
-import os
 import os.path
 import sys
-
 # ignore warnings raised by numpy when reading-in -9 lines
 import warnings
 from collections import defaultdict
 from fnmatch import fnmatch
 from heapq import heappop, heappush
 from pathlib import Path
-from shutil import copyfile, copytree, move, rmtree
-from tempfile import TemporaryDirectory, TemporaryFile
+from shutil import copyfile, move, rmtree
+from tempfile import TemporaryDirectory
 
 import f90nml
 import numpy as np
@@ -29,7 +26,6 @@ import pandas as pd
 
 from .._env import logger_supy, path_supy_module
 from .._load import load_SUEWS_nml
-from .._misc import path_insensitive
 
 warnings.filterwarnings("ignore")
 ########################################################
@@ -315,7 +311,7 @@ def dijkstra(edges, f, t):
             seen.add(v1)
             path = (v1, path)
             if v1 == t:
-                return (cost, path)
+                return cost, path
             for c, v2 in g.get(v1, ()):
                 if v2 not in seen:
                     heappush(q, (cost + c, v2, path))
@@ -347,7 +343,6 @@ def convert_table(fromDir, toDir, fromVer, toVer):
     len_chain = chain_ver[0]
     logger_supy.info(f"working on chained conversion {len_chain} actions to take")
     logger_supy.info(f"chained list: {chain_ver[1:]} \n")
-    import tempfile
 
     # xx=tempfile.gettempdir()
     with TemporaryDirectory() as dir_temp:
@@ -375,7 +370,7 @@ def convert_table(fromDir, toDir, fromVer, toVer):
         # also convert all files to UTF-8 encoding in case inconsistent encoding exists
         for fileX in list_table_input:
             print(fileX)
-            path_dst = Path(tempDir_1) / (fileX.name)
+            path_dst = Path(tempDir_1) / fileX.name
             copyfile(fileX.resolve(), path_dst)
 
         # Indirect version conversion process
@@ -425,7 +420,7 @@ def convert_table(fromDir, toDir, fromVer, toVer):
     ]
 
     for fileX in list_table_input:
-        move(fileX.resolve(), path_input / (fileX.name))
+        move(fileX.resolve(), path_input / fileX.name)
 
 
 import os

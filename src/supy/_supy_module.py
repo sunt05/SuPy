@@ -15,39 +15,28 @@
 ###########################################################################
 
 import logging
-import multiprocessing
-import time
-
-# from multiprocessing import Pool, cpu_count, freeze_support
-
 import os
 import sys
-
-# import functools
+import time
+import pandas
 from pathlib import Path
 from typing import Tuple
-
-import pandas
-import pathlib
 
 import numpy as np
 import pandas as pd
 
-from ._env import path_supy_module
+from ._check import check_forcing, check_state
+from ._env import logger_supy, path_supy_module
 from ._load import (
     load_InitialCond_grid_df,
-    load_SUEWS_dict_ModConfig,
-    # load_SUEWS_Forcing_ESTM_df_raw,
     load_SUEWS_Forcing_met_df_raw,
+    load_SUEWS_dict_ModConfig,
     load_df_state,
     resample_forcing_met,
-    resample_linear,
 )
-from ._post import pack_df_output, pack_df_output_array, pack_df_state
-from ._run import run_supy_ser, run_supy_par
+from ._run import run_supy_par, run_supy_ser
 from ._save import get_save_info, save_df_output, save_df_state, save_initcond_nml
-from ._check import check_forcing, check_state
-from ._env import logger_supy
+
 
 # set up logging module
 logger_supy.setLevel(logging.INFO)
@@ -56,7 +45,7 @@ logger_supy.setLevel(logging.INFO)
 ##############################################################################
 # 1. compact wrapper for loading SUEWS settings
 # @functools.lru_cache(maxsize=16)
-def init_supy(path_init: str, force_reload=True, check_input=False, ) -> pd.DataFrame:
+def init_supy(path_init: str, force_reload=True, check_input=False,) -> pd.DataFrame:
     """Initialise supy by loading initial model states.
 
     Parameters
@@ -69,6 +58,15 @@ def init_supy(path_init: str, force_reload=True, check_input=False, ) -> pd.Data
     force_reload: boolean, optional
         Flag to force reload all initialisation files by clearing all cached states, with default value `True` (i.e., force reload all files).
         Note: If the number of simulation grids is large (e.g., > 100), `force_reload=False` is strongly recommended for better performance.
+
+    check_input: boolean, optional
+        flag for checking validity of input: `df_forcing` and `df_state_init`.
+        If set to `True`, any detected invalid input will stop SuPy simulation;
+        a `False` flag will bypass such validation and may incur kernel error if any invalid input.
+        *Note: such checking procedure may take some time if the input is large.*
+        (the default is `False`, which bypasses the validation).
+
+
 
 
     Returns
@@ -117,7 +115,9 @@ def init_supy(path_init: str, force_reload=True, check_input=False, ) -> pd.Data
                         f"`df_state_init` loaded from {path_init_x} is NOT valid to initialise SuPy!"
                     )
             except:
-                raise RuntimeError("{path_init_x} is NOT a valid file to initialise SuPy!")
+                raise RuntimeError(
+                    "{path_init_x} is NOT a valid file to initialise SuPy!"
+                )
         else:
             return df_state_init
 
@@ -130,16 +130,23 @@ def init_supy(path_init: str, force_reload=True, check_input=False, ) -> pd.Data
 # TODO:
 # to be superseded by a more generic wrapper: load_forcing
 def load_forcing_grid(
-        path_runcontrol: str, grid: int, check_input=False,
+    path_runcontrol: str, grid: int, check_input=False,
 ) -> pd.DataFrame:
     """Load forcing data for a specific grid included in the index of `df_state_init </data-structure/supy-io.ipynb#df_state_init:-model-initial-states>`.
 
     Parameters
     ----------
+
     path_runcontrol : str
         Path to SUEWS :ref:`RunControl.nml <suews:RunControl.nml>`
     grid : int
         Grid number
+    check_input : bool, optional
+        flag for checking validity of input: `df_forcing` and `df_state_init`.
+        If set to `True`, any detected invalid input will stop SuPy simulation;
+        a `False` flag will bypass such validation and may incur kernel error if any invalid input.
+        *Note: such checking procedure may take some time if the input is large.*
+        (the default is `False`, which bypasses the validation).
 
     Returns
     -------
@@ -176,14 +183,14 @@ def load_forcing_grid(
         ) = (
             dict_mod_cfg[x]
             for x in [
-            "filecode",
-            "kdownzen",
-            "resolutionfilesin",
-            "resolutionfilesinestm",
-            "multiplemetfiles",
-            "multipleestmfiles",
-            "fileinputpath",
-        ]
+                "filecode",
+                "kdownzen",
+                "resolutionfilesin",
+                "resolutionfilesinestm",
+                "multiplemetfiles",
+                "multipleestmfiles",
+                "fileinputpath",
+            ]
         )
         tstep_mod, lat, lon, alt, timezone = df_state_init.loc[
             grid, [(x, "0") for x in ["tstep", "lat", "lng", "alt", "timezone"]]
@@ -216,7 +223,7 @@ def load_forcing_grid(
             list_issues = check_forcing(df_forcing)
             if isinstance(list_issues, list):
                 logger_supy.critical(
-                    f"`df_forcing` loaded from {path_init_x} is NOT valid to drive SuPy!"
+                    f"`df_forcing` loaded from {path_input} is NOT valid to drive SuPy!"
                 )
         except:
             sys.exit()
@@ -245,7 +252,6 @@ def load_SampleData() -> Tuple[pandas.DataFrame, pandas.DataFrame]:
     path_SampleData = Path(path_supy_module) / "sample_run"
     path_runcontrol = path_SampleData / "RunControl.nml"
     df_state_init = init_supy(path_runcontrol, force_reload=False)
-    # path_input = path_runcontrol.parent / ser_mod_cfg['fileinputpath']
     df_forcing = load_forcing_grid(path_runcontrol, df_state_init.index[0])
     return df_state_init, df_forcing
 
@@ -259,13 +265,13 @@ def load_SampleData() -> Tuple[pandas.DataFrame, pandas.DataFrame]:
 # # main calculation
 # input as DataFrame
 def run_supy(
-        df_forcing: pandas.DataFrame,
-        df_state_init: pandas.DataFrame,
-        save_state=False,
-        chunk_day=3660,
-        logging_level=logging.INFO,
-        check_input=False,
-        serial_mode=False,
+    df_forcing: pandas.DataFrame,
+    df_state_init: pandas.DataFrame,
+    save_state=False,
+    chunk_day=3660,
+    logging_level=logging.INFO,
+    check_input=False,
+    serial_mode=False,
 ) -> Tuple[pandas.DataFrame, pandas.DataFrame]:
     """Perform supy simulation.
 
@@ -369,16 +375,16 @@ def run_supy(
 ##############################################################################
 # 3. save results of a supy run
 def save_supy(
-        df_output: pandas.DataFrame,
-        df_state_final: pandas.DataFrame,
-        freq_s: int = 3600,
-        site: str = "",
-        path_dir_save: str = Path("."),
-        path_runcontrol: str = None,
-        save_tstep=False,
-        logging_level=50,
-        output_level=1,
-        debug=False,
+    df_output: pandas.DataFrame,
+    df_state_final: pandas.DataFrame,
+    freq_s: int = 3600,
+    site: str = "",
+    path_dir_save: str = Path("."),
+    path_runcontrol: str = None,
+    save_tstep=False,
+    logging_level=50,
+    output_level=1,
+    debug=False,
 ) -> list:
     """Save SuPy run results to files
 
@@ -450,7 +456,14 @@ def save_supy(
 
     # save df_output to several files
     list_path_save = save_df_output(
-        df_output, freq_s, site, path_dir_save, save_tstep, output_level, save_snow, debug
+        df_output,
+        freq_s,
+        site,
+        path_dir_save,
+        save_tstep,
+        output_level,
+        save_snow,
+        debug,
     )
 
     # save df_state

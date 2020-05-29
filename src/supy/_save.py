@@ -285,41 +285,41 @@ def save_df_output(
 #     return list_path
 
 
-# save `df_save` in serial mode
-def save_df_par(df_save, path_dir_save, site, output_level):
-    # number of years for grouping
-    n_yr = 5
-    idx_yr = df_save.index.get_level_values("datetime").year
-    grp_year = df_save.groupby((idx_yr - idx_yr.min()) // n_yr,)
-
-    list_path = []
-    for grp in grp_year.groups:
-        df_grp = grp_year.get_group(grp)
-        list_grid = df_grp.index.get_level_values("grid").unique()
-        list_group = df_grp.columns.get_level_values("group").unique()
-        list_year = df_grp.index.get_level_values("datetime").year[-1].unique()
-        # put large df as common data object for parallel mode
-        id_df_grp = ray.put(df_grp)
-
-        # the below runs in parallel by `ray.remote`
-        for year in list_year:
-            for grid in list_grid:
-                for group in list_group:
-                    list_path.append(
-                        save_df_year.remote(
-                            id_df_grp,
-                            grid,
-                            group,
-                            year,
-                            output_level,
-                            site,
-                            path_dir_save,
-                        )
-                    )
-
-    list_path = ray.get(list_path)
-
-    return list_path
+# # save `df_save` in serial mode
+# def save_df_par(df_save, path_dir_save, site, output_level):
+#     # number of years for grouping
+#     n_yr = 5
+#     idx_yr = df_save.index.get_level_values("datetime").year
+#     grp_year = df_save.groupby((idx_yr - idx_yr.min()) // n_yr,)
+#
+#     list_path = []
+#     for grp in grp_year.groups:
+#         df_grp = grp_year.get_group(grp)
+#         list_grid = df_grp.index.get_level_values("grid").unique()
+#         list_group = df_grp.columns.get_level_values("group").unique()
+#         list_year = df_grp.index.get_level_values("datetime").year[-1].unique()
+#         # put large df as common data object for parallel mode
+#         id_df_grp = ray.put(df_grp)
+#
+#         # the below runs in parallel by `ray.remote`
+#         for year in list_year:
+#             for grid in list_grid:
+#                 for group in list_group:
+#                     list_path.append(
+#                         save_df_year.remote(
+#                             id_df_grp,
+#                             grid,
+#                             group,
+#                             year,
+#                             output_level,
+#                             site,
+#                             path_dir_save,
+#                         )
+#                     )
+#
+#     list_path = ray.get(list_path)
+#
+#     return list_path
 
 
 # save `df_save` in serial mode

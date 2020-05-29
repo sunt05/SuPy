@@ -32,6 +32,15 @@
         },
         "unit": "1"
     },
+    "h_maintain": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "mm"
+    },
     "ahprof_24hr": {
         "cat": "grid",
         "logic": "range",
@@ -170,7 +179,18 @@
         },
         "unit": "1"
     },
-    "basethdd": {
+    "basetmethod": {
+        "cat": "grid",
+        "logic": "method",
+        "param": {
+            "allowed": [
+                1,
+                2
+            ]
+        },
+        "unit": "1"
+    },
+    "baset_hc": {
         "cat": "grid",
         "logic": "range",
         "param": {
@@ -595,19 +615,43 @@
         "param": {},
         "unit": "1"
     },
-    "irrfracconif": {
+    "irrfracpaved": {
         "cat": "grid",
         "logic": "NA",
         "param": {},
         "unit": "1"
     },
-    "irrfracdecid": {
+    "irrfracbldgs": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "irrfracevetr": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "irrfracdectr": {
         "cat": "grid",
         "logic": "NA",
         "param": {},
         "unit": "1"
     },
     "irrfracgrass": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "irrfracbsoil": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "irrfracwater": {
         "cat": "grid",
         "logic": "NA",
         "param": {},
@@ -1423,7 +1467,7 @@
         },
         "unit": "1"
     },
-    "t_critic_cooling": {
+    "baset_cooling": {
         "cat": "grid",
         "logic": "range",
         "param": {
@@ -1432,7 +1476,7 @@
         },
         "unit": "1"
     },
-    "t_critic_heating": {
+    "baset_heating": {
         "cat": "grid",
         "logic": "range",
         "param": {

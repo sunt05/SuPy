@@ -438,7 +438,7 @@ def cal_lat_vap(qa_kgkg, theta_K, pres_hPa):
     return Lv
 
 
-# calculate heat capacity of air
+# calculate specific heat capacity of air [J kg-1 K-1]
 def cal_cp(qa_kgkg, ta_K, pres_hPa):
     from atmosp import calculate as ac
 
@@ -478,21 +478,21 @@ def cal_cp(qa_kgkg, ta_K, pres_hPa):
 # stability correction for momentum
 def cal_psi_mom(zoL):
     # limit for neutral condition
-    lim_ntrl = 1e-5
+    lim_neutral = 1e-5
 
     zoL = np.where(np.abs(zoL) > 5, 5 * np.sign(zoL), zoL)
 
     # stable, zoL>0
-    zoL_stab = np.where(zoL > lim_ntrl, zoL, 0)
+    zoL_stab = np.where(zoL > lim_neutral, zoL, 0)
     psim_stab = (-6) * np.log(1 + zoL_stab)
 
     # unstable, zoL<0
-    zoL_unstab = np.where(zoL < -lim_ntrl, zoL, 0)
+    zoL_unstab = np.where(zoL < -lim_neutral, zoL, 0)
     psim_unstab = 0.6 * (2) * np.log((1 + (1 - 16 * zoL_unstab) ** 0.5) / 2)
 
     # populate values with respect to stability
-    psim = np.where(zoL > lim_ntrl, psim_stab, psim_unstab)
-    psim = np.where(np.abs(zoL) <= lim_ntrl, 0, psim)
+    psim = np.where(zoL > lim_neutral, psim_stab, psim_unstab)
+    psim = np.where(np.abs(zoL) <= lim_neutral, 0, psim)
 
     return psim
 
@@ -500,20 +500,20 @@ def cal_psi_mom(zoL):
 # stability correction for heat
 def cal_psi_heat(zoL):
     # limit for neutral condition
-    lim_ntrl = 1e-5
+    lim_neutral = 1e-5
 
     zoL = np.where(np.abs(zoL) > 5, 5 * np.sign(zoL), zoL)
 
     # stable, zoL>0
-    zoL_stab = np.where(zoL > lim_ntrl, zoL, 0)
+    zoL_stab = np.where(zoL > lim_neutral, zoL, 0)
     psih_stab = -4.5 * zoL_stab
 
     # unstable, zoL<0
-    zoL_unstab = np.where(zoL < -lim_ntrl, zoL, 0)
+    zoL_unstab = np.where(zoL < -lim_neutral, zoL, 0)
     psih_unstab = (2) * np.log((1 + (1 - 16 * zoL_unstab) ** 0.5) / 2)
 
     # populate values with respect to stability
-    psih = np.where(zoL > lim_ntrl, psih_stab, psih_unstab)
-    psih = np.where(np.abs(zoL) <= lim_ntrl, 0, psih)
+    psih = np.where(zoL > lim_neutral, psih_stab, psih_unstab)
+    psih = np.where(np.abs(zoL) <= lim_neutral, 0, psih)
 
     return psih

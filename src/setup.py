@@ -38,13 +38,11 @@ setup(
     # distclass=BinaryDistribution,
     ext_modules=[],
     install_requires=[
-        # "numpy>=1.17.2",
         "pandas>=0.25.1",
         "tables",  # for dumping in hdf5
         "scipy",
         "scikit-learn",
         "dask[complete]",  # needs all dask and its dependencies
-        # "ray",  # parallel processing
         "f90nml",
         "matplotlib",
         "seaborn",
@@ -53,9 +51,10 @@ setup(
         "xarray",
         "click",  # cmd tool
         "lmfit",  # optimiser
+        'pvlib',  # TMY-related solar radiation calculations
         "floweaver",  # wrf reclassification Sankey chart
-        "supy_driver==2019b5",  # a separate f2py-based driver
-        "platypus-opt==1.0.3"
+        "platypus-opt==1.0.3", # a multi-objective optimiser
+        "supy_driver==2020a8",  # a separate f2py-based driver
     ],
     entry_points={
         #   command line tools

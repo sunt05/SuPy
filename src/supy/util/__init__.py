@@ -9,7 +9,7 @@ from ._era5 import download_era5, gen_forcing_era5
 from ._gap_filler import fill_gap_all
 
 
-from ._plot import plot_comp, plot_day_clm
+from ._plot import plot_comp, plot_day_clm, plot_rsl
 
 
 from ._ohm import derive_ohm_coef, sim_ohm, replace_ohm_coeffs
@@ -26,7 +26,7 @@ from ._atm import (
     cal_gs_obs,
     calib_g,
 )
-from ._io import read_suews, parse_suews_datetime, read_forcing
+from ._io import read_suews, read_forcing
 
 from ._wrf import extract_reclassification, plot_reclassification
 

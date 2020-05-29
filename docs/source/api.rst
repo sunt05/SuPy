@@ -85,9 +85,10 @@ Plotting
 
     plot_comp
     plot_day_clm
+    plot_rsl
 
 Roughness Calculation
-~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
     :toctree: api/supy.util

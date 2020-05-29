@@ -129,3 +129,4 @@ SuPy.log
 .idea/
 
 .DS_Store
+src/data_test/ERA5_*.txt
