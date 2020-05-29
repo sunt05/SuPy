@@ -7,7 +7,7 @@ Version History
 .. toctree::
    :maxdepth: 1
 
-   dev
+   20200529
    20200202
    20190829
    20190717
