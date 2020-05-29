@@ -1,8 +1,8 @@
-from typing import Tuple
-import pandas as pd
-import numpy as np
-
 from pathlib import Path
+from typing import Tuple
+
+import numpy as np
+import pandas as pd
 
 
 #################################################################
@@ -321,7 +321,6 @@ def gen_epw(
     lon,
     tz=0,
     path_epw=Path("./uTMY.epw"),
-    ratio_dif_dir=0.15,
 ) -> Tuple[pd.DataFrame, str, Path]:
     """Generate an `epw` file of uTMY (urbanised Typical Meteorological Year) using SUEWS simulation results
 
@@ -331,8 +330,6 @@ def gen_epw(
         SUEWS simulation results.
     path_epw : Path, optional
         Path to store generated epw file, by default Path('./uTMY.epw').
-    ratio_dif_dir : float, optional
-        Ratio between direct and diffuse solar radiation, by default 0.15.
     lat: float
         Latitude of the site, used for calculating solar angle.
     lon: float
@@ -349,7 +346,6 @@ def gen_epw(
 
     """
     import atmosp
-    import datetime
     from pathlib import Path
     import pvlib
 

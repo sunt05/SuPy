@@ -1,13 +1,10 @@
 import functools
-from ast import literal_eval
 from datetime import timedelta
-from multiprocessing import cpu_count
 from pathlib import Path
 
 import f90nml
 import numpy as np
 import pandas as pd
-
 from supy_driver import suews_driver as sd
 
 from ._env import logger_supy, path_supy_module
@@ -1153,27 +1150,22 @@ def load_SUEWS_SurfaceChar_df(path_input):
         val = df_gridSurfaceChar_exp.loc[:, var].values
         if "_24hr" in var:
             dim_x = dim[-1::-1]
-            # val = df_gridSurfaceChar_exp.loc[:, var].values
             val_x = val.reshape((len_grid, *dim_x)).transpose((0, 2, 1))
             dict_gridSurfaceChar.update({var: val_x})
         elif var == "laipower":
             dim_x = dim[-1::-1]
-            # val = df_gridSurfaceChar_exp.loc[:, var].values
             val_x = val.reshape((len_grid, *dim_x)).transpose((0, 2, 1))
             dict_gridSurfaceChar.update({var: val_x})
         elif var == "storedrainprm":
             dim_x = dim
-            # val = df_gridSurfaceChar_exp.loc[:, var].values
             val_x = val.reshape((len_grid, *dim_x))
             dict_gridSurfaceChar.update({var: val_x})
         elif var == "ohm_coef":
             dim_x = dim
-            # val = df_gridSurfaceChar_exp.loc[:, var].values
             val_x = val.reshape((len_grid, *dim_x))
             dict_gridSurfaceChar.update({var: val_x})
         elif var == "waterdist":
             dim_x = dict_var_ndim[var]  # [-1::-1]
-            # val = df_gridSurfaceChar_exp.loc[:, var].values
             val_x0 = val.reshape((len_grid, 9, 6))
             # directly load the values for commen land covers
             val_x1 = val_x0[:, :7]

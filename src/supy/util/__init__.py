@@ -26,7 +26,7 @@ from ._atm import (
     cal_gs_obs,
     calib_g,
 )
-from ._io import read_suews, set_index_dt, read_forcing
+from ._io import read_suews, read_forcing
 
 from ._wrf import extract_reclassification, plot_reclassification
 

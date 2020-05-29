@@ -1,17 +1,17 @@
 # suppress pandas warnings
 
+import logging
 import os
+import shutil
 import time
 import warnings
 from pathlib import Path
-import shutil
 
 import numpy as np
 import pandas as pd
 from numpy import cos, deg2rad, sin, sqrt
 
 from .._env import logger_supy
-import logging
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
@@ -712,8 +712,6 @@ def gen_forcing_era5(
 
 # format dataframe to SUEWS convention
 def format_df_forcing(df_forcing_raw):
-    from atmosp import calculate as ac
-
     df_forcing_grid = df_forcing_raw.copy()
 
     # convert energy fluxes: [J m-2] to [W m-2]
