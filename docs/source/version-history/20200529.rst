@@ -1,13 +1,14 @@
 .. _new_dev:
 
 
-Version Dev
+Version 2020.5.29
 ======================================================
 
 
 - **New**
 
   1. Update supy-driver to `2020a` iteration.
+  2. Add function for plotting RSL variables `supy.util.plot_rsl`.
 
 
 - **Improvement**
@@ -21,7 +22,8 @@ Version Dev
 
 - **Fix**
 
-  None.
+  1. Fix the humidity variable in ERA5-based forcing generation.
+  2. Fix the impact study tutorial.
 
 
 - **Known issue**
