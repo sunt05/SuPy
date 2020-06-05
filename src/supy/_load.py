@@ -860,9 +860,18 @@ def build_code_df(code, path_input, df_base):
         df_code = df_code0.loc[list_code, list_keys]
     except Exception as e:
         logger_supy.exception(f"Entries missing from {lib_code}")
-        logger_supy.exception(f"list_code:\n {list_code} \n {df_code0.index}")
-        logger_supy.exception(f"list_keys:\n {list_keys} \n {df_code0.columns}")
-        logger_supy.exception(f"Entries missing from {lib_code}")
+        list_missing_code= [code for code in list_code if code not in df_code0.index]
+        list_missing_key= [key for key in list_keys if key not in df_code0.columns]
+        if list_missing_code:
+            logger_supy.exception(f"missing code:\n {list_missing_code}")
+        if list_missing_key:
+            logger_supy.exception(f"missing key:\n {list_missing_key}")
+
+        # dump data for debugging
+        path_dump=Path.cwd()/'df_code0.pkl'
+        df_code0.to_pickle(path_dump)
+        logger_supy.exception(f"`df_code0` has been dumped into {path_dump.resolve()} for debugging!")
+
         raise e
 
     df_code.index = df_base.index

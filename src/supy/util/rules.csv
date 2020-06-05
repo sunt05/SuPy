@@ -153,7 +153,7 @@ From,To,Action,File,Variable,Column,Value
 2016a,2017a,Add,SUEWS_ESTMCoefficients.txt,Internal_CHroof,51,0.001
 2016a,2017a,Add,SUEWS_ESTMCoefficients.txt,Internal_CHbld,52,0.001
 2016a,2017a,Add,SUEWS_SiteSelect.txt,Timezone,7,0
-2016a,2017a,Add,SUEWS_SiteSelect.txt,z,10,999
+2016a,2017a,Add,SUEWS_SiteSelect.txt,z,10,40
 2016a,2017a,Add,SUEWS_SiteSelect.txt,TrafficRate,34,99999
 2016a,2017a,Add,SUEWS_SiteSelect.txt,BuildEnergyUse,35,99999
 2016a,2017a,Add,SUEWS_SiteSelect.txt,ActivityProfWD,54,5663
