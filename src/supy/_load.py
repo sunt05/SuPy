@@ -860,17 +860,19 @@ def build_code_df(code, path_input, df_base):
         df_code = df_code0.loc[list_code, list_keys]
     except Exception as e:
         logger_supy.exception(f"Entries missing from {lib_code}")
-        list_missing_code= [code for code in list_code if code not in df_code0.index]
-        list_missing_key= [key for key in list_keys if key not in df_code0.columns]
+        list_missing_code = [code for code in list_code if code not in df_code0.index]
+        list_missing_key = [key for key in list_keys if key not in df_code0.columns]
         if list_missing_code:
             logger_supy.exception(f"missing code:\n {list_missing_code}")
         if list_missing_key:
             logger_supy.exception(f"missing key:\n {list_missing_key}")
 
         # dump data for debugging
-        path_dump=Path.cwd()/'df_code0.pkl'
+        path_dump = Path.cwd() / "df_code0.pkl"
         df_code0.to_pickle(path_dump)
-        logger_supy.exception(f"`df_code0` has been dumped into {path_dump.resolve()} for debugging!")
+        logger_supy.exception(
+            f"`df_code0` has been dumped into {path_dump.resolve()} for debugging!"
+        )
 
         raise e
 
@@ -1334,16 +1336,30 @@ dict_InitCond_default.update(dict_InitCond_out)
 # load initial conditions of all grids as a DataFrame
 def load_SUEWS_InitialCond_df(path_runcontrol):
     # load basic model settings
+    logger_supy.debug("loading runcontrol")
     dict_ModConfig = load_SUEWS_dict_ModConfig(path_runcontrol)
     # path for SUEWS input tables:
     path_input = path_runcontrol.parent / dict_ModConfig["fileinputpath"]
+    logger_supy.debug("loading df_gridSurfaceChar")
     df_gridSurfaceChar = load_SUEWS_SurfaceChar_df(path_input)
+    df_gridSurfaceChar.to_pickle("df_gridSurfaceChar.pkl")
     # only use the first year of each grid as base for initial conditions
-    df_init = df_gridSurfaceChar.groupby("Grid").aggregate(np.min)
+    logger_supy.debug("grouping grids")
+    grp_df = df_gridSurfaceChar.sort_values(("year", "0")).groupby("Grid")
+    # detect if multiple years are set for a single grid:
+    # supy will only choose the first year to proceed
+    # a warning will be issued
+    n_year_grid=grp_df.size()
+    if (n_year_grid>1).any():
+        loc_grid=n_year_grid.loc[n_year_grid>1].index
+        logger_supy.warning(f'multiple years are set for grids: {loc_grid}; SuPy will proceed with records of the first year of each grid')
+    df_init = grp_df.first()
+    # df_init = df_gridSurfaceChar
     # rename 'Grid' to 'grid' for consistency
-    df_init.index.set_names("grid")
+    df_init.index = df_init.index.rename("grid")
 
     # incorporate numeric entries from dict_ModConfig
+    logger_supy.debug("incorporating runcontrol numeric entries")
     list_var_dim_from_dict_ModConfig = [
         (var, 0, val)
         for var, val in dict_ModConfig.items()
@@ -1354,6 +1370,7 @@ def load_SUEWS_InitialCond_df(path_runcontrol):
     df_init = modify_df_init(df_init, list_var_dim_from_dict_ModConfig)
 
     # initialise df_InitialCond_grid with default values
+    logger_supy.debug("adding initial condition namelists")
     for k in dict_InitCond_default:
         # df_InitialCond_grid[k] = dict_InitCond_default[k]
         df_init[(k, "0")] = dict_InitCond_default[k]
@@ -1585,24 +1602,31 @@ def load_InitialCond_grid_df(path_runcontrol, force_reload=True):
         logger_supy.info("All cache cleared.")
 
     # load base df of InitialCond
+    logger_supy.debug("loading base df_init...")
     df_init = load_SUEWS_InitialCond_df(path_runcontrol)
 
     # add Initial Condition variables from namelist file
+    logger_supy.debug("adding initial conditions...")
     df_init = add_file_init_df(df_init)
 
     # add surface specific info into `df_init`
+    logger_supy.debug("adding surface specific conditions...")
     df_init = add_sfc_init_df(df_init)
 
     # add veg info into `df_init`
+    logger_supy.debug("adding vegetation specific conditions...")
     df_init = add_veg_init_df(df_init)
 
     # add initial daily state into `df_init`
+    logger_supy.debug("adding dailystate specific conditions...")
     df_init = add_state_init_df(df_init)
 
     # # sort column names for consistency
+    logger_supy.debug("cleaning columns...")
     df_init.index.set_names("grid", inplace=True)
 
     # filter out unnecessary entries by re-arranging the columns
+    logger_supy.debug("cleaning columns...")
     df_init = trim_df_state(df_init)
 
     # normalise surface fractions to prevent non-1 sums

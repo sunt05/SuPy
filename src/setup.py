@@ -54,7 +54,7 @@ setup(
         'pvlib',  # TMY-related solar radiation calculations
         "floweaver",  # wrf reclassification Sankey chart
         "platypus-opt==1.0.4", # a multi-objective optimiser
-        "supy_driver==2020a9",  # a separate f2py-based driver
+        "supy_driver==2020a10",  # a separate f2py-based driver
     ],
     entry_points={
         #   command line tools

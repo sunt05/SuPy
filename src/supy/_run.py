@@ -305,8 +305,6 @@ def run_supy_ser(
             for grid in list_grid:
                 dict_state_start = dict_state[(tstep, grid)]
                 # calculation at one step:
-                # series_state_end, series_output_tstep = suews_cal_tstep_df(
-                #     series_state_start, met_forcing_tstep)
                 try:
                     dict_state_end, dict_output_tstep = suews_cal_tstep(
                         dict_state_start, met_forcing_tstep

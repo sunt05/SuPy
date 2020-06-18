@@ -130,7 +130,7 @@ def init_supy(path_init: str, force_reload=True, check_input=False,) -> pd.DataF
 # TODO:
 # to be superseded by a more generic wrapper: load_forcing
 def load_forcing_grid(
-    path_runcontrol: str, grid: int, check_input=False,
+    path_runcontrol: str, grid: int, check_input=False, force_reload=True
 ) -> pd.DataFrame:
     """Load forcing data for a specific grid included in the index of `df_state_init </data-structure/supy-io.ipynb#df_state_init:-model-initial-states>`.
 
@@ -169,7 +169,7 @@ def load_forcing_grid(
         logger_supy.exception(f"{path_runcontrol} does not exists!")
     else:
         dict_mod_cfg = load_SUEWS_dict_ModConfig(path_runcontrol)
-        df_state_init = init_supy(path_runcontrol)
+        df_state_init = init_supy(path_runcontrol, force_reload)
 
         # load setting variables from dict_mod_cfg
         (
