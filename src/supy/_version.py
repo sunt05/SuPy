@@ -12,7 +12,7 @@ __version__ = f"{ser_ver.ver_milestone}.{ser_ver.ver_major}.{ser_ver.ver_minor}{
 __version_driver__ = sd_ver
 
 
-def show_versions():
+def show_version():
     """print `supy` and `supy_driver` version information.
     """
     print("SuPy versions")
