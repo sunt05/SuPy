@@ -1342,7 +1342,7 @@ def load_SUEWS_InitialCond_df(path_runcontrol):
     path_input = path_runcontrol.parent / dict_ModConfig["fileinputpath"]
     logger_supy.debug("loading df_gridSurfaceChar")
     df_gridSurfaceChar = load_SUEWS_SurfaceChar_df(path_input)
-    df_gridSurfaceChar.to_pickle("df_gridSurfaceChar.pkl")
+    # df_gridSurfaceChar.to_pickle("df_gridSurfaceChar.pkl")
     # only use the first year of each grid as base for initial conditions
     logger_supy.debug("grouping grids")
     grp_df = df_gridSurfaceChar.sort_values(("year", "0")).groupby("Grid")

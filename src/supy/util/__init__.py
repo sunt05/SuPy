@@ -31,3 +31,5 @@ from ._io import read_suews, read_forcing
 from ._wrf import extract_reclassification, plot_reclassification
 
 from ._roughness import optimize_MO, cal_neutral
+
+from ._debug import diag_rsl, diag_rsl_prm
