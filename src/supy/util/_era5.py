@@ -433,7 +433,7 @@ def download_era5(
     start: str,
     end: str,
     dir_save=Path("."),
-        grid=None,
+    grid=None,
     scale=0,
     logging_level=logging.INFO,
 ) -> dict:
@@ -513,7 +513,7 @@ def gen_req_era5(
     lon_x: float,
     start: str,
     end: str,
-        grid=None,
+    grid=None,
     scale=0,
     dir_save=Path("."),
 ) -> dict:
@@ -575,22 +575,34 @@ def load_filelist_era5(
     lon_x: float,
     start: str,
     end: str,
-        grid=None,
+    grid=None,
     scale=0,
-    dir_save=Path("."),
+    dir_save=".",
+    force_download=True,
     logging_level=logging.INFO,
 ):
+    path_dir_save = Path(dir_save)
     # download data: existing files will be excluded from the downloading list
     if grid is None:
         grid = [0.125, 0.125]
-    download_era5(lat_x, lon_x, start, end, dir_save, grid, scale, logging_level)
+    if force_download:
+        # force download all required files
+        download_era5(
+            lat_x, lon_x, start, end, path_dir_save, grid, scale, logging_level
+        )
 
-    # attempt to generate requests
-    dict_req_all = gen_req_era5(lat_x, lon_x, start, end, grid, scale, dir_save)
+        # attempt to generate requests
+        dict_req_all = gen_req_era5(
+            lat_x, lon_x, start, end, grid, scale, path_dir_save
+        )
 
-    # downloaded files
-    list_fn_sfc = [fn for fn in dict_req_all.keys() if fn.endswith("sfc.nc")]
-    list_fn_ml = [fn for fn in dict_req_all.keys() if fn.endswith("ml.nc")]
+        # downloaded files
+        list_fn_sfc = [fn for fn in dict_req_all.keys() if fn.endswith("sfc.nc")]
+        list_fn_ml = [fn for fn in dict_req_all.keys() if fn.endswith("ml.nc")]
+    else:
+        # use files existing in `dir_save`:
+        list_fn_sfc = sorted([fn for fn in path_dir_save.glob("*sfc.nc")])
+        list_fn_ml = sorted([fn for fn in path_dir_save.glob("*ml.nc")])
 
     return list_fn_sfc, list_fn_ml
 
@@ -602,9 +614,10 @@ def gen_forcing_era5(
     start: str,
     end: str,
     dir_save=Path("."),
-        grid=None,
+    grid=None,
     hgt_agl_diag=100.0,
     scale=0,
+    force_download=True,
     simple_mode=True,
     logging_level=logging.INFO,
 ) -> list:
@@ -629,6 +642,9 @@ def gen_forcing_era5(
     scale : int, optional
         scaling factor that determines the area of interest (i.e., `area=grid[0]*scale`),
         by default 0
+    force_download: boolean, optional
+        flag to determine whether to download required ERA5 netCDF files; if `False`, all ERA5-related nc files in `dir_save` will be picked up for generation.
+        by default True.
     simple_mode: boolean
         if use the *simple* mode for diagnosing the forcing variables, by default `True`.
         In the simple mode, temperature is diagnosed using environmental lapse rate 6.5 K/km and wind speed using MOST under neutral condition.
@@ -654,16 +670,17 @@ def gen_forcing_era5(
             ECMWF, S. P. (2016). In IFS documentation CY41R2 Part IV: Physical Processes. ECMWF: Reading, UK, 111-113. https://www.ecmwf.int/en/elibrary/16648-part-iv-physical-processes
 
     """
+    import xarray as xr
+
     if grid is None:
         grid = [0.125, 0.125]
-    import xarray as xr
 
     # adjust logging level
     logger_supy.setLevel(logging_level)
 
     # download data
     list_fn_sfc, list_fn_ml = load_filelist_era5(
-        lat_x, lon_x, start, end, grid, scale, dir_save, logging_level
+        lat_x, lon_x, start, end, grid, scale, dir_save, force_download, logging_level
     )
 
     # load data from from `sfc` files
@@ -888,7 +905,7 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True
         )
 
     # merge altitude
-    ds_diag = ds_diag.merge(ds_alt_z).drop_sel("level")
+    ds_diag = ds_diag.merge(ds_alt_z).drop("level")
 
     return ds_diag
 
