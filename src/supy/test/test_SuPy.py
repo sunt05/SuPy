@@ -59,7 +59,7 @@ class TestSuPy(TestCase):
         df_state_init, df_forcing_tstep = sp.load_SampleData()
         df_state_init = pd.concat([df_state_init for x in range(n_grid)])
         df_state_init.index = pd.RangeIndex(n_grid, name="grid")
-        df_forcing_part = df_forcing_tstep.iloc[:288*60]
+        df_forcing_part = df_forcing_tstep.iloc[: 288 * 60]
         df_output, df_state = sp.run_supy(df_forcing_part, df_state_init)
 
         test_success_sim = np.all([not df_output.empty, not df_state.empty,])
@@ -168,22 +168,33 @@ class TestSuPy(TestCase):
         test_common_all = set_var_df_init == set_var_common
         self.assertTrue(test_common_all)
 
-    # # test ERA5 forcing generation
-    # def test_gen_forcing(self):
-    #     import xarray as xr
-    #     # mimic downloading
-    #     dict_era5_file = sp.util.download_era5(
-    #         57.7081, 11.9653, "20030101", "20031231", dir_save="./data_test"
-    #     )
-    #     list_fn_ml = [k for k in dict_era5_file.keys() if "ml" in k]
-    #     list_fn_sfc = [k for k in dict_era5_file.keys() if "sfc" in k]
-    #     # test forcing generation
-    #     list_fn_fc = sp.util.gen_forcing_era5(
-    #         57.7081, 11.9653, "20030101", "20031231", dir_save="./data_test"
-    #     )
-    #     df_forcing = sp.util.read_suews(list_fn_fc[0])
-    #     ds_sfc = xr.open_mfdataset(list_fn_sfc)
-    #     ser_t2 = ds_sfc.t2m.to_series()
-    #     res_dif=((df_forcing.Tair + 273.15 - ser_t2.values) / 98).round(4)
-    #     test_dif= -0.0066<res_dif.max()<-0.0063
-    #     self.assertTrue(test_dif)
+    # test ERA5 forcing generation
+    def test_gen_forcing(self):
+        import xarray as xr
+
+        # # mimic downloading
+        # dict_era5_file = sp.util.download_era5(
+        #     57.7081,
+        #     11.9653,
+        #     "20030101",
+        #     "20031231",
+        #     dir_save="./data_test/single-grid",
+        # )
+        # list_fn_ml = [k for k in dict_era5file.keys() if "ml" in k]
+        # list_fn_sfc = [k for k in dict_era5_file.keys() if "sfc" in k]
+        # test forcing generation
+        list_fn_fc = sp.util.gen_forcing_era5(
+            57.7081,
+            11.9653,
+            "20030101",
+            "20031231",
+            dir_save="./data_test/multi-grid",
+            force_download=False,
+        )
+        df_forcing = sp.util.read_suews(list_fn_fc[0])
+        ser_tair=df_forcing.Tair
+        # ds_sfc = xr.open_mfdataset(list_fn_sfc)
+        # ser_t2 = ds_sfc.t2m.to_series()
+        # res_dif = ((df_forcing.Tair + 273.15 - ser_t2.values) / 98).round(4)
+        test_dif = -30 < ser_tair.max() < 100
+        self.assertTrue(test_dif)
