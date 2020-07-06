@@ -130,3 +130,5 @@ SuPy.log
 
 .DS_Store
 src/data_test/*/ERA5_*.txt
+
+Output/
