@@ -10,7 +10,7 @@ To familiarise users with SuPy urban climate modelling and to demonstrate the fu
   :maxdepth: 1
 
   quick-start
-  impact-studies-parallel
+  impact-studies
   external-interaction
   AMF-sim
 
