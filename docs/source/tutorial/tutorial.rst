@@ -1,7 +1,7 @@
 .. _tutorial_index:
 
 Tutorials
-==================================
+=========
 
 
 To familiarise users with SuPy urban climate modelling and to demonstrate the functionality of SuPy, we provide the following tutorials in `Jupyter notebooks <https://jupyter.org/>`_:
@@ -10,7 +10,7 @@ To familiarise users with SuPy urban climate modelling and to demonstrate the fu
   :maxdepth: 1
 
   quick-start
-  impact-studies-parallel
+  impact-studies
   external-interaction
   AMF-sim
 
@@ -35,7 +35,8 @@ Admittedly, this header is somewhat misleading: given the enormity of Python, it
 
         python3 -m pip install jupyter -U
 
-  - Extensions: To empower your Jupyter Notebook environment with better productivity, please check out the `Unofficial Jupyter Notebook Extensions <https://jupyter-contrib-nbextensions.readthedocs.io/en/latest/>`_. Quick introductory blogs can be found `here <https://towardsdatascience.com/jupyter-notebook-extensions-517fa69d2231>`_ and `here <https://towardsdatascience.com/bringing-the-best-out-of-jupyter-notebooks-for-data-science-f0871519ca29>`_.
+  - Extensions: To empower your Jupyter Notebook environment with better productivity, please check out the `Unofficial Jupyter Notebook Extensions <https://jupyter-contrib-nbextensions.readthedocs.io/en/latest/>`_.
+    Quick introductory blogs can be found `here <https://towardsdatascience.com/jupyter-notebook-extensions-517fa69d2231>`_ and `here <https://towardsdatascience.com/bringing-the-best-out-of-jupyter-notebooks-for-data-science-f0871519ca29>`_.
 
 
 - pandas: `pandas` is heavily used in SuPy and thus better understanding of pandas is essential in SuPy workflows.
