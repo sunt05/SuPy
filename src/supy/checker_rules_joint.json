@@ -1,0 +1,1748 @@
+{
+    "aerodynamicresistancemethod": {
+        "cat": "cfg",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "ah_min": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "ah_slope_cooling": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "ah_slope_heating": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "h_maintain": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "mm"
+    },
+    "ahprof_24hr": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "alb": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "albdectr_id": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "albevetr_id": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "albgrass_id": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "albmax_dectr": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "albmax_evetr": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "albmax_grass": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "albmin_dectr": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "albmin_evetr": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "albmin_grass": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "alpha_bioco2": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "alpha_enh_bioco2": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "alt": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "baset": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "1"
+    },
+    "basete": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "1"
+    },
+    "basetmethod": {
+        "cat": "grid",
+        "logic": "method",
+        "param": {
+            "allowed": [
+                1,
+                2
+            ]
+        },
+        "unit": "1"
+    },
+    "baset_hc": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "1"
+    },
+    "beta_bioco2": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "beta_enh_bioco2": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "bldgh": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "capmax_dec": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 10,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "capmin_dec": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "chanohm": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "co2pointsource": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "cpanohm": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "crwmax": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "crwmin": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "daywat": {
+        "cat": "grid",
+        "logic": "method",
+        "param": {
+            "allowed": [
+                0,
+                1
+            ]
+        },
+        "unit": "1"
+    },
+    "daywatper": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "decidcap_id": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "dectreeh": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "diagnose": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "diagqn": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "diagqs": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "dqndt": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "dqnsdt": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "drainrt": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "dt_since_start": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "ef_umolco2perj": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "emis": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "emissionsmethod": {
+        "cat": "grid",
+        "logic": "method",
+        "param": {
+            "allowed": [
+                0,
+                1,
+                2,
+                3
+            ]
+        },
+        "unit": "1"
+    },
+    "enddls": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 366,
+            "min": 1
+        },
+        "unit": "1"
+    },
+    "enef_v_jkm": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "evapmethod": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "evetreeh": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "faibldg": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "faidectree": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "faievetree": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "faut": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "fcef_v_kgkm": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "fcld": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": ""
+    },
+    "flowchange": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "frfossilfuel_heat": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "frfossilfuel_nonheat": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "g1": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 10,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "g2": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "g3": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "g4": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "g5": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "g6": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "gdd_id": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "1"
+    },
+    "gddfull": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "gridiv": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "gsmodel": {
+        "cat": "grid",
+        "logic": "method",
+        "param": {
+            "allowed": [
+                1,
+                2
+            ]
+        },
+        "unit": "1"
+    },
+    "hdd_id": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "1"
+    },
+    "humactivity_24hr": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "icefrac": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "ie_a": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "ie_end": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 366,
+            "min": 1
+        },
+        "unit": "1"
+    },
+    "ie_m": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "ie_start": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 366,
+            "min": 1
+        },
+        "unit": "1"
+    },
+    "internalwateruse_h": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "irrfracpaved": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "irrfracbldgs": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "irrfracevetr": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "irrfracdectr": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "irrfracgrass": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "irrfracbsoil": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "irrfracwater": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "kdiff": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1000,
+            "min": 0
+        },
+        "unit": "W m-2"
+    },
+    "kdir": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1400,
+            "min": 0
+        },
+        "unit": "W m-2"
+    },
+    "kdown": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1400,
+            "min": 0
+        },
+        "unit": "W m-2"
+    },
+    "kkanohm": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "kmax": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "lai": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 10,
+            "min": 0
+        },
+        "unit": "m2 m-2"
+    },
+    "lai_id": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "laicalcyes": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "laimax": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "laimin": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "laipower": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "laitype": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "lat": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 90,
+            "min": -90
+        },
+        "unit": "1"
+    },
+    "ldown": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 600,
+            "min": 100
+        },
+        "unit": "W m-2"
+    },
+    "lenday_id": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "lng": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 180,
+            "min": -180
+        },
+        "unit": "1"
+    },
+    "maxconductance": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "maxfcmetab": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "1"
+    },
+    "maxqfmetab": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "min_res_bioco2": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "minfcmetab": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "1"
+    },
+    "minqfmetab": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "narp_emis_snow": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "narp_trans_site": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "netradiationmethod": {
+        "cat": "grid",
+        "logic": "method",
+        "param": {
+            "allowed": [
+                0,
+                1,
+                2,
+                3,
+                100,
+                200,
+                300
+            ]
+        },
+        "unit": "1"
+    },
+    "ohm_coef": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "ohm_threshsw": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "1"
+    },
+    "ohm_threshwd": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "ohmincqf": {
+        "cat": "grid",
+        "logic": "method",
+        "param": {
+            "allowed": [
+                0,
+                1
+            ]
+        },
+        "unit": "1"
+    },
+    "pipecapacity": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "popdensdaytime": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "popdensnighttime": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "popprof_24hr": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "pormax_dec": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "pormin_dec": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "porosity_id": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "preciplimit": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "preciplimitalb": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "pres": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1300,
+            "min": 800
+        },
+        "unit": "hPa"
+    },
+    "qe": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1300,
+            "min": -500
+        },
+        "unit": "W m-2"
+    },
+    "qf": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1300,
+            "min": -500
+        },
+        "unit": "W m-2"
+    },
+    "qf_a": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "qf_b": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "qf_c": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "qf0_beu": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "qh": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1300,
+            "min": -500
+        },
+        "unit": "W m-2"
+    },
+    "qn": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1300,
+            "min": -500
+        },
+        "unit": "W m-2"
+    },
+    "qn1_av": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "qn1_s_av": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "qs": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 650,
+            "min": -100
+        },
+        "unit": "W m-2"
+    },
+    "radmeltfact": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "rain": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "mm"
+    },
+    "raincover": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "rainmaxres": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "resp_a": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "resp_b": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "RH": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 105,
+            "min": 0.0001
+        },
+        "unit": "%"
+    },
+    "roughlenheatmethod": {
+        "cat": "grid",
+        "logic": "method",
+        "param": {
+            "allowed": [
+                1,
+                2,
+                3,
+                4
+            ]
+        },
+        "unit": "1"
+    },
+    "roughlenmommethod": {
+        "cat": "grid",
+        "logic": "method",
+        "param": {
+            "allowed": [
+                1,
+                2,
+                3
+            ]
+        },
+        "unit": "1"
+    },
+    "runofftowater": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "s1": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "s2": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "sathydraulicconduct": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "sdd_id": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "1"
+    },
+    "sddfull": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "1"
+    },
+    "sfr": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "smdmethod": {
+        "cat": "grid",
+        "logic": "method",
+        "param": {
+            "allowed": [
+                0,
+                1,
+                2
+            ]
+        },
+        "unit": "1"
+    },
+    "snow": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": ""
+    },
+    "snowalb": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "snowalbmax": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "snowalbmin": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "snowdens": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "snowdensmax": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "snowdensmin": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "snowfallcum": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "snowfrac": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "snowlimbldg": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "snowlimpaved": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "snowpack": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "snowpacklimit": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "snowprof_24hr": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "snowuse": {
+        "cat": "grid",
+        "logic": "method",
+        "param": {
+            "allowed": [
+                0,
+                1
+            ]
+        },
+        "unit": "1"
+    },
+    "snowwater": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "soildepth": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "soilstore_id": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "soilstorecap": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "stabilitymethod": {
+        "cat": "grid",
+        "logic": "method",
+        "param": {
+            "allowed": [
+                0,
+                1,
+                2,
+                3,
+                4
+            ]
+        },
+        "unit": "1"
+    },
+    "startdls": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 366,
+            "min": 1
+        },
+        "unit": "1"
+    },
+    "state_id": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "statelimit": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "storageheatmethod": {
+        "cat": "grid",
+        "logic": "method",
+        "param": {
+            "allowed": [
+                1
+            ]
+        },
+        "unit": "1"
+    },
+    "storedrainprm": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "surfacearea": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "baset_cooling": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "1"
+    },
+    "baset_heating": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "1"
+    },
+    "Tair": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 90,
+            "min": -60
+        },
+        "unit": "degC"
+    },
+    "tair_av": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 363.15,
+            "min": 213.15
+        },
+        "unit": "1"
+    },
+    "tau_a": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 10,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "tau_f": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "tau_r": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "tempmeltfact": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "th": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "1"
+    },
+    "theta_bioco2": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "timezone": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 24,
+            "min": -24
+        },
+        "unit": "1"
+    },
+    "tl": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "1"
+    },
+    "tmax_id": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "1"
+    },
+    "tmin_id": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": "-inf"
+        },
+        "unit": "1"
+    },
+    "trafficrate": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "trafficunits": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "traffprof_24hr": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "tstep": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "tstep_prev": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "U": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 60,
+            "min": 0.0001
+        },
+        "unit": "m s-1"
+    },
+    "veg_type": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "waterdist": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 1,
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "waterusemethod": {
+        "cat": "grid",
+        "logic": "method",
+        "param": {
+            "allowed": [
+                0,
+                1
+            ]
+        },
+        "unit": "1"
+    },
+    "wdir": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 360,
+            "min": 0
+        },
+        "unit": "degree"
+    },
+    "wetthresh": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "wuday_id": {
+        "cat": "grid",
+        "logic": "NA",
+        "param": {},
+        "unit": "1"
+    },
+    "wuh": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": 10,
+            "min": 0
+        },
+        "unit": "m3"
+    },
+    "wuprofa_24hr": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "wuprofm_24hr": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "xsmd": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": ""
+    },
+    "z": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "z0m_in": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    },
+    "zdm_in": {
+        "cat": "grid",
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
+        "unit": "1"
+    }
+}

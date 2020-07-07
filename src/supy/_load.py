@@ -1349,10 +1349,12 @@ def load_SUEWS_InitialCond_df(path_runcontrol):
     # detect if multiple years are set for a single grid:
     # supy will only choose the first year to proceed
     # a warning will be issued
-    n_year_grid=grp_df.size()
-    if (n_year_grid>1).any():
-        loc_grid=n_year_grid.loc[n_year_grid>1].index
-        logger_supy.warning(f'multiple years are set for grids: {loc_grid}; SuPy will proceed with records of the first year of each grid')
+    n_year_grid = grp_df.size()
+    if (n_year_grid > 1).any():
+        loc_grid = n_year_grid.loc[n_year_grid > 1].index
+        logger_supy.warning(
+            f"multiple years are set for grids: {loc_grid}; SuPy will proceed with records of the first year of each grid"
+        )
     df_init = grp_df.first()
     # df_init = df_gridSurfaceChar
     # rename 'Grid' to 'grid' for consistency
@@ -1660,3 +1662,23 @@ def load_df_state(path_csv: Path) -> pd.DataFrame:
         infer_datetime_format=True,
     )
     return df_state
+
+
+# flatten columns from MultiIndex to Index with compound notation
+def flatten_col(df_state: pd.DataFrame):
+    # original MultiIndex columsn
+    col_mi = df_state.columns
+    # flattened columns
+    col_flat = col_mi.map(
+        lambda s: (
+            "_".join(s)
+            .replace("_0", "")
+            .replace("(", "")
+            .replace(", ", "_")
+            .replace(",)", "")
+            .replace(")", "")
+        )
+    )
+    # replace columns with flattened ones
+    df_state_flat = df_state.set_axis(col_flat)
+    return df_state_flat

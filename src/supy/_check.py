@@ -10,7 +10,7 @@ import pandas as pd
 from ._env import logger_supy, path_supy_module
 
 # the check list file with ranges and logics
-path_rules = path_supy_module / "checker_rules.json"
+path_rules = path_supy_module / "checker_rules_indiv.json"
 
 
 # opening the check list file

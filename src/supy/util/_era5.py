@@ -977,7 +977,7 @@ def diag_era5(
     avdens = ac("rho", qv=q2, p=pres_z0, theta=t2)
 
     # vapour pressure
-    lv_j_kg = cal_lat_vap(q2, t2, pres_z0)
+    # lv_j_kg = cal_lat_vap(q2, t2, pres_z0)
 
     # heat capacity
     avcp = cal_cp(q2, t2, pres_z0)
@@ -1042,7 +1042,7 @@ def diag_era5(
         dif = np.mean(np.abs(t_z - tx_z))
         tx_z = t_z
     # get final `t_z` and store in the conformity to `t_za`
-    t_z = t_z + t_za * 0
+    t_z = tx_z + t_za * 0
 
     # relative humidity; cap at 105% if above
     RH_z = ac("RH", qv=q_z, p=p_z, T=t_z) + 0 * q_z
