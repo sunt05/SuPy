@@ -928,7 +928,7 @@ def diag_era5_simple(z0m, ustar, pres_z0, uv10, t2, q2, z):
 
     # barometric equation with varying temperature:
     # (https://en.wikipedia.org/wiki/Barometric_formula)
-    p_z = pres_z0 * (t2 / (t2 + env_lapse * (z - 2))) ** (grav / (rd * env_lapse))
+    p_z = pres_z0 * (t2 / t_z) ** (grav / (rd * env_lapse))
 
     # correct humidity assuming invariable relative humidity
     RH_z = ac("RH", qv=q2, p=pres_z0, T=t2) + 0 * t_z
