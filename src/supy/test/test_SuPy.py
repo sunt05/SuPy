@@ -153,7 +153,7 @@ class TestSuPy(TestCase):
     # test saving output files working
     def test_is_checking_complete(self):
         df_state_init, df_forcing_tstep = sp.load_SampleData()
-        dict_rules = sp._check.dict_rules
+        dict_rules = sp._check.dict_rules_indiv
 
         # variables in loaded dataframe
         set_var_df_init = set(df_state_init.columns.get_level_values("var"))

@@ -10,7 +10,7 @@ import pandas as pd
 from ._env import logger_supy, path_supy_module
 
 # the check list file with ranges and logics
-path_rules = path_supy_module / "checker_rules_indiv.json"
+path_rules_indiv = path_supy_module / "checker_rules_indiv.json"
 
 
 # opening the check list file
@@ -29,7 +29,7 @@ def load_rules(path_rules) -> Dict:
 
 
 # store rules as a dict
-dict_rules = load_rules(path_rules)
+dict_rules_indiv = load_rules(path_rules_indiv)
 
 # checking the range of each parameter
 def check_range(ser_to_check: pd.Series, rule_var: dict) -> Tuple:
@@ -191,7 +191,7 @@ def check_forcing(df_forcing: pd.DataFrame):
     for var in col_df:
         if var not in ["iy", "id", "it", "imin", "isec"]:
             ser_var = df_forcing[var]
-            res_check = check_range(ser_var, dict_rules)
+            res_check = check_range(ser_var, dict_rules_indiv)
             if not res_check[1]:
                 str_issue = res_check[2]
                 list_issues.append(str_issue)
@@ -210,7 +210,7 @@ def check_state(df_state: pd.DataFrame) -> List:
     # collect issues
     list_issues = []
     flag_valid = True
-    list_col_state = set(dict_rules.keys()).difference(
+    list_col_state = set(dict_rules_indiv.keys()).difference(
         [x.lower() for x in list_col_forcing]
     )
 
@@ -234,7 +234,7 @@ def check_state(df_state: pd.DataFrame) -> List:
     list_to_check = set(col_df).intersection(list_col_state)
     for var in list_to_check:
         # pack
-        val = dict_rules[var]
+        val = dict_rules_indiv[var]
         df_var = df_state[var]
         # 'NA' implies no checking required
         if val["logic"] != "NA":
@@ -242,7 +242,7 @@ def check_state(df_state: pd.DataFrame) -> List:
         if val["logic"] == "range":
             for ind in df_var.index:
                 ser_var = df_var.loc[ind].rename(var)
-                res_check = check_range(ser_var, dict_rules)
+                res_check = check_range(ser_var, dict_rules_indiv)
                 if not res_check[1]:
                     str_issue = res_check[2] + f" at index `{ind}`"
                     list_issues.append(str_issue)
@@ -250,7 +250,7 @@ def check_state(df_state: pd.DataFrame) -> List:
         if val["logic"] == "method":
             for ind in df_var.index:
                 ser_var = df_var.loc[ind].rename(var)
-                res_check = check_method(ser_var, dict_rules)
+                res_check = check_method(ser_var, dict_rules_indiv)
                 if not res_check[1]:
                     str_issue = res_check[2] + f" at index `{ind}`"
                     list_issues.append(str_issue)
@@ -262,3 +262,23 @@ def check_state(df_state: pd.DataFrame) -> List:
         return list_issues
     else:
         logger_supy.info("All checks for `df_state` passed!")
+
+
+# flatten columns from MultiIndex to Index with compound notation
+def flatten_col(df_state: pd.DataFrame):
+    # original MultiIndex columsn
+    col_mi = df_state.columns
+    # flattened columns
+    col_flat = col_mi.map(
+        lambda s: (
+            "_".join(s)
+            .replace("_0", "")
+            .replace("(", "")
+            .replace(", ", "_")
+            .replace(",)", "")
+            .replace(")", "")
+        )
+    )
+    # replace columns with flattened ones
+    df_state_flat = df_state.set_axis(col_flat)
+    return df_state_flat
