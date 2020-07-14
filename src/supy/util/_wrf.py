@@ -160,7 +160,8 @@ def plot_reclassification(
     Sankey Diagram
         Sankey Diagram showing the reclassification.
     """
-    from floweaver import (
+    try:
+        from floweaver import (
         Bundle,
         Dataset,
         Partition,
@@ -169,6 +170,9 @@ def plot_reclassification(
         SankeyDefinition,
         weave,
     )
+    except Exception as ie:
+        raise ImportError("Please install `floweaver` by `pip install floweaver`.")
+
 
     # derive DataFrames required by Sankey
     df_flow, df_process = gen_df_sankey(path_nml)
