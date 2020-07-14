@@ -42,7 +42,7 @@ setup(
         "tables",  # for dumping in hdf5
         "scipy",
         "scikit-learn",
-        "dask",  # needs all dask and its dependencies
+        "dask",  # needs dask for parallel tasks
         "f90nml",
         "matplotlib",
         "seaborn",
@@ -54,7 +54,7 @@ setup(
         'pvlib',  # TMY-related solar radiation calculations
         "floweaver",  # wrf reclassification Sankey chart
         "platypus-opt==1.0.4", # a multi-objective optimiser
-        "supy_driver==2020b1",  # a separate f2py-based driver
+        "supy_driver==2020b4",  # a separate f2py-based driver
     ],
     entry_points={
         #   command line tools

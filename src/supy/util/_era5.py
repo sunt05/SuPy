@@ -684,7 +684,9 @@ def gen_forcing_era5(
     )
 
     # load data from from `sfc` files
-    ds_sfc = xr.open_mfdataset(list_fn_sfc, concat_dim="time").load()
+    ds_sfc = xr.open_mfdataset(
+        list_fn_sfc, concat_dim="time", combine="by_coords"
+    ).load()
     # close dangling handlers
     ds_sfc.close()
 
@@ -820,12 +822,14 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True
     from atmosp import calculate as ac
 
     # load data from from `sfc` files
-    ds_sfc = xr.open_mfdataset(list_fn_sfc, concat_dim="time").load()
+    ds_sfc = xr.open_mfdataset(
+        list_fn_sfc, concat_dim="time", combine="by_coords"
+    ).load()
     # close dangling handlers
     ds_sfc.close()
 
     # load data from from `ml` files
-    ds_ml = xr.open_mfdataset(list_fn_ml, concat_dim="time").load()
+    ds_ml = xr.open_mfdataset(list_fn_ml, concat_dim="time", combine="by_coords").load()
     # close dangling handlers
     ds_ml.close()
 
@@ -905,7 +909,7 @@ def gen_ds_diag_era5(list_fn_sfc, list_fn_ml, hgt_agl_diag=100, simple_mode=True
         )
 
     # merge altitude
-    ds_diag = ds_diag.merge(ds_alt_z).drop("level")
+    ds_diag = ds_diag.merge(ds_alt_z).drop_vars("level")
 
     return ds_diag
 
