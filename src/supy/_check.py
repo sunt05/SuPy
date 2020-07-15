@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 
 from ._env import logger_supy, path_supy_module
+from ._load import dict_var_type_forcing
 
 # the check list file with ranges and logics
 path_rules_indiv = path_supy_module / "checker_rules_indiv.json"
@@ -106,33 +107,7 @@ def check_method(ser_to_check: pd.Series, rule_var: dict) -> Tuple:
 #     df_sum.loc[len(df_sum)] = out_list
 
 #     return df_sum
-list_col_forcing = [
-    "iy",
-    "id",
-    "it",
-    "imin",
-    "qn",
-    "qh",
-    "qe",
-    "qs",
-    "qf",
-    "U",
-    "RH",
-    "Tair",
-    "pres",
-    "rain",
-    "kdown",
-    "snow",
-    "ldown",
-    "fcld",
-    "Wuh",
-    "xsmd",
-    "lai",
-    "kdiff",
-    "kdir",
-    "wdir",
-    "isec",
-]
+list_col_forcing = list(dict_var_type_forcing.keys())
 
 
 def check_forcing(df_forcing: pd.DataFrame):

@@ -192,24 +192,31 @@ def resample_output(df_output, freq="60T", dict_aggm=dict_var_aggm):
     return df_rsmp
 
 
-def proc_df_rsl(df_output):
+def proc_df_rsl(df_output, debug=False):
     try:
         # if we work on the whole output with multi-index columns
-        df_rsl = df_output["RSL"].copy()
+        df_rsl_raw = df_output["RSL"].copy()
     except:
         # if we directly work on the RSL output
-        df_rsl = df_output.copy()
+        df_rsl_raw = df_output.copy()
 
     try:
         # drop unnecessary columns if existing
-        df_rsl = df_rsl.drop(["Year", "DOY", "Hour", "Min", "Dectime"], axis=1)
+        df_rsl_data = df_rsl_raw.drop(["Year", "DOY", "Hour", "Min", "Dectime"], axis=1)
     except:
-        pass
+        df_rsl_data = df_rsl_raw
 
+    # retrieve data for plotting
+    df_rsl = df_rsl_data.iloc[:, : 30 * 4]
     df_rsl.columns = (
         df_rsl.columns.str.split("_")
         .map(lambda l: tuple([l[0], int(l[1])]))
         .rename(["var", "level"])
     )
     df_rsl_proc = df_rsl.stack()
-    return df_rsl_proc
+    if debug:
+        # retrieve debug variables
+        df_rsl_debug = df_rsl_data.iloc[:, -12:]
+        return df_rsl_proc, df_rsl_debug
+    else:
+        return df_rsl_proc

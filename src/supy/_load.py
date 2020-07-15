@@ -89,7 +89,7 @@ set_var_use = set_var_input.intersection(set_var_input_multitsteps)
 # 2. met forcing conditions will splitted into time steps and used to derive
 # other information
 
-
+######################################################################
 # descriptive list/dicts for variables
 # minimal required input files for configuration:
 list_file_input = [
@@ -138,6 +138,42 @@ dict_varSiteSelect2File = {
 dict_Code2File.update(dict_varSiteSelect2File)
 
 
+# define data types for different resampling schemes
+# time: temporal info
+# avg: average values of period ending at timestamps
+# inst: instantaneous values at timestamps
+# sum: sum of period ending at timestamps
+dict_var_type_forcing = {
+    "iy": "time",
+    "id": "time",
+    "it": "time",
+    "imin": "time",
+    "qn": "avg",
+    "qh": "avg",
+    "qe": "avg",
+    "qs": "avg",
+    "qf": "avg",
+    "U": "inst",
+    "RH": "inst",
+    "Tair": "inst",
+    "pres": "inst",
+    "rain": "sum",
+    "kdown": "avg",
+    "snow": "inst",
+    "ldown": "avg",
+    "fcld": "inst",
+    "Wuh": "sum",
+    "xsmd": "inst",
+    "lai": "inst",
+    "kdiff": "avg",
+    "kdir": "avg",
+    "wdir": "inst",
+    "isec": "time",
+}
+
+
+######################################################################
+# functions
 # extract metainfo of var from dict_info
 def extract_var_info(var_name, dict_info):
     dict_var_info = {"name": var_name}
@@ -520,51 +556,18 @@ def resample_forcing_met(
     # this line is kept for occasional debugging:
     # data_met_raw.to_pickle('data_met_raw.pkl')
 
-    # define data types for different resampling schemes
-    # time: temporal info
-    # avg: average values of period ending at timestamps
-    # inst: instantaneous values at timestamps
-    # sum: sum of period ending at timestamps
-    dict_var_type = {
-        "iy": "time",
-        "id": "time",
-        "it": "time",
-        "imin": "time",
-        "qn": "avg",
-        "qh": "avg",
-        "qe": "avg",
-        "qs": "avg",
-        "qf": "avg",
-        "U": "inst",
-        "RH": "inst",
-        "Tair": "inst",
-        "pres": "inst",
-        "rain": "sum",
-        "kdown": "avg",
-        "snow": "inst",
-        "ldown": "avg",
-        "fcld": "inst",
-        "Wuh": "sum",
-        "xsmd": "inst",
-        "lai": "inst",
-        "kdiff": "avg",
-        "kdir": "avg",
-        "wdir": "inst",
-        "isec": "time",
-    }
-
     # linear interpolation:
     # the interpolation schemes differ between instantaneous and average values
     # instantaneous:
     list_var_inst = [
-        var for var, data_type in dict_var_type.items() if data_type == "inst"
+        var for var, data_type in dict_var_type_forcing.items() if data_type == "inst"
     ]
     data_met_tstep_inst = resample_linear_inst(
         data_met_raw.filter(list_var_inst), tstep_in, tstep_mod
     )
     # average:
     list_var_avg = [
-        var for var, data_type in dict_var_type.items() if data_type == "avg"
+        var for var, data_type in dict_var_type_forcing.items() if data_type == "avg"
     ]
     data_met_tstep_avg = resample_linear_avg(
         data_met_raw.filter(list_var_avg), tstep_in, tstep_mod
@@ -573,7 +576,7 @@ def resample_forcing_met(
     # distributing interpolation:
     # sum:
     list_var_sum = [
-        var for var, data_type in dict_var_type.items() if data_type == "sum"
+        var for var, data_type in dict_var_type_forcing.items() if data_type == "sum"
     ]
     data_met_tstep_sum = resample_sum(
         data_met_raw.filter(list_var_sum), tstep_mod, tstep_in
@@ -596,7 +599,7 @@ def resample_forcing_met(
     data_met_tstep["it"] = data_met_tstep.index.hour
     data_met_tstep["imin"] = data_met_tstep.index.minute
     data_met_tstep["isec"] = data_met_tstep.index.second
-    data_met_tstep = data_met_tstep.filter(list(dict_var_type.keys()))
+    data_met_tstep = data_met_tstep.filter(list(dict_var_type_forcing.keys()))
     data_met_tstep = data_met_tstep.replace(np.nan, -999)
 
     return data_met_tstep
@@ -699,32 +702,8 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, file_pattern):
     df_forcing_met = dd_forcing_met.compute()
     # `drop_duplicates` in case some duplicates mixed
     df_forcing_met = df_forcing_met.drop_duplicates()
-    col_suews_met_forcing = [
-        "iy",
-        "id",
-        "it",
-        "imin",
-        "qn",
-        "qh",
-        "qe",
-        "qs",
-        "qf",
-        "U",
-        "RH",
-        "Tair",
-        "pres",
-        "rain",
-        "kdown",
-        "snow",
-        "ldown",
-        "fcld",
-        "Wuh",
-        "xsmd",
-        "lai",
-        "kdiff",
-        "kdir",
-        "wdir",
-    ]
+    # drop `isec`: redundant for this dataframe
+    col_suews_met_forcing = list(dict_var_type_forcing.keys())[:-1]
     # rename these columns to match variables via the driver interface
     df_forcing_met.columns = col_suews_met_forcing
 

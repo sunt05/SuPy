@@ -731,6 +731,8 @@ def gen_forcing_era5(
 
 # format dataframe to SUEWS convention
 def format_df_forcing(df_forcing_raw):
+    from .._load import dict_var_type_forcing
+
     df_forcing_grid = df_forcing_raw.copy()
 
     # convert energy fluxes: [J m-2] to [W m-2]
@@ -763,33 +765,7 @@ def format_df_forcing(df_forcing_raw):
         axis=1,
     )
 
-    col_suews = [
-        "iy",
-        "id",
-        "it",
-        "imin",
-        "qn",
-        "qh",
-        "qe",
-        "qs",
-        "qf",
-        "U",
-        "RH",
-        "Tair",
-        "pres",
-        "rain",
-        "kdown",
-        "snow",
-        "ldown",
-        "fcld",
-        "Wuh",
-        "xsmd",
-        "lai",
-        "kdiff",
-        "kdir",
-        "wdir",
-        "alt_z",
-    ]
+    col_suews = list(dict_var_type_forcing.keys()) + ["alt_z"]
 
     df_forcing_grid = df_forcing_grid.reindex(col_suews, axis=1)
 

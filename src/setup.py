@@ -41,7 +41,6 @@ setup(
         "pandas>=0.25.1",
         "tables",  # for dumping in hdf5
         "scipy",
-        "scikit-learn",
         "dask",  # needs dask for parallel tasks
         "f90nml",
         "matplotlib",

@@ -123,12 +123,12 @@ def plot_day_clm(df_var, fig=None, ax=None, show_dif=False, col_ref="Obs"):
 
 # comparison plot with 1:1 line added:
 def plot_comp(
-        df_var,
-        scatter_kws={"alpha": 0.1, "s": 0.3, "color": "k"},
-        kde_kws={"shade": True, "shade_lowest": False, "levels": 4, },
-        show_pdf=False,
-        fig=None,
-        ax=None,
+    df_var,
+    scatter_kws={"alpha": 0.1, "s": 0.3, "color": "k"},
+    kde_kws={"shade": True, "shade_lowest": False, "levels": 4,},
+    show_pdf=False,
+    fig=None,
+    ax=None,
 ):
     """Produce a scatter plot with linear regression line to compare simulation results and observations.
 
@@ -339,7 +339,7 @@ def plot_colortable(colors, title, sort_colors=True, emptycols=0):
 
 # plotting RSL profiles
 def plot_rsl(
-        df_output, var=None, fig=None, ax=None,
+    df_output, var=None, fig=None, ax=None,
 ):
     """
     Produce a quick plot of RSL results
@@ -370,7 +370,10 @@ def plot_rsl(
     from .._post import proc_df_rsl
 
     # convert df_output to an easier format
-    df_rsl = proc_df_rsl(df_output)
+    df_rsl, df_rsl_debug = proc_df_rsl(df_output, debug=True)
+
+    # retrieve zH_RSL
+    zH_RSL = df_rsl_debug.zH_RSL
 
     # retrive heights: the number of levels is fixed to 30 as set in SUEWS
     ar_z = df_rsl.loc[:, "z"].iloc[:30].values
@@ -388,7 +391,11 @@ def plot_rsl(
         fig, axes = plt.subplots(1, 3, figsize=(12 * 0.68, 4), sharey=True)
         for var, ax in zip(["U", "T", "q"], axes.flat):
             for t in ser_t:
+                zH_RSL_t = zH_RSL.loc[t]
+                zh_diag = 10 if var == "U" else 2
                 _ = df_x.loc[t].plot(x=var, y="z", label=t, ax=ax)
+                _ = ax.axhline(y=zh_diag, linestyle="--", c="r", alpha=0.6)
+                _ = ax.axhline(y=zH_RSL_t, linestyle="-.", c="b", alpha=0.6)
                 _ = ax.set_ylabel("z (m)")
                 _ = ax.set_xlabel(var + " " + dict_xlabel[var])
         fig.tight_layout()
