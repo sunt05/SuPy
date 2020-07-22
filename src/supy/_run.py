@@ -1,7 +1,7 @@
 from shutil import rmtree
 import tempfile
 import copy
-import multiprocessing
+import multiprocess
 import os
 import sys
 import time
@@ -440,7 +440,7 @@ def run_supy_par(df_forcing_tstep, df_state_init_m, save_state, n_yr):
         list_dir_temp = [path_dir_temp for _ in range(n_grid)]
 
         # parallel run
-        with multiprocessing.Pool() as pool:
+        with multiprocess.Pool() as pool:
             pool.starmap(
                 run_save_supy,
                 zip(

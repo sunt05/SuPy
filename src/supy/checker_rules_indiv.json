@@ -414,20 +414,29 @@
     },
     "faibldg": {
         "cat": "grid",
-        "logic": "NA",
-        "param": {},
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
         "unit": "1"
     },
     "faidectree": {
         "cat": "grid",
-        "logic": "NA",
-        "param": {},
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
         "unit": "1"
     },
     "faievetree": {
         "cat": "grid",
-        "logic": "NA",
-        "param": {},
+        "logic": "range",
+        "param": {
+            "max": "inf",
+            "min": 0
+        },
         "unit": "1"
     },
     "faut": {

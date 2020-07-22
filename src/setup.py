@@ -48,11 +48,12 @@ setup(
         "atmosp",  # my own `atmosp` module forked from `atmos-python`
         "cdsapi",
         "xarray",
+        "multiprocess", # a better multiprocessing library
         "click",  # cmd tool
         "lmfit",  # optimiser
         'pvlib',  # TMY-related solar radiation calculations
         "platypus-opt==1.0.4", # a multi-objective optimiser
-        "supy_driver==2020b4",  # a separate f2py-based driver
+        "supy_driver==2020b5",  # a separate f2py-based driver
     ],
     entry_points={
         #   command line tools
