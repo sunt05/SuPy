@@ -5,6 +5,7 @@ import multiprocess
 import os
 import sys
 import time
+
 # import logging
 import traceback
 from ast import literal_eval
@@ -97,7 +98,7 @@ def suews_cal_tstep_multi(dict_state_start_grid, df_met_forcing_block):
         {
             "metforcingblock": np.array(
                 df_met_forcing_block.drop(
-                    columns=["metforcingdata_grid", "ts5mindata_ir", "isec", ]
+                    columns=["metforcingdata_grid", "ts5mindata_ir", "isec",]
                 ),
                 order="F",
             ),
@@ -153,10 +154,10 @@ def suews_cal_tstep_multi(dict_state_start_grid, df_met_forcing_block):
 # dataframe based wrapper
 # serial mode:
 def run_supy_ser(
-        df_forcing: pandas.DataFrame,
-        df_state_init: pandas.DataFrame,
-        save_state=False,
-        chunk_day=3660,
+    df_forcing: pandas.DataFrame,
+    df_state_init: pandas.DataFrame,
+    save_state=False,
+    chunk_day=3660,
 ) -> Tuple[pandas.DataFrame, pandas.DataFrame]:
     """Perform supy simulation.
 
@@ -202,7 +203,7 @@ def run_supy_ser(
     # add placeholder variables for df_forcing
     # `metforcingdata_grid` and `ts5mindata_ir` are used by AnOHM and ESTM, respectively
     # they are now temporarily disabled in supy
-    df_forcing = df_forcing.assign(metforcingdata_grid=0, ts5mindata_ir=0, ).rename(
+    df_forcing = df_forcing.assign(metforcingdata_grid=0, ts5mindata_ir=0,).rename(
         # rename is a workaround to resolve naming inconsistency between
         # suews fortran code interface and input forcing file headers
         columns={
@@ -326,7 +327,9 @@ def run_supy_ser(
         # for multi-year run, reduce the whole df_forcing into {chunk_day}-day chunks for less memory consumption
         idx_start = df_forcing.index.min()
         idx_all = df_forcing.index
-        grp_forcing_chunk = df_forcing.groupby((idx_all - idx_start) // pd.Timedelta(chunk_day, 'd'))
+        grp_forcing_chunk = df_forcing.groupby(
+            (idx_all - idx_start) // pd.Timedelta(chunk_day, "d")
+        )
         if len(grp_forcing_chunk) > 1:
             df_state_init_chunk = df_state_init.copy()
             list_df_output = []
@@ -349,7 +352,6 @@ def run_supy_ser(
             return df_output, df_state_final
 
         else:
-            # print('single chunk ...',file=open('xx.log','a'))
             # for single-chunk run (1 chunk = {chunk_day} years), directly put df_forcing into supy_driver for calculation
             # use higher level wrapper that calculate at a `block` level
             # for better performance
@@ -363,7 +365,6 @@ def run_supy_ser(
             ]
 
             try:
-                # print('suews_cal_tstep_multi ...',file=open('xx.log','a'))
                 list_res = [
                     suews_cal_tstep_multi(input_grid, df_forcing)
                     for input_grid in list_input
@@ -412,7 +413,7 @@ def run_supy_ser(
 
 
 def run_save_supy(
-        df_forcing_tstep, df_state_init_m, ind, save_state, n_yr, path_dir_temp
+    df_forcing_tstep, df_state_init_m, ind, save_state, n_yr, path_dir_temp
 ):
     # run supy in serial mode
     df_output, df_state_final = run_supy_ser(

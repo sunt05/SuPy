@@ -31,8 +31,9 @@ def gen_df_save(df_grid_group: pd.DataFrame) -> pd.DataFrame:
     ser_hour = pd.Series(idx_dt.hour, index=idx_dt, name="Hour")
     ser_min = pd.Series(idx_dt.minute, index=idx_dt, name="Min")
     df_datetime = pd.concat([ser_year, ser_DOY, ser_hour, ser_min,], axis=1)
+    dt_delta=idx_dt-idx_dt.to_period("d").to_timestamp()
     df_datetime["Dectime"] = (
-        ser_DOY - 1 + idx_dt.to_perioddelta("d").total_seconds() / (24 * 60 * 60)
+        ser_DOY - 1 + dt_delta.total_seconds() / (24 * 60 * 60)
     )
     df_save = pd.concat([df_datetime, df_grid_group], axis=1)
     return df_save
