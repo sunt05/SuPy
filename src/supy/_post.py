@@ -216,7 +216,7 @@ def proc_df_rsl(df_output, debug=False):
     df_rsl_proc = df_rsl.stack()
     if debug:
         # retrieve debug variables
-        df_rsl_debug = df_rsl_data.iloc[:, -12:]
+        df_rsl_debug = df_rsl_data.iloc[:, 120:]
         return df_rsl_proc, df_rsl_debug
     else:
         return df_rsl_proc
