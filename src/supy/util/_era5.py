@@ -194,13 +194,22 @@ def gen_dict_dt_sub(dt_index):
 
 # generate filename
 def gen_fn(dict_x):
-    lat_x, lon_x = dict_x["area"][:2]
+    # centre coordinates
+    ar_coords = np.array(dict_x["area"]).reshape(2, -1)
+    lat_c, lon_c = ar_coords.T.mean(axis=1)
+    # starting year
     yr_x = dict_x["year"][0]
+    # starting month
     mon_x = dict_x["month"][0]
+    # type of dataset: `sfc` for surface level while `ml` for atmospheric multi-level
     type_x = "sfc" if "orography" in dict_x["variable"] else "ml"
-    lat_x = f"{lat_x}N" if lat_x > 0 else f"{-lat_x}S"
-    lon_x = f"{lon_x}E" if lon_x > 0 else f"{-lon_x}W"
-    fn_x = f"{lat_x}{lon_x}-{yr_x}{mon_x}-{type_x}.nc"
+
+    # format location coordinates in filename
+    lat_c = f"{lat_c}N" if lat_c > 0 else f"{-lat_c}S"
+    lon_c = f"{lon_c}E" if lon_c > 0 else f"{-lon_c}W"
+
+    # construct filename
+    fn_x = f"{lat_c}{lon_c}-{yr_x}{mon_x}-{type_x}.nc"
     return fn_x
 
 
@@ -234,7 +243,7 @@ def gen_req_sfc(lat_x, lon_x, start, end, grid=None, scale=0):
     grid : list, optional
         grid size used in CDS request API, by default [0.125, 0.125].
     scale : int, optional
-        scaling factor that determines the area of interest (i.e., `area=grid[0]*scale`), by default 0.
+        scaling factor that determines the area of interest: `area=grid[0]*(2*scale+1)` (i.e., number of grids extending from centre of interest), by default 0.
 
     Returns
     -------
