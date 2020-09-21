@@ -774,7 +774,7 @@ def format_df_forcing(df_forcing_raw):
         axis=1,
     )
 
-    col_suews = list(dict_var_type_forcing.keys()) + ["alt_z"]
+    col_suews = list(dict_var_type_forcing.keys())[:-1] + ["alt_z"]
 
     df_forcing_grid = df_forcing_grid.reindex(col_suews, axis=1)
 
@@ -796,6 +796,12 @@ def format_df_forcing(df_forcing_raw):
     # trim decimals
     df_forcing_grid.iloc[:, 4:] = df_forcing_grid.iloc[:, 4:].round(2)
 
+    # coerce integer
+    df_forcing_grid = df_forcing_grid.astype(
+        {"iy": "int32", "id": "int32", "it": "int32", "imin": "int32"}
+    )
+
+    # replace nan with -999
     df_forcing_grid = df_forcing_grid.replace(np.nan, -999).asfreq("1h")
 
     return df_forcing_grid
