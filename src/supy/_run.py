@@ -92,7 +92,6 @@ def suews_cal_tstep(dict_state_start, dict_met_forcing_tstep):
 # def suews_cal_tstep_multi(df_state_start_grid, df_met_forcing_block):
 def suews_cal_tstep_multi(dict_state_start_grid, df_met_forcing_block):
     # use single dict as input for suews_cal_main
-    # dict_input = df_state_start_grid.copy().to_dict()
     dict_input = copy.deepcopy(dict_state_start_grid)
     dict_input.update(
         {
@@ -115,9 +114,7 @@ def suews_cal_tstep_multi(dict_state_start_grid, df_met_forcing_block):
 
     # main calculation:
     try:
-        # print('sd.suews_cal_multitsteps ...',file=open('xx.log','a'))
         res_suews_tstep_multi = sd.suews_cal_multitsteps(**dict_input)
-        # print('finished suews_cal_tstep_multi ...',file=open('xx.log','a'))
     except Exception as ex:
         # show trace info
         # print(traceback.format_exc())
