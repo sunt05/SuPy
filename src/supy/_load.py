@@ -633,7 +633,7 @@ def set_index_dt(df_raw: pd.DataFrame) -> pd.DataFrame:
     dt_diff = idx_dt.to_series().diff()
     if (~dt_diff[1:].duplicated()).sum() > 1:
         # locate the problematic indices
-        loc_issue = idx_dt[~dt_diff]
+        loc_issue = df_raw.index[~dt_diff.duplicated()][1:]
         raise RuntimeError(f"Loaded forcing files have gaps at: {loc_issue}")
     else:
         freq = dt_diff[1]
