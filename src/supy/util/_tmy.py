@@ -155,7 +155,23 @@ def gen_WS_DF(df_met):
     return df_ws
 
 
-def pick_year(df_ws, df_output, n=5):
+def pick_year(df_output, n=5):
+    # root mean square differences
+    df_rmsd_mon = cal_rmsd_mon(df_output)
+
+    # WS: weighted FS metric
+    df_ws = gen_WS_DF(df_output)
+
+    # years with smallest WS
+    year_nsmallest = df_ws.apply(lambda ser: ser.nsmallest(n).index)
+
+    # best candidate years for each month
+    year_sel = df_rmsd_mon.apply(lambda ser: ser.loc[year_nsmallest[ser.name]]).idxmin()
+
+    return year_sel
+
+
+def cal_rmsd_mon(df_output):
     df_day = pd.pivot_table(
         df_output, values="Kdown", index=["Year", "Month", "Day"], aggfunc=[np.mean,]
     )
@@ -166,7 +182,7 @@ def pick_year(df_ws, df_output, n=5):
 
     array_yr_mon = df_day.index.droplevel("Day").to_frame().drop_duplicates().values
 
-    df_rmsd = (
+    df_rmse = (
         pd.DataFrame(
             {
                 (yr, mon): np.sqrt(
@@ -178,13 +194,8 @@ def pick_year(df_ws, df_output, n=5):
         .stack()
         .T.dropna()
     )
-    df_rmsd.columns = df_rmsd.columns.droplevel([0, 1])
-
-    year_nsmallest = df_ws.apply(lambda ser: ser.nsmallest(n).index)
-
-    year_sel = df_rmsd.apply(lambda ser: ser.loc[year_nsmallest[ser.name]]).idxmin()
-
-    return year_sel
+    df_rmse.columns = df_rmse.columns.droplevel([0, 1])
+    return df_rmse
 
 
 # headers of standard EPW files
@@ -257,10 +268,10 @@ def gen_TMY(df_output):
         Hour=lambda df: df.index.hour,
         Minute=lambda df: df.index.minute,
     )
-    ws = gen_WS_DF(df_output_x)
+    # df_ws = gen_WS_DF(df_output_x)
 
     # select year
-    year_sel = pick_year(ws, df_output_x, n=5)
+    year_sel = pick_year(df_output_x, n=5)
 
     # convert `0h` to `24h` and take care of `day`: to follow EPW convention
     df_output_x = conv_0to24(df_output_x)
@@ -316,11 +327,7 @@ def read_epw(path_epw: Path) -> pd.DataFrame:
 
 # generate EPW file from `df_TMY`
 def gen_epw(
-    df_output: pd.DataFrame,
-    lat,
-    lon,
-    tz=0,
-    path_epw=Path("./uTMY.epw"),
+    df_output: pd.DataFrame, lat, lon, tz=0, path_epw=Path("./uTMY.epw"),
 ) -> Tuple[pd.DataFrame, str, Path]:
     """Generate an `epw` file of uTMY (urbanised Typical Meteorological Year) using SUEWS simulation results
 
