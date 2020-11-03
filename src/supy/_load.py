@@ -467,7 +467,7 @@ def resample_kdn(data_raw_kdn, tstep_mod, timezone, lat, lon, alt):
 
 
 # correct precipitation by even redistribution over resampled periods
-def resample_sum(data_raw_precip, tstep_mod, tstep_in):
+def resample_sum(data_raw_precip, tstep_in, tstep_mod):
     ratio_precip = 1.0 * tstep_mod / tstep_in
     data_tstep_precip_adj = ratio_precip * data_raw_precip.copy().shift(
         -tstep_in + tstep_mod, freq="S"
@@ -529,7 +529,7 @@ def resample_linear_avg(data_raw_avg, tstep_in, tstep_mod):
     idx_tstep = data_raw_tstep.index
 
     # insert the shifted
-    data_raw_tstep.loc[data_raw_shift.index] = data_raw_shift.values
+    data_raw_tstep = data_raw_tstep.append(data_raw_shift).sort_index()
     # interpolation so to get the instantaneous values
     data_raw_tstep = data_raw_tstep.interpolate("linear")
     # only `sow` those values at desirable timestamps
@@ -579,7 +579,7 @@ def resample_forcing_met(
         var for var, data_type in dict_var_type_forcing.items() if data_type == "sum"
     ]
     data_met_tstep_sum = resample_sum(
-        data_met_raw.filter(list_var_sum), tstep_mod, tstep_in
+        data_met_raw.filter(list_var_sum), tstep_in, tstep_mod
     )
 
     # combine the resampled individual dataframes
@@ -700,7 +700,7 @@ def load_SUEWS_Forcing_met_df_pattern(path_input, file_pattern):
     # # convert to normal pandas dataframe
     # df_forcing_met = dd_forcing_met.compute()
 
-    df_forcing_met=pd.concat([read_suews(fn) for fn in list_file_MetForcing])
+    df_forcing_met = pd.concat([read_suews(fn) for fn in list_file_MetForcing])
     # `drop_duplicates` in case some duplicates mixed
     df_forcing_met = df_forcing_met.drop_duplicates()
     # drop `isec`: redundant for this dataframe
