@@ -56,14 +56,17 @@ def read_forcing(path_suews_file: str, tstep_mod=300) -> pd.DataFrame:
     tstep_met_in = df_forcing_raw.index.to_series().diff()[-1] / pd.Timedelta("1s")
     df_forcing_raw = df_forcing_raw.asfreq(f"{tstep_met_in:.0f}s")
 
-    # resampling
-    if tstep_mod is not None:
-        df_forcing = df_forcing_raw.replace(-999, np.nan)
-        df_forcing = resample_forcing_met(
-            df_forcing, tstep_met_in, tstep_mod, kdownzen=0
-        )
-        df_forcing = df_forcing.replace(np.nan, -999)
-    else:
-        df_forcing = df_forcing_raw
+    df_forcing = df_forcing_raw
+
+    # resampling only when necessary
+    if (tstep_mod is not None):
+        if (tstep_mod < tstep_met_in):
+            df_forcing = df_forcing_raw.replace(-999, np.nan)
+            df_forcing = resample_forcing_met(
+                df_forcing, tstep_met_in, tstep_mod, kdownzen=0
+            )
+            df_forcing = df_forcing.replace(np.nan, -999)
+
+
 
     return df_forcing

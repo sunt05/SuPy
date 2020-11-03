@@ -1,4 +1,4 @@
-.. _new_latest:
+
 
 
 Version 2020.2.2

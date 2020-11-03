@@ -1,0 +1,38 @@
+.. _new_latest:
+.. _new_dev:
+
+Version 2020.11.3
+======================================================
+
+
+- **New**
+
+  1. Update supy-driver to `2020b` iteration.
+  2. Add function for plotting RSL variables `supy.util.plot_rsl`.
+
+
+- **Improvement**
+
+  1. The RSL related functions are more robust in dealing with broader urban morphology settings.
+  2. Internal changes to conform with recent upgrades in `pandas`.
+
+- **Changes**
+
+  None.
+
+
+- **Fix**
+
+  1. Fix an issue in `supy.util.read_forcing` that improper resampling could be conducted
+  if input temporal resolution is the same as the desirable resampling time step `tstep_mod`.
+
+
+- **Known issue**
+
+  1. ESTM is not supported yet.
+  2. BLUEWS, a CBL modules in SUEWS, is not supported yet.
+  3. Simulation in parallel mode is NOT supported on Windows
+     due to system limitation.
+
+
+

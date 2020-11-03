@@ -165,16 +165,21 @@ def plot_comp(
 
     # add regression expression
     df_var_fit = df_var.dropna(how="any")
-    val_x = df_var_fit["Obs"]
-    val_y = df_var_fit["Sim"]
+    try:
+        val_x = df_var_fit["Obs"]
+        val_y = df_var_fit["Sim"]
+    except:
+        val_x = df_var_fit.iloc[:,0]
+        val_y = df_var_fit.iloc[:,1]
+
     slope, intercept, r_value, p_value, std_err = stats.linregress(val_x, val_y)
     mae = (val_y - val_x).abs().mean()
     mbe = (val_y - val_x).mean()
 
     sns.regplot(
-        x="Obs",
-        y="Sim",
-        data=df_var_fit,
+        x=val_x,
+        y=val_y,
+        # data=df_var_fit,
         ax=ax,
         fit_reg=True,
         line_kws={
