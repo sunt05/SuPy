@@ -1,5 +1,7 @@
 # SuPy
 
+**THIS PROJECT IS ARCHIVED AND NOW MAINTAINED BY [@UMEP-dev](https://github.com/UMEP-dev).**
+
 [![Python Version Support Status](https://img.shields.io/pypi/pyversions/supy.svg)](https://pypi.org/project/supy)
 [![Latest Version Status](https://img.shields.io/pypi/v/supy.svg)](https://pypi.org/project/supy)
 [![Downloads](https://pepy.tech/badge/supy)](https://pepy.tech/project/supy)
